@@ -3,3 +3,5 @@ dist/
 .astro/
 .DS_Store
 src/assets/sketches/
+# the manuscript is reference only and is never published (CLAUDE.md)
+source/
