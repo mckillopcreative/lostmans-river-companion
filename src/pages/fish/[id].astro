@@ -1,0 +1,70 @@
+---
+import Base from '@layouts/Base.astro';
+import EntityDetail from '@components/EntityDetail.astro';
+import { fish, gear, toCard, type Fish } from '@lib/data';
+import { url } from '@lib/url';
+import site from '../../../site.config.mjs';
+
+export function getStaticPaths() {
+  return fish.map((f) => ({ params: { id: f.id }, props: { f } }));
+}
+const { f } = Astro.props as { f: Fish };
+
+// Related: other fish sharing a chapter, most overlap first.
+const related = fish
+  .filter((o) => o.id !== f.id)
+  .map((o) => ({ o, n: o.chapters.filter((c) => f.chapters.includes(c)).length }))
+  .filter((x) => x.n > 0)
+  .sort((a, b) => b.n - a.n)
+  .slice(0, 4)
+  .map((x) => toCard('fish', x.o));
+
+const specs = [
+  { k: 'Identify', v: f.identify },
+  { k: 'Typical size', v: f.typical_size },
+  { k: 'Where', v: f.habitat },
+  { k: 'Scientific', v: f.scientific },
+];
+const mentionsTackle = gear.filter((g) => (f.how_matt_fishes_it ?? '').toLowerCase().includes(g.term.toLowerCase().split(' ')[0]!)).slice(0, 3);
+---
+
+<Base title={f.common} description={f.in_book} image={f.sketch ? `/assets/sketches/${f.sketch}` : undefined}>
+  <EntityDetail section="fish" title={f.common} subtitle={f.scientific} sketch={f.sketch} chapters={f.chapters} specs={specs} related={related} relatedLabel="Swims with">
+    <section>
+      <h2>In the book</h2>
+      <p>{f.in_book}</p>
+    </section>
+    {
+      f.how_matt_fishes_it && (
+        <section>
+          <h2>How Matt fishes it</h2>
+          <p>{f.how_matt_fishes_it}</p>
+          {mentionsTackle.length > 0 && (
+            <p class="small">
+              Tackle box:{' '}
+              {mentionsTackle.map((g, i) => (
+                <>
+                  <a href={url(`/tackle/#${g.id}`)}>{g.term}</a>
+                  {i < mentionsTackle.length - 1 ? ', ' : ''}
+                </>
+              ))}
+            </p>
+          )}
+        </section>
+      )
+    }
+    {
+      (f.regulation_note || f.conservation) && (
+        <section>
+          <h2>Rules and conservation</h2>
+          {f.regulation_note && <p>{f.regulation_note}</p>}
+          {f.conservation && <p>{f.conservation}</p>}
+          <p class="note small">
+            Limits, seasons and slot sizes change. Always check the current
+            <a href={site.fwcUrl} rel="noopener">FWC rules</a> before keeping a fish.
+          </p>
+        </section>
+      )
+    }
+  </EntityDetail>
+</Base>

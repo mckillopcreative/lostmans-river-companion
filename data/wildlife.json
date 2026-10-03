@@ -1,0 +1,260 @@
+[
+  {
+    "id": "pelican",
+    "name": "Brown pelican",
+    "scientific": "Pelecanus occidentalis",
+    "in_book": "Bertha and Oscar; the hooked pelican Snapper carries to the door; the fish-head thief at Lostman's.",
+    "facts": [
+      "Dive from 30–60 feet and hit the water head-first; air sacs under the skin cushion the impact.",
+      "A pouch can hold about three gallons — more than the stomach.",
+      "Nearly wiped out in the 1960s–70s by DDT; recovered and delisted in 2009.",
+      "Fishing line and hooks are now one of their biggest killers — exactly the rescue Dan performs."
+    ],
+    "chapters": [
+      2,
+      5,
+      7,
+      13,
+      22
+    ],
+    "sketch": "pelican-on-dock.png"
+  },
+  {
+    "id": "dolphin",
+    "name": "Bottlenose dolphin",
+    "scientific": "Tursiops truncatus",
+    "in_book": "The playful pair at Lopez River; the mother who rams the hammerhead and bites her calf free of the net.",
+    "facts": [
+      "Everglades dolphins live in small resident groups and work the mangrove edges in teams.",
+      "Mothers really do defend calves aggressively, and dolphins have been documented ramming sharks.",
+      "Abandoned 'ghost' nets are a leading cause of dolphin and sea-turtle entanglement."
+    ],
+    "chapters": [
+      3,
+      16
+    ],
+    "sketch": "dolphin-vs-hammerhead.png"
+  },
+  {
+    "id": "alligator",
+    "name": "American alligator",
+    "scientific": "Alligator mississippiensis",
+    "in_book": "The marina gators tourists get too close to; the grouper thief at Lostman's; Alligator Alley; the poachers who caused Dad's death.",
+    "facts": [
+      "Everglades gators tolerate brackish water near river mouths but prefer fresh.",
+      "Splashing attracts them — Matt's rule about not splashing is real guide wisdom.",
+      "Poaching for hides was once rampant; legal protection since 1967 brought them back."
+    ],
+    "chapters": [
+      3,
+      13,
+      23
+    ],
+    "sketch": "alligator-grouper-thief.png"
+  },
+  {
+    "id": "water-moccasin",
+    "name": "Cottonmouth (water moccasin)",
+    "scientific": "Agkistrodon piscivorus conanti",
+    "in_book": "The snake drawn to the lantern at Comer Key.",
+    "facts": [
+      "Florida cottonmouths swim with the whole body on the surface; harmless water snakes swim with just the head up.",
+      "The white mouth gape is a warning, not an attack.",
+      "Bites are serious but rarely fatal with treatment — which is why 'a long time to a mainland hospital' matters."
+    ],
+    "chapters": [
+      8
+    ],
+    "sketch": null
+  },
+  {
+    "id": "shark",
+    "name": "Sharks of the Ten Thousand Islands",
+    "scientific": "Bull, blacktip, lemon, bonnethead, hammerhead",
+    "in_book": "The 'Mako' on the beach at Comer Key; the hammerhead at the ghost net.",
+    "facts": [
+      "Bull sharks are the shallow-water shark of the Everglades and move far up the rivers.",
+      "Shortfin makos are open-ocean fish; the Comer Key shark was more likely a bull — a nice discussion point.",
+      "Great hammerheads cruise the passes hunting tarpon during the spring migration."
+    ],
+    "chapters": [
+      8,
+      16
+    ],
+    "sketch": "shark-comer-key-beach.png"
+  },
+  {
+    "id": "mangroves",
+    "name": "Mangroves",
+    "scientific": "Red (Rhizophora mangle), black, white",
+    "in_book": "Everywhere. The hideout at Pavilion Key, the storm tie-off, the overhangs where snook wait.",
+    "facts": [
+      "Red mangroves' prop roots are a fish nursery — most of the fish in this book start life there.",
+      "The Ten Thousand Islands is one of the largest mangrove forests in the world.",
+      "'Every mangrove key and bay looked alike' — guides navigate by chart, memory, and tide."
+    ],
+    "chapters": [
+      3,
+      9,
+      12,
+      14
+    ],
+    "sketch": null
+  },
+  {
+    "id": "oyster-bar",
+    "name": "Oyster bars",
+    "scientific": "Crassostrea virginica",
+    "in_book": "The thing that scrapes the hull, holds the Sea Belle, cuts your line, and hides the redfish.",
+    "facts": [
+      "Oysters filter up to 50 gallons of water a day each.",
+      "Bars grow at river mouths where fresh and salt water mix — the same place the fish gather.",
+      "Wading boots like Snapper's are essential; shells cut like glass."
+    ],
+    "chapters": [
+      2,
+      3,
+      12,
+      18
+    ],
+    "sketch": null
+  },
+  {
+    "id": "cypress",
+    "name": "Bald cypress",
+    "scientific": "Taxodium distichum",
+    "in_book": "'Colossal cypress trees gnarled up out of the ground like giant twisted guardians of the realm' on the drive in.",
+    "facts": [
+      "Deciduous conifers; the 'knees' may help with stability in soft mud.",
+      "The Fakahatchee Strand along the Everglades City road is the largest cypress strand in the world."
+    ],
+    "chapters": [
+      2
+    ],
+    "sketch": null
+  },
+  {
+    "id": "banyan",
+    "name": "Banyan / strangler fig",
+    "scientific": "Ficus spp.",
+    "in_book": "Two massive banyans flank Dan's front yard.",
+    "chapters": [
+      2
+    ],
+    "sketch": null
+  },
+  {
+    "id": "mosquito",
+    "name": "Mosquitoes, sand fleas, no-see-ums",
+    "scientific": "Aedes taeniorhynchus and friends",
+    "in_book": "'It was the mosquitos that chomped at his peace of mind.' Dan's homemade lavender repellent.",
+    "facts": [
+      "The black salt-marsh mosquito breeds in the mangroves by the billion after rain.",
+      "A westerly breeze is the only real relief — which is why Dan picks windy nights to camp."
+    ],
+    "chapters": [
+      1,
+      2,
+      5,
+      16
+    ],
+    "sketch": null
+  },
+  {
+    "id": "ghost-net",
+    "name": "Abandoned fishing nets",
+    "scientific": null,
+    "in_book": "Catches Matt's foot in the storm and the baby dolphin the next day.",
+    "facts": [
+      "Derelict gear keeps 'fishing' for years.",
+      "Everglades National Park banned commercial netting in 1985; old nets still turn up."
+    ],
+    "chapters": [
+      12,
+      16
+    ],
+    "sketch": null
+  },
+  {
+    "id": "stone-crab",
+    "name": "Stone crab",
+    "scientific": "Menippe mercenaria",
+    "in_book": "Matt begging claws from the seafood company as a kid.",
+    "facts": [
+      "Only one claw is taken and the crab is returned alive to regrow it.",
+      "Chokoloskee and Everglades City are the stone-crab capital of Florida."
+    ],
+    "chapters": [
+      2
+    ],
+    "sketch": null
+  },
+  {
+    "id": "grass-beds",
+    "name": "Seagrass beds",
+    "scientific": "Thalassia, Halodule",
+    "in_book": "Rabbit Key's grass beds — 'grass bed fishing meant trout.'",
+    "chapters": [
+      7
+    ],
+    "sketch": null
+  },
+  {
+    "id": "frogs",
+    "name": "The Everglades choir",
+    "scientific": null,
+    "in_book": "Mullet splashing, frogs croaking, birds singing — Ch. 15's night on deck.",
+    "chapters": [
+      15
+    ],
+    "sketch": null
+  },
+  {
+    "id": "iguana",
+    "name": "Green iguana (invasive)",
+    "scientific": "Iguana iguana",
+    "in_book": "Smuggled exotics in the Gazette article.",
+    "chapters": [
+      1
+    ],
+    "sketch": null
+  },
+  {
+    "id": "seagull",
+    "name": "Gull",
+    "scientific": "Larus spp.",
+    "in_book": "Matt's confidant about the lavender repellent.",
+    "chapters": [
+      5
+    ],
+    "sketch": null
+  },
+  {
+    "id": "birds",
+    "name": "Birds of the islands",
+    "scientific": null,
+    "in_book": "'Birds danced alongside in the air, no doubt singing songs of Matt's adventures.'",
+    "chapters": [
+      19
+    ],
+    "sketch": null
+  },
+  {
+    "id": "sand-flea",
+    "name": "Sand fleas",
+    "scientific": null,
+    "chapters": [
+      16
+    ],
+    "sketch": null
+  },
+  {
+    "id": "gnat",
+    "name": "Gnats / no-see-ums",
+    "scientific": null,
+    "chapters": [
+      16
+    ],
+    "sketch": null
+  }
+]

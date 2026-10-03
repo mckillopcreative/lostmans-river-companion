@@ -1,0 +1,74 @@
+---
+// Email capture. Posts to Buttondown or Mailchimp once site.config.mjs email.provider is set;
+// until then it renders a clearly marked placeholder (SPEC.md §8.4).
+import site from '../../site.config.mjs';
+interface Props {
+  id?: string;
+  compact?: boolean;
+}
+const { id = 'signup', compact = false } = Astro.props;
+const { provider, action, listName } = site.email;
+const live = !!(provider && action);
+const emailField = provider === 'mailchimp' ? 'EMAIL' : 'email';
+---
+
+<section class:list={['signup', { compact }]} id={id} aria-labelledby={`${id}-h`}>
+  <p class="eyebrow">Next summer</p>
+  <h2 id={`${id}-h`} class="signup-h">Hear when the airboat is running</h2>
+  <p class="small muted">
+    The sequel is in the works. One email when there’s news, none otherwise. No spam, no sharing your address.
+  </p>
+  {
+    live ? (
+      <form class="signup-form" method="post" action={action} target="_blank" rel="noopener">
+        <label class="sr-only" for={`${id}-email`}>Email address</label>
+        <input id={`${id}-email`} type="email" name={emailField} placeholder="you@example.com" required autocomplete="email" />
+        {provider === 'buttondown' && <input type="hidden" name="tag" value={listName} />}
+        <button class="btn btn-primary" type="submit">Sign up</button>
+      </form>
+    ) : (
+      <form class="signup-form" onsubmit="return false">
+        <label class="sr-only" for={`${id}-email`}>Email address</label>
+        <input id={`${id}-email`} type="email" placeholder="you@example.com" autocomplete="email" disabled />
+        <button class="btn btn-primary" type="button" disabled>
+          Sign up
+        </button>
+        <p class="small muted placeholder">Sign-up opens soon.</p>
+      </form>
+    )
+  }
+</section>
+
+<style>
+  .signup {
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+  .signup-h {
+    margin-top: 0;
+    font-size: 1.4rem;
+  }
+  .signup-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .signup-form input[type='email'] {
+    flex: 1 1 220px;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--oyster);
+    border-radius: var(--radius);
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+  }
+  .placeholder {
+    flex-basis: 100%;
+    margin: 0.25rem 0 0;
+  }
+</style>

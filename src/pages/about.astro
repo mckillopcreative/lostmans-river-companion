@@ -1,0 +1,101 @@
+---
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SignupForm from '@components/SignupForm.astro';
+import { photoImages } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../site.config.mjs';
+
+const dedication = photoImages.get('for-dad-three-anglers.jpg');
+---
+
+<Base title="About the book" description={site.tagline}>
+  <article class="frame">
+    <div class="wrap">
+      <header>
+        <p class="eyebrow">About</p>
+        <h1>The book, the people, the place</h1>
+      </header>
+
+      <section>
+        <h2>The book</h2>
+        <p>
+          <em>Escape to Lostman’s River</em> is a short adventure novel for readers who like fishing, or boats, or getting into a little trouble. Fifteen-year-old Matt Creek spends the summer after his father’s death as his uncle Dan’s assistant guide in Chokoloskee, at the top of the Ten Thousand Islands. There is a legendary tarpon, a smuggling ring, a houseboat, a storm, and a lot of snook.
+        </p>
+        <p>
+          It is written by John and Linda McKillop. Every pen-and-ink sketch in the book, and on this site, is Linda’s. The site is laid out like the one thing Matt carries everywhere: his dad’s <em>South Florida Fishing Guidebook</em>, with the blank pages filled in.
+        </p>
+        <p class="cluster">
+          <a class="btn btn-primary" href={site.buyUrl} rel="noopener">Buy on Amazon</a>
+          <a class="btn" href={site.joelbooks.url} rel="noopener">{site.joelbooks.text}</a>
+        </p>
+        <dl class="specs">
+          <dt>Paperback</dt>
+          <dd class="mono">ISBN {site.isbn.paperback}</dd>
+          <dt>Hardcover</dt>
+          <dd class="mono">ISBN {site.isbn.hardcover}</dd>
+          <dt>Kindle</dt>
+          <dd class="mono">ASIN {site.isbn.kindle}</dd>
+        </dl>
+      </section>
+
+      {
+        dedication && (
+          <section>
+            <h2>For Dad</h2>
+            <figure class="photo">
+              <Image src={dedication} alt="Three anglers, from the dedication page of the book" width={800} sizes="(min-width: 720px) 680px, 94vw" loading="lazy" />
+              <figcaption class="mono">
+                The dedication photograph. <span class="placeholder">[Caption to come from the author.]</span> Photo courtesy of the McKillop family.
+              </figcaption>
+            </figure>
+          </section>
+        )
+      }
+
+      <section>
+        <h2>The real Chokoloskee</h2>
+        <p>
+          Chokoloskee is a real island at the end of a real causeway, just south of Everglades City on Florida’s Gulf coast. It sits at the top of the Ten Thousand Islands, the mangrove maze that runs south to Lostman’s River, Shark River, and Cape Sable inside Everglades National Park. Guides still leave from its marinas at sunrise. The stone crabs are still the best in the state. Most of the places on <a href={url('/map/')}>the chart</a> are there to be found; Dan’s cottage, Doc’s house, and the abandoned post office at South Point you will have to imagine.
+        </p>
+        <p class="small muted">
+          Planning a trip? Start with <a href={site.npsUrl} rel="noopener">Everglades National Park</a> and the <a href={site.fwcUrl} rel="noopener">FWC fishing rules</a>.
+        </p>
+      </section>
+
+      <section>
+        <h2>Next summer</h2>
+        <p>
+          The last chapter leaves two things waiting: a fire-engine red airboat in the garage, and a date at the end of the last dock at the Chokoloskee marina. A second book is in the works.
+        </p>
+        <SignupForm id="signup" />
+      </section>
+
+      <section>
+        <h2>For teachers and book clubs</h2>
+        <p>
+          A discussion guide, printable fish cards, and coloring pages from the sketches are planned. Until then, <a href={url('/list/')}>Matt’s List</a> and the <a href={url('/fish/')}>fish guide</a> work well as classroom pages.
+        </p>
+      </section>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .photo {
+    margin: 1rem 0;
+  }
+  .photo img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+  .photo figcaption {
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+  }
+  .placeholder {
+    color: var(--sunrise);
+  }
+</style>

@@ -1,0 +1,15 @@
+---
+import Base from '@layouts/Base.astro';
+import EntityIndex from '@components/EntityIndex.astro';
+import { boats, toCard, sectionMeta } from '@lib/data';
+
+const cards = boats.map((b) => toCard('boats', b));
+const groups = [
+  { label: 'Dan’s fleet', ids: ['mako', 'sea-belle', 'bonefisher', 'airboat', 'tahoe'] },
+  { label: 'Everyone else’s', ids: ['doc-skiff', 'the-marina', 'seaplane', 'jet-boat'] },
+];
+---
+
+<Base title="Boats" description={sectionMeta.boats.blurb}>
+  <EntityIndex section="boats" cards={cards} groups={groups} />
+</Base>

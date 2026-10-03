@@ -1,0 +1,312 @@
+[
+  {
+    "id": "snook",
+    "common": "Common snook",
+    "scientific": "Centropomus undecimalis",
+    "in_book": "Fishing royalty. The black lateral stripe is the tell-tale. Matt's 36-inch, 20-pound monster at South Point (Ch. 6).",
+    "how_matt_fishes_it": "Bagley Mullet lure in moonlight, or a live shrimp on a size-6 hook with a weighted leader, near high tide along mangroves and rocks. Thirty-pound leader. Big snook jump and run for the oysters.",
+    "identify": "Long body, protruding lower jaw, single black stripe nose to tail.",
+    "typical_size": "20–35 in; trophies over 40 in",
+    "habitat": "Mangrove shorelines, oyster bars, river mouths, passes",
+    "regulation_note": "Catch-and-release only during the closed season in the book (May–Sept Gulf side). Check current FWC rules.",
+    "chapters": [
+      1,
+      2,
+      4,
+      5,
+      6,
+      15
+    ],
+    "sketch": "matt-holding-snook.png"
+  },
+  {
+    "id": "tarpon",
+    "common": "Tarpon ('silver king')",
+    "scientific": "Megalops atlanticus",
+    "in_book": "The trophy fish of South Florida and the tournament's main event. Old Scarface. Rose's 68-inch, 81-pound winner.",
+    "how_matt_fishes_it": "Trolling a lure a hundred feet behind the Sea Belle at a river mouth; thick 'boat poles' with 30-lb line. Tarpon leap and shake to throw the hook — bow to the fish, reel on the way down.",
+    "identify": "Huge silver scales, upturned mouth, long trailing dorsal ray.",
+    "typical_size": "40–150 lb; giants over 200 lb",
+    "habitat": "Passes, river mouths, grass flats, open Gulf",
+    "regulation_note": "Catch-and-release only in Florida; a tag is required to possess one. Weigh-in tournaments like the book's are now mostly measure-and-release.",
+    "chapters": [
+      1,
+      2,
+      7,
+      8,
+      19,
+      20,
+      21
+    ],
+    "sketch": "tarpon-leap-houseboat.png"
+  },
+  {
+    "id": "redfish",
+    "common": "Redfish (red drum, 'spot-tail')",
+    "scientific": "Sciaenops ocellatus",
+    "in_book": "The first keeper Matt ever caught, at Comer Key. Rose's cooler-toppling redfish at the marina. The 22- and 24-inch keepers at Lostman's (Ch. 16).",
+    "how_matt_fishes_it": "Popping cork with a live shrimp over oyster bars on a dropping tide.",
+    "identify": "Copper-bronze, one or more black spots at the base of the tail.",
+    "typical_size": "18–27 in slot; bull reds over 40 in",
+    "habitat": "Oyster bars, mangrove points, shallow bays",
+    "regulation_note": "Slot limit and bag limit vary by region; check FWC.",
+    "chapters": [
+      2,
+      3,
+      7,
+      8,
+      16
+    ],
+    "sketch": null
+  },
+  {
+    "id": "trout",
+    "common": "Spotted seatrout",
+    "scientific": "Cynoscion nebulosus",
+    "in_book": "'Grass bed fishing meant trout.' Three keepers on the first client trip; Dave's trout off Little Pavilion Key.",
+    "how_matt_fishes_it": "Jigging a yellow feather tipped with shrimp over grass beds; soft mouth, so don't yank.",
+    "identify": "Silver-gray with black spots on back, dorsal, and tail; two canine teeth.",
+    "typical_size": "14–20 in",
+    "habitat": "Seagrass beds, open bays",
+    "regulation_note": "Slot and bag limits; check FWC.",
+    "chapters": [
+      2,
+      3,
+      7,
+      16,
+      20
+    ],
+    "sketch": null
+  },
+  {
+    "id": "snapper",
+    "common": "Mangrove (gray) snapper",
+    "scientific": "Lutjanus griseus",
+    "in_book": "Dave's 22-incher; the snapper bonanza at the river mouth ('leave that snapper in the water, it'll attract more'); Matt's post-storm cooler-fillers.",
+    "how_matt_fishes_it": "Hook and live shrimp with weight in fast current and deep water near mangrove roots.",
+    "identify": "Gray-bronze, dark stripe through the eye, reddish tint near the mouth.",
+    "typical_size": "10–16 in inshore",
+    "habitat": "Mangrove roots, river mouths, deep holes",
+    "regulation_note": "Minimum size and bag limit; check FWC.",
+    "chapters": [
+      2,
+      3,
+      7,
+      13,
+      14,
+      20
+    ],
+    "sketch": null
+  },
+  {
+    "id": "grouper",
+    "common": "Grouper (goliath / gag)",
+    "scientific": "Epinephelus itajara (goliath); Mycteroperca microlepis (gag)",
+    "in_book": "Matt's favorite eating fish. The 'unseen giant' that dragged the anchored Bonefisher across the channel; the one that pulled Doc overboard; the one the gator bit in half.",
+    "how_matt_fishes_it": "Live bait in deep holes between mangrove islands where the current rushes. Strong arms and back; don't let it get under a rock.",
+    "identify": "Broad head, huge mouth, mottled brown. Goliaths are the 300-pounders.",
+    "typical_size": "Gag 20–30 in; goliath 100–400 lb",
+    "habitat": "Deep holes, river channels, structure",
+    "regulation_note": "Goliath grouper is protected (limited harvest by permit only). Gag has seasons and limits.",
+    "chapters": [
+      2,
+      3,
+      13,
+      14,
+      16,
+      17
+    ],
+    "sketch": "grouper.png"
+  },
+  {
+    "id": "black-drum",
+    "common": "Black drum",
+    "scientific": "Pogonias cromis",
+    "in_book": "The 'single black drum, which were hard to find these days' in the Rabbit Key cooler. A tournament category.",
+    "identify": "Deep-bodied, gray-black, chin barbels, vertical bars when young.",
+    "typical_size": "14–24 in slot; big ones over 40 lb",
+    "habitat": "Oyster bars, mud flats",
+    "chapters": [
+      7,
+      20
+    ],
+    "sketch": null
+  },
+  {
+    "id": "cobia",
+    "common": "Cobia",
+    "scientific": "Rachycentron canadum",
+    "in_book": "A tournament category at Port of the Everglades.",
+    "identify": "Long, dark brown, flat head; often mistaken for a shark.",
+    "typical_size": "30–50 lb",
+    "habitat": "Open Gulf, around structure and rays",
+    "chapters": [
+      20
+    ],
+    "sketch": null
+  },
+  {
+    "id": "yellowtail",
+    "common": "Yellowtail snapper",
+    "scientific": "Ocyurus chrysurus",
+    "in_book": "On Dan's list of what the Ten Thousand Islands offers.",
+    "identify": "Yellow stripe from nose to a forked yellow tail.",
+    "chapters": [
+      2
+    ],
+    "sketch": null
+  },
+  {
+    "id": "ladyfish",
+    "common": "Ladyfish",
+    "scientific": "Elops saurus",
+    "in_book": "Matt's metaphor: the tiny ladyfish that minds its own business before the snook gobbles it.",
+    "identify": "Slender, silver, leaps wildly when hooked.",
+    "chapters": [
+      2
+    ],
+    "sketch": null
+  },
+  {
+    "id": "flounder",
+    "common": "Gulf flounder",
+    "scientific": "Paralichthys albigutta",
+    "in_book": "On Dan's list.",
+    "identify": "Flat, both eyes on the left side, three ocellated spots.",
+    "chapters": [
+      2
+    ],
+    "sketch": null
+  },
+  {
+    "id": "sheepshead",
+    "common": "Sheepshead",
+    "scientific": "Archosargus probatocephalus",
+    "in_book": "On Dan's list.",
+    "identify": "Black vertical bars and eerily human-looking teeth.",
+    "chapters": [
+      2
+    ],
+    "sketch": null
+  },
+  {
+    "id": "pufferfish",
+    "common": "Pufferfish",
+    "scientific": "Sphoeroides spp.",
+    "in_book": "'Those little puffy buggers were tough to unhook.'",
+    "identify": "Inflates when threatened.",
+    "chapters": [
+      2
+    ],
+    "sketch": null
+  },
+  {
+    "id": "jack",
+    "common": "Jack crevalle",
+    "scientific": "Caranx hippos",
+    "in_book": "'Aggressive jack fish darted frantically under the surface' herding baitfish at South Point.",
+    "identify": "Blunt head, yellow tail, black spot on the gill cover.",
+    "chapters": [
+      4
+    ],
+    "sketch": null
+  },
+  {
+    "id": "mullet",
+    "common": "Striped mullet",
+    "scientific": "Mugil cephalus",
+    "in_book": "The baitfish the Bagley Mullet lure imitates. Mullet 'splashing in the current' is part of the Everglades choir.",
+    "identify": "Blunt nose, silver, jumps for no reason anyone has proven.",
+    "chapters": [
+      4,
+      5,
+      6,
+      15
+    ],
+    "sketch": null
+  },
+  {
+    "id": "pinfish",
+    "common": "Pinfish",
+    "scientific": "Lagodon rhomboides",
+    "in_book": "Baitfish fleeing bigger fish at South Point.",
+    "identify": "Small, striped, sharp dorsal spines.",
+    "chapters": [
+      4
+    ],
+    "sketch": null
+  },
+  {
+    "id": "catfish",
+    "common": "Hardhead catfish",
+    "scientific": "Ariopsis felis",
+    "in_book": "The 'spiny catfish' Matt caught as a kid off the Anglers Motel dock.",
+    "identify": "Venomous spines — handle carefully.",
+    "chapters": [
+      2
+    ],
+    "sketch": null
+  },
+  {
+    "id": "bonefish",
+    "common": "Bonefish",
+    "scientific": "Albula vulpes",
+    "in_book": "The fish President Bush hooked with Snapper on the Key Largo flats.",
+    "identify": "Silver, forked tail, tails in inches of water.",
+    "chapters": [
+      19
+    ],
+    "sketch": null
+  },
+  {
+    "id": "amberjack",
+    "common": "Greater amberjack",
+    "scientific": "Seriola dumerili",
+    "in_book": "'Bleeding like a dang amberjack' — Doc.",
+    "chapters": [
+      17
+    ],
+    "sketch": null
+  },
+  {
+    "id": "brim",
+    "common": "Bluegill ('brim')",
+    "scientific": "Lepomis macrochirus",
+    "in_book": "The 'giant brim' Russ watches with his grandson off the lake dock up north — about the size of Everglades bait.",
+    "chapters": [
+      3
+    ],
+    "sketch": null
+  },
+  {
+    "id": "lionfish",
+    "common": "Lionfish (invasive)",
+    "scientific": "Pterois volitans",
+    "in_book": "The Chokoloskee Gazette article: smuggled exotics destroying local reefs and 'outcompeting' native species.",
+    "conservation": "Invasive in Florida waters; no bag limit, harvest encouraged.",
+    "chapters": [
+      1
+    ],
+    "sketch": null
+  },
+  {
+    "id": "mako-shark",
+    "common": "Shark on the beach ('Mako')",
+    "scientific": "Isurus oxyrinchus (as named in the book); more likely a bull shark, Carcharhinus leucas, in those shallows",
+    "in_book": "Black dorsal fin and red eyes in the lantern light at Comer Key. Dan cuts the line: 'There is such a thing as too much fish.'",
+    "chapters": [
+      8
+    ],
+    "sketch": "shark-comer-key-beach.png"
+  },
+  {
+    "id": "hammerhead-shark",
+    "common": "Hammerhead shark",
+    "scientific": "Sphyrna spp.",
+    "in_book": "Arrives at the ghost net while Matt is freeing the baby dolphin; driven off by the mother dolphin.",
+    "chapters": [
+      16
+    ],
+    "sketch": "dolphin-vs-hammerhead.png"
+  }
+]

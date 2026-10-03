@@ -1,0 +1,184 @@
+[
+  {
+    "id": "matt",
+    "name": "Matthew 'Matt' Creek",
+    "role": "protagonist",
+    "age": "15¾ at the start; turns 16 in Chapter 22",
+    "from": "Fort Lauderdale, Florida",
+    "description": "List-keeper, daydreamer, lifeguard, and the best young angler in the Ten Thousand Islands. Half Seminole on his father's side. Unusually long thumbs. Lost his father last summer and is spending this one as Uncle Dan's assistant fishing guide.",
+    "traits": [
+      "keeps a summer to-do list in his dad's Guidebook",
+      "learns a new word each day",
+      "'mental rebound' when worry hits",
+      "loves Orange Crush, candy corn, tuna-and-mayo for breakfast, donuts",
+      "sketches fish and pelicans into the Guidebook's blank pages"
+    ],
+    "sayings": [
+      "This will be the summer of The Big One.",
+      "Smile like you're awesome.",
+      "Catch you later."
+    ],
+    "first_chapter": 1,
+    "sketch": "matt-holding-snook.png"
+  },
+  {
+    "id": "james-creek",
+    "name": "James W. Creek ('Dad')",
+    "role": "Matt's late father",
+    "description": "Owner of the South Florida Fishing Guidebook and the red airboat. Died the previous summer when poachers' boat struck his airboat while he was trying to scare off illegal alligator hunters. His bronze plaque read 'O God, thy sea is so great, and my boat is so small.'",
+    "sayings": [
+      "Good cast, son.",
+      "Progress defeats worry.",
+      "Lead by example.",
+      "Memories aren't made to last.",
+      "We're in it together.",
+      "Distraction is an excellent tool."
+    ],
+    "first_chapter": 1,
+    "sketch": null
+  },
+  {
+    "id": "dan",
+    "name": "Daniel Walter Panther Jr. ('Uncle Dan')",
+    "role": "Matt's uncle, charter captain",
+    "description": "Matt's mother's older brother. Lifelong Chokoloskee fishing guide, 'amateur psychologist with a rockin' suntan,' restorer of old boats, keeper of a backyard pelican rookery. Drives a rusty Chevy Tahoe. Secretly serving as the FBI's informant against the smugglers.",
+    "sayings": [
+      "You gotta risk it for the biscuit!",
+      "More tourists... less fish.",
+      "Patience, patience, sunscreen, and patience.",
+      "A catch for one is a catch for all.",
+      "There is such a thing as too much fish.",
+      "I prefer to get around by boat, escalator, or starship."
+    ],
+    "first_chapter": 1,
+    "sketch": null
+  },
+  {
+    "id": "rose",
+    "name": "Rose",
+    "role": "Matt's oldest friend",
+    "description": "Red hair, freckles, a slightly sunburnt nose, and a fishing pole twice her height. Swaps the first letters of swear words so she isn't technically swearing. Doc Brown's granddaughter and Marge's daughter. Wins the Port of the Everglades tarpon division with a 68-inch, 81-pound fish.",
+    "sayings": [
+      "It takes technique and patience... but most importantly a great boat team. A boat team with real grit."
+    ],
+    "first_chapter": 1,
+    "sketch": null
+  },
+  {
+    "id": "snapper",
+    "name": "Snapper",
+    "role": "Dan's neighbor, retired guide",
+    "description": "A 'crazy old buzzard with a constant crooked smile.' Communicates mostly in grunts, hoots, and howls. Once guided President George H. W. Bush on the Key Largo flats. Forgetful, fearless, and the best navigator in the backcountry.",
+    "sayings": [
+      "Into the heart of darkness we go.",
+      "That was the bravest... stupidest... bravest thing I've ever seen.",
+      "You know it."
+    ],
+    "first_chapter": 2,
+    "sketch": null
+  },
+  {
+    "id": "doc",
+    "name": "Doc Brown",
+    "role": "Old fishing guide and retired Navy physician",
+    "description": "Short, stocky, friendly blue eyes, and a face smeared chalk-white with zinc oxide. A fishing rival of Dan and Snapper for thirty years. Dishonorably discharged from the Navy for treating the most wounded soldier first instead of a higher-ranking officer. Has heart disease and needs a procedure the family can't afford.",
+    "sayings": [
+      "I still know my way around these backcountry bays like it's my own bathroom.",
+      "Just sew me up like two pieces of clothes."
+    ],
+    "first_chapter": 16,
+    "sketch": "doc-brown-skiff.png"
+  },
+  {
+    "id": "rawley",
+    "name": "'Rawley' Simms",
+    "role": "Grocery-store owner / undercover FBI agent",
+    "description": "Six-foot-plus, shaggy brown hair, tattooed biceps, burps as a greeting. Runs the musty Chokoloskee grocery store, which is a front. Spends the book looking like the villain and turns out to be one of the good guys; his real name is never revealed.",
+    "sayings": [
+      "I'm FBI. I'm one of the good guys.",
+      "Not that small."
+    ],
+    "first_chapter": 2,
+    "sketch": null
+  },
+  {
+    "id": "russ",
+    "name": "Russ Worthington",
+    "role": "FBI agent, fishing client",
+    "description": "Tall, muscular, could pass for a local. Lives in Naples. Fishes with his grandson off a lake dock. Hooks Old Scarface for thirty minutes and loses him.",
+    "first_chapter": 2,
+    "sketch": null
+  },
+  {
+    "id": "dave",
+    "name": "Dave Carver",
+    "role": "FBI agent, fishing client",
+    "description": "Russ's partner, overdressed in a stuffed fishing vest on day one. Catches the first snapper and the first trout. Eats Doritos.",
+    "first_chapter": 2,
+    "sketch": null
+  },
+  {
+    "id": "marge",
+    "name": "Marge",
+    "role": "Doc's daughter, Rose's mother",
+    "description": "Red curly hair, waitress in Everglades City, worn white tennis shoes. Takes care of Doc.",
+    "first_chapter": 17,
+    "sketch": null
+  },
+  {
+    "id": "mom",
+    "name": "Matt's mother",
+    "role": "Dan's sister",
+    "description": "Recently opened a restaurant in Fort Lauderdale. Worried about Matt since his father's death. Her letters ask to hear about every single day of his summer.",
+    "first_chapter": 1,
+    "sketch": null
+  },
+  {
+    "id": "josh-ben",
+    "name": "Josh and Ben",
+    "role": "Matt's ten-year-old twin brothers",
+    "description": "Josh is thirty seconds older with curly hair and freckles; Ben is a bit taller. Both intend to be doctors. Both already know what 'starboard' means. They sign the Guidebook on the last page.",
+    "first_chapter": 1,
+    "sketch": null
+  },
+  {
+    "id": "captain-homer",
+    "name": "Captain Homer",
+    "role": "Local legend",
+    "description": "Has won the tournament more times than Matt has been alive. Captains a twenty-one-foot boat named, inexplicably, 'The Marina.' His 65-inch tarpon from Indian Key doesn't beat Rose.",
+    "first_chapter": 21,
+    "sketch": null
+  },
+  {
+    "id": "third-man",
+    "name": "The third man",
+    "role": "Smuggler boss (unnamed)",
+    "description": "The man in charge on the jet boat at Pavilion Key — one of the real smugglers arrested at the end.",
+    "first_chapter": 9,
+    "sketch": null
+  },
+  {
+    "id": "bertha-oscar",
+    "name": "Bertha and Oscar",
+    "role": "Pelicans of the rookery",
+    "description": "'Soulmates,' according to Dan. Bertha was named by a German client after she ate his breakfast burrito. Oscar steals a glazed donut out of Matt's hand. They nest in a flat tire, a barbecue grill, and an old wooden tub.",
+    "first_chapter": 2,
+    "sketch": "pelican-on-dock.png"
+  },
+  {
+    "id": "old-scarface",
+    "name": "Old Scarface",
+    "role": "The legendary tarpon",
+    "description": "Roams Rabbit Key and Little Pavilion Key. Face scarred by years of lures and oyster bars. Evaded every angler for years, spit Russ's hook, then took Matt's trolled lure and fought for an hour and a half before being gaffed, photographed, and released alive.",
+    "first_chapter": 7,
+    "sketch": "tarpon-leap-houseboat.png"
+  },
+  {
+    "id": "lobster",
+    "name": "Lobster",
+    "role": "Marge's red tabby cat",
+    "description": "Falls off the couch at the key moment of Matt's 'Big One' speech.",
+    "first_chapter": 21,
+    "sketch": null
+  }
+]

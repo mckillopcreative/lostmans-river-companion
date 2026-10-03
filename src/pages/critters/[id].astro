@@ -1,0 +1,47 @@
+---
+import Base from '@layouts/Base.astro';
+import EntityDetail from '@components/EntityDetail.astro';
+import { wildlife, toCard, type Wildlife } from '@lib/data';
+import site from '../../../site.config.mjs';
+
+export function getStaticPaths() {
+  return wildlife.map((w) => ({ params: { id: w.id }, props: { w } }));
+}
+const { w } = Astro.props as { w: Wildlife };
+const related = wildlife
+  .filter((o) => o.id !== w.id)
+  .map((o) => ({ o, n: o.chapters.filter((c) => w.chapters.includes(c)).length }))
+  .filter((x) => x.n > 0)
+  .sort((a, b) => b.n - a.n)
+  .slice(0, 4)
+  .map((x) => toCard('critters', x.o));
+const specs = [{ k: 'Scientific', v: w.scientific }];
+---
+
+<Base title={w.name} description={w.in_book ?? w.name} image={w.sketch ? `/assets/sketches/${w.sketch}` : undefined}>
+  <EntityDetail section="critters" title={w.name} sketch={w.sketch} chapters={w.chapters} specs={specs} related={related} relatedLabel="Found nearby">
+    {
+      w.in_book && (
+        <section>
+          <h2>In the book</h2>
+          <p>{w.in_book}</p>
+        </section>
+      )
+    }
+    {
+      w.facts && w.facts.length > 0 && (
+        <section>
+          <h2>Field notes</h2>
+          <ul>
+            {w.facts.map((f) => (
+              <li>{f}</li>
+            ))}
+          </ul>
+          <p class="small muted">
+            More from the people who look after this place: <a href={site.npsUrl} rel="noopener">Everglades National Park</a>.
+          </p>
+        </section>
+      )
+    }
+  </EntityDetail>
+</Base>

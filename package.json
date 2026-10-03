@@ -1,0 +1,25 @@
+{
+  "name": "lostmans-river-companion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Interactive companion site for the novel Escape to Lostman's River",
+  "scripts": {
+    "dev": "npm run trim && astro dev",
+    "trim": "node scripts/trim-sketches.mjs",
+    "validate": "node scripts/validate.mjs",
+    "build": "npm run validate && npm run trim && astro build",
+    "preview": "astro preview",
+    "qr": "node scripts/make-qr.mjs",
+    "linkcheck": "node scripts/linkcheck.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.3.5",
+    "leaflet": "^1.9.4",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.12",
+    "qrcode": "^1.5.4"
+  }
+}

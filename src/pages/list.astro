@@ -1,0 +1,217 @@
+---
+import Base from '@layouts/Base.astro';
+import ChapterPill from '@components/ChapterPill.astro';
+import { todo } from '@lib/data';
+---
+
+<Base title="Matt’s List" description="Matt’s summer to-do list from the Guidebook, and a blank page for yours.">
+  <article class="frame">
+    <div class="wrap">
+      <header>
+        <p class="eyebrow">The Guidebook</p>
+        <h1>Matt’s List</h1>
+        <p class="lede">
+          The to-do list Matt keeps in the back of his dad’s Guidebook. Tick the ones you have done too. Your ticks stay on this phone and nowhere else.
+        </p>
+      </header>
+
+      <ol class="todo" id="matts-list">
+        {
+          todo.map((t, i) => (
+            <li>
+              <label class="todo-row">
+                <input type="checkbox" data-key={`matt-${i}`} />
+                <span class="todo-text">{t.item}</span>
+              </label>
+              <span class="todo-meta small muted">
+                added <ChapterPill n={t.chapter_added} />
+                {t.chapter_checked ? (
+                  <>
+                    · Matt checked it <ChapterPill n={t.chapter_checked} />
+                  </>
+                ) : (
+                  <> · still open</>
+                )}
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+
+      <section id="mine" aria-labelledby="mine-h">
+        <p class="eyebrow">Blank page</p>
+        <h2 id="mine-h" class="mine-h">Your summer</h2>
+        <p class="small muted">A good fisherman always has the next adventure planned. Write yours down.</p>
+        <form class="add" id="add-form">
+          <label class="sr-only" for="add-input">New item</label>
+          <input id="add-input" type="text" maxlength="120" placeholder="e.g. Learn to tie a loop knot" autocomplete="off" required />
+          <button class="btn btn-primary" type="submit">Add</button>
+        </form>
+        <ol class="todo mine" id="my-list"></ol>
+        <p class="small muted" id="my-empty">Nothing yet. Patience, patience, sunscreen, and patience.</p>
+      </section>
+    </div>
+  </article>
+
+  <script>
+    const KEY_M = 'matts-list';
+    const KEY_MINE = 'my-list';
+    const load = <T,>(k: string, d: T): T => {
+      try {
+        const v = localStorage.getItem(k);
+        return v ? (JSON.parse(v) as T) : d;
+      } catch {
+        return d;
+      }
+    };
+    const save = (k: string, v: unknown) => {
+      try {
+        localStorage.setItem(k, JSON.stringify(v));
+      } catch {}
+    };
+
+    // Matt's list ticks
+    const ticks = load<Record<string, boolean>>(KEY_M, {});
+    document.querySelectorAll<HTMLInputElement>('#matts-list input[type=checkbox]').forEach((box) => {
+      const k = box.dataset.key!;
+      box.checked = !!ticks[k];
+      box.closest('li')?.classList.toggle('done', box.checked);
+      box.addEventListener('change', () => {
+        ticks[k] = box.checked;
+        box.closest('li')?.classList.toggle('done', box.checked);
+        save(KEY_M, ticks);
+      });
+    });
+
+    // Reader's own list
+    type Item = { text: string; done: boolean };
+    let mine = load<Item[]>(KEY_MINE, []);
+    const list = document.getElementById('my-list')!;
+    const empty = document.getElementById('my-empty')!;
+    const render = () => {
+      list.innerHTML = '';
+      empty.hidden = mine.length > 0;
+      mine.forEach((it, i) => {
+        const li = document.createElement('li');
+        li.className = it.done ? 'done' : '';
+        const label = document.createElement('label');
+        label.className = 'todo-row';
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+        box.checked = it.done;
+        box.addEventListener('change', () => {
+          mine[i]!.done = box.checked;
+          save(KEY_MINE, mine);
+          render();
+        });
+        const span = document.createElement('span');
+        span.className = 'todo-text';
+        span.textContent = it.text;
+        label.append(box, span);
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'del';
+        del.setAttribute('aria-label', `Remove "${it.text}"`);
+        del.textContent = '×';
+        del.addEventListener('click', () => {
+          mine.splice(i, 1);
+          save(KEY_MINE, mine);
+          render();
+        });
+        li.append(label, del);
+        list.append(li);
+      });
+    };
+    render();
+    const form = document.getElementById('add-form') as HTMLFormElement;
+    const input = document.getElementById('add-input') as HTMLInputElement;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      mine.push({ text, done: false });
+      save(KEY_MINE, mine);
+      input.value = '';
+      render();
+    });
+  </script>
+</Base>
+
+<style>
+  .todo {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 2rem;
+  }
+  .todo li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px dashed color-mix(in srgb, var(--oyster) 60%, transparent);
+  }
+  .todo-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    flex: 1 1 260px;
+    cursor: pointer;
+    min-height: 32px;
+  }
+  .todo-row input {
+    width: 22px;
+    height: 22px;
+    margin-top: 0.2rem;
+    accent-color: var(--sunrise);
+    flex: none;
+  }
+  .todo-text {
+    font-size: 1.05rem;
+  }
+  .done .todo-text {
+    text-decoration: line-through;
+    text-decoration-color: var(--sunrise);
+    color: var(--ink-soft);
+  }
+  .todo-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    padding-left: 2.1rem;
+  }
+  .mine-h {
+    margin-top: 0;
+  }
+  .add {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0.5rem 0 0.5rem;
+  }
+  .add input {
+    flex: 1;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--oyster);
+    border-radius: var(--radius);
+    background: var(--paper-2);
+    color: var(--ink);
+    font: inherit;
+    min-width: 0;
+  }
+  .del {
+    border: 0;
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 1.4rem;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    border-radius: var(--radius);
+  }
+  .del:hover {
+    color: var(--sunrise);
+    background: var(--paper-2);
+  }
+</style>

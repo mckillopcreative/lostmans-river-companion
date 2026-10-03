@@ -1,0 +1,71 @@
+---
+// Shared index page body for Fish / Crew / Critters / Boats.
+import EntityCard from './EntityCard.astro';
+import type { CardModel, Section } from '@lib/data';
+import { sectionMeta } from '@lib/data';
+
+interface Props {
+  section: Section;
+  cards: CardModel[];
+  /** Optional sub-groups: label + ids in order. Cards not in any group go in "Also mentioned". */
+  groups?: { label: string; ids: string[] }[];
+}
+const { section, cards, groups } = Astro.props;
+const meta = sectionMeta[section];
+const byId = new Map(cards.map((c) => [c.id, c]));
+const grouped = groups?.map((g) => ({ label: g.label, cards: g.ids.map((id) => byId.get(id)!).filter(Boolean) })) ?? [];
+const used = new Set(grouped.flatMap((g) => g.cards.map((c) => c.id)));
+const rest = cards.filter((c) => !used.has(c.id));
+---
+
+<div class="wrap-wide section">
+  <header class="idx-head">
+    <p class="eyebrow">The Guidebook</p>
+    <h1>{meta.label}</h1>
+    <p class="lede">{meta.blurb}</p>
+  </header>
+  {
+    grouped.length ? (
+      <>
+        {grouped.map((g) => (
+          <section>
+            <h2 class="group-h">{g.label}</h2>
+            <ul class="grid-cards">
+              {g.cards.map((card) => (
+                <EntityCard card={card} />
+              ))}
+            </ul>
+          </section>
+        ))}
+        {rest.length > 0 && (
+          <section>
+            <h2 class="group-h">Also mentioned</h2>
+            <ul class="grid-cards">
+              {rest.map((card) => (
+                <EntityCard card={card} />
+              ))}
+            </ul>
+          </section>
+        )}
+      </>
+    ) : (
+      <ul class="grid-cards">
+        {cards.map((card) => (
+          <EntityCard card={card} />
+        ))}
+      </ul>
+    )
+  }
+</div>
+
+<style>
+  .idx-head {
+    max-width: var(--measure);
+  }
+  .group-h {
+    font-size: 1.3rem;
+    margin-top: 2rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--oyster);
+  }
+</style>

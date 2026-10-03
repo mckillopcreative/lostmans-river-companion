@@ -1,0 +1,240 @@
+[
+  {
+    "id": "lure",
+    "term": "Lure",
+    "definition": "A miniature plastic or metal fish with treble hooks, reeled with just the right jerk to look like a scared meal. Floating or sinking depending on weather, tide, and target.",
+    "chapter": 2,
+    "group": "lures-bait"
+  },
+  {
+    "id": "leader",
+    "term": "Leader",
+    "definition": "The last few feet of line: heavier or clearer than the main line, with the lure or hook, often a swivel and a small weight above it. Matt adds a thirty-pound leader the night before the big snook.",
+    "chapter": 2,
+    "group": "line-rigging"
+  },
+  {
+    "id": "swivel",
+    "term": "Swivel",
+    "definition": "A tiny metal figure-eight that joins main line to leader and keeps the line from twisting.",
+    "chapter": 2,
+    "group": "line-rigging"
+  },
+  {
+    "id": "bagley-mullet",
+    "term": "Bagley Mullet lure",
+    "definition": "Dan's black-and-silver mullet imitation that 'glistens in the moonlight.' The lure that caught the South Point snook.",
+    "chapter": 5,
+    "group": "lures-bait"
+  },
+  {
+    "id": "yellow-feather",
+    "term": "Yellow feather tipped with shrimp",
+    "definition": "A feathered jig with a piece of shrimp on the hook; jigged over grass for trout, bounced for snapper.",
+    "chapter": 2,
+    "group": "lures-bait"
+  },
+  {
+    "id": "popping-cork",
+    "term": "Popping cork",
+    "definition": "A float with a cupped top; tug every few seconds and it 'pops' to call fish to the shrimp dangling beneath. How Matt caught his first snook and most redfish.",
+    "chapter": 3,
+    "group": "lures-bait"
+  },
+  {
+    "id": "spoon-lure",
+    "term": "Spoon",
+    "definition": "A curved metal flasher that wobbles on the retrieve. Matt's first post-storm cast.",
+    "chapter": 13,
+    "group": "lures-bait"
+  },
+  {
+    "id": "golden-flicker",
+    "term": "The 'Golden Flicker'",
+    "definition": "Matt's prized red mullet lure with gold flecks.",
+    "chapter": 14,
+    "group": "lures-bait"
+  },
+  {
+    "id": "boat-poles",
+    "term": "Boat poles",
+    "definition": "Heavy rods with woven 30-lb test, steel tip leaders, and forged hooks for beach-casting at tarpon and sharks.",
+    "chapter": 8,
+    "group": "line-rigging"
+  },
+  {
+    "id": "steel-leader",
+    "term": "Steel leader",
+    "definition": "Wire leader that toothy fish can't bite through.",
+    "chapter": 8,
+    "group": "line-rigging"
+  },
+  {
+    "id": "thirty-pound-leader",
+    "term": "Thirty-pound test",
+    "definition": "Line strength rated to hold thirty pounds before breaking.",
+    "chapter": 6,
+    "group": "line-rigging"
+  },
+  {
+    "id": "gaff",
+    "term": "Gaff",
+    "definition": "A big hook on a pole for lifting a fish aboard by the mouth. Snapper's one lucky pass.",
+    "chapter": 19,
+    "group": "line-rigging"
+  },
+  {
+    "id": "push-pole",
+    "term": "Push pole",
+    "definition": "Long wooden pole for moving a boat silently through the shallows — how Snapper gets the Mako into the mangroves unheard.",
+    "chapter": 9,
+    "group": "techniques"
+  },
+  {
+    "id": "sand-pipes",
+    "term": "Sand pipes (rod holders)",
+    "definition": "Aluminum pipes hammered into the beach to hold rods after a long cast.",
+    "chapter": 8,
+    "group": "line-rigging"
+  },
+  {
+    "id": "shrimp",
+    "term": "Live shrimp",
+    "definition": "The universal Everglades bait, kept alive in a bucket with a battery aerator.",
+    "chapter": 3,
+    "group": "lures-bait"
+  },
+  {
+    "id": "aerator",
+    "term": "Aerator",
+    "definition": "Battery-powered bubbler that keeps bait shrimp alive overnight.",
+    "chapter": 5,
+    "group": "lures-bait"
+  },
+  {
+    "id": "live-bait",
+    "term": "Live bait",
+    "definition": "Snapper tosses a small live snapper into the current and hooks the giant.",
+    "chapter": 14,
+    "group": "lures-bait"
+  },
+  {
+    "id": "drifting",
+    "term": "Drifting",
+    "definition": "Letting the boat move with the tide and wind while casting. 'Drifting actually meant casting.'",
+    "chapter": 7,
+    "group": "techniques"
+  },
+  {
+    "id": "trolling",
+    "term": "Trolling",
+    "definition": "Dragging a lure a hundred feet behind a moving boat. Little effort, long waits, then Old Scarface.",
+    "chapter": 19,
+    "group": "techniques"
+  },
+  {
+    "id": "setting-the-hook",
+    "term": "Setting the hook",
+    "definition": "The upward yank at exactly the right bite. Too early and the hook flies out empty — Ch. 4.",
+    "chapter": 4,
+    "group": "techniques"
+  },
+  {
+    "id": "throwing-a-wake",
+    "term": "Throwing a wake",
+    "definition": "A big fish moving just under the surface, pushing a ripple like a tiny boat.",
+    "chapter": 4,
+    "group": "reading-the-water"
+  },
+  {
+    "id": "reviving-a-fish",
+    "term": "Reviving a fish",
+    "definition": "Hold it upright and move it back and forth so water passes over the gills until the tail kicks. Done for the snook and for Old Scarface.",
+    "chapter": 6,
+    "group": "techniques"
+  },
+  {
+    "id": "tides",
+    "term": "Reading the tide",
+    "definition": "Fish the hour either side of high tide; 'morning high' means plenty of water over the oyster bars. Dan: the water isn't rising, the earth is turning through bulges of water pulled by sun and moon.",
+    "chapter": 2,
+    "group": "reading-the-water"
+  },
+  {
+    "id": "grass-beds-trout",
+    "term": "Grass beds = trout",
+    "definition": "Seatrout hold over seagrass; mangroves and oysters hold snook and reds.",
+    "chapter": 7,
+    "group": "reading-the-water"
+  },
+  {
+    "id": "snook-season",
+    "term": "Snook closed season",
+    "definition": "Snook spawn May–September; the book's Gulf-coast season is closed then and all snook go back.",
+    "chapter": 4,
+    "group": "reading-the-water"
+  },
+  {
+    "id": "storm-tie-off",
+    "term": "Storm tie-off",
+    "definition": "Bow rope to one mangrove, stern anchor out — the boat 'stretched secure from end to end.'",
+    "chapter": 12,
+    "group": "techniques"
+  },
+  {
+    "id": "marine-radio",
+    "term": "Marine VHF radio",
+    "definition": "How Dan reaches the Sea Belle.",
+    "chapter": 10,
+    "group": "boat-safety"
+  },
+  {
+    "id": "channel-16",
+    "term": "Channel 16",
+    "definition": "The international hailing and distress channel. Dan says to leave it open 9–10 p.m.",
+    "chapter": 10,
+    "group": "boat-safety"
+  },
+  {
+    "id": "navigational-chart",
+    "term": "Navigational chart",
+    "definition": "Paper chart of the backcountry; cell reception is unreliable so 'they had to rely on actual maps.'",
+    "chapter": 14,
+    "group": "reading-the-water"
+  },
+  {
+    "id": "spotlight",
+    "term": "Spotlight",
+    "definition": "Swiveled over the bow to find Doc in the dark.",
+    "chapter": 17,
+    "group": "boat-safety"
+  },
+  {
+    "id": "snorkel",
+    "term": "Snorkel, fins, pocketknife",
+    "definition": "Matt's dolphin-rescue kit.",
+    "chapter": 16,
+    "group": "boat-safety"
+  },
+  {
+    "id": "medical-bag",
+    "term": "Doc's medical bag",
+    "definition": "Novocain, needles, thread, antiseptic, gauze — and Matt's first stitches.",
+    "chapter": 17,
+    "group": "boat-safety"
+  },
+  {
+    "id": "provisioning",
+    "term": "Provisioning the Sea Belle",
+    "definition": "Peanut butter, three loaves of bread, cereal, cans, meat, milk, eggs, butter — 'a week of solid eating for two.' Plus donuts.",
+    "chapter": 11,
+    "group": "boat-safety"
+  },
+  {
+    "id": "tournament-rules",
+    "term": "Tournament categories",
+    "definition": "Tarpon, cobia, snapper, trout, drum — by weight. Snook, grouper, and redfish excluded under catch-and-release rules.",
+    "chapter": 20,
+    "group": "boat-safety"
+  }
+]

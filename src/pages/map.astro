@@ -1,0 +1,494 @@
+---
+// The Chart: full-screen Leaflet map with a chapter stepper and Linda's hand-drawn overlay.
+import Base from '@layouts/Base.astro';
+import { places, routes, chapterByN, chaptersForPlace } from '@lib/data';
+import { url } from '@lib/url';
+import handMap from '../assets/sketches/lostmans-river-hand-map.png';
+
+const data = {
+  base: url('/'),
+  places: places.map((p) => ({ ...p, chapters: chaptersForPlace(p.id) })),
+  routes: routes.map((r) => ({ ...r, title: chapterByN.get(r.chapter)?.title ?? '' })),
+  overlay: {
+    src: handMap.src,
+    // APPROXIMATE georeference of Linda's hand-drawn map over the mouth of Lostman's River.
+    // [[south, west], [north, east]] — author to adjust (docs/OPEN-ITEMS.md).
+    bounds: [
+      [25.523, -81.257],
+      [25.602, -81.187],
+    ],
+  },
+};
+---
+
+<Base title="The Chart" description="Every place in the book on a real chart of the Ten Thousand Islands, chapter by chapter." bleed>
+  <div class="map-shell">
+    <div id="map" role="application" aria-label="Chart of the Ten Thousand Islands with places from the book"></div>
+
+    <div class="sheet" id="sheet">
+      <div class="sheet-bar">
+        <button class="step-btn" id="prev" type="button" aria-label="Previous chapter route">‹</button>
+        <button class="sheet-title" id="sheet-toggle" type="button" aria-expanded="false" aria-controls="route-list">
+          <span class="hand sheet-eyebrow" id="step-eyebrow">The Chart</span>
+          <span class="sheet-label" id="step-label">Pick a chapter to follow its route</span>
+        </button>
+        <button class="step-btn" id="next" type="button" aria-label="Next chapter route">›</button>
+      </div>
+      <ol class="route-list" id="route-list">
+        {
+          data.routes.map((r) => (
+            <li>
+              <button type="button" class="route-item" data-chapter={r.chapter}>
+                <span class="pill">Ch. {r.chapter}</span>
+                <span class="route-name">{r.label}</span>
+                <span class="route-mode mono">{r.mode}</span>
+              </button>
+            </li>
+          ))
+        }
+        <li class="route-tools">
+          <label class="tool">
+            <input type="checkbox" id="overlay-toggle" />
+            <span>Linda’s hand-drawn map over Lostman’s River</span>
+          </label>
+          <label class="tool">
+            <input type="checkbox" id="all-routes" checked />
+            <span>Show every route</span>
+          </label>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <script type="application/json" id="map-data" set:html={JSON.stringify(data)} />
+
+  <script>
+    import L from 'leaflet';
+    import 'leaflet/dist/leaflet.css';
+
+    type Place = { id: string; name: string; lat: number; lng: number; type: string; in_book: string; chapters: number[] };
+    type Route = { chapter: number; label: string; waypoints: string[]; mode: 'boat' | 'road' | 'air'; title: string };
+    const data = JSON.parse(document.getElementById('map-data')!.textContent!) as {
+      base: string;
+      places: Place[];
+      routes: Route[];
+      overlay: { src: string; bounds: [[number, number], [number, number]] };
+    };
+    const byId = new Map(data.places.map((p) => [p.id, p]));
+    const css = (v: string) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+    const map = L.map('map', { zoomControl: false, attributionControl: true });
+    L.control.zoom({ position: 'topright' }).addTo(map);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    // ---- places
+    const markers = new Map<string, L.CircleMarker>();
+    const labelsPane = map.createPane('labels');
+    labelsPane.style.zIndex = '650';
+    labelsPane.style.pointerEvents = 'none';
+    // Label tiers: big names first, small spots only when zoomed right in.
+    const tier = (t: string) => (['town', 'island', 'river', 'water'].includes(t) ? 1 : ['marina', 'pass', 'creek'].includes(t) ? 2 : 3);
+    for (const p of data.places) {
+      const m = L.circleMarker([p.lat, p.lng], {
+        radius: 5,
+        color: css('--paper') || '#f6f1e7',
+        weight: 1.5,
+        fillColor: css('--ink') || '#1f2a2e',
+        fillOpacity: 1,
+        className: 'place-dot',
+      }).addTo(map);
+      const chapterLinks = p.chapters
+        .map((n) => `<a class="pill" href="${data.base}ch/${n}/">Ch. ${n}</a>`)
+        .join(' ');
+      m.bindPopup(
+        `<div class="pop"><strong>${p.name}</strong><p>${p.in_book}</p><p class="pop-pills">${chapterLinks}</p></div>`,
+        { maxWidth: 280 },
+      );
+      m.bindTooltip(p.name.replace(/\s*\(.*\)$/, ''), {
+        permanent: true,
+        direction: 'right',
+        offset: [6, 0],
+        className: `place-label hand tier-${tier(p.type)}`,
+        pane: 'labels',
+      });
+      markers.set(p.id, m);
+    }
+    // Show label tiers progressively so they don't pile up when zoomed out.
+    const syncLabels = () => {
+      const z = map.getZoom();
+      const el = document.getElementById('map')!;
+      el.classList.toggle('show-t1', z >= 10);
+      el.classList.toggle('show-t2', z >= 12);
+      el.classList.toggle('show-t3', z >= 13);
+    };
+    map.on('zoomend', syncLabels);
+
+    // ---- routes
+    const lines = new Map<number, L.Polyline>();
+    const styleFor = (r: Route, state: 'current' | 'past' | 'idle'): L.PolylineOptions => ({
+      color: state === 'current' ? css('--sunrise') || '#e8873a' : css('--oyster') || '#b8b2a6',
+      weight: state === 'current' ? 4 : 2,
+      opacity: state === 'current' ? 0.95 : 0.4,
+      dashArray: r.mode === 'air' ? '10 8' : r.mode === 'road' ? '2 6' : undefined,
+      lineCap: 'round',
+      lineJoin: 'round',
+    });
+    for (const r of data.routes) {
+      const pts = r.waypoints.map((id) => byId.get(id)!).map((p) => [p.lat, p.lng] as [number, number]);
+      const line = L.polyline(pts, styleFor(r, 'idle')).addTo(map);
+      line.bindTooltip(`Ch. ${r.chapter} — ${r.label}`, { sticky: true });
+      line.on('click', () => select(data.routes.indexOf(r)));
+      lines.set(r.chapter, line);
+    }
+
+    // ---- hand-drawn overlay
+    const overlay = L.imageOverlay(data.overlay.src, data.overlay.bounds, { opacity: 0.9, className: 'hand-overlay', interactive: false });
+    const overlayToggle = document.getElementById('overlay-toggle') as HTMLInputElement;
+    overlayToggle.addEventListener('change', () => {
+      if (overlayToggle.checked) {
+        overlay.addTo(map);
+        map.flyToBounds(data.overlay.bounds, { padding: [20, 20] });
+      } else overlay.remove();
+    });
+    const allRoutes = document.getElementById('all-routes') as HTMLInputElement;
+    allRoutes.addEventListener('change', () => render());
+
+    // ---- stepper
+    let current = -1;
+    const eyebrow = document.getElementById('step-eyebrow')!;
+    const label = document.getElementById('step-label')!;
+    const items = Array.from(document.querySelectorAll<HTMLButtonElement>('.route-item'));
+
+    function render() {
+      data.routes.forEach((r, i) => {
+        const line = lines.get(r.chapter)!;
+        const state = i === current ? 'current' : i < current ? 'past' : 'idle';
+        line.setStyle(styleFor(r, state));
+        if (allRoutes.checked || i === current) {
+          if (!map.hasLayer(line)) line.addTo(map);
+        } else line.remove();
+        if (i === current) line.bringToFront();
+      });
+      items.forEach((b, i) => b.classList.toggle('is-current', i === current));
+      markers.forEach((m) => m.getElement()?.classList.remove('pulse'));
+    }
+
+    function select(i: number, fly = true) {
+      current = Math.max(0, Math.min(data.routes.length - 1, i));
+      const r = data.routes[current]!;
+      eyebrow.textContent = `Chapter ${r.chapter}`;
+      label.textContent = `${r.label} — ${r.title}`;
+      render();
+      const pts = r.waypoints.map((id) => byId.get(id)!);
+      if (fly) map.flyToBounds(L.latLngBounds(pts.map((p) => [p.lat, p.lng] as [number, number])), { padding: [40, 40], maxZoom: 13 });
+      for (const p of pts) {
+        const el = markers.get(p.id)?.getElement();
+        if (el) {
+          el.classList.remove('pulse');
+          void (el as any).getBBox?.();
+          el.classList.add('pulse');
+        }
+      }
+      history.replaceState(null, '', `#ch${r.chapter}`);
+      closeSheet();
+    }
+
+    document.getElementById('prev')!.addEventListener('click', () => select(current <= 0 ? data.routes.length - 1 : current - 1));
+    document.getElementById('next')!.addEventListener('click', () => select(current >= data.routes.length - 1 ? 0 : current + 1));
+    items.forEach((b, i) => b.addEventListener('click', () => select(i)));
+
+    const sheet = document.getElementById('sheet')!;
+    const toggle = document.getElementById('sheet-toggle')!;
+    const openSheet = () => {
+      sheet.classList.add('is-open');
+      toggle.setAttribute('aria-expanded', 'true');
+    };
+    const closeSheet = () => {
+      sheet.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    };
+    toggle.addEventListener('click', () => (sheet.classList.contains('is-open') ? closeSheet() : openSheet()));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') document.getElementById('next')!.click();
+      if (e.key === 'ArrowLeft') document.getElementById('prev')!.click();
+      if (e.key === 'Escape') closeSheet();
+    });
+
+    // ---- initial view: whole archipelago, or a chapter / place from the hash
+    const all = L.latLngBounds(data.places.filter((p) => p.type !== 'town' || p.id === 'chokoloskee' || p.id === 'everglades-city').map((p) => [p.lat, p.lng] as [number, number]));
+    map.fitBounds(all, { padding: [20, 20] });
+    syncLabels();
+    const hash = decodeURIComponent(location.hash.slice(1));
+    const chMatch = /^ch(\d+)$/.exec(hash);
+    if (chMatch) {
+      const idx = data.routes.findIndex((r) => r.chapter === Number(chMatch[1]));
+      if (idx >= 0) select(idx);
+      else {
+        // chapter without a route: show its places
+        const n = Number(chMatch[1]);
+        const pts = data.places.filter((p) => p.chapters.includes(n));
+        if (pts.length) map.fitBounds(L.latLngBounds(pts.map((p) => [p.lat, p.lng] as [number, number])), { padding: [40, 40], maxZoom: 13 });
+        pts.forEach((p) => markers.get(p.id)?.getElement()?.classList.add('pulse'));
+      }
+    } else if (hash && markers.has(hash)) {
+      const m = markers.get(hash)!;
+      map.setView(m.getLatLng(), 13);
+      m.openPopup();
+    }
+  </script>
+</Base>
+
+<style is:global>
+  .map-shell {
+    position: relative;
+    height: calc(100dvh - 57px);
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+  }
+  #map {
+    flex: 1;
+    background: var(--water);
+    font-family: var(--font-serif);
+  }
+  .leaflet-container {
+    font: inherit;
+  }
+  .leaflet-tile-pane {
+    filter: saturate(0.75) contrast(0.95);
+  }
+  :root[data-theme='dark'] .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(0.8) saturate(0.5) contrast(0.95);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .leaflet-tile-pane {
+      filter: invert(1) hue-rotate(180deg) brightness(0.8) saturate(0.5) contrast(0.95);
+    }
+  }
+  .leaflet-control-zoom a {
+    color: var(--ink) !important;
+    background: var(--paper) !important;
+    border-color: var(--oyster) !important;
+  }
+  .leaflet-control-attribution {
+    background: color-mix(in srgb, var(--paper) 85%, transparent) !important;
+    color: var(--ink-soft) !important;
+    font-size: 10px !important;
+  }
+  .leaflet-control-attribution a {
+    color: var(--mangrove) !important;
+  }
+  .leaflet-tooltip.place-label {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    color: var(--ink);
+    font-size: 16px;
+    padding: 0;
+    text-shadow:
+      0 0 3px var(--paper),
+      0 0 3px var(--paper),
+      0 0 6px var(--paper);
+  }
+  .leaflet-tooltip.place-label::before {
+    display: none;
+  }
+  .leaflet-tooltip.place-label {
+    display: none;
+  }
+  .show-t1 .leaflet-tooltip.tier-1,
+  .show-t2 .leaflet-tooltip.tier-2,
+  .show-t3 .leaflet-tooltip.tier-3 {
+    display: block;
+  }
+  .place-dot.pulse {
+    animation: pulse 1.2s ease-out 1;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    40% {
+      transform: scale(2.4);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  .hand-overlay {
+    mix-blend-mode: multiply;
+  }
+  :root[data-theme='dark'] .hand-overlay {
+    filter: invert(1);
+    mix-blend-mode: screen;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .hand-overlay {
+      filter: invert(1);
+      mix-blend-mode: screen;
+    }
+  }
+  .leaflet-popup-content-wrapper {
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    font-family: var(--font-serif);
+  }
+  .leaflet-popup-tip {
+    background: var(--paper);
+  }
+  .leaflet-popup-content {
+    margin: 12px 14px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .pop strong {
+    color: var(--mangrove);
+    font-size: 15px;
+  }
+  .pop p {
+    margin: 0.3em 0 0;
+  }
+  .pop-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .leaflet-popup-close-button {
+    color: var(--ink-soft) !important;
+  }
+
+  /* bottom sheet */
+  .sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    background: var(--paper);
+    border-top: 1px solid var(--oyster);
+    box-shadow: 0 -6px 24px -12px rgb(0 0 0 / 0.4);
+    max-height: 60%;
+    display: flex;
+    flex-direction: column;
+  }
+  .sheet-bar {
+    display: flex;
+    align-items: stretch;
+    min-height: 60px;
+  }
+  .step-btn {
+    width: 56px;
+    border: 0;
+    background: transparent;
+    color: var(--mangrove);
+    font-size: 2rem;
+    cursor: pointer;
+    flex: none;
+  }
+  .step-btn:hover {
+    background: var(--paper-2);
+  }
+  .sheet-title {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    padding: 0.5rem 0.25rem;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    font: inherit;
+    color: var(--ink);
+    min-width: 0;
+  }
+  .sheet-eyebrow {
+    color: var(--sunrise);
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+  .sheet-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .route-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0.5rem;
+    overflow: auto;
+    display: none;
+    border-top: 1px solid var(--oyster);
+  }
+  .sheet.is-open .route-list {
+    display: block;
+  }
+  .route-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 1rem;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .route-item:hover {
+    background: var(--paper-2);
+  }
+  .route-item.is-current .pill {
+    background: var(--sunrise);
+    border-color: var(--sunrise);
+    color: #fff;
+  }
+  .route-name {
+    flex: 1;
+    font-weight: 600;
+  }
+  .route-mode {
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+  }
+  .route-tools {
+    border-top: 1px solid var(--oyster);
+    padding: 0.5rem 1rem 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+  .tool {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    min-height: 32px;
+  }
+  .tool input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--sunrise);
+  }
+  @media (min-width: 960px) {
+    .sheet {
+      left: 16px;
+      right: auto;
+      bottom: 16px;
+      width: 380px;
+      border: 1px solid var(--oyster);
+      border-radius: var(--radius);
+      max-height: calc(100% - 32px);
+    }
+  }
+</style>

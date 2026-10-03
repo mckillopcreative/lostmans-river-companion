@@ -1,0 +1,389 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import site from '../../site.config.mjs';
+import { url } from '@lib/url';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Chapter number, when this is a chapter page (drives the header progress bar). */
+  chapter?: number;
+  /** Social image path relative to site root (optional). */
+  image?: string;
+  /** Full-bleed pages (the map) suppress main padding. */
+  bleed?: boolean;
+}
+const { title, description = site.tagline, chapter, image, bleed = false } = Astro.props;
+const fullTitle = title === site.title ? title : `${title} · ${site.shortTitle}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImage = image ? new URL(url(image), Astro.site).toString() : null;
+
+const nav = [
+  { href: '/map/', label: 'The Chart' },
+  { href: '/fish/', label: 'Fish' },
+  { href: '/crew/', label: 'Crew' },
+  { href: '/critters/', label: 'Critters' },
+  { href: '/boats/', label: 'Boats' },
+  { href: '/tackle/', label: 'Tackle Box' },
+  { href: '/list/', label: "Matt's List" },
+  { href: '/sketchbook/', label: 'Sketchbook' },
+  { href: '/about/', label: 'About' },
+];
+const here = Astro.url.pathname;
+const isActive = (href: string) => here.startsWith(url(href));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <meta name="theme-color" content="#f6f1e7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121b22" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={site.title} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <Font cssVariable="--font-serif" preload />
+    <Font cssVariable="--font-hand" />
+    <script is:inline>
+      // Apply a saved theme before first paint to avoid a flash.
+      try {
+        const t = localStorage.getItem('theme');
+        if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+    {
+      site.analytics.provider === 'plausible' && site.analytics.id && (
+        <script is:inline defer data-domain={site.analytics.id} src="https://plausible.io/js/script.js" />
+      )
+    }
+    {
+      site.analytics.provider === 'goatcounter' && site.analytics.id && (
+        <script
+          is:inline
+          data-goatcounter={`https://${site.analytics.id}.goatcounter.com/count`}
+          async
+          src="https://gc.zgo.at/count.js"
+        />
+      )
+    }
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="wrap-wide bar">
+        <a class="wordmark" href={url('/')} aria-label={`${site.shortTitle} home`}>
+          <span class="wm-title">Lostman’s River</span>
+          <span class="wm-sub hand">a Guidebook</span>
+        </a>
+        <nav class="nav" aria-label="Site">
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-list">
+            <span class="sr-only">Menu</span>
+            <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path class="i-open" d="M3 6h16M3 11h16M3 16h16" />
+              <path class="i-close" d="M5 5l12 12M17 5L5 17" />
+            </svg>
+          </button>
+          <ul id="nav-list" class="nav-list">
+            {
+              nav.map((n) => (
+                <li>
+                  <a href={url(n.href)} aria-current={isActive(n.href) ? 'page' : undefined}>
+                    {n.label}
+                  </a>
+                </li>
+              ))
+            }
+            <li class="nav-theme">
+              <button class="theme-toggle" type="button" aria-label="Toggle night mode" title="Night fishing mode">
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path class="i-moon" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+                  <g class="i-sun"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></g>
+                </svg>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      {
+        chapter && (
+          <div class="progress" role="progressbar" aria-label="Chapter progress" aria-valuemin="1" aria-valuemax="23" aria-valuenow={chapter}>
+            <span style={`width:${(chapter / 23) * 100}%`} />
+          </div>
+        )
+      }
+    </header>
+
+    <main id="main" class:list={{ bleed }}>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap-wide foot">
+        <div class="foot-col">
+          <p class="foot-title">Escape to Lostman’s River</p>
+          <p class="small muted">An Everglades adventure novel by {site.authors}. Illustrations © {site.artist}.</p>
+          <p class="cluster">
+            <a class="btn btn-primary btn-sm" href={site.buyUrl} rel="noopener">Buy on Amazon</a>
+            <a class="btn btn-sm" href={url('/about/#signup')}>Sign up for next summer</a>
+          </p>
+        </div>
+        <div class="foot-col small">
+          <p class="foot-h hand">Keep handy</p>
+          <ul class="foot-links">
+            <li><a href={site.fwcUrl} rel="noopener">Florida saltwater rules (FWC)</a></li>
+            <li><a href={site.npsUrl} rel="noopener">Everglades National Park</a></li>
+            <li><a href={url('/credits/')}>Credits &amp; sources</a></li>
+            <li><a href={url('/sketchbook/')}>The sketchbook</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+      const list = document.getElementById('nav-list');
+      toggle?.addEventListener('click', () => {
+        const open = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!open));
+        list?.classList.toggle('is-open', !open);
+      });
+      document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const sysDark = matchMedia('(prefers-color-scheme: dark)').matches;
+        const cur = root.dataset.theme || (sysDark ? 'dark' : 'light');
+        const next = cur === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem('theme', next);
+        } catch {}
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: -999px;
+    top: 8px;
+    background: var(--sunrise);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    z-index: 100;
+    border-radius: var(--radius);
+  }
+  .skip:focus {
+    left: 8px;
+  }
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    gap: 1rem;
+  }
+  .wordmark {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--mangrove);
+    white-space: nowrap;
+  }
+  .wm-title {
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+  }
+  .wm-sub {
+    font-size: 1.1rem;
+    color: var(--sunrise);
+  }
+  .nav {
+    position: relative;
+  }
+  .nav-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    color: var(--mangrove);
+    cursor: pointer;
+    border-radius: var(--radius);
+  }
+  .nav-toggle .i-close {
+    display: none;
+  }
+  .nav-toggle[aria-expanded='true'] .i-open {
+    display: none;
+  }
+  .nav-toggle[aria-expanded='true'] .i-close {
+    display: block;
+  }
+  .nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0;
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    min-width: 220px;
+    background: var(--paper);
+    border: 1px solid var(--oyster);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .nav-list.is-open {
+    display: block;
+  }
+  .nav-list a {
+    display: block;
+    padding: 0.6rem 1rem;
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--ink);
+    min-height: 44px;
+    line-height: 1.6;
+  }
+  .nav-list a[aria-current='page'] {
+    color: var(--sunrise);
+  }
+  .nav-list a:hover {
+    background: var(--paper-2);
+  }
+  .nav-theme {
+    border-top: 1px solid var(--oyster);
+    margin-top: 0.25rem;
+    padding: 0.25rem 0.5rem 0;
+  }
+  .theme-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    color: var(--mangrove);
+    cursor: pointer;
+    border-radius: var(--radius);
+  }
+  .theme-toggle:hover {
+    background: var(--paper-2);
+  }
+  .theme-toggle .i-sun {
+    display: none;
+  }
+  :global(:root[data-theme='dark']) .theme-toggle .i-sun {
+    display: block;
+  }
+  :global(:root[data-theme='dark']) .theme-toggle .i-moon {
+    display: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .theme-toggle .i-sun {
+      display: block;
+    }
+    :global(:root:not([data-theme='light'])) .theme-toggle .i-moon {
+      display: none;
+    }
+  }
+  @media (min-width: 960px) {
+    .nav-toggle {
+      display: none;
+    }
+    .nav-list,
+    .nav-list.is-open {
+      display: flex;
+      align-items: center;
+      position: static;
+      min-width: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      padding: 0;
+      gap: 0.1rem;
+    }
+    .nav-list a {
+      padding: 0.5rem 0.6rem;
+      font-size: 0.95rem;
+      border-radius: var(--radius);
+    }
+    .nav-list a:hover {
+      background: var(--paper-2);
+    }
+    .nav-theme {
+      border: 0;
+      margin: 0;
+      padding: 0 0 0 0.25rem;
+    }
+  }
+  .progress {
+    height: 3px;
+    background: color-mix(in srgb, var(--oyster) 40%, transparent);
+  }
+  .progress span {
+    display: block;
+    height: 100%;
+    background: var(--sunrise);
+  }
+  main.bleed {
+    display: flex;
+    flex-direction: column;
+  }
+  .site-footer {
+    border-top: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    background: var(--paper-2);
+    margin-top: 3rem;
+  }
+  .foot {
+    display: grid;
+    gap: 1.5rem;
+    padding-block: 2rem;
+  }
+  @media (min-width: 720px) {
+    .foot {
+      grid-template-columns: 2fr 1fr;
+      gap: 3rem;
+    }
+  }
+  .foot-title {
+    font-weight: 700;
+    color: var(--mangrove);
+    margin-bottom: 0.25rem;
+  }
+  .foot-h {
+    font-size: 1.4rem;
+    color: var(--sunrise);
+    margin: 0 0 0.25rem;
+  }
+  .foot-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .foot-links li {
+    padding: 0.2rem 0;
+  }
+</style>

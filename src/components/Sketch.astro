@@ -1,0 +1,64 @@
+---
+// A sketch displayed large on paper with Linda's credit. Never on white (DESIGN.md).
+import { Image } from 'astro:assets';
+import { sketchByFile } from '@lib/data';
+import { sketchImage } from '@lib/images';
+import site from '../../site.config.mjs';
+
+interface Props {
+  file: string;
+  /** Chapter to credit in the caption; defaults to the sketch's first chapter. */
+  chapter?: number;
+  caption?: string;
+  priority?: boolean;
+  maxWidth?: number;
+  /** Add data-lightbox so the Sketchbook can open it full size. */
+  lightbox?: boolean;
+}
+const { file, chapter, caption, priority = false, maxWidth = 900, lightbox = false } = Astro.props;
+const meta = sketchByFile.get(file);
+const img = sketchImage(file);
+const ch = chapter ?? meta?.chapters[0];
+const alt = meta?.subject ?? file;
+---
+
+{
+  img && (
+    <figure class="sketch sketch-figure" style={`--mw:${maxWidth}px`}>
+      <Image
+        src={img}
+        alt={alt}
+        width={Math.min(maxWidth, img.width)}
+        sizes={`(min-width: ${maxWidth}px) ${maxWidth}px, 100vw`}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchpriority={priority ? 'high' : undefined}
+        data-lightbox={lightbox ? img.src : undefined}
+        data-lightbox-alt={lightbox ? alt : undefined}
+      />
+      <figcaption class="mono">
+        {caption ?? alt}
+        {ch ? ` — Ch. ${ch}` : ''} — Illustration © {site.artist}
+      </figcaption>
+    </figure>
+  )
+}
+
+<style>
+  .sketch-figure {
+    margin: 1.5rem auto;
+    max-width: var(--mw);
+  }
+  .sketch-figure img {
+    width: 100%;
+    height: auto;
+  }
+  .sketch-figure figcaption {
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+  [data-lightbox] {
+    cursor: zoom-in;
+  }
+</style>

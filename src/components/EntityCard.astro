@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import type { CardModel } from '@lib/data';
+import { sketchByFile } from '@lib/data';
+import { sketchImage } from '@lib/images';
+import { sectionUrl } from '@lib/url';
+import ChapterPill from './ChapterPill.astro';
+import Silhouette from './Silhouette.astro';
+
+interface Props {
+  card: CardModel;
+  current?: number;
+  /** Show at most this many chapter pills. */
+  maxPills?: number;
+}
+const { card, current, maxPills = 4 } = Astro.props;
+const img = sketchImage(card.sketch);
+const alt = card.sketch ? sketchByFile.get(card.sketch)?.subject ?? card.title : '';
+const pills = card.chapters.slice(0, maxPills);
+const more = card.chapters.length - pills.length;
+---
+
+<li>
+  <a class="card" href={sectionUrl(card.section, card.id)}>
+    <div class:list={['card-media', { sketch: !!img }]}>
+      {img ? <Image src={img} alt={alt} width={400} sizes="(min-width: 520px) 240px, 45vw" loading="lazy" /> : <Silhouette kind={card.section} />}
+    </div>
+    <div class="card-body">
+      <span class="card-title">{card.title}</span>
+      {card.hook && <span class="card-hook">{card.hook}</span>}
+      <span class="card-pills">
+        {pills.map((n) => <ChapterPill n={n} current={current} link={false} />)}
+        {more > 0 && <span class="pill">+{more}</span>}
+      </span>
+    </div>
+  </a>
+</li>

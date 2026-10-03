@@ -1,0 +1,151 @@
+---
+// "Where we are": a chart-sketch of the chapter's places, no tiles, no JS.
+// Equirectangular projection over the Ten Thousand Islands bounding box.
+import { placeById, routeByChapter, type Place } from '@lib/data';
+import { url } from '@lib/url';
+
+interface Props {
+  chapter: number;
+  placeIds: string[];
+}
+const { chapter, placeIds } = Astro.props;
+const route = routeByChapter.get(chapter);
+const ids = Array.from(new Set([...(route?.waypoints ?? []), ...placeIds]));
+const pts = ids.map((id) => placeById.get(id)).filter((p): p is Place => !!p);
+
+// Frame: pad the bounding box of this chapter's places; keep aspect ~ 3:2.
+const W = 600,
+  H = 400,
+  PAD = 46;
+const lats = pts.map((p) => p.lat),
+  lngs = pts.map((p) => p.lng);
+let minLat = Math.min(...lats),
+  maxLat = Math.max(...lats),
+  minLng = Math.min(...lngs),
+  maxLng = Math.max(...lngs);
+const cosLat = Math.cos(((minLat + maxLat) / 2) * (Math.PI / 180));
+// ensure a minimum extent so single-place chapters are not a dot on a blank page
+const minSpanLat = 0.06;
+if (maxLat - minLat < minSpanLat) {
+  const c = (minLat + maxLat) / 2;
+  minLat = c - minSpanLat / 2;
+  maxLat = c + minSpanLat / 2;
+}
+if ((maxLng - minLng) * cosLat < minSpanLat * 1.5) {
+  const c = (minLng + maxLng) / 2;
+  minLng = c - (minSpanLat * 1.5) / 2 / cosLat;
+  maxLng = c + (minSpanLat * 1.5) / 2 / cosLat;
+}
+// fit to aspect
+const spanLat = maxLat - minLat;
+const spanLngKm = (maxLng - minLng) * cosLat;
+const target = (W - 2 * PAD) / (H - 2 * PAD);
+if (spanLngKm / spanLat < target) {
+  const want = spanLat * target;
+  const c = (minLng + maxLng) / 2;
+  minLng = c - want / 2 / cosLat;
+  maxLng = c + want / 2 / cosLat;
+} else {
+  const want = spanLngKm / target;
+  const c = (minLat + maxLat) / 2;
+  minLat = c - want / 2;
+  maxLat = c + want / 2;
+}
+const x = (lng: number) => PAD + ((lng - minLng) / (maxLng - minLng)) * (W - 2 * PAD);
+const y = (lat: number) => H - PAD - ((lat - minLat) / (maxLat - minLat)) * (H - 2 * PAD);
+const routePts = (route?.waypoints ?? []).map((id) => placeById.get(id)!).map((p) => `${x(p.lng).toFixed(1)},${y(p.lat).toFixed(1)}`);
+const dash = route?.mode === 'air' ? '10 8' : route?.mode === 'road' ? '3 5' : undefined;
+// label placement: alternate above/below to reduce collisions
+const labelled = pts.map((p, i) => ({ p, dy: i % 2 ? 18 : -10 }));
+---
+
+<figure class="minimap">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Chart of places in chapter ${chapter}: ${pts.map((p) => p.name).join(', ')}`}>
+    <defs>
+      <pattern id="mm-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M40 0H0V40" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.18" />
+      </pattern>
+    </defs>
+    <rect width={W} height={H} class="mm-water" />
+    <rect width={W} height={H} fill="url(#mm-grid)" class="mm-gridc" />
+    {route && <polyline points={routePts.join(' ')} class="mm-route" stroke-dasharray={dash} />}
+    {
+      labelled.map(({ p, dy }) => (
+        <g>
+          <circle cx={x(p.lng)} cy={y(p.lat)} r="4.5" class="mm-dot" />
+          <text x={x(p.lng)} y={y(p.lat) + dy} class="mm-label hand" text-anchor="middle">
+            {p.name.replace(/\s*\(.*\)$/, '')}
+          </text>
+        </g>
+      ))
+    }
+    <g class="mm-compass" transform={`translate(${W - 34} 34)`}>
+      <circle r="14" />
+      <path d="M0-12 L4 0 L0 12 L-4 0 Z" />
+      <text y="-17" text-anchor="middle" class="hand">N</text>
+    </g>
+  </svg>
+  <figcaption class="small">
+    <span class="hand mm-cap">{route ? route.label : 'Where we are'}</span>
+    <a href={url(`/map/#ch${chapter}`)}>Open the full chart →</a>
+  </figcaption>
+</figure>
+
+<style>
+  .minimap {
+    margin: 1.25rem 0;
+  }
+  .minimap svg {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--oyster);
+    color: var(--gulf);
+  }
+  .mm-water {
+    fill: var(--water);
+  }
+  .mm-route {
+    fill: none;
+    stroke: var(--sunrise);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .mm-dot {
+    fill: var(--ink);
+    stroke: var(--paper);
+    stroke-width: 1.5;
+  }
+  .mm-label {
+    font-size: 17px;
+    fill: var(--ink);
+    paint-order: stroke;
+    stroke: var(--water);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+  .mm-compass circle {
+    fill: none;
+    stroke: var(--ink-soft);
+    stroke-width: 1;
+  }
+  .mm-compass path {
+    fill: var(--ink-soft);
+  }
+  .mm-compass text {
+    font-size: 14px;
+    fill: var(--ink-soft);
+  }
+  figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.4rem;
+    color: var(--ink-soft);
+  }
+  .mm-cap {
+    font-size: 1.2rem;
+    color: var(--sunrise);
+  }
+</style>

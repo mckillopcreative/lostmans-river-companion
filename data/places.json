@@ -1,0 +1,234 @@
+[
+  {
+    "id": "naples-airport",
+    "name": "Naples, Florida (airport)",
+    "lat": 26.1525,
+    "lng": -81.7753,
+    "type": "town",
+    "in_book": "Where Matt lands in Ch. 1 and takes his driver's test in Ch. 22."
+  },
+  {
+    "id": "alligator-alley",
+    "name": "Alligator Alley (I-75)",
+    "lat": 26.17,
+    "lng": -81.1,
+    "type": "route",
+    "in_book": "The drive to the airport in Ch. 23 — 'those crazy large reptiles cheered people on.'"
+  },
+  {
+    "id": "everglades-city",
+    "name": "Everglades City",
+    "lat": 25.8587,
+    "lng": -81.3851,
+    "type": "town",
+    "in_book": "The mainland town; Rose lives here with her dad; Marge waits tables here."
+  },
+  {
+    "id": "everglades-marina",
+    "name": "Everglades City marina (Barron River)",
+    "lat": 25.862,
+    "lng": -81.389,
+    "type": "marina",
+    "in_book": "Gas, water, and Rawley on the dock, Ch. 11."
+  },
+  {
+    "id": "barron-river",
+    "name": "Barron River",
+    "lat": 25.85,
+    "lng": -81.39,
+    "type": "river",
+    "in_book": "The Sea Belle's channel from Chokoloskee Bay to Everglades City."
+  },
+  {
+    "id": "chokoloskee-causeway",
+    "name": "Chokoloskee causeway",
+    "lat": 25.835,
+    "lng": -81.37,
+    "type": "route",
+    "in_book": "First view of Chokoloskee Bay, 'the glassy waters of Matt's youth.'"
+  },
+  {
+    "id": "chokoloskee",
+    "name": "Chokoloskee Island",
+    "lat": 25.8126,
+    "lng": -81.3626,
+    "type": "town",
+    "in_book": "Home base. Seminole for 'Old House.' Dan's cottage, the grocery store, the marina."
+  },
+  {
+    "id": "chokoloskee-bay",
+    "name": "Chokoloskee Bay",
+    "lat": 25.83,
+    "lng": -81.38,
+    "type": "water",
+    "in_book": "The bay crossed at sunrise on every trip."
+  },
+  {
+    "id": "chokoloskee-marina",
+    "name": "Chokoloskee marina",
+    "lat": 25.815,
+    "lng": -81.365,
+    "type": "marina",
+    "in_book": "Where the Mako lives, where Matt caught his first snook, where Rose waves from the last dock."
+  },
+  {
+    "id": "dans-cottage",
+    "name": "Dan's cottage and rookery",
+    "lat": 25.81,
+    "lng": -81.36,
+    "type": "home",
+    "in_book": "Stilt house with banyans out front and pelicans out back. Fictional location — place near the island's east side."
+  },
+  {
+    "id": "anglers-motel-dock",
+    "name": "Anglers Motel dock",
+    "lat": 25.818,
+    "lng": -81.364,
+    "type": "dock",
+    "in_book": "Childhood catfish and lobster traps."
+  },
+  {
+    "id": "south-point",
+    "name": "South Point (abandoned post office)",
+    "lat": 25.806,
+    "lng": -81.363,
+    "type": "spot",
+    "in_book": "Matt's spot. The snook, the smugglers' meeting, the sleeping-bag night. (The real Smallwood Store sits at Chokoloskee's south tip.)"
+  },
+  {
+    "id": "lopez-river",
+    "name": "Lopez River",
+    "lat": 25.78,
+    "lng": -81.35,
+    "type": "river",
+    "in_book": "First client trip, Ch. 3 — the mangrove overhang between two oyster bars."
+  },
+  {
+    "id": "rabbit-key-pass",
+    "name": "Rabbit Key Pass",
+    "lat": 25.765,
+    "lng": -81.43,
+    "type": "pass",
+    "in_book": "The way home from the storm in Ch. 3; the escape route in Ch. 10."
+  },
+  {
+    "id": "sandfly-pass",
+    "name": "Sandfly Pass",
+    "lat": 25.8,
+    "lng": -81.42,
+    "type": "pass",
+    "in_book": "Out to the Gulf for Comer Key camping."
+  },
+  {
+    "id": "comer-key",
+    "name": "Comer Key",
+    "lat": 25.83,
+    "lng": -81.46,
+    "type": "island",
+    "in_book": "Beach camping, the moccasin, the shark. Matt's first keeper redfish years ago."
+  },
+  {
+    "id": "indian-key",
+    "name": "Indian Key",
+    "lat": 25.806,
+    "lng": -81.47,
+    "type": "island",
+    "in_book": "Where Captain Homer hooked his tournament tarpon."
+  },
+  {
+    "id": "pavilion-key",
+    "name": "Pavilion Key",
+    "lat": 25.698,
+    "lng": -81.364,
+    "type": "island",
+    "in_book": "The seaplane drop at dawn, Ch. 9; the mangrove hideout."
+  },
+  {
+    "id": "little-pavilion-key",
+    "name": "Little Pavilion Key",
+    "lat": 25.71,
+    "lng": -81.37,
+    "type": "island",
+    "in_book": "Old Scarface's territory. Hooked by Russ (Ch. 7) and caught by Matt (Ch. 19)."
+  },
+  {
+    "id": "gulf-of-mexico",
+    "name": "Gulf of Mexico",
+    "lat": 25.6,
+    "lng": -81.6,
+    "type": "water",
+    "in_book": "The 'blue abyss' from the plane window."
+  },
+  {
+    "id": "lostmans-river",
+    "name": "Lostman's River",
+    "lat": 25.553,
+    "lng": -81.207,
+    "type": "river",
+    "in_book": "The destination. 'A river inside a bay inside a gulf.' The Sea Belle beached on an oyster bar near the mouth, Ch. 11–18."
+  },
+  {
+    "id": "crooked-creek",
+    "name": "Crooked Creek",
+    "lat": 25.57,
+    "lng": -81.17,
+    "type": "creek",
+    "in_book": "The magazine-writer story, Ch. 15."
+  },
+  {
+    "id": "backcountry",
+    "name": "The backcountry bays",
+    "lat": 25.6,
+    "lng": -81.15,
+    "type": "water",
+    "in_book": "'A navigational test for even the most experienced fishing guides.'"
+  },
+  {
+    "id": "shark-river",
+    "name": "Shark River",
+    "lat": 25.36,
+    "lng": -81.12,
+    "type": "river",
+    "in_book": "Matt asks Snapper and Doc if they've been out there."
+  },
+  {
+    "id": "port-of-the-everglades",
+    "name": "Port of the Everglades Lodge (tournament)",
+    "lat": 25.96,
+    "lng": -81.5,
+    "type": "marina",
+    "in_book": "The tournament weigh-in. Appears fictionalized; the real Port of the Islands marina is nearby. Confirm with the author."
+  },
+  {
+    "id": "docs-house",
+    "name": "Doc's house",
+    "lat": 25.8,
+    "lng": -81.36,
+    "type": "home",
+    "in_book": "Rundown house down a dirt road on Chokoloskee. Fictional."
+  },
+  {
+    "id": "key-largo",
+    "name": "Key Largo flats",
+    "lat": 25.09,
+    "lng": -80.44,
+    "type": "water",
+    "in_book": "Snapper and President Bush's bonefish."
+  },
+  {
+    "id": "fort-lauderdale",
+    "name": "Fort Lauderdale",
+    "lat": 26.1224,
+    "lng": -80.1373,
+    "type": "town",
+    "in_book": "Matt's home. Mom's restaurant. Mr. Farmer's garage with the airboat."
+  },
+  {
+    "id": "naples",
+    "name": "Naples DMV",
+    "lat": 26.14,
+    "lng": -81.79,
+    "type": "town",
+    "in_book": "Driver's test on Matt's sixteenth birthday."
+  }
+]

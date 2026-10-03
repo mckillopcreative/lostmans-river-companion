@@ -1,0 +1,805 @@
+[
+  {
+    "n": 1,
+    "slug": "ch1",
+    "title": "Off Ground",
+    "summary": "Matt Creek, fifteen and three-quarters, flies alone for the first time to Naples to spend the summer as Uncle Dan's assistant fishing guide in Chokoloskee. We meet his father's South Florida Fishing Guidebook, his summer to-do list, the plaque quote, and learn his father died last summer.",
+    "places": [
+      "naples-airport",
+      "gulf-of-mexico",
+      "chokoloskee",
+      "lostmans-river"
+    ],
+    "fish": [
+      "snook",
+      "tarpon",
+      "lionfish"
+    ],
+    "wildlife": [
+      "pelican",
+      "iguana"
+    ],
+    "characters": [
+      "matt",
+      "james-creek",
+      "mom",
+      "dan",
+      "rose"
+    ],
+    "boats": [
+      "boeing-737",
+      "mako",
+      "airboat"
+    ],
+    "gear": [
+      "popping-cork"
+    ],
+    "word_of_day": [
+      "starboard",
+      "zany"
+    ],
+    "sketch": null
+  },
+  {
+    "n": 2,
+    "slug": "ch2",
+    "title": "Welcome",
+    "summary": "Dan picks Matt up in the Tahoe. Donuts at the grocery store run by the unsettling Rawley Simms. Dan's stilt cottage, the pelican rookery with Bertha and Oscar, the tarpon room, rigging eight poles, and a warning: tomorrow's clients are federal agents.",
+    "places": [
+      "naples-airport",
+      "everglades-city",
+      "chokoloskee-causeway",
+      "chokoloskee",
+      "dans-cottage",
+      "anglers-motel-dock",
+      "south-point"
+    ],
+    "fish": [
+      "snook",
+      "tarpon",
+      "redfish",
+      "trout",
+      "snapper",
+      "grouper",
+      "yellowtail",
+      "ladyfish",
+      "flounder",
+      "sheepshead",
+      "pufferfish",
+      "catfish"
+    ],
+    "wildlife": [
+      "pelican",
+      "cypress",
+      "banyan",
+      "mosquito",
+      "stone-crab"
+    ],
+    "characters": [
+      "dan",
+      "rawley",
+      "rose",
+      "snapper",
+      "bertha-oscar",
+      "russ",
+      "dave"
+    ],
+    "boats": [
+      "tahoe",
+      "mako",
+      "bonefisher",
+      "sea-belle"
+    ],
+    "gear": [
+      "lure",
+      "leader",
+      "swivel",
+      "bagley-mullet",
+      "yellow-feather",
+      "tides"
+    ],
+    "word_of_day": [
+      "rookery"
+    ],
+    "sketch": "pelican-on-dock.png"
+  },
+  {
+    "n": 3,
+    "slug": "ch3",
+    "title": "Early Morning",
+    "summary": "First client trip with FBI agents Russ and Dave. Sunrise run across Chokoloskee Bay toward Lopez River, dolphins at the oyster bar, trout and redfish, then a snapper bonanza at a river mouth. Matt spots Rose at the marina but misses her.",
+    "places": [
+      "chokoloskee-marina",
+      "chokoloskee-bay",
+      "lopez-river",
+      "rabbit-key-pass"
+    ],
+    "fish": [
+      "trout",
+      "redfish",
+      "snapper",
+      "snook",
+      "grouper",
+      "brim"
+    ],
+    "wildlife": [
+      "dolphin",
+      "alligator",
+      "mosquito",
+      "oyster-bar"
+    ],
+    "characters": [
+      "matt",
+      "dan",
+      "russ",
+      "dave",
+      "rose"
+    ],
+    "boats": [
+      "mako",
+      "fbi-suv"
+    ],
+    "gear": [
+      "popping-cork",
+      "yellow-feather",
+      "drifting",
+      "shrimp"
+    ],
+    "word_of_day": [],
+    "sketch": null
+  },
+  {
+    "n": 4,
+    "slug": "ch4",
+    "title": "The Monster of South Point",
+    "summary": "A month passes. Snook lore, closed season, and Matt's nightly vigil at South Point under the abandoned post office. A giant snook 'throwing a wake' steals his shrimp.",
+    "places": [
+      "south-point",
+      "everglades-city"
+    ],
+    "fish": [
+      "snook",
+      "mullet",
+      "pinfish",
+      "jack",
+      "tarpon"
+    ],
+    "wildlife": [
+      "oyster-bar"
+    ],
+    "characters": [
+      "matt",
+      "dan",
+      "rose"
+    ],
+    "boats": [],
+    "gear": [
+      "throwing-a-wake",
+      "snook-season",
+      "setting-the-hook"
+    ],
+    "word_of_day": [],
+    "sketch": null
+  },
+  {
+    "n": 5,
+    "slug": "ch5",
+    "title": "Unexpected Voices",
+    "summary": "Oscar steals a donut. Matt camps overnight at South Point with the Bagley Mullet lure. Dan brings cookies and asks about school; Matt tells him he read the accident report. After Dan leaves, two boats and a car meet in the dark — smugglers, and one of them is called Rawley.",
+    "places": [
+      "south-point",
+      "dans-cottage"
+    ],
+    "fish": [
+      "snook",
+      "tarpon",
+      "mullet"
+    ],
+    "wildlife": [
+      "pelican",
+      "mosquito",
+      "seagull"
+    ],
+    "characters": [
+      "matt",
+      "dan",
+      "rawley",
+      "james-creek",
+      "bertha-oscar"
+    ],
+    "boats": [
+      "smuggler-boats"
+    ],
+    "gear": [
+      "bagley-mullet",
+      "tides",
+      "aerator"
+    ],
+    "word_of_day": [],
+    "sketch": null
+  },
+  {
+    "n": 6,
+    "slug": "ch6",
+    "title": "Second Chances",
+    "summary": "Minutes after the smugglers leave, Matt hooks and lands the biggest snook of his life — 36 inches, 20 pounds — on the Bagley Mullet, revives it, and releases it. 'Catch you later.'",
+    "places": [
+      "south-point"
+    ],
+    "fish": [
+      "snook",
+      "mullet"
+    ],
+    "wildlife": [],
+    "characters": [
+      "matt",
+      "dan"
+    ],
+    "boats": [],
+    "gear": [
+      "bagley-mullet",
+      "reviving-a-fish",
+      "thirty-pound-leader"
+    ],
+    "word_of_day": [],
+    "sketch": "matt-holding-snook.png"
+  },
+  {
+    "n": 7,
+    "slug": "ch7",
+    "title": "A Tarpon to Remember",
+    "summary": "Snapper arrives holding a hooked pelican. Out at Rabbit Key / Little Pavilion Key with Russ and Dave, Russ hooks the legendary tarpon Old Scarface, who spits the hook after thirty minutes. Matt finally tells the agents about the smugglers.",
+    "places": [
+      "dans-cottage",
+      "chokoloskee-bay",
+      "rabbit-key-pass",
+      "little-pavilion-key",
+      "chokoloskee-marina"
+    ],
+    "fish": [
+      "trout",
+      "tarpon",
+      "redfish",
+      "snapper",
+      "black-drum",
+      "snook"
+    ],
+    "wildlife": [
+      "pelican",
+      "grass-beds"
+    ],
+    "characters": [
+      "matt",
+      "dan",
+      "snapper",
+      "russ",
+      "dave",
+      "old-scarface"
+    ],
+    "boats": [
+      "mako"
+    ],
+    "gear": [
+      "drifting",
+      "grass-beds-trout"
+    ],
+    "word_of_day": [],
+    "sketch": null
+  },
+  {
+    "n": 8,
+    "slug": "ch8",
+    "title": "Dangerous Encounters",
+    "summary": "Dan announces a 'business trip' and enters them both in the Port of the Everglades tournament. Beach camping on Comer Key: boat poles in sand pipes, a water moccasin dispatched with a hand ax, and a shark on the line in the shallows.",
+    "places": [
+      "sandfly-pass",
+      "comer-key"
+    ],
+    "fish": [
+      "redfish",
+      "tarpon",
+      "snook",
+      "mako-shark"
+    ],
+    "wildlife": [
+      "water-moccasin",
+      "shark",
+      "mosquito"
+    ],
+    "characters": [
+      "matt",
+      "dan",
+      "snapper"
+    ],
+    "boats": [
+      "mako"
+    ],
+    "gear": [
+      "boat-poles",
+      "steel-leader",
+      "sand-pipes"
+    ],
+    "word_of_day": [],
+    "sketch": "shark-comer-key-beach.png"
+  },
+  {
+    "n": 9,
+    "slug": "ch9",
+    "title": "Wrong Place at the Wrong Time",
+    "summary": "Pre-dawn run to Pavilion Key with Snapper. A seaplane lands without lights and meets a jet boat — a smuggling drop. Snapper poles the Mako into the mangroves. At sunrise Matt recognizes one of the three men: Uncle Dan.",
+    "places": [
+      "chokoloskee-marina",
+      "pavilion-key",
+      "little-pavilion-key"
+    ],
+    "fish": [
+      "tarpon",
+      "mullet"
+    ],
+    "wildlife": [
+      "mangroves",
+      "mosquito"
+    ],
+    "characters": [
+      "matt",
+      "snapper",
+      "rawley",
+      "dan",
+      "third-man"
+    ],
+    "boats": [
+      "mako",
+      "seaplane",
+      "jet-boat"
+    ],
+    "gear": [
+      "push-pole",
+      "tides"
+    ],
+    "word_of_day": [],
+    "sketch": "seaplane-smuggler-drop.png"
+  },
+  {
+    "n": 10,
+    "slug": "ch10",
+    "title": "Run for It",
+    "summary": "Matt guns the Mako out of hiding; the jet boat bogs in the shallows. Dan calls: 'Trust me. Head to Lostman's River in the Sea Belle. Channel sixteen, nine to ten p.m.' Matt and Snapper load the houseboat, towing the Bonefisher — and pass Rose waving on the dock.",
+    "places": [
+      "pavilion-key",
+      "rabbit-key-pass",
+      "dans-cottage",
+      "chokoloskee-marina"
+    ],
+    "fish": [],
+    "wildlife": [],
+    "characters": [
+      "matt",
+      "snapper",
+      "dan",
+      "rawley",
+      "rose",
+      "third-man"
+    ],
+    "boats": [
+      "mako",
+      "jet-boat",
+      "sea-belle",
+      "bonefisher"
+    ],
+    "gear": [
+      "marine-radio",
+      "channel-16"
+    ],
+    "word_of_day": [],
+    "sketch": null
+  },
+  {
+    "n": 11,
+    "slug": "ch11",
+    "title": "Escape to Lostman's River",
+    "summary": "Gas and water at Everglades Marina — and Rawley on the dock. Down the Barron River and out through the islands to the mouth of Lostman's. A threatening phone call: 'how you gonna wave next time without your hand?'",
+    "places": [
+      "barron-river",
+      "everglades-marina",
+      "lostmans-river"
+    ],
+    "fish": [],
+    "wildlife": [],
+    "characters": [
+      "matt",
+      "snapper",
+      "rawley"
+    ],
+    "boats": [
+      "sea-belle",
+      "bonefisher"
+    ],
+    "gear": [
+      "provisioning"
+    ],
+    "word_of_day": [],
+    "sketch": "sea-belle-towing-bonefisher.png"
+  },
+  {
+    "n": 12,
+    "slug": "ch12",
+    "title": "The Storm",
+    "summary": "A squall from the east drives the Sea Belle onto an oyster bar. Matt uses the Bonefisher to tow and tie the houseboat to mangroves, then gets his foot caught in an abandoned fishing net swimming back.",
+    "places": [
+      "lostmans-river"
+    ],
+    "fish": [],
+    "wildlife": [
+      "oyster-bar",
+      "mangroves",
+      "ghost-net"
+    ],
+    "characters": [
+      "matt",
+      "snapper",
+      "rose"
+    ],
+    "boats": [
+      "sea-belle",
+      "bonefisher"
+    ],
+    "gear": [
+      "storm-tie-off",
+      "tides"
+    ],
+    "word_of_day": [],
+    "sketch": null
+  },
+  {
+    "n": 13,
+    "slug": "ch13",
+    "title": "Hungry Visitors",
+    "summary": "After the storm: muddy water, no bites, PB&J. Then snapper on a yellow feather, a grouper bitten in half by an alligator, and a pelican that steals the fish head — hook, line, and a 'present' on Matt's arm.",
+    "places": [
+      "lostmans-river"
+    ],
+    "fish": [
+      "grouper",
+      "snapper"
+    ],
+    "wildlife": [
+      "alligator",
+      "pelican"
+    ],
+    "characters": [
+      "matt",
+      "snapper"
+    ],
+    "boats": [
+      "sea-belle"
+    ],
+    "gear": [
+      "spoon-lure",
+      "yellow-feather"
+    ],
+    "word_of_day": [],
+    "sketch": "alligator-grouper-thief.png"
+  },
+  {
+    "n": 14,
+    "slug": "ch14",
+    "title": "The Unseen Giant",
+    "summary": "The 'Golden Flicker' lure. Into the backcountry in the Bonefisher. Snapper live-baits a small snapper and hooks something that drags the anchored boat across the channel before the line snaps — a grouper, three hundred pounds or more.",
+    "places": [
+      "lostmans-river",
+      "backcountry"
+    ],
+    "fish": [
+      "grouper",
+      "snapper"
+    ],
+    "wildlife": [
+      "oyster-bar",
+      "mangroves"
+    ],
+    "characters": [
+      "matt",
+      "snapper"
+    ],
+    "boats": [
+      "bonefisher"
+    ],
+    "gear": [
+      "golden-flicker",
+      "live-bait",
+      "navigational-chart"
+    ],
+    "word_of_day": [],
+    "sketch": "grouper.png"
+  },
+  {
+    "n": 15,
+    "slug": "ch15",
+    "title": "Silent Shadows and Warm Memories",
+    "summary": "A sleepless night on deck listening to the Everglades 'choir.' Matt remembers Dan, a magazine writer, a snagged hat, and a snook landed by hand through a bird's nest of line at Crooked Creek.",
+    "places": [
+      "lostmans-river",
+      "crooked-creek"
+    ],
+    "fish": [
+      "snook",
+      "mullet"
+    ],
+    "wildlife": [
+      "frogs",
+      "birds"
+    ],
+    "characters": [
+      "matt",
+      "snapper",
+      "dan",
+      "james-creek"
+    ],
+    "boats": [],
+    "gear": [],
+    "word_of_day": [],
+    "sketch": null
+  },
+  {
+    "n": 16,
+    "slug": "ch16",
+    "title": "A Dolphin in Trouble",
+    "summary": "Dan's explanation of tides as the earth turning through bulges of water. A man dressed all in white passes without waving. Redfish, grouper, trout. A baby dolphin tangled in the ghost net; Matt swims out with a knife as a hammerhead arrives — and the mother dolphin rams the shark.",
+    "places": [
+      "lostmans-river"
+    ],
+    "fish": [
+      "redfish",
+      "grouper",
+      "trout",
+      "hammerhead-shark"
+    ],
+    "wildlife": [
+      "dolphin",
+      "shark",
+      "ghost-net",
+      "sand-flea",
+      "gnat"
+    ],
+    "characters": [
+      "matt",
+      "snapper",
+      "doc"
+    ],
+    "boats": [
+      "sea-belle",
+      "doc-skiff"
+    ],
+    "gear": [
+      "popping-cork",
+      "tides",
+      "snorkel"
+    ],
+    "word_of_day": [],
+    "sketch": "dolphin-vs-hammerhead.png"
+  },
+  {
+    "n": 17,
+    "slug": "ch17",
+    "title": "Stranger in White",
+    "summary": "The white-clad man's boat drifts up empty. Matt and Snapper find Doc Brown half-submerged with a cut head and broken rib. Zinc oxide. Matt stitches Doc's wound. Dan's voice on channel sixteen.",
+    "places": [
+      "lostmans-river",
+      "backcountry"
+    ],
+    "fish": [
+      "grouper",
+      "amberjack"
+    ],
+    "wildlife": [],
+    "characters": [
+      "matt",
+      "snapper",
+      "doc",
+      "dan",
+      "marge"
+    ],
+    "boats": [
+      "bonefisher",
+      "doc-skiff",
+      "sea-belle"
+    ],
+    "gear": [
+      "spotlight",
+      "navigational-chart",
+      "medical-bag"
+    ],
+    "word_of_day": [],
+    "sketch": "doc-brown-skiff.png"
+  },
+  {
+    "n": 18,
+    "slug": "ch18",
+    "title": "Push and Pull",
+    "summary": "Oatmeal vs. PB&J. At the 9 a.m. high tide, Matt and Snapper push while Doc tows with the Bonefisher. Matt bangs his knee on the propeller. The Sea Belle floats free.",
+    "places": [
+      "lostmans-river"
+    ],
+    "fish": [],
+    "wildlife": [
+      "oyster-bar"
+    ],
+    "characters": [
+      "matt",
+      "snapper",
+      "doc"
+    ],
+    "boats": [
+      "sea-belle",
+      "bonefisher",
+      "doc-skiff"
+    ],
+    "gear": [
+      "tides",
+      "push-pole"
+    ],
+    "word_of_day": [],
+    "sketch": null
+  },
+  {
+    "n": 19,
+    "slug": "ch19",
+    "title": "The Return of Old Scarface",
+    "summary": "Trolling home on the last day of the tournament. Off Little Pavilion Key Matt hooks Old Scarface; a ninety-minute fight; Snapper gaffs him aboard. Matt chooses to release the fish rather than weigh it. Dan on the radio: 'I'm so proud of you, son.'",
+    "places": [
+      "little-pavilion-key",
+      "chokoloskee"
+    ],
+    "fish": [
+      "tarpon",
+      "bonefish"
+    ],
+    "wildlife": [],
+    "characters": [
+      "matt",
+      "snapper",
+      "doc",
+      "dan",
+      "old-scarface"
+    ],
+    "boats": [
+      "sea-belle"
+    ],
+    "gear": [
+      "trolling",
+      "gaff",
+      "reviving-a-fish"
+    ],
+    "word_of_day": [],
+    "sketch": "tarpon-leap-houseboat.png"
+  },
+  {
+    "n": 20,
+    "slug": "ch20",
+    "title": "Finding an Old Friend",
+    "summary": "The tournament weigh-in. Rose has the leading tarpon: 68 inches, 81 pounds. Rawley corners Matt in the parking lot — he's undercover FBI, Dan is the informant, the real smugglers are in jail, and the cargo was sunken treasure. A $20,000 reward. Doc's story and his heart.",
+    "places": [
+      "port-of-the-everglades"
+    ],
+    "fish": [
+      "tarpon",
+      "cobia",
+      "snapper",
+      "trout",
+      "black-drum"
+    ],
+    "wildlife": [],
+    "characters": [
+      "matt",
+      "rose",
+      "rawley",
+      "dan",
+      "russ",
+      "dave",
+      "snapper",
+      "doc",
+      "marge"
+    ],
+    "boats": [
+      "sea-belle"
+    ],
+    "gear": [
+      "tournament-rules"
+    ],
+    "word_of_day": [
+      "undercover",
+      "informant"
+    ],
+    "sketch": null
+  },
+  {
+    "n": 21,
+    "slug": "ch21",
+    "title": "A Final Tarpon Entry",
+    "summary": "Captain Homer's 65-inch tarpon doesn't beat Rose's. Matt hides Snapper's share of the reward in a Dorito bag. At Doc's house Matt explains what 'the Big One' really means and offers Doc his reward for surgery — then Rose walks in with the trophy, having already done the same.",
+    "places": [
+      "port-of-the-everglades",
+      "docs-house",
+      "chokoloskee"
+    ],
+    "fish": [
+      "tarpon"
+    ],
+    "wildlife": [],
+    "characters": [
+      "matt",
+      "rose",
+      "doc",
+      "marge",
+      "dan",
+      "snapper",
+      "captain-homer",
+      "lobster"
+    ],
+    "boats": [
+      "the-marina",
+      "tahoe"
+    ],
+    "gear": [],
+    "word_of_day": [],
+    "sketch": null
+  },
+  {
+    "n": 22,
+    "slug": "ch22",
+    "title": "An Uncle's Promise",
+    "summary": "Birthday week. In the garage: Dad's red airboat, found in a junkyard and restored by Dan and Snapper. Next summer's project. Matt turns sixteen and passes his driver's test in Naples.",
+    "places": [
+      "dans-cottage",
+      "naples"
+    ],
+    "fish": [],
+    "wildlife": [
+      "pelican"
+    ],
+    "characters": [
+      "matt",
+      "dan",
+      "snapper",
+      "james-creek"
+    ],
+    "boats": [
+      "airboat",
+      "tahoe"
+    ],
+    "gear": [],
+    "word_of_day": [],
+    "sketch": null
+  },
+  {
+    "n": 23,
+    "slug": "ch23",
+    "title": "In It Together",
+    "summary": "Alligator Alley to the airport. The date with Rose set for next summer at the end of the last dock. Home in Fort Lauderdale, Matt opens the Guidebook and draws two blank lines under his name for Josh and Ben.",
+    "places": [
+      "alligator-alley",
+      "naples-airport",
+      "fort-lauderdale",
+      "chokoloskee-marina"
+    ],
+    "fish": [],
+    "wildlife": [
+      "alligator"
+    ],
+    "characters": [
+      "matt",
+      "dan",
+      "rose",
+      "josh-ben",
+      "mom",
+      "james-creek"
+    ],
+    "boats": [
+      "tahoe",
+      "airboat"
+    ],
+    "gear": [],
+    "word_of_day": [],
+    "sketch": "lostmans-river-hand-map.png"
+  }
+]

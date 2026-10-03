@@ -1,0 +1,42 @@
+---
+import Base from '@layouts/Base.astro';
+import EntityDetail from '@components/EntityDetail.astro';
+import { boats, toCard, type Boat } from '@lib/data';
+
+export function getStaticPaths() {
+  return boats.map((b) => ({ params: { id: b.id }, props: { b } }));
+}
+const { b } = Astro.props as { b: Boat };
+const related = boats
+  .filter((o) => o.id !== b.id)
+  .map((o) => ({ o, n: o.chapters.filter((c) => b.chapters.includes(c)).length }))
+  .filter((x) => x.n > 0)
+  .sort((a, c) => c.n - a.n)
+  .slice(0, 4)
+  .map((x) => toCard('boats', x.o));
+const specs = [
+  { k: 'Type', v: b.type },
+  { k: 'Owner', v: b.owner },
+];
+---
+
+<Base title={b.name} description={b.in_book} image={b.sketch ? `/assets/sketches/${b.sketch}` : undefined}>
+  <EntityDetail section="boats" title={b.name} sketch={b.sketch} chapters={b.chapters} specs={specs} related={related} relatedLabel="Shares the water with">
+    <section>
+      <h2>In the book</h2>
+      <p>{b.in_book}</p>
+    </section>
+    {
+      b.facts && b.facts.length > 0 && (
+        <section>
+          <h2>Boatyard notes</h2>
+          <ul>
+            {b.facts.map((f) => (
+              <li>{f}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </EntityDetail>
+</Base>

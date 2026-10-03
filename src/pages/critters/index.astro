@@ -1,0 +1,17 @@
+---
+import Base from '@layouts/Base.astro';
+import EntityIndex from '@components/EntityIndex.astro';
+import { wildlife, toCard, sectionMeta } from '@lib/data';
+
+const cards = wildlife.map((w) => toCard('critters', w));
+const groups = [
+  { label: 'Teeth and feathers', ids: ['pelican', 'dolphin', 'alligator', 'water-moccasin', 'shark'] },
+  { label: 'The islands themselves', ids: ['mangroves', 'oyster-bar', 'grass-beds', 'cypress', 'banyan'] },
+  { label: 'Small and annoying', ids: ['mosquito', 'sand-flea', 'gnat', 'stone-crab'] },
+  { label: 'Trouble', ids: ['ghost-net', 'iguana'] },
+];
+---
+
+<Base title="Critters" description={sectionMeta.critters.blurb}>
+  <EntityIndex section="critters" cards={cards} groups={groups} />
+</Base>

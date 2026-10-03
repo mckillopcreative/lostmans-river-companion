@@ -1,0 +1,33 @@
+---
+import Base from '@layouts/Base.astro';
+import site from '../../site.config.mjs';
+---
+
+<Base title="Credits & sources" description="Who drew, wrote, mapped and built this.">
+  <article class="frame">
+    <div class="wrap">
+      <header>
+        <p class="eyebrow">Fine print</p>
+        <h1>Credits &amp; sources</h1>
+      </header>
+      <dl class="specs">
+        <dt>Illustrations</dt>
+        <dd>All sketches © {site.artist}. Used with permission; please do not reproduce without asking.</dd>
+        <dt>Photograph</dt>
+        <dd>The dedication photo is courtesy of the McKillop family.</dd>
+        <dt>Text</dt>
+        <dd>Chapter summaries, field notes and glossary written for this site. The novel itself is © John and Linda McKillop and is not reproduced here.</dd>
+        <dt>Map</dt>
+        <dd>
+          Map data © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors (ODbL). Rendered with <a href="https://leafletjs.com" rel="noopener">Leaflet</a>. Place positions are approximate and some locations are fictional.
+        </dd>
+        <dt>Natural history</dt>
+        <dd>Species facts drawn from Florida Fish and Wildlife Conservation Commission and National Park Service public information. Always check <a href={site.fwcUrl} rel="noopener">current FWC rules</a>.</dd>
+        <dt>Type</dt>
+        <dd>Source Serif 4 and Caveat, both under the SIL Open Font License, self-hosted.</dd>
+        <dt>Built with</dt>
+        <dd>Astro, static files, no cookies, no trackers beyond cookieless page counts.</dd>
+      </dl>
+    </div>
+  </article>
+</Base>

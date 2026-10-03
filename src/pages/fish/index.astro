@@ -1,0 +1,23 @@
+---
+import Base from '@layouts/Base.astro';
+import EntityIndex from '@components/EntityIndex.astro';
+import { fish, toCard, sectionMeta } from '@lib/data';
+import site from '../../../site.config.mjs';
+
+const cards = fish.map((f) => toCard('fish', f));
+const groups = [
+  { label: 'The ones that matter', ids: ['snook', 'tarpon', 'redfish', 'trout', 'snapper', 'grouper'] },
+  { label: 'Sharks', ids: ['mako-shark', 'hammerhead-shark'] },
+  { label: 'Bait and bycatch', ids: ['mullet', 'pinfish', 'ladyfish', 'catfish', 'pufferfish', 'jack'] },
+];
+---
+
+<Base title="Fish" description={sectionMeta.fish.blurb}>
+  <EntityIndex section="fish" cards={cards} groups={groups} />
+  <div class="wrap">
+    <p class="note small">
+      Sizes and seasons here describe the book. Florida rules change every year — before you keep anything, check the current
+      <a href={site.fwcUrl} rel="noopener">FWC saltwater regulations</a>.
+    </p>
+  </div>
+</Base>

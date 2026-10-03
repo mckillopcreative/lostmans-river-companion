@@ -1,0 +1,144 @@
+[
+  {
+    "chapter": 1,
+    "label": "Flight into Naples",
+    "waypoints": [
+      "fort-lauderdale",
+      "gulf-of-mexico",
+      "naples-airport"
+    ],
+    "mode": "air"
+  },
+  {
+    "chapter": 2,
+    "label": "Tahoe to Chokoloskee",
+    "waypoints": [
+      "naples-airport",
+      "everglades-city",
+      "chokoloskee-causeway",
+      "chokoloskee",
+      "dans-cottage"
+    ],
+    "mode": "road"
+  },
+  {
+    "chapter": 3,
+    "label": "First client trip",
+    "waypoints": [
+      "chokoloskee-marina",
+      "chokoloskee-bay",
+      "lopez-river",
+      "rabbit-key-pass",
+      "chokoloskee-marina"
+    ],
+    "mode": "boat"
+  },
+  {
+    "chapter": 7,
+    "label": "Old Scarface, round one",
+    "waypoints": [
+      "chokoloskee-marina",
+      "chokoloskee-bay",
+      "rabbit-key-pass",
+      "little-pavilion-key",
+      "chokoloskee-marina"
+    ],
+    "mode": "boat"
+  },
+  {
+    "chapter": 8,
+    "label": "Comer Key camping",
+    "waypoints": [
+      "chokoloskee-marina",
+      "sandfly-pass",
+      "comer-key",
+      "chokoloskee-marina"
+    ],
+    "mode": "boat"
+  },
+  {
+    "chapter": 9,
+    "label": "Dawn at Pavilion Key",
+    "waypoints": [
+      "chokoloskee-marina",
+      "pavilion-key",
+      "little-pavilion-key"
+    ],
+    "mode": "boat"
+  },
+  {
+    "chapter": 10,
+    "label": "Run for it",
+    "waypoints": [
+      "pavilion-key",
+      "rabbit-key-pass",
+      "chokoloskee-marina"
+    ],
+    "mode": "boat"
+  },
+  {
+    "chapter": 11,
+    "label": "Escape to Lostman's",
+    "waypoints": [
+      "chokoloskee-marina",
+      "barron-river",
+      "everglades-marina",
+      "chokoloskee-bay",
+      "rabbit-key-pass",
+      "pavilion-key",
+      "lostmans-river"
+    ],
+    "mode": "boat"
+  },
+  {
+    "chapter": 14,
+    "label": "Into the backcountry",
+    "waypoints": [
+      "lostmans-river",
+      "backcountry",
+      "lostmans-river"
+    ],
+    "mode": "boat"
+  },
+  {
+    "chapter": 17,
+    "label": "Finding Doc",
+    "waypoints": [
+      "lostmans-river",
+      "backcountry",
+      "lostmans-river"
+    ],
+    "mode": "boat"
+  },
+  {
+    "chapter": 19,
+    "label": "Trolling home",
+    "waypoints": [
+      "lostmans-river",
+      "little-pavilion-key",
+      "port-of-the-everglades"
+    ],
+    "mode": "boat"
+  },
+  {
+    "chapter": 21,
+    "label": "To Doc's house",
+    "waypoints": [
+      "port-of-the-everglades",
+      "chokoloskee",
+      "docs-house"
+    ],
+    "mode": "road"
+  },
+  {
+    "chapter": 23,
+    "label": "Alligator Alley home",
+    "waypoints": [
+      "chokoloskee",
+      "alligator-alley",
+      "naples-airport",
+      "fort-lauderdale"
+    ],
+    "mode": "road"
+  }
+]

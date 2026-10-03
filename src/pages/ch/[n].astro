@@ -1,0 +1,254 @@
+---
+// QR landing pages. Route /ch/<n>/ is a print contract — never rename (SPEC.md §6).
+import Base from '@layouts/Base.astro';
+import Sketch from '@components/Sketch.astro';
+import EntityCard from '@components/EntityCard.astro';
+import ChapterPill from '@components/ChapterPill.astro';
+import PrevNext from '@components/PrevNext.astro';
+import MiniMap from '@components/MiniMap.astro';
+import {
+  chapters,
+  characterById,
+  fishById,
+  wildlifeById,
+  boatById,
+  gearById,
+  placeById,
+  glossaryByWord,
+  quotes,
+  todo,
+  toCard,
+  type Chapter,
+} from '@lib/data';
+import { url } from '@lib/url';
+
+export function getStaticPaths() {
+  return chapters.map((c) => ({ params: { n: String(c.n) }, props: { chapter: c } }));
+}
+const { chapter } = Astro.props as { chapter: Chapter };
+const n = chapter.n;
+
+const fishCards = chapter.fish.map((id) => toCard('fish', fishById.get(id)!));
+const crewCards = chapter.characters.map((id) => toCard('crew', characterById.get(id)!));
+const critterCards = chapter.wildlife.map((id) => toCard('critters', wildlifeById.get(id)!));
+const boatCards = chapter.boats.map((id) => toCard('boats', boatById.get(id)!));
+const gearItems = chapter.gear.map((id) => gearById.get(id)!);
+const placeItems = chapter.places.map((id) => placeById.get(id)!);
+const words = chapter.word_of_day.map((w) => glossaryByWord.get(w)!);
+const chapterQuotes = quotes.filter((q) => q.chapter === n);
+const checked = todo.filter((t) => t.chapter_checked === n);
+const added = todo.filter((t) => t.chapter_added === n && t.chapter_checked !== n);
+
+const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
+  { label: 'Fish', cards: fishCards },
+  { label: 'Crew', cards: crewCards },
+  { label: 'Critters', cards: critterCards },
+  { label: 'Boats', cards: boatCards },
+].filter((g) => g.cards.length);
+---
+
+<Base title={`Chapter ${n} — ${chapter.title}`} description={chapter.summary} chapter={n} image={chapter.sketch ? `/assets/sketches/${chapter.sketch}` : undefined}>
+  <article class="frame">
+    <div class="wrap">
+      <header class="ch-head">
+        <p class="eyebrow">Chapter {n} of 23</p>
+        <h1>{chapter.title}</h1>
+        <p class="lede">{chapter.summary}</p>
+      </header>
+
+      {chapter.sketch && <Sketch file={chapter.sketch} chapter={n} priority />}
+
+      {
+        (words.length > 0 || chapterQuotes.length > 0) && (
+          <section class="margin-notes" aria-label="Margin notes">
+            {words.map((w) => (
+              <div class="wotd">
+                <span class="hand wotd-k">Word of the day</span>
+                <strong>{w.word}</strong> — {w.definition}
+              </div>
+            ))}
+            {chapterQuotes.map((q) => (
+              <blockquote>
+                “{q.text}”<cite>— {q.who}</cite>
+              </blockquote>
+            ))}
+          </section>
+        )
+      }
+
+      {
+        placeItems.length > 0 && (
+          <section aria-labelledby="where">
+            <h2 id="where">Where we are</h2>
+            <MiniMap chapter={n} placeIds={chapter.places} />
+            <ul class="places">
+              {placeItems.map((p) => (
+                <li>
+                  <a href={url(`/map/#${p.id}`)}>
+                    <strong>{p.name}</strong>
+                  </a>
+                  <span class="muted"> — {p.in_book}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        groups.map((g) => (
+          <section aria-labelledby={`in-${g.label.toLowerCase()}`}>
+            <h2 id={`in-${g.label.toLowerCase()}`}>{g.label} in this chapter</h2>
+            <ul class="grid-cards">
+              {g.cards.map((card) => (
+                <EntityCard card={card} current={n} />
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+
+      {
+        gearItems.length > 0 && (
+          <section aria-labelledby="tackle">
+            <h2 id="tackle">From the tackle box</h2>
+            <dl class="tackle-list">
+              {gearItems.map((g) => (
+                <div>
+                  <dt>
+                    <a href={url(`/tackle/#${g.id}`)}>{g.term}</a>
+                  </dt>
+                  <dd>{g.definition}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )
+      }
+
+      {
+        (checked.length > 0 || added.length > 0) && (
+          <section aria-labelledby="list">
+            <h2 id="list">Matt’s list</h2>
+            <ul class="todo">
+              {checked.map((t) => (
+                <li class="done">
+                  <span class="box" aria-hidden="true">
+                    ✓
+                  </span>
+                  <span>
+                    {t.item} <span class="muted small">— checked off this chapter</span>
+                  </span>
+                </li>
+              ))}
+              {added.map((t) => (
+                <li>
+                  <span class="box" aria-hidden="true" />
+                  <span>
+                    {t.item} <span class="muted small">— added this chapter</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p class="small">
+              <a href={url('/list/')}>See the whole list →</a>
+            </p>
+          </section>
+        )
+      }
+
+      <PrevNext n={n} />
+      <p class="all-chapters small muted">
+        All chapters:
+        {chapters.map((c) => <ChapterPill n={c.n} current={n} />)}
+      </p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .ch-head {
+    margin-bottom: 1rem;
+  }
+  .margin-notes {
+    margin: 1.5rem 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .wotd {
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+  .wotd-k {
+    display: block;
+    color: var(--sunrise);
+    font-size: 1.2rem;
+    line-height: 1;
+    margin-bottom: 0.2rem;
+  }
+  .places {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    font-size: 0.95rem;
+  }
+  .places li {
+    padding: 0.35rem 0;
+    border-bottom: 1px dashed color-mix(in srgb, var(--oyster) 60%, transparent);
+  }
+  .tackle-list {
+    margin: 0.5rem 0 0;
+  }
+  .tackle-list div {
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed color-mix(in srgb, var(--oyster) 60%, transparent);
+  }
+  .tackle-list dt {
+    font-weight: 600;
+  }
+  .tackle-list dd {
+    margin: 0.1rem 0 0;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  .todo {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+  }
+  .todo li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    padding: 0.35rem 0;
+  }
+  .box {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--ink-soft);
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    font-size: 0.9rem;
+    margin-top: 0.15rem;
+  }
+  .done .box {
+    background: var(--sunrise);
+    border-color: var(--sunrise);
+    color: #fff;
+  }
+  .done > span:last-child {
+    text-decoration: line-through;
+    text-decoration-color: var(--oyster);
+  }
+  .all-chapters {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+</style>

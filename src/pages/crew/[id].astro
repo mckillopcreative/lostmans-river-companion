@@ -1,0 +1,58 @@
+---
+import Base from '@layouts/Base.astro';
+import EntityDetail from '@components/EntityDetail.astro';
+import { characters, chapters, toCard, chaptersForCharacter, type Character } from '@lib/data';
+
+export function getStaticPaths() {
+  return characters.map((c) => ({ params: { id: c.id }, props: { c } }));
+}
+const { c } = Astro.props as { c: Character };
+const chs = chaptersForCharacter(c.id);
+
+// Related: who shares the most chapters with this character.
+const related = characters
+  .filter((o) => o.id !== c.id)
+  .map((o) => ({ o, n: chapters.filter((ch) => ch.characters.includes(c.id) && ch.characters.includes(o.id)).length }))
+  .filter((x) => x.n > 0)
+  .sort((a, b) => b.n - a.n)
+  .slice(0, 4)
+  .map((x) => ({ ...toCard('crew', x.o), chapters: chaptersForCharacter(x.o.id) }));
+
+const specs = [
+  { k: 'Role', v: c.role },
+  { k: 'Age', v: c.age },
+  { k: 'From', v: c.from },
+  { k: 'First appears', v: `Chapter ${c.first_chapter}` },
+];
+---
+
+<Base title={c.name} description={c.description} image={c.sketch ? `/assets/sketches/${c.sketch}` : undefined}>
+  <EntityDetail section="crew" title={c.name} sketch={c.sketch} chapters={chs} specs={specs} related={related} relatedLabel="Usually found with">
+    <section>
+      <h2>Who they are</h2>
+      <p>{c.description}</p>
+    </section>
+    {
+      c.traits && c.traits.length > 0 && (
+        <section>
+          <h2>Tells</h2>
+          <ul>
+            {c.traits.map((t) => (
+              <li>{t}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+    {
+      c.sayings && c.sayings.length > 0 && (
+        <section>
+          <h2>Things they say</h2>
+          {c.sayings.map((s) => (
+            <blockquote>“{s}”</blockquote>
+          ))}
+        </section>
+      )
+    }
+  </EntityDetail>
+</Base>

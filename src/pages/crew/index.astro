@@ -1,0 +1,17 @@
+---
+import Base from '@layouts/Base.astro';
+import EntityIndex from '@components/EntityIndex.astro';
+import { characters, toCard, sectionMeta, chaptersForCharacter } from '@lib/data';
+
+const cards = characters.map((c) => ({ ...toCard('crew', c), chapters: chaptersForCharacter(c.id) }));
+const groups = [
+  { label: 'The boat team', ids: ['matt', 'dan', 'snapper', 'rose', 'doc'] },
+  { label: 'Family', ids: ['james-creek', 'mom', 'josh-ben', 'marge'] },
+  { label: 'The clients, the store, the law', ids: ['russ', 'dave', 'rawley', 'third-man', 'captain-homer'] },
+  { label: 'Not people', ids: ['old-scarface', 'bertha-oscar', 'lobster'] },
+];
+---
+
+<Base title="Crew" description={sectionMeta.crew.blurb}>
+  <EntityIndex section="crew" cards={cards} groups={groups} />
+</Base>

@@ -1,0 +1,22 @@
+---
+import Base from '@layouts/Base.astro';
+import { url } from '@lib/url';
+---
+
+<Base title="Lost">
+  <div class="wrap section lost">
+    <p class="eyebrow">404</p>
+    <h1>You got lost in the Ten Thousand Islands.</h1>
+    <p class="lede">Every mangrove key and bay looks alike out here. Snapper would find the way. You can use the chart.</p>
+    <p class="cluster">
+      <a class="btn btn-primary" href={url('/map/')}>Open the chart</a>
+      <a class="btn" href={url('/')}>Back to the Guidebook</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .lost {
+    min-height: 50vh;
+  }
+</style>

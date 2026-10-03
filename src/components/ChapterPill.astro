@@ -1,0 +1,12 @@
+---
+import { chapterUrl } from '@lib/url';
+interface Props {
+  n: number;
+  current?: number;
+  link?: boolean;
+}
+const { n, current, link = true } = Astro.props;
+const cls = ['pill', { 'is-current': n === current }];
+---
+
+{link ? <a class:list={cls} href={chapterUrl(n)}>Ch. {n}</a> : <span class:list={cls}>Ch. {n}</span>}

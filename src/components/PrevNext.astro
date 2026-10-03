@@ -1,0 +1,77 @@
+---
+import { chapterByN } from '@lib/data';
+import { chapterUrl, url } from '@lib/url';
+interface Props {
+  n: number;
+}
+const { n } = Astro.props;
+const prev = chapterByN.get(n - 1);
+const next = chapterByN.get(n + 1);
+---
+
+<nav class="prevnext" aria-label="Chapter navigation">
+  {
+    prev ? (
+      <a class="pn pn-prev" href={chapterUrl(prev.n)}>
+        <span class="pn-label mono">← Ch. {prev.n}</span>
+        <span class="pn-title">{prev.title}</span>
+      </a>
+    ) : (
+      <a class="pn pn-prev" href={url('/')}>
+        <span class="pn-label mono">← Home</span>
+        <span class="pn-title">Back to the Guidebook</span>
+      </a>
+    )
+  }
+  {
+    next ? (
+      <a class="pn pn-next" href={chapterUrl(next.n)}>
+        <span class="pn-label mono">Ch. {next.n} →</span>
+        <span class="pn-title">{next.title}</span>
+      </a>
+    ) : (
+      <a class="pn pn-next" href={url('/about/')}>
+        <span class="pn-label mono">Next summer →</span>
+        <span class="pn-title">The airboat, and the last dock</span>
+      </a>
+    )
+  }
+</nav>
+
+<style>
+  .prevnext {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--oyster);
+  }
+  .pn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    text-decoration: none;
+    padding: 0.75rem;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    min-height: 44px;
+  }
+  .pn:hover {
+    border-color: var(--oyster);
+    background: var(--paper-2);
+  }
+  .pn-next {
+    text-align: right;
+    align-items: flex-end;
+  }
+  .pn-label {
+    font-size: 0.75rem;
+    color: var(--sunrise);
+  }
+  .pn-title {
+    font-weight: 600;
+    color: var(--mangrove);
+    line-height: 1.25;
+  }
+</style>

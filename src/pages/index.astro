@@ -1,0 +1,210 @@
+---
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SignupForm from '@components/SignupForm.astro';
+import { sketchImage } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../site.config.mjs';
+
+const tarpon = sketchImage('tarpon-leap-houseboat.png')!;
+const entries = [
+  { href: '/map/', title: 'The Chart', text: 'Every place in the book on a real chart, with Matt’s routes chapter by chapter.', sketch: 'lostmans-river-hand-map.png' },
+  { href: '/fish/', title: 'Fish', text: 'Twenty-three species, what they look like, and how Matt went after them.', sketch: 'matt-holding-snook.png' },
+  { href: '/crew/', title: 'Crew', text: 'Dan, Snapper, Rose, Doc, two pelicans and one very old tarpon.', sketch: 'pelican-on-dock.png' },
+];
+---
+
+<Base title={site.title} description={site.tagline} image="/assets/sketches/tarpon-leap-houseboat.png">
+  <section class="hero">
+    <div class="wrap-wide hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">An Everglades adventure novel</p>
+        <h1>Escape to Lostman’s River</h1>
+        <p class="lede">
+          One summer, one houseboat, one legendary tarpon. Fifteen-year-old Matt Creek goes to work for his uncle Dan, a fishing guide in the Ten Thousand Islands, and ends up with more than fish on the line.
+        </p>
+        <p class="cluster">
+          <a class="btn btn-primary" href={site.buyUrl} rel="noopener">Buy on Amazon</a>
+          <a class="btn" href={url('/map/')}>Open the chart</a>
+        </p>
+        <p class="small muted laurel">
+          <a href={site.joelbooks.url} rel="noopener">{site.joelbooks.text}</a>
+        </p>
+      </div>
+      <figure class="sketch hero-art">
+        <Image src={tarpon} alt="A tarpon leaping beside the Sea Belle houseboat, line tight" width={1000} sizes="(min-width: 900px) 560px, 100vw" loading="eager" fetchpriority="high" />
+        <figcaption class="mono">Old Scarface, Ch. 19 — Illustration © {site.artist}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="wrap-wide section">
+    <p class="eyebrow">This is the Guidebook</p>
+    <h2 class="h2-tight">Matt’s dad left him a fishing guidebook with blank pages. This is what he filled them with.</h2>
+    <ul class="entries">
+      {
+        entries.map((e) => {
+          const img = sketchImage(e.sketch)!;
+          return (
+            <li>
+              <a class="entry" href={url(e.href)}>
+                <div class="sketch entry-art">
+                  <Image src={img} alt="" width={600} sizes="(min-width: 720px) 340px, 94vw" loading="lazy" />
+                </div>
+                <span class="entry-title">{e.title}</span>
+                <span class="entry-text">{e.text}</span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <p class="also cluster small">
+      Also in the book:
+      <a class="pill" href={url('/critters/')}>Critters</a>
+      <a class="pill" href={url('/boats/')}>Boats</a>
+      <a class="pill" href={url('/tackle/')}>Tackle Box</a>
+      <a class="pill" href={url('/list/')}>Matt’s List</a>
+      <a class="pill" href={url('/sketchbook/')}>Sketchbook</a>
+    </p>
+  </section>
+
+  <section class="wrap section scan">
+    <div class="scan-box">
+      <p class="eyebrow">Reading the book?</p>
+      <h2 class="h2-tight">Scan the code at the top of any chapter.</h2>
+      <p>It opens that chapter’s page here: where Matt is on the chart, which fish are in play, who is in the boat, and what Dan is talking about. No spoilers past the chapter you are on.</p>
+      <p><a class="btn btn-sm" href={url('/ch/1/')}>Start at Chapter 1 →</a></p>
+    </div>
+  </section>
+
+  {
+    site.pullQuotes.length > 0 && (
+      <section class="wrap section">
+        <p class="eyebrow">Readers</p>
+        <div class="quotes">
+          {site.pullQuotes.map((q) => (
+            <blockquote>
+              “{q.text}”<cite>— {q.who}</cite>
+            </blockquote>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="wrap">
+    <SignupForm id="signup-home" compact />
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding-block: 1.5rem 2rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+  }
+  .hero-grid {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .hero {
+      padding-block: 3rem;
+    }
+    .hero-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+    .hero-copy {
+      order: 1;
+    }
+    .hero-art {
+      order: 2;
+    }
+  }
+  .hero-art {
+    margin: 0;
+  }
+  .hero-art figcaption {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    margin-top: 0.4rem;
+  }
+  .laurel {
+    margin-top: 0.5rem;
+  }
+  .h2-tight {
+    margin-top: 0;
+    max-width: 26ch;
+  }
+  .entries {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 720px) {
+    .entries {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .entry {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-decoration: none;
+    color: inherit;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-radius: var(--radius);
+    padding: 1rem;
+    height: 100%;
+    box-shadow: var(--shadow);
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .entry:hover {
+    transform: translateY(-2px);
+    border-color: var(--gulf);
+    color: inherit;
+  }
+  .entry-art {
+    aspect-ratio: 4 / 3;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .entry-art img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+  .entry-title {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--mangrove);
+  }
+  .entry-text {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  .also {
+    margin-top: 1.5rem;
+  }
+  .scan-box {
+    background: var(--paper-2);
+    border-left: 4px solid var(--sunrise);
+    padding: 1.25rem 1.5rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .quotes {
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 720px) {
+    .quotes {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

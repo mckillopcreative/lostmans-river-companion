@@ -1,0 +1,132 @@
+---
+// Shared detail page shell: sketch, specs, body, "in the book", chapters, related.
+import Sketch from './Sketch.astro';
+import ChapterPill from './ChapterPill.astro';
+import Silhouette from './Silhouette.astro';
+import EntityCard from './EntityCard.astro';
+import type { CardModel, Section } from '@lib/data';
+import { sectionMeta, chapterByN } from '@lib/data';
+import { sectionUrl } from '@lib/url';
+
+interface Props {
+  section: Section;
+  title: string;
+  subtitle?: string;
+  sketch: string | null;
+  chapters: number[];
+  specs?: { k: string; v: string | undefined | null }[];
+  related?: CardModel[];
+  relatedLabel?: string;
+}
+const { section, title, subtitle, sketch, chapters, specs = [], related = [], relatedLabel = 'Also in these chapters' } = Astro.props;
+const meta = sectionMeta[section];
+const shownSpecs = specs.filter((s) => s.v);
+---
+
+<article class="frame">
+  <div class="wrap">
+    <p class="crumbs small"><a href={sectionUrl(section)}>← {meta.label}</a></p>
+    <header>
+      <p class="eyebrow">{meta.one}</p>
+      <h1>{title}</h1>
+      {subtitle && <p class="subtitle muted">{subtitle}</p>}
+    </header>
+
+    {
+      sketch ? (
+        <Sketch file={sketch} maxWidth={720} />
+      ) : (
+        <div class="no-sketch">
+          <Silhouette kind={section} />
+          <p class="small muted hand">No sketch yet — this one lives in your imagination.</p>
+        </div>
+      )
+    }
+
+    {
+      shownSpecs.length > 0 && (
+        <dl class="specs">
+          {shownSpecs.map((s) => (
+            <>
+              <dt>{s.k}</dt>
+              <dd>{s.v}</dd>
+            </>
+          ))}
+        </dl>
+      )
+    }
+
+    <slot />
+
+    {
+      chapters.length > 0 && (
+        <section class="appears">
+          <h2>Appears in</h2>
+          <ul class="chapter-list">
+            {chapters.map((n) => (
+              <li>
+                <ChapterPill n={n} />
+                <a class="ch-title" href={`${sectionUrl('ch', String(n))}`}>
+                  {chapterByN.get(n)?.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      related.length > 0 && (
+        <section>
+          <h2>{relatedLabel}</h2>
+          <ul class="grid-cards">
+            {related.map((c) => (
+              <EntityCard card={c} />
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .crumbs {
+    margin-bottom: 0.5rem;
+  }
+  .subtitle {
+    font-style: italic;
+    margin-top: -0.25rem;
+  }
+  .no-sketch {
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    margin: 1rem 0 1.5rem;
+  }
+  .no-sketch svg {
+    width: 160px;
+  }
+  .no-sketch p {
+    margin: 0.25rem 0 0;
+    font-size: 1.15rem;
+  }
+  .chapter-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .chapter-list li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    padding: 0.3rem 0;
+  }
+  .ch-title {
+    text-decoration: none;
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,172 @@
+[
+  {
+    "id": "mako",
+    "name": "The Mako",
+    "type": "Center-console bay boat",
+    "owner": "Dan",
+    "in_book": "Named after the shark. Wide and flat at the back, V-hull forward, draws almost no water. The workhorse for client trips and the Pavilion Key escape.",
+    "facts": [
+      "Mako Marine has built center consoles since 1967; a 17–19 ft Mako is the classic Florida guide boat.",
+      "Center console = room to walk all the way around during a fish fight."
+    ],
+    "chapters": [
+      1,
+      2,
+      3,
+      7,
+      8,
+      9,
+      10
+    ],
+    "sketch": null
+  },
+  {
+    "id": "bonefisher",
+    "name": "The Bonefisher",
+    "type": "Sixteen-foot open backcountry skiff",
+    "owner": "Dan",
+    "in_book": "'The new smaller backcountry boat.' Towed behind the Sea Belle; tows the Sea Belle off the oyster bar; dragged across a channel by a grouper.",
+    "chapters": [
+      2,
+      10,
+      11,
+      12,
+      14,
+      17,
+      18
+    ],
+    "sketch": "sea-belle-towing-bonefisher.png"
+  },
+  {
+    "id": "sea-belle",
+    "name": "The Sea Belle",
+    "type": "Houseboat",
+    "owner": "Dan",
+    "in_book": "Four times the size of the Mako, with a cabin, bunks, kitchen, and a covered rear deck. 'Only he drives this here boat.' Home for a week at Lostman's River.",
+    "chapters": [
+      2,
+      10,
+      11,
+      12,
+      13,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "sketch": "sea-belle-towing-bonefisher.png"
+  },
+  {
+    "id": "airboat",
+    "name": "Dad's red airboat",
+    "type": "Airboat",
+    "owner": "James Creek → Matt",
+    "in_book": "Fire-engine red hull, white bow, 'just the right amount of rust.' Wrecked in the accident, found in a junkyard by Snapper, restored by Dan. Matt's sixteenth-birthday gift and next summer's project.",
+    "facts": [
+      "An aircraft-style propeller pushes the flat-bottomed hull over inches of water and sawgrass.",
+      "Airboats need a full driver's license in Florida — hence the DMV trip.",
+      "Everglades airboats are loud: ear protection is standard."
+    ],
+    "chapters": [
+      1,
+      19,
+      22,
+      23
+    ],
+    "sketch": null
+  },
+  {
+    "id": "tahoe",
+    "name": "Dan's Chevy Tahoe",
+    "type": "SUV",
+    "owner": "Dan",
+    "in_book": "Rusty, beloved, with the radio antenna Matt threatens to bend. Matt drives it to the DMV and to the airport.",
+    "chapters": [
+      2,
+      7,
+      21,
+      22,
+      23
+    ],
+    "sketch": null
+  },
+  {
+    "id": "doc-skiff",
+    "name": "Doc's skiff",
+    "type": "Small aluminum boat",
+    "owner": "Doc Brown",
+    "in_book": "'Too little to be out so far from civilization.' Drifts up empty to the Sea Belle.",
+    "chapters": [
+      16,
+      17,
+      18
+    ],
+    "sketch": "doc-brown-skiff.png"
+  },
+  {
+    "id": "seaplane",
+    "name": "The smugglers' seaplane",
+    "type": "Twin-engine floatplane",
+    "owner": "Smugglers",
+    "in_book": "Lands without lights at Little Pavilion Key and flashes three times.",
+    "chapters": [
+      9
+    ],
+    "sketch": "seaplane-smuggler-drop.png"
+  },
+  {
+    "id": "jet-boat",
+    "name": "The smugglers' jet boat",
+    "type": "Deep-hull powerboat",
+    "owner": "Smugglers",
+    "in_book": "Faster than the Mako but can't follow into one-foot bays — 'bogged down in the muddy shallow bay' three times.",
+    "chapters": [
+      9,
+      10
+    ],
+    "sketch": null
+  },
+  {
+    "id": "the-marina",
+    "name": "'The Marina'",
+    "type": "Twenty-one-foot sea boat",
+    "owner": "Captain Homer",
+    "in_book": "'Who names a boat Marina?'",
+    "chapters": [
+      21
+    ],
+    "sketch": null
+  },
+  {
+    "id": "boeing-737",
+    "name": "Boeing 737",
+    "type": "Airliner",
+    "in_book": "Matt's first flight; starboard confirmed in the Guidebook.",
+    "chapters": [
+      1
+    ],
+    "sketch": null
+  },
+  {
+    "id": "fbi-suv",
+    "name": "The agents' black SUV",
+    "type": "SUV",
+    "in_book": "'The cool government license plate.'",
+    "chapters": [
+      3
+    ],
+    "sketch": null
+  },
+  {
+    "id": "smuggler-boats",
+    "name": "Two boats and a car at South Point",
+    "type": null,
+    "in_book": "The night exchange in Ch. 5.",
+    "chapters": [
+      5
+    ],
+    "sketch": null
+  }
+]

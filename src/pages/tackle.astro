@@ -1,0 +1,156 @@
+---
+import Base from '@layouts/Base.astro';
+import RigDiagram from '@components/RigDiagram.astro';
+import ChapterPill from '@components/ChapterPill.astro';
+import { gear, gearGroups, chaptersForGear, type GearGroup } from '@lib/data';
+
+const order: GearGroup[] = ['lures-bait', 'line-rigging', 'techniques', 'reading-the-water', 'boat-safety'];
+const grouped = order.map((g) => ({ key: g, label: gearGroups[g], items: gear.filter((x) => x.group === g) }));
+---
+
+<Base title="Tackle Box" description="Every lure, knot, rig and trick Matt learns, explained the way Dan would.">
+  <article class="frame">
+    <div class="wrap">
+      <header>
+        <p class="eyebrow">The Guidebook</p>
+        <h1>Tackle Box</h1>
+        <p class="lede">Everything Dan hands Matt over the summer, from the first swivel to the gaff. If a word in the book stumped you, it is probably here.</p>
+      </header>
+
+      <nav class="jump cluster small" aria-label="Sections">
+        {grouped.map((g) => <a class="pill" href={`#${g.key}`}>{g.label}</a>)}
+      </nav>
+
+      <h2 id="rig">The basic rig</h2>
+      <p>Main line to a swivel so the line does not twist, a small weight to get the bait down, then a short, heavier leader that a snook’s gill plates and oyster shells cannot saw through, and the lure or hook at the end. Dan rigs eight poles this way the night Matt arrives.</p>
+      <RigDiagram />
+
+      {
+        grouped.map((g) => (
+          <section id={g.key} aria-labelledby={`${g.key}-h`}>
+            <h2 id={`${g.key}-h`}>{g.label}</h2>
+            <dl class="terms">
+              {g.items.map((t) => {
+                const chs = chaptersForGear(t.id);
+                return (
+                  <div id={t.id} class="term">
+                    <dt>
+                      {t.term}
+                      <span class="term-pills">
+                        {(chs.length ? chs : [t.chapter]).slice(0, 4).map((n) => (
+                          <ChapterPill n={n} />
+                        ))}
+                      </span>
+                    </dt>
+                    <dd>{t.definition}</dd>
+                  </div>
+                );
+              })}
+            </dl>
+          </section>
+        ))
+      }
+
+      <section id="tide" aria-labelledby="tide-h">
+        <h2 id="tide-h">Reading the tide</h2>
+        <p>
+          Dan’s version: the water is not rising and falling so much as the earth is turning through two bulges of ocean the moon and sun pull up. Two highs and two lows most days, about six hours apart, each one roughly fifty minutes later than yesterday. Fish the hour either side of the high and you will have water over the oyster bars and bait moving along the mangroves.
+        </p>
+        <figure class="tide">
+          <svg viewBox="0 0 600 200" role="img" aria-label="A tide curve over one day, with the hour either side of each high tide shaded as the time to fish.">
+            <defs>
+              <clipPath id="tide-clip"><rect x="0" y="0" width="600" height="200" /></clipPath>
+            </defs>
+            <g class="fish-window">
+              <rect x="110" y="20" width="80" height="160" />
+              <rect x="410" y="20" width="80" height="160" />
+            </g>
+            <path class="curve" d="M0 150 C 75 150, 75 50, 150 50 S 225 150, 300 150 S 375 50, 450 50 S 525 150, 600 150" />
+            <g class="axis">
+              <line x1="0" y1="180" x2="600" y2="180" />
+              <text x="150" y="196" text-anchor="middle">high</text>
+              <text x="300" y="196" text-anchor="middle">low</text>
+              <text x="450" y="196" text-anchor="middle">high</text>
+            </g>
+            <text class="hand note-t" x="150" y="36" text-anchor="middle">fish here</text>
+            <text class="hand note-t" x="450" y="36" text-anchor="middle">and here</text>
+          </svg>
+          <figcaption class="mono">Not to scale. Real Chokoloskee tide tables: NOAA tides &amp; currents, station Everglades City.</figcaption>
+        </figure>
+      </section>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .jump {
+    margin: 0.5rem 0 1rem;
+  }
+  .terms {
+    margin: 0.5rem 0 0;
+  }
+  .term {
+    padding: 0.7rem 0;
+    border-bottom: 1px dashed color-mix(in srgb, var(--oyster) 60%, transparent);
+    scroll-margin-top: 80px;
+  }
+  .term:target {
+    background: color-mix(in srgb, var(--sunrise) 12%, transparent);
+    margin-inline: -0.5rem;
+    padding-inline: 0.5rem;
+    border-radius: var(--radius);
+  }
+  .term dt {
+    font-weight: 600;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .term-pills {
+    display: inline-flex;
+    gap: 4px;
+  }
+  .term dd {
+    margin: 0.2rem 0 0;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  .tide {
+    margin: 1rem 0;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .tide svg {
+    width: 100%;
+    height: auto;
+  }
+  .curve {
+    fill: none;
+    stroke: var(--gulf);
+    stroke-width: 3;
+  }
+  .fish-window rect {
+    fill: var(--sunrise);
+    opacity: 0.18;
+  }
+  .axis line {
+    stroke: var(--oyster);
+  }
+  .axis text {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    fill: var(--ink-soft);
+  }
+  .note-t {
+    font-size: 22px;
+    fill: var(--sunrise);
+  }
+  .tide figcaption {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    margin-top: 0.5rem;
+  }
+</style>

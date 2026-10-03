@@ -1,0 +1,109 @@
+---
+// The basic rig Dan ties in Ch. 2: main line → swivel → weight → leader → lure.
+// Inline SVG, ink on paper, line draws itself in on load (respects reduced motion).
+---
+
+<figure class="rig">
+  <svg viewBox="0 0 340 560" role="img" aria-labelledby="rig-title rig-desc">
+    <title id="rig-title">The basic rig</title>
+    <desc id="rig-desc">Main line from the rod tip down to a swivel, then a small weight, then a short heavier leader ending in a mullet-style lure with treble hooks.</desc>
+    <g class="ink">
+      <!-- rod tip -->
+      <path class="draw" d="M30 30 C60 20 90 24 110 40" />
+      <circle cx="110" cy="40" r="3" fill="currentColor" />
+      <!-- main line -->
+      <path class="draw" d="M110 40 C130 110 120 170 140 230" />
+      <!-- swivel -->
+      <ellipse class="draw" cx="140" cy="244" rx="6" ry="9" />
+      <ellipse class="draw" cx="140" cy="262" rx="6" ry="9" />
+      <!-- line to weight -->
+      <path class="draw" d="M140 271 L140 300" />
+      <!-- weight (egg sinker) -->
+      <ellipse class="draw" cx="140" cy="316" rx="9" ry="15" />
+      <path class="draw" d="M140 301 V331" stroke-dasharray="2 2" />
+      <!-- leader -->
+      <path class="draw leader" d="M140 331 C150 380 150 420 160 450" />
+      <!-- lure: mullet imitation -->
+      <path class="draw" d="M160 450 c-22 14 -36 36 -14 60 c20 22 54 18 74 0 c10 -10 18 -22 30 -34 c-14 -8 -22 -18 -30 -28 c-18 -14 -42 -16 -60 2 z" />
+      <path class="draw" d="M250 476 l26 -14 -6 20 6 22 -26 -14" />
+      <circle cx="178" cy="476" r="2.5" fill="currentColor" />
+      <!-- treble hooks -->
+      <path class="draw" d="M190 512 v10 m0 0 c-6 0 -8 -4 -8 -8 m8 8 c6 0 8 -4 8 -8 m-8 8 v6" />
+      <path class="draw" d="M232 508 v10 m0 0 c-6 0 -8 -4 -8 -8 m8 8 c6 0 8 -4 8 -8 m-8 8 v6" />
+    </g>
+    <g class="labels hand">
+      <text x="140" y="130" text-anchor="end" dx="-14">main line</text>
+      <path class="lead" d="M128 126 L122 140" />
+      <text x="170" y="256">swivel</text>
+      <path class="lead" d="M166 252 L150 252" />
+      <text x="170" y="320">weight</text>
+      <path class="lead" d="M166 316 L152 316" />
+      <text x="90" y="400" text-anchor="end">leader</text>
+      <path class="lead" d="M94 396 L144 392" />
+      <text x="40" y="492" text-anchor="start">lure</text>
+      <path class="lead" d="M68 486 L146 480" />
+    </g>
+  </svg>
+  <figcaption class="mono">The rig Dan ties eight of in Chapter 2. Thirty-pound leader for the big snook.</figcaption>
+</figure>
+
+<style>
+  .rig {
+    margin: 1.5rem auto;
+    max-width: 380px;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .rig svg {
+    width: 100%;
+    height: auto;
+  }
+  .ink {
+    color: var(--ink);
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .leader {
+    stroke-width: 3;
+  }
+  .draw {
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+    animation: draw 2.2s ease-out forwards;
+  }
+  .draw:nth-child(n + 6) {
+    animation-delay: 0.5s;
+  }
+  .draw:nth-child(n + 11) {
+    animation-delay: 1.1s;
+  }
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .labels text {
+    font-size: 22px;
+    fill: var(--sunrise);
+  }
+  .labels .lead {
+    stroke: var(--sunrise);
+    stroke-width: 1.2;
+    fill: none;
+  }
+  figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

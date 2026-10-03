@@ -1,0 +1,77 @@
+---
+// Native <dialog> lightbox. Any <img data-lightbox="full-src"> on the page opens it.
+---
+
+<dialog class="lightbox" id="lightbox" aria-label="Enlarged sketch">
+  <button class="lb-close" type="button" aria-label="Close">×</button>
+  <div class="sketch lb-body">
+    <img id="lb-img" alt="" />
+  </div>
+  <p class="lb-cap mono" id="lb-cap"></p>
+</dialog>
+
+<script>
+  const dlg = document.getElementById('lightbox') as HTMLDialogElement;
+  const img = document.getElementById('lb-img') as HTMLImageElement;
+  const cap = document.getElementById('lb-cap')!;
+  document.addEventListener('click', (e) => {
+    const t = (e.target as HTMLElement).closest<HTMLImageElement>('img[data-lightbox]');
+    if (!t) return;
+    e.preventDefault();
+    img.src = t.dataset.lightbox!;
+    img.alt = t.dataset.lightboxAlt ?? t.alt;
+    cap.textContent = t.dataset.lightboxAlt ?? t.alt;
+    dlg.showModal();
+  });
+  dlg.querySelector('.lb-close')!.addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', (e) => {
+    if (e.target === dlg) dlg.close();
+  });
+</script>
+
+<style>
+  .lightbox {
+    border: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    max-width: min(96vw, 1100px);
+    max-height: 96vh;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .lightbox::backdrop {
+    background: rgb(18 27 34 / 0.75);
+    backdrop-filter: blur(3px);
+  }
+  .lb-body {
+    padding: 1rem 1rem 0;
+    display: grid;
+    place-items: center;
+  }
+  .lb-body img {
+    max-height: 82vh;
+    width: auto;
+    max-width: 100%;
+  }
+  .lb-cap {
+    margin: 0;
+    padding: 0.6rem 1rem 0.9rem;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+  }
+  .lb-close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--paper-2);
+    color: var(--ink);
+    font-size: 1.6rem;
+    cursor: pointer;
+    z-index: 1;
+  }
+</style>
