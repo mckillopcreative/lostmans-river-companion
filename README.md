@@ -15,6 +15,8 @@ npm run qr         # regenerate the 25 print QR codes into qr/ (set the domain f
 
 Node 22 or newer.
 
+Fonts (Source Serif 4, Caveat) are downloaded from Google Fonts at build time and self-hosted. On a machine with a corporate TLS proxy the download can fail with `unable to verify the first certificate`; run with `NODE_OPTIONS=--use-system-ca` or let the page fall back to Georgia and the build will still succeed.
+
 ## Where things live
 
 ```
