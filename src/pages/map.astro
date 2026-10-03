@@ -218,8 +218,13 @@ const data = {
     });
 
     // ---- initial view: whole archipelago, or a chapter / place from the hash
-    const all = L.latLngBounds(data.places.filter((p) => p.type !== 'town' || p.id === 'chokoloskee' || p.id === 'everglades-city').map((p) => [p.lat, p.lng] as [number, number]));
-    map.fitBounds(all, { padding: [20, 20] });
+    // Opening view: Chokoloskee down to Lostman's River. Outliers (Naples, Fort Lauderdale,
+    // Key Largo, Shark River) are still on the map; step or zoom out to see them.
+    const home = L.latLngBounds([
+      [25.5, -81.52],
+      [25.9, -81.16],
+    ]);
+    map.fitBounds(home, { padding: [10, 10] });
     syncLabels();
     const hash = decodeURIComponent(location.hash.slice(1));
     const chMatch = /^ch(\d+)$/.exec(hash);
@@ -452,7 +457,7 @@ const data = {
   .route-item.is-current .pill {
     background: var(--sunrise);
     border-color: var(--sunrise);
-    color: #fff;
+    color: var(--on-sunrise);
   }
   .route-name {
     flex: 1;

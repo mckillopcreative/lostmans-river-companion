@@ -7,7 +7,7 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   compressHTML: true,
-  build: { format: 'directory' },
+  build: { format: 'directory', inlineStylesheets: 'always' },
   image: {
     // Sketch scans are 900–1300px; constrained layout emits srcset + sizes automatically.
     layout: 'constrained',

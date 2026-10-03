@@ -1,5 +1,6 @@
 /* ---------- Tokens (docs/DESIGN.md) ---------- */
 :root {
+  --on-sunrise: #1f2a2e;
   --paper: #f6f1e7;
   --paper-2: #ede5d5;
   --ink: #1f2a2e;
@@ -165,7 +166,7 @@ blockquote cite {
 }
 ::selection {
   background: var(--sunrise);
-  color: #fff;
+  color: var(--on-sunrise);
 }
 
 /* ---------- Typography helpers ---------- */
@@ -308,7 +309,7 @@ a.pill:hover {
 .pill.is-current {
   background: var(--sunrise);
   border-color: var(--sunrise);
-  color: #fff;
+  color: var(--on-sunrise);
 }
 .btn {
   display: inline-flex;
@@ -335,12 +336,12 @@ a.pill:hover {
 .btn-primary {
   background: var(--sunrise);
   border-color: var(--sunrise);
-  color: #fff;
+  color: var(--on-sunrise);
 }
 .btn-primary:hover {
   background: color-mix(in srgb, var(--sunrise) 85%, black);
   border-color: color-mix(in srgb, var(--sunrise) 85%, black);
-  color: #fff;
+  color: var(--on-sunrise);
 }
 .btn-sm {
   min-height: 36px;

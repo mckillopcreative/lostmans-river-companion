@@ -82,7 +82,7 @@ const isActive = (href: string) => here.startsWith(url(href));
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="wrap-wide bar">
-        <a class="wordmark" href={url('/')} aria-label={`${site.shortTitle} home`}>
+        <a class="wordmark" href={url('/')}>
           <span class="wm-title">Lostman’s River</span>
           <span class="wm-sub hand">a Guidebook</span>
         </a>
@@ -178,7 +178,7 @@ const isActive = (href: string) => here.startsWith(url(href));
     left: -999px;
     top: 8px;
     background: var(--sunrise);
-    color: #fff;
+    color: var(--on-sunrise);
     padding: 0.5rem 1rem;
     z-index: 100;
     border-radius: var(--radius);
