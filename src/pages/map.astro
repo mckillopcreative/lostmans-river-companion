@@ -22,6 +22,7 @@ const data = {
 ---
 
 <Base title="The Chart" description="Every place in the book on a real chart of the Ten Thousand Islands, chapter by chapter." bleed>
+  <link slot="head" rel="preconnect" href="https://tile.openstreetmap.org" crossorigin />
   <div class="map-shell">
     <div id="map" role="application" aria-label="Chart of the Ten Thousand Islands with places from the book"></div>
 
@@ -90,7 +91,8 @@ const data = {
     labelsPane.style.zIndex = '650';
     labelsPane.style.pointerEvents = 'none';
     // Label tiers: big names first, small spots only when zoomed right in.
-    const tier = (t: string) => (['town', 'island', 'river', 'water'].includes(t) ? 1 : ['marina', 'pass', 'creek'].includes(t) ? 2 : 3);
+    const anchors = new Set(['chokoloskee', 'lostmans-river', 'gulf-of-mexico', 'everglades-city']);
+    const tier = (p: Place) => (anchors.has(p.id) ? 0 : ['town', 'island', 'river', 'water'].includes(p.type) ? 1 : ['marina', 'pass', 'creek'].includes(p.type) ? 2 : 3);
     for (const p of data.places) {
       const m = L.circleMarker([p.lat, p.lng], {
         radius: 5,
@@ -111,7 +113,7 @@ const data = {
         permanent: true,
         direction: 'right',
         offset: [6, 0],
-        className: `place-label hand tier-${tier(p.type)}`,
+        className: `place-label hand tier-${tier(p)}`,
         pane: 'labels',
       });
       markers.set(p.id, m);
@@ -120,7 +122,7 @@ const data = {
     const syncLabels = () => {
       const z = map.getZoom();
       const el = document.getElementById('map')!;
-      el.classList.toggle('show-t1', z >= 10);
+      el.classList.toggle('show-t1', z >= 11);
       el.classList.toggle('show-t2', z >= 12);
       el.classList.toggle('show-t3', z >= 13);
     };
@@ -304,6 +306,7 @@ const data = {
   .leaflet-tooltip.place-label {
     display: none;
   }
+  .leaflet-tooltip.tier-0,
   .show-t1 .leaflet-tooltip.tier-1,
   .show-t2 .leaflet-tooltip.tier-2,
   .show-t3 .leaflet-tooltip.tier-3 {
