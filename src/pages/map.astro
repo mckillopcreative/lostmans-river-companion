@@ -80,6 +80,8 @@ const data = {
 
     const map = L.map('map', { zoomControl: false, attributionControl: true });
     L.control.zoom({ position: 'topright' }).addTo(map);
+    // Exposed for tuning the hand-drawn overlay bounds from the console (docs/OPEN-ITEMS.md).
+    (window as any).lostmansMap = map;
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -219,32 +221,47 @@ const data = {
       if (e.key === 'Escape') closeSheet();
     });
 
-    // ---- initial view: whole archipelago, or a chapter / place from the hash
-    // Opening view: Chokoloskee down to Lostman's River. Outliers (Naples, Fort Lauderdale,
-    // Key Largo, Shark River) are still on the map; step or zoom out to see them.
-    const home = L.latLngBounds([
-      [25.5, -81.52],
-      [25.9, -81.16],
-    ]);
-    map.fitBounds(home, { padding: [10, 10] });
-    syncLabels();
-    const hash = decodeURIComponent(location.hash.slice(1));
-    const chMatch = /^ch(\d+)$/.exec(hash);
-    if (chMatch) {
-      const idx = data.routes.findIndex((r) => r.chapter === Number(chMatch[1]));
-      if (idx >= 0) select(idx);
-      else {
-        // chapter without a route: show its places
-        const n = Number(chMatch[1]);
-        const pts = data.places.filter((p) => p.chapters.includes(n));
-        if (pts.length) map.fitBounds(L.latLngBounds(pts.map((p) => [p.lat, p.lng] as [number, number])), { padding: [40, 40], maxZoom: 13 });
-        pts.forEach((p) => markers.get(p.id)?.getElement()?.classList.add('pulse'));
+    // ---- initial view: whole archipelago, or a chapter / place from the hash.
+    // Leaflet caches the container size at init. If the page is hidden (background tab, a
+    // collapsed pane) the container measures 0 wide and every fitBounds lands on max zoom,
+    // so the opening view waits until the container actually has a width.
+    const container = document.getElementById('map')!;
+    let viewSet = false;
+    function initialView() {
+      viewSet = true;
+      map.invalidateSize({ animate: false });
+      // Opening view: Chokoloskee down to Lostman's River. Outliers (Naples, Fort Lauderdale,
+      // Key Largo, Shark River) are still on the map; step or zoom out to see them.
+      const home = L.latLngBounds([
+        [25.5, -81.52],
+        [25.9, -81.16],
+      ]);
+      map.fitBounds(home, { padding: [10, 10] });
+      syncLabels();
+      const hash = decodeURIComponent(location.hash.slice(1));
+      const chMatch = /^ch(\d+)$/.exec(hash);
+      if (chMatch) {
+        const idx = data.routes.findIndex((r) => r.chapter === Number(chMatch[1]));
+        if (idx >= 0) select(idx);
+        else {
+          // chapter without a route: show its places
+          const n = Number(chMatch[1]);
+          const pts = data.places.filter((p) => p.chapters.includes(n));
+          if (pts.length) map.fitBounds(L.latLngBounds(pts.map((p) => [p.lat, p.lng] as [number, number])), { padding: [40, 40], maxZoom: 13 });
+          pts.forEach((p) => markers.get(p.id)?.getElement()?.classList.add('pulse'));
+        }
+      } else if (hash && markers.has(hash)) {
+        const m = markers.get(hash)!;
+        map.setView(m.getLatLng(), 13);
+        m.openPopup();
       }
-    } else if (hash && markers.has(hash)) {
-      const m = markers.get(hash)!;
-      map.setView(m.getLatLng(), 13);
-      m.openPopup();
     }
+    new ResizeObserver(() => {
+      if (container.clientWidth === 0) return;
+      if (viewSet) map.invalidateSize({ animate: false });
+      else initialView();
+    }).observe(container);
+    if (container.clientWidth > 0) initialView();
   </script>
 </Base>
 

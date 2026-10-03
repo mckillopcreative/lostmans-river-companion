@@ -13,7 +13,7 @@ See SPEC.md §8. Placeholders used during the build are listed here with where t
 
 ## The chart
 - [ ] **Verify coordinates** in `data/places.json`. Real places were placed from memory of the chart and need a check against NOAA chart 11430 / USGS GNIS. Fictional spots to pin by hand: `dans-cottage`, `docs-house`, `south-point`, `anglers-motel-dock`, `port-of-the-everglades`, `backcountry`, `crooked-creek`.
-- [ ] **Hand-drawn map overlay bounds** — `src/pages/map.astro`, `data.overlay.bounds`. Toggle "Linda's hand-drawn map" on the chart and nudge the south/west/north/east numbers until the river mouth lines up.
+- [ ] **Hand-drawn map overlay bounds** — `src/pages/map.astro`, `data.overlay.bounds`. Toggle "Linda's hand-drawn map" on the chart and nudge the south/west/north/east numbers until the river mouth lines up. In the browser console `lostmansMap.getBounds().toBBoxString()` prints the current view as `west,south,east,north`, which helps find good numbers.
 - [ ] Basemap is OpenStreetMap. If a nautical look is wanted, the Esri Ocean basemap looks right but check its terms before switching the tile URL.
 
 ## Assets
