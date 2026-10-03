@@ -1,4 +1,6 @@
-/* ---------- Tokens (docs/DESIGN.md) ---------- */
+/* ---------- Tokens (docs/DESIGN.md) ----------
+   Paper is the default for everyone; night mode is opt-in via the header toggle
+   (data-theme="dark"), not the OS setting. The sketches are the brand. */
 :root {
   --on-sunrise: #1f2a2e;
   --paper: #f6f1e7;
@@ -18,21 +20,6 @@
   --measure: 720px;
   --wide: 1100px;
   color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --paper: #121b22;
-    --paper-2: #1a2730;
-    --ink: #e9e2d3;
-    --ink-soft: #a9b2b5;
-    --mangrove: #8fc1ad;
-    --gulf: #5fb3c2;
-    --sunrise: #f0a05c;
-    --oyster: #4a5559;
-    --water: #16303a;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 18px -8px rgb(0 0 0 / 0.6);
-    color-scheme: dark;
-  }
 }
 :root[data-theme='dark'] {
   --paper: #121b22;
@@ -412,14 +399,9 @@ a.pill:hover {
   mix-blend-mode: multiply;
 }
 :root[data-theme='dark'] .sketch img {
-  filter: invert(0.92) contrast(1.05);
+  /* invert: scanner white -> black, which 'screen' makes fully transparent */
+  filter: invert(1);
   mix-blend-mode: screen;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .sketch img {
-    filter: invert(0.92) contrast(1.05);
-    mix-blend-mode: screen;
-  }
 }
 .silhouette {
   stroke: var(--ink-soft);

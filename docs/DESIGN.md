@@ -29,7 +29,7 @@ dark ("night fishing"):
 --sunrise:      #f0a05c
 --oyster:       #4a5559
 ```
-Define on `:root`, redefine under `prefers-color-scheme: dark` guarded by `:root:not([data-theme="light"])` and again under `:root[data-theme="dark"]`. Give `body` an explicit background.
+Define on `:root` and redefine under `:root[data-theme="dark"]` only. Paper is the default for everyone regardless of OS setting; night mode is opt-in from the header toggle and remembered in localStorage. (Decided 2026-10-03: the OS dark default made the first impression a chalkboard, not a guidebook.) Give `body` an explicit background.
 
 ## Type
 - Body: Source Serif 4 (Google Fonts), 17px/1.6 on mobile, 18px desktop. Two spaces after periods are NOT preserved on the web; don't try.

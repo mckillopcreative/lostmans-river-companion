@@ -43,8 +43,7 @@ const isActive = (href: string) => here.startsWith(url(href));
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
-    <meta name="theme-color" content="#f6f1e7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#121b22" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f1e7" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -160,8 +159,7 @@ const isActive = (href: string) => here.startsWith(url(href));
       });
       document.querySelector('.theme-toggle')?.addEventListener('click', () => {
         const root = document.documentElement;
-        const sysDark = matchMedia('(prefers-color-scheme: dark)').matches;
-        const cur = root.dataset.theme || (sysDark ? 'dark' : 'light');
+        const cur = root.dataset.theme || 'light';
         const next = cur === 'dark' ? 'light' : 'dark';
         root.dataset.theme = next;
         try {
@@ -300,14 +298,6 @@ const isActive = (href: string) => here.startsWith(url(href));
   }
   :global(:root[data-theme='dark']) .theme-toggle .i-moon {
     display: none;
-  }
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .theme-toggle .i-sun {
-      display: block;
-    }
-    :global(:root:not([data-theme='light'])) .theme-toggle .i-moon {
-      display: none;
-    }
   }
   @media (min-width: 960px) {
     .nav-toggle {

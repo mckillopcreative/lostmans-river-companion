@@ -291,11 +291,6 @@ const data = {
   :root[data-theme='dark'] .leaflet-tile-pane {
     filter: invert(1) hue-rotate(180deg) brightness(0.8) saturate(0.5) contrast(0.95);
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) .leaflet-tile-pane {
-      filter: invert(1) hue-rotate(180deg) brightness(0.8) saturate(0.5) contrast(0.95);
-    }
-  }
   .leaflet-control-zoom a {
     color: var(--ink) !important;
     background: var(--paper) !important;
@@ -355,12 +350,6 @@ const data = {
   :root[data-theme='dark'] .hand-overlay {
     filter: invert(1);
     mix-blend-mode: screen;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) .hand-overlay {
-      filter: invert(1);
-      mix-blend-mode: screen;
-    }
   }
   .leaflet-popup-content-wrapper {
     background: var(--paper);
