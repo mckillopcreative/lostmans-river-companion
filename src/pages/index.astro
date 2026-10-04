@@ -18,7 +18,7 @@ const entries = [
 ---
 
 <Base title={site.title} description={site.tagline} image="/assets/sketches/tarpon-leap-houseboat.png">
-  <section class="hero sky">
+  <section class="hero">
     <div class="wrap-wide hero-grid">
       <div class="hero-copy">
         <p class="eyebrow hero-eyebrow">An Everglades adventure novel</p>
@@ -35,8 +35,8 @@ const entries = [
             )
           }
           <p class="cluster">
-            <a class="btn btn-primary" href={site.buyUrl} rel="noopener">Buy on Amazon</a>
-            <a class="btn btn-sky" href={url('/map/')}>Open the chart</a>
+            <a class="btn btn-primary" href={site.buyUrl} rel="noopener">Amazon</a>
+            <a class="btn" href={url('/map/')}>Open the chart</a>
           </p>
         </div>
         <p class="small laurel">
@@ -121,7 +121,7 @@ const entries = [
 </Base>
 
 <style>
-  /* ---- Hero: the cover's watercolor sky; copy left, Linda's tarpon whole and unobstructed right ---- */
+  /* ---- Hero: plain paper; copy left, Linda's tarpon whole and unobstructed right ---- */
   .hero {
     border-bottom: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
     padding-block: 2rem 2.5rem;
@@ -140,20 +140,14 @@ const entries = [
       gap: 3.5rem;
     }
   }
-  .hero-eyebrow {
-    color: var(--silhouette);
-    opacity: 0.8;
-  }
   .hero-title {
-    color: var(--silhouette);
     font-size: clamp(2.4rem, 5.6vw, 3.9rem);
     line-height: 1.04;
     margin-bottom: 0.5rem;
   }
   .hero-lede {
     font-size: 1.1rem;
-    color: var(--silhouette);
-    opacity: 0.85;
+    color: var(--ink-soft);
     max-width: 42ch;
   }
   .hero-cta {
@@ -178,27 +172,14 @@ const entries = [
     height: auto;
     border-radius: 2px 4px 4px 2px;
   }
-  .btn-sky {
-    border-color: var(--silhouette);
-    color: var(--silhouette);
-    background: color-mix(in srgb, var(--sky-pale) 55%, transparent);
-  }
-  .btn-sky:hover {
-    background: var(--sky-pale);
-    color: var(--silhouette);
-  }
   .laurel {
     margin-top: 0.75rem;
-  }
-  .laurel a {
-    color: var(--silhouette);
   }
   .hero-art {
     margin: 0;
     padding: 1rem 1rem 0.5rem;
-    background: color-mix(in srgb, var(--paper) 55%, transparent);
+    background: var(--paper-2);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
   }
   .hero-art img {
     width: 100%;
@@ -208,15 +189,6 @@ const entries = [
     font-size: 0.7rem;
     color: var(--ink-soft);
     margin-top: 0.5rem;
-  }
-  :global(:root[data-theme='dark']) .hero-title,
-  :global(:root[data-theme='dark']) .hero-lede,
-  :global(:root[data-theme='dark']) .hero-eyebrow,
-  :global(:root[data-theme='dark']) .laurel a {
-    color: var(--ink);
-  }
-  :global(:root[data-theme='dark']) .hero-art {
-    background: color-mix(in srgb, var(--paper-2) 70%, transparent);
   }
 
   /* ---- Guidebook entries ---- */
