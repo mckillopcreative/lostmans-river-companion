@@ -2,11 +2,14 @@
 import { Image } from 'astro:assets';
 import Base from '@layouts/Base.astro';
 import SignupForm from '@components/SignupForm.astro';
-import { sketchImage } from '@lib/images';
+import Divider from '@components/Divider.astro';
+import CompassRose from '@components/CompassRose.astro';
+import { sketchImage, coverImage } from '@lib/images';
 import { url } from '@lib/url';
 import site from '../../site.config.mjs';
 
 const tarpon = sketchImage('tarpon-leap-houseboat.png')!;
+const cover = coverImage();
 const entries = [
   { href: '/map/', title: 'The Chart', text: 'Every place in the book on a real chart, with Matt’s routes chapter by chapter.', sketch: 'lostmans-river-hand-map.png' },
   { href: '/fish/', title: 'Fish', text: 'Twenty-three species, what they look like, and how Matt went after them.', sketch: 'matt-holding-snook.png' },
@@ -15,32 +18,45 @@ const entries = [
 ---
 
 <Base title={site.title} description={site.tagline} image="/assets/sketches/tarpon-leap-houseboat.png">
-  <section class="hero">
-    <div class="wrap-wide hero-grid">
+  <section class="hero sky">
+    <div class="hero-water sketch">
+      <Image src={tarpon} alt="" width={1400} sizes="100vw" loading="eager" fetchpriority="high" />
+    </div>
+    <div class="wrap-wide hero-inner">
       <div class="hero-copy">
-        <p class="eyebrow">An Everglades adventure novel</p>
-        <h1>Escape to Lostman’s River</h1>
-        <p class="lede">
+        <p class="eyebrow hero-eyebrow">An Everglades adventure novel</p>
+        <h1 class="hero-title">Escape to<br />Lostman’s River</h1>
+        <p class="hero-lede">
           One summer, one houseboat, one legendary tarpon. Fifteen-year-old Matt Creek goes to work for his uncle Dan, a fishing guide in the Ten Thousand Islands, and ends up with more than fish on the line.
         </p>
         <p class="cluster">
           <a class="btn btn-primary" href={site.buyUrl} rel="noopener">Buy on Amazon</a>
-          <a class="btn" href={url('/map/')}>Open the chart</a>
+          <a class="btn btn-sky" href={url('/map/')}>Open the chart</a>
         </p>
-        <p class="small muted laurel">
+        <p class="small laurel">
           <a href={site.joelbooks.url} rel="noopener">{site.joelbooks.text}</a>
         </p>
       </div>
-      <figure class="sketch hero-art">
-        <Image src={tarpon} alt="A tarpon leaping beside the Sea Belle houseboat, line tight" width={1000} sizes="(min-width: 900px) 560px, 100vw" loading="eager" fetchpriority="high" />
-        <figcaption class="mono">Old Scarface, Ch. 19 — Illustration © {site.artist}</figcaption>
-      </figure>
+      {
+        cover && (
+          <a class="book" href={site.buyUrl} rel="noopener" aria-label="The paperback cover — buy on Amazon">
+            <Image src={cover} alt="Cover of Escape to Lostman’s River: an angler casting at dusk, a seaplane overhead" width={260} loading="eager" />
+            <span class="book-spine" aria-hidden="true" />
+          </a>
+        )
+      }
     </div>
+    <p class="hero-credit mono">Old Scarface, Ch. 19 — Illustration © {site.artist}</p>
   </section>
 
-  <section class="wrap-wide section">
-    <p class="eyebrow">This is the Guidebook</p>
-    <h2 class="h2-tight">Matt’s dad left him a fishing guidebook with blank pages. This is what he filled them with.</h2>
+  <section class="wrap-wide section guide">
+    <div class="guide-head">
+      <CompassRose size={84} class="guide-compass" />
+      <div>
+        <p class="eyebrow">This is the Guidebook</p>
+        <h2 class="h2-tight">Matt’s dad left him a fishing guidebook with blank pages. This is what he filled them with.</h2>
+      </div>
+    </div>
     <ul class="entries">
       {
         entries.map((e) => {
@@ -69,6 +85,8 @@ const entries = [
     </p>
   </section>
 
+  <Divider kind="mullet" />
+
   <section class="wrap section scan">
     <div class="scan-box">
       <p class="eyebrow">Reading the book?</p>
@@ -80,16 +98,19 @@ const entries = [
 
   {
     site.pullQuotes.length > 0 && (
-      <section class="wrap section">
-        <p class="eyebrow">Readers</p>
-        <div class="quotes">
-          {site.pullQuotes.map((q) => (
-            <blockquote>
-              “{q.text}”<cite>— {q.who}</cite>
-            </blockquote>
-          ))}
-        </div>
-      </section>
+      <>
+        <Divider kind="wave" />
+        <section class="wrap section">
+          <p class="eyebrow">Readers</p>
+          <div class="quotes">
+            {site.pullQuotes.map((q) => (
+              <blockquote>
+                “{q.text}”<cite>— {q.who}</cite>
+              </blockquote>
+            ))}
+          </div>
+        </section>
+      </>
     )
   }
 
@@ -99,40 +120,154 @@ const entries = [
 </Base>
 
 <style>
+  /* ---- Hero: the cover's watercolor sky, the tarpon as ink over the water ---- */
   .hero {
-    padding-block: 1.5rem 2rem;
+    overflow: hidden;
     border-bottom: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
-  .hero-grid {
-    display: grid;
-    gap: 1.5rem;
-    align-items: center;
+  .hero-water {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    pointer-events: none;
+  }
+  .hero-water img {
+    width: min(92vw, 820px);
+    height: auto;
+    opacity: 0.55;
+    margin-right: -8vw;
+    margin-bottom: -4%;
+    mask-image: linear-gradient(90deg, transparent 0%, black 35%, black 100%);
   }
   @media (min-width: 900px) {
-    .hero {
-      padding-block: 3rem;
-    }
-    .hero-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-    }
-    .hero-copy {
-      order: 1;
-    }
-    .hero-art {
-      order: 2;
+    .hero-water img {
+      opacity: 0.9;
     }
   }
-  .hero-art {
-    margin: 0;
+  .hero-inner {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+    padding-block: 2.5rem 3.5rem;
+    align-items: end;
   }
-  .hero-art figcaption {
-    font-size: 0.72rem;
-    color: var(--ink-soft);
-    margin-top: 0.4rem;
+  .hero-copy {
+    max-width: 34rem;
+  }
+  .hero-eyebrow {
+    color: var(--silhouette);
+    opacity: 0.8;
+  }
+  .hero-title {
+    color: var(--silhouette);
+    font-size: clamp(2.6rem, 7vw, 4.6rem);
+    line-height: 1.02;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 1px 0 color-mix(in srgb, var(--sky-pale) 60%, transparent);
+  }
+  .hero-lede {
+    font-size: 1.1rem;
+    color: var(--silhouette);
+    opacity: 0.85;
+    max-width: 40ch;
+  }
+  .btn-sky {
+    border-color: var(--silhouette);
+    color: var(--silhouette);
+    background: color-mix(in srgb, var(--sky-pale) 55%, transparent);
+  }
+  .btn-sky:hover {
+    background: var(--sky-pale);
+    color: var(--silhouette);
   }
   .laurel {
     margin-top: 0.5rem;
+  }
+  .laurel a {
+    color: var(--silhouette);
+  }
+  .book {
+    justify-self: start;
+    position: relative;
+    width: 150px;
+    transform: rotate(-4deg);
+    transition: transform 0.2s;
+    filter: drop-shadow(0 14px 18px rgb(0 0 0 / 0.35));
+  }
+  .book:hover {
+    transform: rotate(-2deg) translateY(-4px);
+  }
+  .book img {
+    width: 100%;
+    height: auto;
+    border-radius: 2px 6px 6px 2px;
+    image-rendering: auto;
+  }
+  .book-spine {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: linear-gradient(90deg, rgb(0 0 0 / 0.35), transparent);
+    border-radius: 2px 0 0 2px;
+  }
+  .hero-credit {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 8px;
+    margin: 0;
+    font-size: 0.68rem;
+    color: var(--silhouette);
+    opacity: 0.7;
+  }
+  @media (min-width: 900px) {
+    .hero {
+      min-height: 600px;
+    }
+    .hero-inner {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding-block: 4rem;
+    }
+    .book {
+      width: 220px;
+      justify-self: end;
+      margin-right: 2rem;
+    }
+    .hero-water img {
+      width: min(56vw, 860px);
+      margin-right: 6%;
+      margin-bottom: -3%;
+    }
+    .hero-water {
+      justify-content: flex-end;
+    }
+  }
+  :global(:root[data-theme='dark']) .hero-title,
+  :global(:root[data-theme='dark']) .hero-lede,
+  :global(:root[data-theme='dark']) .hero-eyebrow,
+  :global(:root[data-theme='dark']) .laurel a,
+  :global(:root[data-theme='dark']) .hero-credit {
+    color: var(--ink);
+  }
+
+  /* ---- Guidebook entries ---- */
+  .guide-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.25rem;
+    align-items: center;
+    max-width: 48rem;
+  }
+  .guide-compass {
+    flex: none;
   }
   .h2-tight {
     margin-top: 0;

@@ -3,6 +3,8 @@ import { Font } from 'astro:assets';
 import '../styles/global.css';
 import site from '../../site.config.mjs';
 import { url } from '@lib/url';
+import CompassRose from '@components/CompassRose.astro';
+import Divider from '@components/Divider.astro';
 
 interface Props {
   title: string;
@@ -128,7 +130,9 @@ const isActive = (href: string) => here.startsWith(url(href));
     </main>
 
     <footer class="site-footer">
+      <Divider kind="wave" class="foot-divider" />
       <div class="wrap-wide foot">
+        <CompassRose size={72} class="foot-compass" />
         <div class="foot-col">
           <p class="foot-title">Escape to Lostman’s River</p>
           <p class="small muted">An Everglades adventure novel by {site.authors}. Illustrations © {site.artist}.</p>
@@ -351,12 +355,20 @@ const isActive = (href: string) => here.startsWith(url(href));
   .foot {
     display: grid;
     gap: 1.5rem;
-    padding-block: 2rem;
+    padding-block: 1rem 2rem;
+  }
+  .foot-compass {
+    opacity: 0.8;
+  }
+  :global(.foot-divider) {
+    margin: 0 auto 0.5rem;
+    opacity: 0.5;
   }
   @media (min-width: 720px) {
     .foot {
-      grid-template-columns: 2fr 1fr;
-      gap: 3rem;
+      grid-template-columns: auto 2fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
     }
   }
   .foot-title {

@@ -2,11 +2,15 @@
 import { Image } from 'astro:assets';
 import Base from '@layouts/Base.astro';
 import SignupForm from '@components/SignupForm.astro';
-import { photoImages } from '@lib/images';
+import Divider from '@components/Divider.astro';
+import { photoImages, coverImage } from '@lib/images';
 import { url } from '@lib/url';
 import site from '../../site.config.mjs';
 
 const dedication = photoImages.get('for-dad-three-anglers.jpg');
+// Drop a photo of Linda and John at assets/photos/authors.jpg and it appears here.
+const authorsPhoto = photoImages.get('authors.jpg') ?? photoImages.get('authors.png') ?? null;
+const cover = coverImage();
 ---
 
 <Base title="About the book" description={site.tagline}>
@@ -17,26 +21,67 @@ const dedication = photoImages.get('for-dad-three-anglers.jpg');
         <h1>The book, the people, the place</h1>
       </header>
 
-      <section>
-        <h2>The book</h2>
-        <p>
-          <em>Escape to Lostman’s River</em> is a short adventure novel for readers who like fishing, or boats, or getting into a little trouble. Fifteen-year-old Matt Creek spends the summer after his father’s death as his uncle Dan’s assistant guide in Chokoloskee, at the top of the Ten Thousand Islands. There is a legendary tarpon, a smuggling ring, a houseboat, a storm, and a lot of snook.
-        </p>
-        <p>
-          It is written by John and Linda McKillop. Every pen-and-ink sketch in the book, and on this site, is Linda’s. The site is laid out like the one thing Matt carries everywhere: his dad’s <em>South Florida Fishing Guidebook</em>, with the blank pages filled in.
-        </p>
-        <p class="cluster">
-          <a class="btn btn-primary" href={site.buyUrl} rel="noopener">Buy on Amazon</a>
-          <a class="btn" href={site.joelbooks.url} rel="noopener">{site.joelbooks.text}</a>
-        </p>
-        <dl class="specs">
-          <dt>Paperback</dt>
-          <dd class="mono">ISBN {site.isbn.paperback}</dd>
-          <dt>Hardcover</dt>
-          <dd class="mono">ISBN {site.isbn.hardcover}</dd>
-          <dt>Kindle</dt>
-          <dd class="mono">ASIN {site.isbn.kindle}</dd>
-        </dl>
+      <section class="book-row">
+        {
+          cover && (
+            <a class="book" href={site.buyUrl} rel="noopener">
+              <Image src={cover} alt="Cover of Escape to Lostman’s River" width={320} />
+            </a>
+          )
+        }
+        <div>
+          <h2 class="first">The book</h2>
+          <p>
+            <em>Escape to Lostman’s River</em> is a short adventure novel for readers who like fishing, or boats, or getting into a little trouble. Fifteen-year-old Matt Creek spends the summer after his father’s death as his uncle Dan’s assistant guide in Chokoloskee, at the top of the Ten Thousand Islands. There is a legendary tarpon, a smuggling ring, a houseboat, a storm, and a lot of snook.
+          </p>
+          <p>
+            The site is laid out like the one thing Matt carries everywhere: his dad’s <em>South Florida Fishing Guidebook</em>, with the blank pages filled in.
+          </p>
+          <p class="cluster">
+            <a class="btn btn-primary" href={site.buyUrl} rel="noopener">Buy on Amazon</a>
+            <a class="btn" href={site.joelbooks.url} rel="noopener">{site.joelbooks.text}</a>
+          </p>
+          <dl class="specs">
+            <dt>Paperback</dt>
+            <dd class="mono">ISBN {site.isbn.paperback}</dd>
+            <dt>Hardcover</dt>
+            <dd class="mono">ISBN {site.isbn.hardcover}</dd>
+            <dt>Kindle</dt>
+            <dd class="mono">ASIN {site.isbn.kindle}</dd>
+          </dl>
+        </div>
+      </section>
+
+      <Divider kind="rule" />
+
+      <section id="authors" class="authors">
+        <h2>The authors</h2>
+        <div class="authors-row">
+          {
+            authorsPhoto ? (
+              <figure class="photo authors-photo">
+                <Image src={authorsPhoto} alt="Linda and John McKillop" width={520} sizes="(min-width: 720px) 300px, 94vw" loading="lazy" />
+                <figcaption class="mono">Linda and John McKillop. Photo courtesy of the McKillop family.</figcaption>
+              </figure>
+            ) : (
+              <div class="photo-slot hand" aria-hidden="true">
+                photo of Linda &amp; John goes here
+              </div>
+            )
+          }
+          <div>
+            <p>
+              <em>Escape to Lostman’s River</em> is by John and Linda McKillop, son and mother. John wrote the summer; Linda drew it. Every pen-and-ink sketch in the book, and on this site, is hers, including the hand-drawn chart of Lostman’s River at the back.
+            </p>
+            {
+              site.authorsBio ? (
+                <p set:html={site.authorsBio} />
+              ) : (
+                <p class="placeholder small">[Author bio from the back of the book goes here — set <code>authorsBio</code> in site.config.mjs.]</p>
+              )
+            }
+          </div>
+        </div>
       </section>
 
       {
@@ -52,6 +97,8 @@ const dedication = photoImages.get('for-dad-three-anglers.jpg');
           </section>
         )
       }
+
+      <Divider kind="wave" />
 
       <section>
         <h2>The real Chokoloskee</h2>
@@ -82,8 +129,46 @@ const dedication = photoImages.get('for-dad-three-anglers.jpg');
 </Base>
 
 <style>
+  .book-row {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  @media (min-width: 640px) {
+    .book-row {
+      grid-template-columns: 180px 1fr;
+      align-items: start;
+    }
+  }
+  .book {
+    display: block;
+    max-width: 180px;
+    filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.3));
+    transform: rotate(-2deg);
+  }
+  .book img {
+    width: 100%;
+    height: auto;
+    border-radius: 2px 6px 6px 2px;
+  }
+  .first {
+    margin-top: 0;
+  }
+  .authors-row {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 720px) {
+    .authors-row {
+      grid-template-columns: 300px 1fr;
+      align-items: start;
+    }
+  }
   .photo {
     margin: 1rem 0;
+  }
+  .authors-photo {
+    margin: 0;
   }
   .photo img {
     width: 100%;
@@ -94,6 +179,18 @@ const dedication = photoImages.get('for-dad-three-anglers.jpg');
     margin-top: 0.4rem;
     font-size: 0.72rem;
     color: var(--ink-soft);
+  }
+  .photo-slot {
+    aspect-ratio: 4 / 3;
+    border: 1.5px dashed var(--oyster);
+    border-radius: var(--radius);
+    display: grid;
+    place-items: center;
+    color: var(--ink-soft);
+    font-size: 1.3rem;
+    text-align: center;
+    padding: 1rem;
+    background: var(--paper-2);
   }
   .placeholder {
     color: var(--sunrise);

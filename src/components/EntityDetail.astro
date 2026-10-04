@@ -1,15 +1,20 @@
 ---
-// Shared detail page shell: sketch, specs, body, "in the book", chapters, related.
+// Shared detail page shell: sketch (or commissioned art), specs, body, chapters, related.
+import { Image } from 'astro:assets';
 import Sketch from './Sketch.astro';
 import ChapterPill from './ChapterPill.astro';
 import Silhouette from './Silhouette.astro';
 import EntityCard from './EntityCard.astro';
+import Divider from './Divider.astro';
 import type { CardModel, Section } from '@lib/data';
 import { sectionMeta, chapterByN } from '@lib/data';
+import { artImage, sectionFolder } from '@lib/images';
 import { sectionUrl } from '@lib/url';
+import site from '../../site.config.mjs';
 
 interface Props {
   section: Section;
+  id: string;
   title: string;
   subtitle?: string;
   sketch: string | null;
@@ -17,27 +22,36 @@ interface Props {
   specs?: { k: string; v: string | undefined | null }[];
   related?: CardModel[];
   relatedLabel?: string;
+  initials?: string;
+  tint?: string;
 }
-const { section, title, subtitle, sketch, chapters, specs = [], related = [], relatedLabel = 'Also in these chapters' } = Astro.props;
+const { section, id, title, subtitle, sketch, chapters, specs = [], related = [], relatedLabel = 'Also in these chapters', initials, tint } = Astro.props;
 const meta = sectionMeta[section];
 const shownSpecs = specs.filter((s) => s.v);
+const art = sketch ? null : artImage(sectionFolder[section]!, id);
 ---
 
-<article class="frame">
+<article class="frame" style={tint ? `--tint:${tint}` : undefined}>
   <div class="wrap">
     <p class="crumbs small"><a href={sectionUrl(section)}>← {meta.label}</a></p>
-    <header>
+    <header class="det-head">
       <p class="eyebrow">{meta.one}</p>
       <h1>{title}</h1>
       {subtitle && <p class="subtitle muted">{subtitle}</p>}
+      {tint && <span class="tint-bar" aria-hidden="true" />}
     </header>
 
     {
       sketch ? (
         <Sketch file={sketch} maxWidth={720} />
+      ) : art ? (
+        <figure class="art art-figure">
+          <Image src={art} alt={title} width={720} sizes="(min-width: 720px) 680px, 94vw" />
+          <figcaption class="mono">{title} — {site.artCredit}</figcaption>
+        </figure>
       ) : (
         <div class="no-sketch">
-          <Silhouette kind={section} />
+          <Silhouette kind={section} initials={initials} />
           <p class="small muted hand">No sketch yet — this one lives in your imagination.</p>
         </div>
       )
@@ -61,6 +75,7 @@ const shownSpecs = specs.filter((s) => s.v);
     {
       chapters.length > 0 && (
         <section class="appears">
+          <Divider kind="rule" />
           <h2>Appears in</h2>
           <ul class="chapter-list">
             {chapters.map((n) => (
@@ -99,6 +114,14 @@ const shownSpecs = specs.filter((s) => s.v);
     font-style: italic;
     margin-top: -0.25rem;
   }
+  .tint-bar {
+    display: block;
+    width: 72px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--tint);
+    margin: 0.25rem 0 0.5rem;
+  }
   .no-sketch {
     display: grid;
     place-items: center;
@@ -113,6 +136,22 @@ const shownSpecs = specs.filter((s) => s.v);
   .no-sketch p {
     margin: 0.25rem 0 0;
     font-size: 1.15rem;
+  }
+  .art-figure {
+    margin: 1.5rem auto;
+    max-width: 720px;
+  }
+  .art-figure img {
+    width: 100%;
+    height: auto;
+  }
+  .art-figure figcaption {
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+  }
+  .appears :global(.divider) {
+    margin: 1.5rem auto 0.5rem;
   }
   .chapter-list {
     list-style: none;

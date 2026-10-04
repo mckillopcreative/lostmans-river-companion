@@ -1,0 +1,61 @@
+---
+// A pen-and-ink compass rose, the kind drawn in the corner of a chart.
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 96, class: cls } = Astro.props;
+---
+
+<svg class:list={['compass', cls]} width={size} height={size} viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+  <circle cx="50" cy="50" r="40" class="ring" />
+  <circle cx="50" cy="50" r="33" class="ring thin" />
+  <!-- minor points -->
+  <path class="minor" d="M50 50 L62 38 L50 46 Z M50 50 L62 62 L54 50 Z M50 50 L38 62 L50 54 Z M50 50 L38 38 L46 50 Z" />
+  <!-- major points -->
+  <path class="major" d="M50 10 L54 46 L50 50 L46 46 Z" />
+  <path class="major fill" d="M50 10 L54 46 L50 50 Z" />
+  <path class="major" d="M90 50 L54 54 L50 50 L54 46 Z" />
+  <path class="major fill" d="M90 50 L54 54 L50 50 Z" />
+  <path class="major" d="M50 90 L46 54 L50 50 L54 54 Z" />
+  <path class="major fill" d="M50 90 L46 54 L50 50 Z" />
+  <path class="major" d="M10 50 L46 46 L50 50 L46 54 Z" />
+  <path class="major fill" d="M10 50 L46 46 L50 50 Z" />
+  <circle cx="50" cy="50" r="2.2" class="pin" />
+  <text x="50" y="7" text-anchor="middle" class="hand lbl">N</text>
+  <text x="96" y="53.5" text-anchor="middle" class="hand lbl">E</text>
+  <text x="50" y="99" text-anchor="middle" class="hand lbl">S</text>
+  <text x="4" y="53.5" text-anchor="middle" class="hand lbl">W</text>
+</svg>
+
+<style>
+  .compass {
+    color: var(--ink-soft);
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    stroke-linejoin: round;
+  }
+  .ring.thin {
+    stroke-width: 0.6;
+    stroke-dasharray: 2 2.5;
+  }
+  .minor {
+    stroke-width: 0.8;
+    opacity: 0.7;
+  }
+  .fill {
+    fill: currentColor;
+    stroke: none;
+    opacity: 0.85;
+  }
+  .pin {
+    fill: var(--sunrise);
+    stroke: none;
+  }
+  .lbl {
+    font-size: 9px;
+    fill: currentColor;
+    stroke: none;
+  }
+</style>

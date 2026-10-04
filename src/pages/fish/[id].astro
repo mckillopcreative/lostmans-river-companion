@@ -29,7 +29,7 @@ const mentionsTackle = gear.filter((g) => (f.how_matt_fishes_it ?? '').toLowerCa
 ---
 
 <Base title={f.common} description={f.in_book} image={f.sketch ? `/assets/sketches/${f.sketch}` : undefined}>
-  <EntityDetail section="fish" title={f.common} subtitle={f.scientific} sketch={f.sketch} chapters={f.chapters} specs={specs} related={related} relatedLabel="Swims with">
+  <EntityDetail section="fish" id={f.id} tint={f.color} title={f.common} subtitle={f.scientific} sketch={f.sketch} chapters={f.chapters} specs={specs} related={related} relatedLabel="Swims with">
     <section>
       <h2>In the book</h2>
       <p>{f.in_book}</p>

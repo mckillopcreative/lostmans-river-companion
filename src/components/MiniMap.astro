@@ -55,8 +55,22 @@ const x = (lng: number) => PAD + ((lng - minLng) / (maxLng - minLng)) * (W - 2 *
 const y = (lat: number) => H - PAD - ((lat - minLat) / (maxLat - minLat)) * (H - 2 * PAD);
 const routePts = (route?.waypoints ?? []).map((id) => placeById.get(id)!).map((p) => `${x(p.lng).toFixed(1)},${y(p.lat).toFixed(1)}`);
 const dash = route?.mode === 'air' ? '10 8' : route?.mode === 'road' ? '3 5' : undefined;
-// label placement: alternate above/below to reduce collisions
-const labelled = pts.map((p, i) => ({ p, dy: i % 2 ? 18 : -10 }));
+// label placement: alternate above/below, and skip a label when it would sit on top of
+// one already placed (the dot stays; the full chart has every name).
+const placed: { x: number; y: number }[] = [];
+const labelled = pts.map((p, i) => {
+  const px = x(p.lng);
+  const candidates = i % 2 ? [18, -10] : [-10, 18];
+  for (const dy of candidates) {
+    const py = y(p.lat) + dy;
+    const clash = placed.some((q) => Math.abs(q.x - px) < 120 && Math.abs(q.y - py) < 18);
+    if (!clash) {
+      placed.push({ x: px, y: py });
+      return { p, dy, show: true };
+    }
+  }
+  return { p, dy: 0, show: false };
+});
 ---
 
 <figure class="minimap">
@@ -70,12 +84,14 @@ const labelled = pts.map((p, i) => ({ p, dy: i % 2 ? 18 : -10 }));
     <rect width={W} height={H} fill="url(#mm-grid)" class="mm-gridc" />
     {route && <polyline points={routePts.join(' ')} class="mm-route" stroke-dasharray={dash} />}
     {
-      labelled.map(({ p, dy }) => (
+      labelled.map(({ p, dy, show }) => (
         <g>
           <circle cx={x(p.lng)} cy={y(p.lat)} r="4.5" class="mm-dot" />
-          <text x={x(p.lng)} y={y(p.lat) + dy} class="mm-label hand" text-anchor="middle">
-            {p.name.replace(/\s*\(.*\)$/, '')}
-          </text>
+          {show && (
+            <text x={x(p.lng)} y={y(p.lat) + dy} class="mm-label hand" text-anchor="middle">
+              {p.name.replace(/\s*\(.*\)$/, '')}
+            </text>
+          )}
         </g>
       ))
     }

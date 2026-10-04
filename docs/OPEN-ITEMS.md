@@ -24,3 +24,9 @@ See SPEC.md §8. Placeholders used during the build are listed here with where t
 ## Text decisions
 - [ ] The book's title page says 1992 but the story has a cell phone, Instagram and Alexa. The site shows no year; decide for the reprint.
 - [ ] Characters with no sketch show a plain line-drawing placeholder and the note "No sketch yet." Fine to leave, or commission Linda for Dan, Snapper and Rose.
+
+## Visuals (added 2026-10-03)
+- [ ] **Hi-res cover file.** `assets/cover/cover-thumbnail.png` is 129 × 199 px; drop the KDP cover JPG/PDF export in `assets/cover/` (any name without "thumb") and the site uses it.
+- [ ] **Author photo** → `assets/photos/authors.jpg` (Linda and John). The About page shows a dashed slot until it exists.
+- [ ] **Author bio** → `authorsBio` in `site.config.mjs` (paste the back-of-book bio).
+- [ ] **Commissioned / generated art** → `assets/art/<folder>/<id>.png` per `docs/VISUAL-BRIEF.md`. Set `artCredit` in `site.config.mjs` to how you want it credited.

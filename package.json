@@ -11,7 +11,8 @@
     "build": "npm run validate && npm run trim && astro build",
     "preview": "astro preview",
     "qr": "node scripts/make-qr.mjs",
-    "linkcheck": "node scripts/linkcheck.mjs"
+    "linkcheck": "node scripts/linkcheck.mjs",
+    "brief": "node scripts/visual-brief.mjs"
   },
   "dependencies": {
     "astro": "^7.3.5",

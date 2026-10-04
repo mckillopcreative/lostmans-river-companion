@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import type { CardModel } from '@lib/data';
 import { sketchByFile } from '@lib/data';
-import { sketchImage } from '@lib/images';
+import { sketchImage, artImage, sectionFolder } from '@lib/images';
 import { sectionUrl } from '@lib/url';
 import ChapterPill from './ChapterPill.astro';
 import Silhouette from './Silhouette.astro';
@@ -14,16 +14,26 @@ interface Props {
   maxPills?: number;
 }
 const { card, current, maxPills = 4 } = Astro.props;
-const img = sketchImage(card.sketch);
-const alt = card.sketch ? sketchByFile.get(card.sketch)?.subject ?? card.title : '';
+// Linda's sketch first, then commissioned art (assets/art), then a placeholder.
+const sketch = sketchImage(card.sketch);
+const art = sketch ? null : artImage(sectionFolder[card.section]!, card.id);
+const img = sketch ?? art;
+const alt = sketch ? (sketchByFile.get(card.sketch!)?.subject ?? card.title) : art ? card.title : '';
 const pills = card.chapters.slice(0, maxPills);
 const more = card.chapters.length - pills.length;
 ---
 
 <li>
-  <a class="card" href={sectionUrl(card.section, card.id)}>
-    <div class:list={['card-media', { sketch: !!img }]}>
-      {img ? <Image src={img} alt={alt} width={400} sizes="(min-width: 520px) 240px, 45vw" loading="lazy" /> : <Silhouette kind={card.section} />}
+  <a class="card" href={sectionUrl(card.section, card.id)} style={card.tint ? `--tint:${card.tint}` : undefined}>
+    {card.tint && <span class="card-tint" aria-hidden="true" />}
+    <div class:list={['card-media', { sketch: !!sketch, art: !!art }]}>
+      {
+        img ? (
+          <Image src={img} alt={alt} width={400} sizes="(min-width: 520px) 240px, 45vw" loading="lazy" />
+        ) : (
+          <Silhouette kind={card.section} initials={card.initials} />
+        )
+      }
     </div>
     <div class="card-body">
       <span class="card-title">{card.title}</span>

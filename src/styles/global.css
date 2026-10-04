@@ -1,6 +1,8 @@
 /* ---------- Tokens (docs/DESIGN.md) ----------
    Paper is the default for everyone; night mode is opt-in via the header toggle
-   (data-theme="dark"), not the OS setting. The sketches are the brand. */
+   (data-theme="dark"), not the OS setting. The sketches are the brand.
+   Sky / seafoam / silhouette come from the book cover: a watercolor sky-blue wash,
+   a pale green horizon, and black silhouettes of the angler, the boat and the seaplane. */
 :root {
   --on-sunrise: #1f2a2e;
   --paper: #f6f1e7;
@@ -11,7 +13,12 @@
   --gulf: #2a7f8e;
   --sunrise: #e8873a;
   --oyster: #b8b2a6;
-  --water: #d6e6e8;
+  --water: #d6e9f0;
+  /* cover */
+  --sky: #6ab8e8;
+  --sky-pale: #d9eefb;
+  --seafoam: #cfeacb;
+  --silhouette: #0b1218;
   --shadow: 0 1px 2px rgb(31 42 46 / 0.08), 0 6px 18px -8px rgb(31 42 46 / 0.18);
 
   --font-mono: ui-monospace, 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
@@ -22,15 +29,19 @@
   color-scheme: light;
 }
 :root[data-theme='dark'] {
-  --paper: #121b22;
-  --paper-2: #1a2730;
+  --paper: #0f1a24;
+  --paper-2: #16252f;
   --ink: #e9e2d3;
   --ink-soft: #a9b2b5;
   --mangrove: #8fc1ad;
   --gulf: #5fb3c2;
   --sunrise: #f0a05c;
   --oyster: #4a5559;
-  --water: #16303a;
+  --water: #14303d;
+  --sky: #1f4a6b;
+  --sky-pale: #0d2233;
+  --seafoam: #1b3a3a;
+  --silhouette: #e9e2d3;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 18px -8px rgb(0 0 0 / 0.6);
   color-scheme: dark;
 }
@@ -273,6 +284,28 @@ blockquote cite {
   position: relative;
 }
 
+/* ---------- Watercolor wash (cover sky) ---------- */
+.sky {
+  background:
+    radial-gradient(120% 60% at 20% 100%, color-mix(in srgb, var(--seafoam) 85%, transparent) 0%, transparent 60%),
+    radial-gradient(80% 50% at 85% 10%, color-mix(in srgb, white 35%, transparent) 0%, transparent 60%),
+    linear-gradient(180deg, var(--sky-pale) 0%, var(--sky) 100%);
+  position: relative;
+}
+.sky::before {
+  /* watercolor grain */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.3 0 0 0 0 0.5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+}
+.sky > * {
+  position: relative;
+}
+
 /* ---------- Pills, buttons, cards ---------- */
 .pill {
   display: inline-flex;
@@ -348,11 +381,17 @@ a.pill:hover {
   height: 100%;
   box-shadow: var(--shadow);
   transition: transform 0.15s, border-color 0.15s;
+  position: relative;
 }
 .card:hover {
   border-color: var(--gulf);
   transform: translateY(-2px);
   color: inherit;
+}
+.card-tint {
+  /* species colour stripe (data/fish.json "color") */
+  height: 5px;
+  background: var(--tint, transparent);
 }
 .card-media {
   aspect-ratio: 4 / 3;
@@ -410,6 +449,11 @@ a.pill:hover {
   stroke-linecap: round;
   stroke-linejoin: round;
   opacity: 0.7;
+}
+/* generated / commissioned art (assets/art): already transparent, no blend needed */
+.art img {
+  mix-blend-mode: normal;
+  filter: none;
 }
 
 /* ---------- Definition list (field guide specs) ---------- */

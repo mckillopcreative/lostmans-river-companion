@@ -50,6 +50,8 @@ export interface Fish {
   habitat?: string;
   regulation_note?: string;
   conservation?: string;
+  /** species colour used as a tint stripe on cards (hex) */
+  color?: string;
   chapters: number[];
   sketch: string | null;
 }
@@ -165,6 +167,14 @@ export interface CardModel {
   hook: string;
   chapters: number[];
   sketch: string | null;
+  tint?: string;
+  initials?: string;
+}
+
+/** Crew monogram: the nickname in quotes if there is one, else the first word. */
+export function initialsFor(name: string): string {
+  const nick = /['‘’"“”]([A-Za-z]+)['‘’"“”]/.exec(name)?.[1] ?? /(([^)]+))/.exec(name)?.[1]?.split(" ").pop() ?? name.split(" ")[0];
+  return (nick ?? name).replace(/[^A-Za-z]/g, "").slice(0, 1).toUpperCase();
 }
 
 const clip = (s: string | undefined, n = 110) => {
@@ -178,11 +188,11 @@ export function toCard(section: Section, e: Fish | Character | Wildlife | Boat):
   switch (section) {
     case 'fish': {
       const f = e as Fish;
-      return { section, id: f.id, title: f.common, hook: clip(f.in_book), chapters: f.chapters, sketch: f.sketch };
+      return { section, id: f.id, title: f.common, hook: clip(f.in_book), chapters: f.chapters, sketch: f.sketch, tint: f.color };
     }
     case 'crew': {
       const c = e as Character;
-      return { section, id: c.id, title: c.name, hook: c.role, chapters: [c.first_chapter], sketch: c.sketch };
+      return { section, id: c.id, title: c.name, hook: c.role, chapters: [c.first_chapter], sketch: c.sketch, initials: initialsFor(c.name) };
     }
     case 'critters': {
       const w = e as Wildlife;

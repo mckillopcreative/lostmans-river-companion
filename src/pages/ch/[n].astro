@@ -1,11 +1,13 @@
 ---
 // QR landing pages. Route /ch/<n>/ is a print contract — never rename (SPEC.md §6).
+import { Image } from 'astro:assets';
 import Base from '@layouts/Base.astro';
 import Sketch from '@components/Sketch.astro';
 import EntityCard from '@components/EntityCard.astro';
 import ChapterPill from '@components/ChapterPill.astro';
 import PrevNext from '@components/PrevNext.astro';
 import MiniMap from '@components/MiniMap.astro';
+import Divider from '@components/Divider.astro';
 import {
   chapters,
   characterById,
@@ -17,9 +19,11 @@ import {
   glossaryByWord,
   quotes,
   todo,
+  routeByChapter,
   toCard,
   type Chapter,
 } from '@lib/data';
+import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 
 export function getStaticPaths() {
@@ -38,6 +42,9 @@ const words = chapter.word_of_day.map((w) => glossaryByWord.get(w)!);
 const chapterQuotes = quotes.filter((q) => q.chapter === n);
 const checked = todo.filter((t) => t.chapter_checked === n);
 const added = todo.filter((t) => t.chapter_added === n && t.chapter_checked !== n);
+// Chapters with a route lead with the chart: a reader scanning mid-chapter wants "where are we" first.
+const hasRoute = routeByChapter.has(n);
+const spot = artImage('chapters', `ch-${String(n).padStart(2, '0')}`);
 
 const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
   { label: 'Fish', cards: fishCards },
@@ -50,11 +57,33 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
 <Base title={`Chapter ${n} — ${chapter.title}`} description={chapter.summary} chapter={n} image={chapter.sketch ? `/assets/sketches/${chapter.sketch}` : undefined}>
   <article class="frame">
     <div class="wrap">
-      <header class="ch-head">
-        <p class="eyebrow">Chapter {n} of 23</p>
-        <h1>{chapter.title}</h1>
-        <p class="lede">{chapter.summary}</p>
+      <header class:list={['ch-head', { 'has-spot': !!spot }]}>
+        {spot && <Image class="spot art" src={spot} alt="" width={160} loading="eager" />}
+        <div>
+          <p class="eyebrow">Chapter {n} of 23</p>
+          <h1>{chapter.title}</h1>
+          <p class="lede">{chapter.summary}</p>
+        </div>
       </header>
+
+      {
+        hasRoute && placeItems.length > 0 && (
+          <section aria-labelledby="where">
+            <h2 id="where" class="h2-first">Where we are</h2>
+            <MiniMap chapter={n} placeIds={chapter.places} />
+            <ul class="places">
+              {placeItems.map((p) => (
+                <li>
+                  <a href={url(`/map/#${p.id}`)}>
+                    <strong>{p.name}</strong>
+                  </a>
+                  <span class="muted"> — {p.in_book}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
 
       {chapter.sketch && <Sketch file={chapter.sketch} chapter={n} priority />}
 
@@ -77,7 +106,7 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
       }
 
       {
-        placeItems.length > 0 && (
+        !hasRoute && placeItems.length > 0 && (
           <section aria-labelledby="where">
             <h2 id="where">Where we are</h2>
             <MiniMap chapter={n} placeIds={chapter.places} />
@@ -95,6 +124,8 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
         )
       }
 
+      {groups.length > 0 && <Divider kind="wave" />}
+
       {
         groups.map((g) => (
           <section aria-labelledby={`in-${g.label.toLowerCase()}`}>
@@ -111,6 +142,7 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
       {
         gearItems.length > 0 && (
           <section aria-labelledby="tackle">
+            <Divider kind="rule" />
             <h2 id="tackle">From the tackle box</h2>
             <dl class="tackle-list">
               {gearItems.map((g) => (
@@ -169,6 +201,30 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
 <style>
   .ch-head {
     margin-bottom: 1rem;
+  }
+  .ch-head.has-spot {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+  .spot {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    margin-top: 0.4rem;
+  }
+  @media (min-width: 720px) {
+    .ch-head.has-spot {
+      grid-template-columns: 110px 1fr;
+    }
+    .spot {
+      width: 110px;
+      height: 110px;
+    }
+  }
+  .h2-first {
+    margin-top: 0.5em;
   }
   .margin-notes {
     margin: 1.5rem 0;

@@ -17,7 +17,8 @@
       6,
       15
     ],
-    "sketch": "matt-holding-snook.png"
+    "sketch": "matt-holding-snook.png",
+    "color": "#b9b58f"
   },
   {
     "id": "tarpon",
@@ -38,7 +39,8 @@
       20,
       21
     ],
-    "sketch": "tarpon-leap-houseboat.png"
+    "sketch": "tarpon-leap-houseboat.png",
+    "color": "#aab8c2"
   },
   {
     "id": "redfish",
@@ -57,7 +59,8 @@
       8,
       16
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#b86b3a"
   },
   {
     "id": "trout",
@@ -76,7 +79,8 @@
       16,
       20
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#7f9a7a"
   },
   {
     "id": "snapper",
@@ -96,7 +100,8 @@
       14,
       20
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#8c6a4f"
   },
   {
     "id": "grouper",
@@ -116,7 +121,8 @@
       16,
       17
     ],
-    "sketch": "grouper.png"
+    "sketch": "grouper.png",
+    "color": "#7a6a52"
   },
   {
     "id": "black-drum",
@@ -130,7 +136,8 @@
       7,
       20
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#4d4f52"
   },
   {
     "id": "cobia",
@@ -143,7 +150,8 @@
     "chapters": [
       20
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#5a4b3c"
   },
   {
     "id": "yellowtail",
@@ -154,7 +162,8 @@
     "chapters": [
       2
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#e2bd4a"
   },
   {
     "id": "ladyfish",
@@ -165,7 +174,8 @@
     "chapters": [
       2
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#c3cbd0"
   },
   {
     "id": "flounder",
@@ -176,7 +186,8 @@
     "chapters": [
       2
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#9a8a6a"
   },
   {
     "id": "sheepshead",
@@ -187,7 +198,8 @@
     "chapters": [
       2
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#8a8a86"
   },
   {
     "id": "pufferfish",
@@ -198,7 +210,8 @@
     "chapters": [
       2
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#c9b98a"
   },
   {
     "id": "jack",
@@ -209,7 +222,8 @@
     "chapters": [
       4
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#6d8a5a"
   },
   {
     "id": "mullet",
@@ -223,7 +237,8 @@
       6,
       15
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#93a3ac"
   },
   {
     "id": "pinfish",
@@ -234,7 +249,8 @@
     "chapters": [
       4
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#c2bb6c"
   },
   {
     "id": "catfish",
@@ -245,7 +261,8 @@
     "chapters": [
       2
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#737a7c"
   },
   {
     "id": "bonefish",
@@ -256,7 +273,8 @@
     "chapters": [
       19
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#c9d2d6"
   },
   {
     "id": "amberjack",
@@ -266,7 +284,8 @@
     "chapters": [
       17
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#8a7a4a"
   },
   {
     "id": "brim",
@@ -276,7 +295,8 @@
     "chapters": [
       3
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#6a7a4a"
   },
   {
     "id": "lionfish",
@@ -287,7 +307,8 @@
     "chapters": [
       1
     ],
-    "sketch": null
+    "sketch": null,
+    "color": "#b5593a"
   },
   {
     "id": "mako-shark",
@@ -297,7 +318,8 @@
     "chapters": [
       8
     ],
-    "sketch": "shark-comer-key-beach.png"
+    "sketch": "shark-comer-key-beach.png",
+    "color": "#5b6c7a"
   },
   {
     "id": "hammerhead-shark",
@@ -307,6 +329,7 @@
     "chapters": [
       16
     ],
-    "sketch": "dolphin-vs-hammerhead.png"
+    "sketch": "dolphin-vs-hammerhead.png",
+    "color": "#687782"
   }
 ]

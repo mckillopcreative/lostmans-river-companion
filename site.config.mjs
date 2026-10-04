@@ -17,6 +17,10 @@ export default {
   tagline: 'An Everglades adventure novel by Linda & John McKillop',
   authors: 'Linda & John McKillop',
   artist: 'Linda McKillop',
+  /** Credit line under commissioned / generated art in assets/art (docs/VISUAL-BRIEF.md). */
+  artCredit: 'Illustration for the companion site',
+  /** About the authors. PLACEHOLDER: paste the bio from the back of the book (docs/OPEN-ITEMS.md). */
+  authorsBio: null,
 
   /** Amazon listing. */
   buyUrl: 'https://www.amazon.com/dp/B0BVJ4XR65',

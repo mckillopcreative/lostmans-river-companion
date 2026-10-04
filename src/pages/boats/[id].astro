@@ -21,7 +21,7 @@ const specs = [
 ---
 
 <Base title={b.name} description={b.in_book} image={b.sketch ? `/assets/sketches/${b.sketch}` : undefined}>
-  <EntityDetail section="boats" title={b.name} sketch={b.sketch} chapters={b.chapters} specs={specs} related={related} relatedLabel="Shares the water with">
+  <EntityDetail section="boats" id={b.id} title={b.name} sketch={b.sketch} chapters={b.chapters} specs={specs} related={related} relatedLabel="Shares the water with">
     <section>
       <h2>In the book</h2>
       <p>{b.in_book}</p>

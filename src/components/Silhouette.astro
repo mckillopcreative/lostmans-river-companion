@@ -1,59 +1,76 @@
 ---
-// Ink-line placeholder for entities that have no sketch yet. Deliberately plain:
-// the pelicans are drawn by Linda or not at all (DESIGN.md).
+// Ink-line placeholder for entities that have no sketch or art yet. Deliberately plain:
+// the pelicans are drawn by Linda or not at all (DESIGN.md). Crew get a hand-lettered
+// monogram instead of a generic figure.
 import type { Section } from '@lib/data';
 interface Props {
   kind: Section | 'place';
+  /** For crew: the initial(s) to letter inside the circle. */
+  initials?: string;
 }
-const { kind } = Astro.props;
+const { kind, initials } = Astro.props;
 ---
 
-<svg class="silhouette" viewBox="0 0 120 90" aria-hidden="true" focusable="false">
-  {
-    kind === 'fish' && (
-      <>
-        <path d="M14 45c14-18 36-26 60-22 10 2 18 8 26 16-8 8-16 14-26 16-24 4-46-4-60-22z" />
-        <path d="M100 39l14-12-4 18 4 18-14-12M44 27l6-12 10 10M46 63l6 12 10-10" />
-        <circle cx="86" cy="42" r="2" fill="currentColor" />
-        <path d="M50 46c10-2 20-2 30-2" stroke-dasharray="2 3" />
-      </>
-    )
+{
+  kind === 'crew' && initials ? (
+    <svg class="silhouette monogram" viewBox="0 0 120 90" aria-hidden="true" focusable="false">
+      <path d="M60 10 c 22 -2 36 14 36 34 c 0 22 -16 36 -36 36 c -21 0 -37 -15 -36 -36 c 1 -20 15 -33 36 -34 z" />
+      <path class="thin" d="M30 76 c 10 -3 18 4 26 2 c 8 -2 14 -5 22 -2 c 6 2 10 2 16 0" />
+      <text x="60" y="58" text-anchor="middle" class="hand mono-letter">
+        {initials}
+      </text>
+    </svg>
+  ) : (
+    <svg class="silhouette" viewBox="0 0 120 90" aria-hidden="true" focusable="false">
+      {kind === 'fish' && (
+        <>
+          <path d="M14 45c14-18 36-26 60-22 10 2 18 8 26 16-8 8-16 14-26 16-24 4-46-4-60-22z" />
+          <path d="M100 39l14-12-4 18 4 18-14-12M44 27l6-12 10 10M46 63l6 12 10-10" />
+          <circle cx="86" cy="42" r="2" fill="currentColor" />
+          <path d="M50 46c10-2 20-2 30-2" stroke-dasharray="2 3" />
+        </>
+      )}
+      {kind === 'crew' && (
+        <>
+          <path d="M36 32h48l-6-10H42z" />
+          <path d="M48 22c0-6 24-6 24 0" />
+          <path d="M46 34c0 14 6 24 14 24s14-10 14-24" />
+          <path d="M22 84c4-16 16-22 38-22s34 6 38 22" />
+        </>
+      )}
+      {kind === 'critters' && (
+        <>
+          <path d="M60 82V40" />
+          <path d="M60 60c-14 0-26-6-34-18 14-4 28 2 34 18zM60 48c4-16 18-24 34-22-2 14-14 24-34 22zM60 72c-10 2-22-2-30-10 10-4 22 0 30 10z" />
+          <path d="M40 82h40" />
+        </>
+      )}
+      {kind === 'boats' && (
+        <>
+          <path d="M10 56h100l-12 18H26z" />
+          <path d="M52 56V40h18v16" />
+          <path d="M70 44h10M60 40V30" />
+          <path d="M6 80c8-4 14 4 22 0s14 4 22 0 14 4 22 0 14 4 22 0 14 4 20 0" />
+        </>
+      )}
+      {kind === 'place' && (
+        <>
+          <path d="M60 80c-16-18-28-30-28-44a28 28 0 0 1 56 0c0 14-12 26-28 44z" />
+          <circle cx="60" cy="36" r="9" />
+        </>
+      )}
+    </svg>
+  )
+}
+
+<style>
+  .mono-letter {
+    font-size: 40px;
+    fill: var(--ink-soft);
+    stroke: none;
   }
-  {
-    kind === 'crew' && (
-      <>
-        <path d="M36 32h48l-6-10H42z" />
-        <path d="M48 22c0-6 24-6 24 0" />
-        <path d="M46 34c0 14 6 24 14 24s14-10 14-24" />
-        <path d="M22 84c4-16 16-22 38-22s34 6 38 22" />
-      </>
-    )
+  .thin {
+    stroke-width: 1;
+    opacity: 0.6;
   }
-  {
-    kind === 'critters' && (
-      <>
-        <path d="M60 82V40" />
-        <path d="M60 60c-14 0-26-6-34-18 14-4 28 2 34 18zM60 48c4-16 18-24 34-22-2 14-14 24-34 22zM60 72c-10 2-22-2-30-10 10-4 22 0 30 10z" />
-        <path d="M40 82h40" />
-      </>
-    )
-  }
-  {
-    kind === 'boats' && (
-      <>
-        <path d="M10 56h100l-12 18H26z" />
-        <path d="M52 56V40h18v16" />
-        <path d="M70 44h10M60 40V30" />
-        <path d="M6 80c8-4 14 4 22 0s14 4 22 0 14 4 22 0 14 4 22 0 14 4 20 0" />
-      </>
-    )
-  }
-  {
-    kind === 'place' && (
-      <>
-        <path d="M60 80c-16-18-28-30-28-44a28 28 0 0 1 56 0c0 14-12 26-28 44z" />
-        <circle cx="60" cy="36" r="9" />
-      </>
-    )
-  }
-</svg>
+</style>

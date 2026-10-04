@@ -1,0 +1,67 @@
+---
+// Hand-drawn ink dividers, echoing the lettering on Linda's chart.
+// kind: "wave" (water line with a wobble), "rule" (notebook rule with a hook), "mullet" (a jumping bait fish)
+interface Props {
+  kind?: 'wave' | 'rule' | 'mullet';
+  class?: string;
+}
+const { kind = 'wave', class: cls } = Astro.props;
+---
+
+<div class:list={['divider', `divider-${kind}`, cls]} aria-hidden="true">
+  {
+    kind === 'wave' && (
+      <svg viewBox="0 0 600 24" preserveAspectRatio="none">
+        <path d="M2 14 C 30 6, 50 22, 80 13 S 130 4, 160 14 S 210 22, 240 12 S 290 5, 320 14 S 370 22, 400 12 S 450 5, 480 14 S 530 22, 560 12 S 590 8, 598 13" />
+        <path class="thin" d="M40 20 C 60 16, 70 24, 95 19 M300 20 C 320 16, 330 24, 355 19 M500 21 C 520 17, 530 25, 555 20" />
+      </svg>
+    )
+  }
+  {
+    kind === 'rule' && (
+      <svg viewBox="0 0 600 24" preserveAspectRatio="none">
+        <path d="M2 13 C 120 11, 240 15, 360 12 S 540 13, 586 12" />
+        <path class="hook" vector-effect="non-scaling-stroke" d="M586 12 c 6 0 9 4 9 8 c 0 3 -3 5 -6 4" />
+      </svg>
+    )
+  }
+  {
+    kind === 'mullet' && (
+      <svg viewBox="0 0 600 40">
+        <path d="M2 30 C 60 22, 120 36, 180 28 S 300 22, 360 30 S 480 36, 540 28 S 580 26, 598 29" />
+        <g transform="translate(290 6)">
+          <path d="M0 14 c 8 -10 22 -14 34 -10 c 5 2 9 5 12 9 c -4 4 -8 7 -13 8 c -12 3 -25 -1 -33 -7 z" />
+          <path d="M46 13 l 10 -7 -3 10 3 9 -10 -7" />
+          <circle cx="30" cy="11" r="1.3" fill="currentColor" />
+          <path d="M-6 26 c 6 -3 10 2 16 -1" class="thin" />
+        </g>
+      </svg>
+    )
+  }
+</div>
+
+<style>
+  .divider {
+    color: var(--ink-soft);
+    opacity: 0.7;
+    margin: 2rem auto;
+    max-width: 600px;
+    padding-inline: var(--gutter);
+  }
+  .divider svg {
+    width: 100%;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .divider-mullet svg {
+    height: 40px;
+  }
+  .thin {
+    stroke-width: 1;
+    opacity: 0.6;
+  }
+</style>

@@ -19,7 +19,7 @@ const specs = [{ k: 'Scientific', v: w.scientific }];
 ---
 
 <Base title={w.name} description={w.in_book ?? w.name} image={w.sketch ? `/assets/sketches/${w.sketch}` : undefined}>
-  <EntityDetail section="critters" title={w.name} sketch={w.sketch} chapters={w.chapters} specs={specs} related={related} relatedLabel="Found nearby">
+  <EntityDetail section="critters" id={w.id} title={w.name} sketch={w.sketch} chapters={w.chapters} specs={specs} related={related} relatedLabel="Found nearby">
     {
       w.in_book && (
         <section>
