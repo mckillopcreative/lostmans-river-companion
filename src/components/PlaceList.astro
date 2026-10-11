@@ -1,0 +1,70 @@
+---
+// The places in a chapter, each with its painted scene as a thumbnail, linking to the chart.
+import { Image } from 'astro:assets';
+import type { Place } from '@lib/data';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+
+interface Props {
+  places: Place[];
+}
+const { places } = Astro.props;
+---
+
+<ul class="places">
+  {
+    places.map((p) => {
+      const img = artImage('places', p.id);
+      return (
+        <li>
+          <a class="place-thumb art" href={url(`/places/#${p.id}`)} aria-label={`${p.name}, painted`}>
+            {img && <Image src={img} alt="" width={200} height={133} sizes="100px" loading="lazy" />}
+          </a>
+          <div>
+            <a href={url(`/map/#${p.id}`)}>
+              <strong>{p.name}</strong>
+            </a>
+            <span class="muted"> — {p.in_book}</span>
+          </div>
+        </li>
+      );
+    })
+  }
+</ul>
+<p class="small all-places">
+  <a href={url('/places/')}>Every place in the book, painted →</a>
+</p>
+
+<style>
+  .places {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    font-size: 0.95rem;
+  }
+  .places li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.45rem 0;
+    border-bottom: 1px dashed color-mix(in srgb, var(--oyster) 60%, transparent);
+  }
+  .place-thumb {
+    flex: none;
+    width: 100px;
+    border-radius: 4px;
+    overflow: hidden;
+    display: block;
+  }
+  .place-thumb img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .place-thumb:empty {
+    display: none;
+  }
+  .all-places {
+    margin-top: 0.5rem;
+  }
+</style>

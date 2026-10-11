@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import Base from '@layouts/Base.astro';
 import SignupForm from '@components/SignupForm.astro';
 import Divider from '@components/Divider.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
 import { photoImages, coverImage } from '@lib/images';
 import { url } from '@lib/url';
 import site from '../../site.config.mjs';
@@ -16,9 +17,12 @@ const cover = coverImage();
 <Base title="About the book" description={site.tagline}>
   <article class="frame">
     <div class="wrap">
-      <header>
-        <p class="eyebrow">About</p>
-        <h1>The book, the people, the place</h1>
+      <header class="ab-head">
+        <SectionEmblem name="about" size={100} />
+        <div>
+          <p class="eyebrow">About</p>
+          <h1>The book, the people, the place</h1>
+        </div>
       </header>
 
       <section class="book-row">
@@ -129,6 +133,14 @@ const cover = coverImage();
 </Base>
 
 <style>
+  .ab-head {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .ab-head h1 {
+    margin-bottom: 0;
+  }
   .book-row {
     display: grid;
     gap: 1.5rem;

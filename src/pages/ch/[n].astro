@@ -25,6 +25,7 @@ import {
 } from '@lib/data';
 import { artImage } from '@lib/images';
 import { url } from '@lib/url';
+import PlaceList from '@components/PlaceList.astro';
 
 export function getStaticPaths() {
   return chapters.map((c) => ({ params: { n: String(c.n) }, props: { chapter: c } }));
@@ -54,7 +55,7 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
 ].filter((g) => g.cards.length);
 ---
 
-<Base title={`Chapter ${n} — ${chapter.title}`} description={chapter.summary} chapter={n} image={chapter.sketch ? `/assets/sketches/${chapter.sketch}` : undefined}>
+<Base title={`Chapter ${n} — ${chapter.title}`} description={chapter.summary} chapter={n}` : undefined}>
   <article class="frame">
     <div class="wrap">
       <header class:list={['ch-head', { 'has-spot': !!spot }]}>
@@ -71,16 +72,7 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
           <section aria-labelledby="where">
             <h2 id="where" class="h2-first">Where we are</h2>
             <MiniMap chapter={n} placeIds={chapter.places} />
-            <ul class="places">
-              {placeItems.map((p) => (
-                <li>
-                  <a href={url(`/map/#${p.id}`)}>
-                    <strong>{p.name}</strong>
-                  </a>
-                  <span class="muted"> — {p.in_book}</span>
-                </li>
-              ))}
-            </ul>
+            <PlaceList places={placeItems} />
           </section>
         )
       }
@@ -110,16 +102,7 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
           <section aria-labelledby="where">
             <h2 id="where">Where we are</h2>
             <MiniMap chapter={n} placeIds={chapter.places} />
-            <ul class="places">
-              {placeItems.map((p) => (
-                <li>
-                  <a href={url(`/map/#${p.id}`)}>
-                    <strong>{p.name}</strong>
-                  </a>
-                  <span class="muted"> — {p.in_book}</span>
-                </li>
-              ))}
-            </ul>
+            <PlaceList places={placeItems} />
           </section>
         )
       }

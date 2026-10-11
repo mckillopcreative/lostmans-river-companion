@@ -14,11 +14,12 @@ interface Props {
   maxPills?: number;
 }
 const { card, current, maxPills = 4 } = Astro.props;
-// Linda's sketch first, then commissioned art (assets/art), then a placeholder.
-const sketch = sketchImage(card.sketch);
-const art = sketch ? null : artImage(sectionFolder[card.section]!, card.id);
-const img = sketch ?? art;
-const alt = sketch ? (sketchByFile.get(card.sketch!)?.subject ?? card.title) : art ? card.title : '';
+// Cards use the field-guide art when it exists so a grid reads as one set; Linda's
+// sketches (scenes, not plates) lead on the detail pages instead.
+const art = artImage(sectionFolder[card.section]!, card.id);
+const sketch = art ? null : sketchImage(card.sketch);
+const img = art ?? sketch;
+const alt = art ? card.title : sketch ? (sketchByFile.get(card.sketch!)?.subject ?? card.title) : '';
 const pills = card.chapters.slice(0, maxPills);
 const more = card.chapters.length - pills.length;
 ---
@@ -29,7 +30,7 @@ const more = card.chapters.length - pills.length;
     <div class:list={['card-media', { sketch: !!sketch, art: !!art }]}>
       {
         img ? (
-          <Image src={img} alt={alt} width={400} sizes="(min-width: 520px) 240px, 45vw" loading="lazy" />
+          <Image src={img} alt={alt} width={480} height={art ? 480 : undefined} sizes="(min-width: 520px) 240px, 45vw" loading="lazy" />
         ) : (
           <Silhouette kind={card.section} initials={card.initials} />
         )

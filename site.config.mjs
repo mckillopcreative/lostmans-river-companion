@@ -18,7 +18,7 @@ export default {
   authors: 'Linda & John McKillop',
   artist: 'Linda McKillop',
   /** Credit line under commissioned / generated art in assets/art (docs/VISUAL-BRIEF.md). */
-  artCredit: 'Illustration for the companion site',
+  artCredit: 'Companion-site illustration (AI-generated from the author’s brief)',
   /** About the authors. PLACEHOLDER: paste the bio from the back of the book (docs/OPEN-ITEMS.md). */
   authorsBio: null,
 

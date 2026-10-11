@@ -12,6 +12,7 @@ import todoJson from '@data/todo.json';
 import glossaryJson from '@data/glossary.json';
 import recipesJson from '@data/recipes.json';
 import sketchesJson from '@data/sketches.json';
+import knotsJson from '@data/knots.json';
 
 export interface Chapter {
   n: number;
@@ -123,6 +124,13 @@ export interface Recipe {
   chapter: number;
   note: string;
 }
+export interface Knot {
+  id: string;
+  name: string;
+  use: string;
+  steps: string[];
+  reference: string;
+}
 export interface Sketch {
   file: string;
   subject: string;
@@ -144,6 +152,7 @@ export const todo = todoJson as Todo[];
 export const glossary = glossaryJson as GlossaryWord[];
 export const recipes = recipesJson as Recipe[];
 export const sketches = sketchesJson as Sketch[];
+export const knots = knotsJson as Knot[];
 
 const byId = <T extends { id: string }>(list: T[]) => new Map(list.map((e) => [e.id, e]));
 export const characterById = byId(characters);

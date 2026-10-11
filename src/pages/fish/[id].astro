@@ -28,7 +28,7 @@ const specs = [
 const mentionsTackle = gear.filter((g) => (f.how_matt_fishes_it ?? '').toLowerCase().includes(g.term.toLowerCase().split(' ')[0]!)).slice(0, 3);
 ---
 
-<Base title={f.common} description={f.in_book} image={f.sketch ? `/assets/sketches/${f.sketch}` : undefined}>
+<Base title={f.common} description={f.in_book}` : undefined}>
   <EntityDetail section="fish" id={f.id} tint={f.color} title={f.common} subtitle={f.scientific} sketch={f.sketch} chapters={f.chapters} specs={specs} related={related} relatedLabel="Swims with">
     <section>
       <h2>In the book</h2>

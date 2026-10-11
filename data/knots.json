@@ -1,0 +1,62 @@
+[
+  {
+    "id": "improved-clinch",
+    "name": "Improved clinch knot",
+    "use": "The everyday hook-to-line knot. Matt's first knot.",
+    "steps": [
+      "Pass the tag end through the hook eye.",
+      "Make five turns around the standing line.",
+      "Bring the tag back through the small loop by the eye, then through the larger loop you just made.",
+      "Wet it and pull the turns snug against the eye."
+    ],
+    "reference": "https://www.animatedknots.com/improved-clinch-knot"
+  },
+  {
+    "id": "loop-knot",
+    "name": "Non-slip loop knot",
+    "use": "Leaves an open loop at the lure eye so a Bagley Mullet or a spoon can swing freely.",
+    "steps": [
+      "Tie a loose overhand knot in the line, pass the tag through the lure eye and back through the overhand.",
+      "Wrap the tag around the standing line; lighter line takes more wraps.",
+      "Bring the tag back through the overhand opening on the same side it left.",
+      "Wet it and tighten, keeping the loop open at the eye."
+    ],
+    "reference": "https://www.animatedknots.com/non-slip-mono-knot"
+  },
+  {
+    "id": "uni-knot",
+    "name": "Uni knot",
+    "use": "Line to swivel. Two of them back to back join line to leader.",
+    "steps": [
+      "Pass the line through the swivel eye and double it back.",
+      "Form a loop and start wrapping the tag around both strands inside it.",
+      "Make five turns inside the loop.",
+      "Wet it, tighten the knot, then slide it down to the eye."
+    ],
+    "reference": "https://www.animatedknots.com/uni-knot"
+  },
+  {
+    "id": "palomar",
+    "name": "Palomar knot",
+    "use": "The strongest simple hook knot. Good for the forged hooks on the boat poles.",
+    "steps": [
+      "Pass a doubled loop of line through the hook eye.",
+      "Tie a loose overhand knot with the doubled line.",
+      "Pass the whole hook through the loop.",
+      "Wet it and draw everything down evenly to the eye."
+    ],
+    "reference": "https://www.animatedknots.com/palomar-knot"
+  },
+  {
+    "id": "albright",
+    "name": "Albright knot",
+    "use": "Main line to a heavier leader, the way Matt rigs the thirty-pound leader for the big snook.",
+    "steps": [
+      "Fold the heavy leader and pass the lighter line through the fold.",
+      "Wrap the light line back over itself and both strands of the fold.",
+      "After ten wraps, pass the tag back through the fold beside where it came in.",
+      "Wet it and tighten the wraps carefully."
+    ],
+    "reference": "https://www.animatedknots.com/albright-knot"
+  }
+]

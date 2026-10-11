@@ -1,8 +1,12 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '@layouts/Base.astro';
 import RigDiagram from '@components/RigDiagram.astro';
 import ChapterPill from '@components/ChapterPill.astro';
-import { gear, gearGroups, chaptersForGear, type GearGroup } from '@lib/data';
+import SectionEmblem from '@components/SectionEmblem.astro';
+import Divider from '@components/Divider.astro';
+import { gear, gearGroups, knots, chaptersForGear, type GearGroup } from '@lib/data';
+import { artImage } from '@lib/images';
 
 const order: GearGroup[] = ['lures-bait', 'line-rigging', 'techniques', 'reading-the-water', 'boat-safety'];
 const grouped = order.map((g) => ({ key: g, label: gearGroups[g], items: gear.filter((x) => x.group === g) }));
@@ -11,14 +15,19 @@ const grouped = order.map((g) => ({ key: g, label: gearGroups[g], items: gear.fi
 <Base title="Tackle Box" description="Every lure, knot, rig and trick Matt learns, explained the way Dan would.">
   <article class="frame">
     <div class="wrap">
-      <header>
-        <p class="eyebrow">The Guidebook</p>
-        <h1>Tackle Box</h1>
-        <p class="lede">Everything Dan hands Matt over the summer, from the first swivel to the gaff. If a word in the book stumped you, it is probably here.</p>
+      <header class="tb-head">
+        <SectionEmblem name="tackle" size={110} />
+        <div>
+          <p class="eyebrow">The Guidebook</p>
+          <h1>Tackle Box</h1>
+          <p class="lede">Everything Dan hands Matt over the summer, from the first swivel to the gaff. If a word in the book stumped you, it is probably here.</p>
+        </div>
       </header>
 
       <nav class="jump cluster small" aria-label="Sections">
         {grouped.map((g) => <a class="pill" href={`#${g.key}`}>{g.label}</a>)}
+        <a class="pill" href="#knots">Knots</a>
+        <a class="pill" href="#tide">Tides</a>
       </nav>
 
       <h2 id="rig">The basic rig</h2>
@@ -32,17 +41,25 @@ const grouped = order.map((g) => ({ key: g, label: gearGroups[g], items: gear.fi
             <dl class="terms">
               {g.items.map((t) => {
                 const chs = chaptersForGear(t.id);
+                const img = artImage('tackle', t.id);
                 return (
-                  <div id={t.id} class="term">
-                    <dt>
-                      {t.term}
-                      <span class="term-pills">
-                        {(chs.length ? chs : [t.chapter]).slice(0, 4).map((n) => (
-                          <ChapterPill n={n} />
-                        ))}
-                      </span>
-                    </dt>
-                    <dd>{t.definition}</dd>
+                  <div id={t.id} class:list={['term', { 'has-art': !!img }]}>
+                    {img && (
+                      <div class="term-art art">
+                        <Image src={img} alt={t.term} width={240} height={240} sizes="120px" loading="lazy" />
+                      </div>
+                    )}
+                    <div class="term-text">
+                      <dt>
+                        {t.term}
+                        <span class="term-pills">
+                          {(chs.length ? chs : [t.chapter]).slice(0, 4).map((n) => (
+                            <ChapterPill n={n} />
+                          ))}
+                        </span>
+                      </dt>
+                      <dd>{t.definition}</dd>
+                    </div>
                   </div>
                 );
               })}
@@ -51,6 +68,44 @@ const grouped = order.map((g) => ({ key: g, label: gearGroups[g], items: gear.fi
         ))
       }
 
+      <Divider kind="rule" />
+
+      <section id="knots" aria-labelledby="knots-h">
+        <h2 id="knots-h">Five knots worth knowing</h2>
+        <p>
+          The book never spells out which knots Dan ties, so these are the five every Everglades guide would hand a new mate. The drawings are first drafts: follow the written steps and the linked demonstrations, and have someone who ties them check your work before you trust a fish to one.
+        </p>
+        <ol class="knots">
+          {
+            knots.map((k) => {
+              const img = artImage('tackle', `knot-${k.id}`);
+              return (
+                <li id={`knot-${k.id}`} class="knot">
+                  <h3>{k.name}</h3>
+                  <p class="small muted">{k.use}</p>
+                  {img && (
+                    <figure class="knot-art art">
+                      <Image src={img} alt={`${k.name}, drawn in four stages`} width={900} sizes="(min-width: 720px) 680px, 94vw" loading="lazy" />
+                      <figcaption class="mono">Draft diagram, four stages left to right — check against the demonstration before relying on it.</figcaption>
+                    </figure>
+                  )}
+                  <ol class="steps">
+                    {k.steps.map((s) => (
+                      <li>{s}</li>
+                    ))}
+                  </ol>
+                  <p class="small">
+                    <a href={k.reference} rel="noopener">Watch it tied step by step →</a>
+                  </p>
+                </li>
+              );
+            })
+          }
+        </ol>
+      </section>
+
+      <Divider kind="wave" />
+
       <section id="tide" aria-labelledby="tide-h">
         <h2 id="tide-h">Reading the tide</h2>
         <p>
@@ -58,9 +113,6 @@ const grouped = order.map((g) => ({ key: g, label: gearGroups[g], items: gear.fi
         </p>
         <figure class="tide">
           <svg viewBox="0 0 600 200" role="img" aria-label="A tide curve over one day, with the hour either side of each high tide shaded as the time to fish.">
-            <defs>
-              <clipPath id="tide-clip"><rect x="0" y="0" width="600" height="200" /></clipPath>
-            </defs>
             <g class="fish-window">
               <rect x="110" y="20" width="80" height="160" />
               <rect x="410" y="20" width="80" height="160" />
@@ -83,8 +135,16 @@ const grouped = order.map((g) => ({ key: g, label: gearGroups[g], items: gear.fi
 </Base>
 
 <style>
+  .tb-head {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .tb-head .lede {
+    margin-bottom: 0;
+  }
   .jump {
-    margin: 0.5rem 0 1rem;
+    margin: 1rem 0;
   }
   .terms {
     margin: 0.5rem 0 0;
@@ -93,12 +153,40 @@ const grouped = order.map((g) => ({ key: g, label: gearGroups[g], items: gear.fi
     padding: 0.7rem 0;
     border-bottom: 1px dashed color-mix(in srgb, var(--oyster) 60%, transparent);
     scroll-margin-top: 80px;
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
   }
   .term:target {
     background: color-mix(in srgb, var(--sunrise) 12%, transparent);
     margin-inline: -0.5rem;
     padding-inline: 0.5rem;
     border-radius: var(--radius);
+  }
+  .term-art {
+    flex: none;
+    width: 88px;
+    height: 88px;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    display: grid;
+    place-items: center;
+    padding: 4px;
+  }
+  .term-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  @media (min-width: 720px) {
+    .term-art {
+      width: 120px;
+      height: 120px;
+    }
+  }
+  .term-text {
+    flex: 1;
+    min-width: 0;
   }
   .term dt {
     font-weight: 600;
@@ -116,6 +204,43 @@ const grouped = order.map((g) => ({ key: g, label: gearGroups[g], items: gear.fi
     margin: 0.2rem 0 0;
     color: var(--ink-soft);
     font-size: 0.95rem;
+  }
+  .knots {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: grid;
+    gap: 2rem;
+  }
+  .knot {
+    scroll-margin-top: 80px;
+  }
+  .knot h3 {
+    margin: 0 0 0.2rem;
+  }
+  .knot-art {
+    margin: 0.75rem 0;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 0.75rem;
+  }
+  .knot-art img {
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+    object-fit: contain;
+  }
+  .knot-art figcaption {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    margin-top: 0.4rem;
+  }
+  .steps {
+    margin: 0.5rem 0;
+    padding-left: 1.4em;
+  }
+  .steps li {
+    padding: 0.15rem 0;
   }
   .tide {
     margin: 1rem 0;

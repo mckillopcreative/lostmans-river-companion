@@ -1,18 +1,22 @@
 ---
 import Base from '@layouts/Base.astro';
 import ChapterPill from '@components/ChapterPill.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
 import { todo } from '@lib/data';
 ---
 
 <Base title="Matt’s List" description="Matt’s summer to-do list from the Guidebook, and a blank page for yours.">
   <article class="frame">
     <div class="wrap">
-      <header>
-        <p class="eyebrow">The Guidebook</p>
-        <h1>Matt’s List</h1>
-        <p class="lede">
-          The to-do list Matt keeps in the back of his dad’s Guidebook. Tick the ones you have done too. Your ticks stay on this phone and nowhere else.
-        </p>
+      <header class="list-head">
+        <SectionEmblem name="list" size={100} />
+        <div>
+          <p class="eyebrow">The Guidebook</p>
+          <h1>Matt’s List</h1>
+          <p class="lede">
+            The to-do list Matt keeps in the back of his dad’s Guidebook. Tick the ones you have done too. Your ticks stay on this phone and nowhere else.
+          </p>
+        </div>
       </header>
 
       <ol class="todo" id="matts-list">
@@ -138,6 +142,14 @@ import { todo } from '@lib/data';
 </Base>
 
 <style>
+  .list-head {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .list-head .lede {
+    margin-bottom: 0;
+  }
   .todo {
     list-style: none;
     padding: 0;

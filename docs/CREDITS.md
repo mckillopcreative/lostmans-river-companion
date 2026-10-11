@@ -7,6 +7,11 @@ Every image and third-party resource used on the site, with its license. Keep th
 |---|---|---|---|
 | assets/sketches/*.png (11 files) | See data/sketches.json | Linda McKillop | © Linda McKillop, used with permission |
 
+## Field-guide art (assets/art, 183 files)
+| Folder | Count | Source | License / notes |
+|---|---|---|---|
+| fish, crew, critters, boats, tackle, places, chapters, emblems | 183 | Generated 2026-10 with OpenAI's image tool from docs/VISUAL-BRIEF.md; 14 corrections applied by the author | Author-directed generated work, separate from Linda McKillop's originals. Stored as 1600 px WebP web masters (scripts/import-art.mjs); the 2048 px PNG originals stay in the author's pack outside the repo. Knot diagrams are drafts pending an angler's review. `grouper` depicts a goliath; `mako-shark` is drawn as a bull shark per the brief. |
+
 ## Photographs
 | File | Subject | Source | License |
 |---|---|---|---|

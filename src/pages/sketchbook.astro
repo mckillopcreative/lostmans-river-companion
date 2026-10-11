@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import Base from '@layouts/Base.astro';
 import Lightbox from '@components/Lightbox.astro';
 import ChapterPill from '@components/ChapterPill.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
 import { sketches, chapterByN } from '@lib/data';
 import { sketchImage } from '@lib/images';
 import { url } from '@lib/url';
@@ -14,11 +15,14 @@ const ordered = [...sketches].sort((a, b) => a.chapters[0]! - b.chapters[0]!);
 <Base title="Sketchbook" description="Every pen-and-ink sketch from the book, drawn by Linda McKillop, large enough to see the lines.">
   <div class="wrap-wide section">
     <header class="sb-head">
-      <p class="eyebrow">The margins</p>
-      <h1>Sketchbook</h1>
-      <p class="lede">
-        Eleven drawings by {site.artist}, the ones Matt would have made in the back of the Guidebook if he could draw this well. Tap any sketch to see it full size.
-      </p>
+      <SectionEmblem name="sketchbook" size={100} />
+      <div>
+        <p class="eyebrow">The margins</p>
+        <h1>Sketchbook</h1>
+        <p class="lede">
+          Eleven drawings by {site.artist}, the ones Matt would have made in the back of the Guidebook if he could draw this well. Tap any sketch to see it full size.
+        </p>
+      </div>
     </header>
 
     <ul class="sb-grid">
@@ -63,6 +67,12 @@ const ordered = [...sketches].sort((a, b) => a.chapters[0]! - b.chapters[0]!);
 <style>
   .sb-head {
     max-width: var(--measure);
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .sb-head .lede {
+    margin-bottom: 0;
   }
   .sb-grid {
     list-style: none;

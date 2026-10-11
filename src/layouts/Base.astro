@@ -3,8 +3,11 @@ import { Font } from 'astro:assets';
 import '../styles/global.css';
 import site from '../../site.config.mjs';
 import { url } from '@lib/url';
+import { Image } from 'astro:assets';
 import CompassRose from '@components/CompassRose.astro';
 import Divider from '@components/Divider.astro';
+import { artImage } from '@lib/images';
+const siteMark = artImage('emblems', 'site-mark');
 
 interface Props {
   title: string;
@@ -19,7 +22,8 @@ interface Props {
 const { title, description = site.tagline, chapter, image, bleed = false } = Astro.props;
 const fullTitle = title === site.title ? title : `${title} · ${site.shortTitle}`;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
-const ogImage = image ? new URL(url(image), Astro.site).toString() : null;
+// Every page gets a share card; pages with a sketch pass their own.
+const ogImage = new URL(url(image ?? '/social-share.jpg'), Astro.site).toString();
 
 const nav = [
   { href: '/map/', label: 'The Chart' },
@@ -44,15 +48,17 @@ const isActive = (href: string) => here.startsWith(url(href));
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="icon" href={url('/favicon-64.png')} type="image/png" sizes="64x64" />
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
     <meta name="theme-color" content="#f6f1e7" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={site.title} />
-    {ogImage && <meta property="og:image" content={ogImage} />}
-    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
     <Font cssVariable="--font-serif" preload />
     <Font cssVariable="--font-hand" />
     <script is:inline>
@@ -84,6 +90,7 @@ const isActive = (href: string) => here.startsWith(url(href));
     <header class="site-header">
       <div class="wrap-wide bar">
         <a class="wordmark" href={url('/')}>
+          {siteMark && <Image class="wm-mark" src={siteMark} alt="" width={64} height={64} loading="eager" />}
           <span class="wm-title">Lostman’s River</span>
           <span class="wm-sub hand">a Guidebook</span>
         </a>
@@ -210,6 +217,15 @@ const isActive = (href: string) => here.startsWith(url(href));
     text-decoration: none;
     color: var(--mangrove);
     white-space: nowrap;
+  }
+  .wm-mark {
+    width: 32px;
+    height: 32px;
+    align-self: center;
+    margin-right: 0.15rem;
+  }
+  :global(:root[data-theme='dark']) .wm-mark {
+    filter: invert(1) hue-rotate(180deg);
   }
   .wm-title {
     font-weight: 700;

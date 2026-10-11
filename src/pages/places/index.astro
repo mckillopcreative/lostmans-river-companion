@@ -1,0 +1,135 @@
+---
+// Every place in the book as a painted scene. Reached from the chart and chapter pages, not the main nav.
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import ChapterPill from '@components/ChapterPill.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
+import { places, chaptersForPlace } from '@lib/data';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../../site.config.mjs';
+
+const fictional = new Set(['dans-cottage', 'docs-house', 'south-point', 'anglers-motel-dock', 'port-of-the-everglades', 'backcountry']);
+const groups = [
+  { label: 'Chokoloskee and Everglades City', ids: ['chokoloskee', 'chokoloskee-marina', 'chokoloskee-bay', 'chokoloskee-causeway', 'dans-cottage', 'south-point', 'anglers-motel-dock', 'docs-house', 'everglades-city', 'everglades-marina', 'barron-river'] },
+  { label: 'The islands and passes', ids: ['lopez-river', 'rabbit-key-pass', 'sandfly-pass', 'comer-key', 'indian-key', 'pavilion-key', 'little-pavilion-key', 'gulf-of-mexico'] },
+  { label: 'Lostman’s River and beyond', ids: ['lostmans-river', 'crooked-creek', 'backcountry', 'shark-river', 'port-of-the-everglades'] },
+  { label: 'The way in and the way home', ids: ['naples-airport', 'naples', 'alligator-alley', 'fort-lauderdale', 'key-largo'] },
+];
+const byId = new Map(places.map((p) => [p.id, p]));
+---
+
+<Base title="Places" description="Every place in the book, painted, with what happened there.">
+  <div class="wrap-wide section">
+    <header class="pl-head">
+      <SectionEmblem name="chart" size={110} />
+      <div>
+        <p class="eyebrow">The Guidebook</p>
+        <h1>Places</h1>
+        <p class="lede">Twenty-nine places from the story, the way they look in a guide’s memory. Tap any of them to find it on <a href={url('/map/')}>the chart</a>.</p>
+      </div>
+    </header>
+
+    {
+      groups.map((g) => (
+        <section>
+          <h2 class="group-h">{g.label}</h2>
+          <ul class="scenes">
+            {g.ids.map((id) => {
+              const p = byId.get(id)!;
+              const img = artImage('places', id);
+              const chs = chaptersForPlace(id);
+              return (
+                <li class="scene" id={id}>
+                  <a class="scene-art art" href={url(`/map/#${id}`)} aria-label={`${p.name} on the chart`}>
+                    {img && <Image src={img} alt={p.name} width={720} sizes="(min-width: 900px) 420px, 94vw" loading="lazy" />}
+                  </a>
+                  <div class="scene-body">
+                    <h3>
+                      {p.name}
+                      {fictional.has(id) && <span class="pill fict">fictional</span>}
+                    </h3>
+                    <p class="small">{p.in_book}</p>
+                    <p class="cluster">
+                      {chs.map((n) => (
+                        <ChapterPill n={n} />
+                      ))}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))
+    }
+    <p class="note small">
+      These are illustrations inspired by the book, not surveyed views. Real places are marked on the chart as closely as the author could place them; the ones marked fictional exist only in the story. {site.artCredit}.
+    </p>
+  </div>
+</Base>
+
+<style>
+  .pl-head {
+    max-width: var(--measure);
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .pl-head .lede {
+    margin-bottom: 0;
+  }
+  .group-h {
+    font-size: 1.3rem;
+    margin-top: 2rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--oyster);
+  }
+  .scenes {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .scenes {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1000px) {
+    .scenes {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .scene {
+    scroll-margin-top: 80px;
+  }
+  .scene-art {
+    display: block;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .scene-art img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.2s;
+  }
+  .scene-art:hover img {
+    transform: scale(1.02);
+  }
+  .scene-body h3 {
+    margin: 0.6rem 0 0.2rem;
+    font-size: 1.1rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .fict {
+    font-size: 0.65rem;
+  }
+  .scene-body p {
+    margin-bottom: 0.4rem;
+  }
+</style>

@@ -1,6 +1,7 @@
 ---
 // Shared index page body for Fish / Crew / Critters / Boats.
 import EntityCard from './EntityCard.astro';
+import SectionEmblem from './SectionEmblem.astro';
 import type { CardModel, Section } from '@lib/data';
 import { sectionMeta } from '@lib/data';
 
@@ -20,9 +21,12 @@ const rest = cards.filter((c) => !used.has(c.id));
 
 <div class="wrap-wide section">
   <header class="idx-head">
-    <p class="eyebrow">The Guidebook</p>
-    <h1>{meta.label}</h1>
-    <p class="lede">{meta.blurb}</p>
+    <SectionEmblem name={section} size={110} />
+    <div>
+      <p class="eyebrow">The Guidebook</p>
+      <h1>{meta.label}</h1>
+      <p class="lede">{meta.blurb}</p>
+    </div>
   </header>
   {
     grouped.length ? (
@@ -61,6 +65,12 @@ const rest = cards.filter((c) => !used.has(c.id));
 <style>
   .idx-head {
     max-width: var(--measure);
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .idx-head .lede {
+    margin-bottom: 0;
   }
   .group-h {
     font-size: 1.3rem;

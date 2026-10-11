@@ -4,12 +4,21 @@ import Base from '@layouts/Base.astro';
 import SignupForm from '@components/SignupForm.astro';
 import Divider from '@components/Divider.astro';
 import CompassRose from '@components/CompassRose.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
 import { sketchImage, coverImage } from '@lib/images';
 import { url } from '@lib/url';
 import site from '../../site.config.mjs';
 
 const tarpon = sketchImage('tarpon-leap-houseboat.png')!;
 const cover = coverImage();
+const more = [
+  { href: '/critters/', label: 'Critters', emblem: 'critters' },
+  { href: '/boats/', label: 'Boats', emblem: 'boats' },
+  { href: '/tackle/', label: 'Tackle Box', emblem: 'tackle' },
+  { href: '/list/', label: 'Matt’s List', emblem: 'list' },
+  { href: '/sketchbook/', label: 'Sketchbook', emblem: 'sketchbook' },
+  { href: '/about/', label: 'About', emblem: 'about' },
+];
 const entries = [
   { href: '/map/', title: 'The Chart', text: 'Every place in the book on a real chart, with Matt’s routes chapter by chapter.', sketch: 'lostmans-river-hand-map.png' },
   { href: '/fish/', title: 'Fish', text: 'Twenty-three species, what they look like, and how Matt went after them.', sketch: 'matt-holding-snook.png' },
@@ -17,7 +26,7 @@ const entries = [
 ];
 ---
 
-<Base title={site.title} description={site.tagline} image="/assets/sketches/tarpon-leap-houseboat.png">
+<Base title={site.title} description={site.tagline}>
   <section class="hero">
     <div class="wrap-wide hero-grid">
       <div class="hero-copy">
@@ -76,14 +85,18 @@ const entries = [
         })
       }
     </ul>
-    <p class="also cluster small">
-      Also in the book:
-      <a class="pill" href={url('/critters/')}>Critters</a>
-      <a class="pill" href={url('/boats/')}>Boats</a>
-      <a class="pill" href={url('/tackle/')}>Tackle Box</a>
-      <a class="pill" href={url('/list/')}>Matt’s List</a>
-      <a class="pill" href={url('/sketchbook/')}>Sketchbook</a>
-    </p>
+    <ul class="also">
+      {
+        more.map((m) => (
+          <li>
+            <a class="also-link" href={url(m.href)}>
+              <SectionEmblem name={m.emblem} size={44} />
+              <span>{m.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 
   <Divider kind="mullet" />
@@ -258,7 +271,34 @@ const entries = [
     font-size: 0.95rem;
   }
   .also {
-    margin-top: 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 1.75rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  @media (min-width: 720px) {
+    .also {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+  .also-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.75rem 0.5rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--mangrove);
+    min-height: 44px;
+    transition: background-color 0.15s;
+  }
+  .also-link:hover {
+    background: var(--paper-2);
   }
   .scan-box {
     background: var(--paper-2);

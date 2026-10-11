@@ -29,4 +29,7 @@ See SPEC.md §8. Placeholders used during the build are listed here with where t
 - [ ] **Hi-res cover file.** `assets/cover/cover-thumbnail.png` is 129 × 199 px; drop the KDP cover JPG/PDF export in `assets/cover/` (any name without "thumb") and the site uses it.
 - [ ] **Author photo** → `assets/photos/authors.jpg` (Linda and John). The About page shows a dashed slot until it exists.
 - [ ] **Author bio** → `authorsBio` in `site.config.mjs` (paste the back-of-book bio).
-- [ ] **Commissioned / generated art** → `assets/art/<folder>/<id>.png` per `docs/VISUAL-BRIEF.md`. Set `artCredit` in `site.config.mjs` to how you want it credited.
+- [x] **Generated art installed** (183 files, 2026-10-11) as WebP web masters. Re-import from the pack with `node scripts/import-art.mjs <pack>/assets/art` if GPT delivers corrections.
+- [ ] **Knot diagrams** are drafts: have an angler trace each one before the Tackle Box is used as instruction. Steps and links are in `data/knots.json`.
+- [ ] **Review the portraits and places** for anything that contradicts the book (hair, boats, buildings). Replacements go in the same path with the same id.
+- [ ] **Wording of the art credit** — `artCredit` in `site.config.mjs` and the Credits page.

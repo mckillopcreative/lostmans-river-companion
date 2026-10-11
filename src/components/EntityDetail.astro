@@ -1,5 +1,6 @@
 ---
-// Shared detail page shell: sketch (or commissioned art), specs, body, chapters, related.
+// Shared detail page shell: Linda's sketch first, the field-guide art beside or instead,
+// then specs, body, chapters, related.
 import { Image } from 'astro:assets';
 import Sketch from './Sketch.astro';
 import ChapterPill from './ChapterPill.astro';
@@ -28,7 +29,7 @@ interface Props {
 const { section, id, title, subtitle, sketch, chapters, specs = [], related = [], relatedLabel = 'Also in these chapters', initials, tint } = Astro.props;
 const meta = sectionMeta[section];
 const shownSpecs = specs.filter((s) => s.v);
-const art = sketch ? null : artImage(sectionFolder[section]!, id);
+const art = artImage(sectionFolder[section]!, id);
 ---
 
 <article class="frame" style={tint ? `--tint:${tint}` : undefined}>
@@ -57,20 +58,31 @@ const art = sketch ? null : artImage(sectionFolder[section]!, id);
       )
     }
 
-    {
-      shownSpecs.length > 0 && (
-        <dl class="specs">
-          {shownSpecs.map((s) => (
-            <>
-              <dt>{s.k}</dt>
-              <dd>{s.v}</dd>
-            </>
-          ))}
-        </dl>
-      )
-    }
-
-    <slot />
+    <div class:list={['det-body', { 'with-side': !!(sketch && art) }]}>
+      {
+        sketch && art && (
+          <figure class="art side-art">
+            <Image src={art} alt={title} width={360} sizes="(min-width: 720px) 240px, 60vw" loading="lazy" />
+            <figcaption class="mono">{site.artCredit}</figcaption>
+          </figure>
+        )
+      }
+      <div>
+        {
+          shownSpecs.length > 0 && (
+            <dl class="specs">
+              {shownSpecs.map((s) => (
+                <>
+                  <dt>{s.k}</dt>
+                  <dd>{s.v}</dd>
+                </>
+              ))}
+            </dl>
+          )
+        }
+        <slot />
+      </div>
+    </div>
 
     {
       chapters.length > 0 && (
@@ -145,10 +157,33 @@ const art = sketch ? null : artImage(sectionFolder[section]!, id);
     width: 100%;
     height: auto;
   }
-  .art-figure figcaption {
+  .art-figure figcaption,
+  .side-art figcaption {
     margin-top: 0.4rem;
     font-size: 0.72rem;
     color: var(--ink-soft);
+  }
+  .det-body.with-side {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 720px) {
+    .det-body.with-side {
+      grid-template-columns: 240px 1fr;
+      align-items: start;
+    }
+    .side-art {
+      position: sticky;
+      top: 72px;
+    }
+  }
+  .side-art {
+    margin: 0;
+    max-width: 240px;
+  }
+  .side-art img {
+    width: 100%;
+    height: auto;
   }
   .appears :global(.divider) {
     margin: 1.5rem auto 0.5rem;
