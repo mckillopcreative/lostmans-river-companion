@@ -12,8 +12,10 @@ interface Props {
   current?: number;
   /** Show at most this many chapter pills. */
   maxPills?: number;
+  /** Load the image immediately (first row of a grid). */
+  eager?: boolean;
 }
-const { card, current, maxPills = 4 } = Astro.props;
+const { card, current, maxPills = 4, eager = false } = Astro.props;
 // Cards use the field-guide art when it exists so a grid reads as one set; Linda's
 // sketches (scenes, not plates) lead on the detail pages instead.
 const art = artImage(sectionFolder[card.section]!, card.id);
@@ -30,7 +32,7 @@ const more = card.chapters.length - pills.length;
     <div class:list={['card-media', { sketch: !!sketch, art: !!art }]}>
       {
         img ? (
-          <Image src={img} alt={alt} width={480} height={art ? 480 : undefined} sizes="(min-width: 520px) 240px, 45vw" loading="lazy" />
+          <Image src={img} alt={alt} width={480} height={art ? 480 : undefined} sizes="(min-width: 520px) 240px, 45vw" loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} />
         ) : (
           <Silhouette kind={card.section} initials={card.initials} />
         )

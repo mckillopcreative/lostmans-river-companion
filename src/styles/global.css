@@ -12,6 +12,7 @@
   --mangrove: #2f5d50;
   --gulf: #2a7f8e;
   --sunrise: #e8873a;
+  --sunrise-ink: #a04d12; /* the accent as text: clears 4.5:1 on paper and paper-2 */
   --oyster: #b8b2a6;
   --water: #d6e9f0;
   /* cover */
@@ -36,6 +37,7 @@
   --mangrove: #8fc1ad;
   --gulf: #5fb3c2;
   --sunrise: #f0a05c;
+  --sunrise-ink: #f0a05c;
   --oyster: #4a5559;
   --water: #14303d;
   --sky: #1f4a6b;
@@ -176,7 +178,7 @@ blockquote cite {
 .eyebrow {
   font-family: var(--font-hand);
   font-size: 1.5rem;
-  color: var(--sunrise);
+  color: var(--sunrise-ink);
   line-height: 1;
   margin: 0 0 0.35rem;
   display: block;

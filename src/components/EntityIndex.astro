@@ -31,12 +31,12 @@ const rest = cards.filter((c) => !used.has(c.id));
   {
     grouped.length ? (
       <>
-        {grouped.map((g) => (
+        {grouped.map((g, gi) => (
           <section>
             <h2 class="group-h">{g.label}</h2>
             <ul class="grid-cards">
-              {g.cards.map((card) => (
-                <EntityCard card={card} />
+              {g.cards.map((card, i) => (
+                <EntityCard card={card} eager={gi === 0 && i < 4} />
               ))}
             </ul>
           </section>
@@ -54,8 +54,8 @@ const rest = cards.filter((c) => !used.has(c.id));
       </>
     ) : (
       <ul class="grid-cards">
-        {cards.map((card) => (
-          <EntityCard card={card} />
+        {cards.map((card, i) => (
+          <EntityCard card={card} eager={i < 4} />
         ))}
       </ul>
     )
