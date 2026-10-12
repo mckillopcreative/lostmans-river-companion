@@ -1,0 +1,785 @@
+---
+// TEST PAGE: the whole site as one scrolling journal. If it works, it becomes the home page.
+// Every section previews real content inline and links through to the full page.
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import EntityCard from '@components/EntityCard.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
+import Divider from '@components/Divider.astro';
+import SignupForm from '@components/SignupForm.astro';
+import ChapterPill from '@components/ChapterPill.astro';
+import {
+  chapters,
+  fish,
+  characters,
+  wildlife,
+  boats,
+  gear,
+  places,
+  routes,
+  todo,
+  sketches,
+  toCard,
+  chaptersForCharacter,
+  chaptersForPlace,
+  fishById,
+  characterById,
+  wildlifeById,
+  boatById,
+  gearById,
+  placeById,
+} from '@lib/data';
+import { artImage, sketchImage, coverImage } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../../site.config.mjs';
+
+const journal = artImage('emblems', 'emblem-about');
+const cover = coverImage();
+const handMap = sketchImage('lostmans-river-hand-map.png')!;
+
+const pick = <T,>(ids: string[], map: Map<string, T>) => ids.map((id) => map.get(id)!).filter(Boolean);
+const fishCards = pick(['snook', 'tarpon', 'redfish', 'trout', 'snapper', 'grouper', 'mako-shark', 'hammerhead-shark'], fishById).map((f) => toCard('fish', f));
+const crewCards = pick(['matt', 'dan', 'snapper', 'rose', 'doc', 'rawley', 'james-creek', 'josh-ben', 'old-scarface', 'bertha-oscar'], characterById).map((c) => ({
+  ...toCard('crew', c),
+  chapters: chaptersForCharacter(c.id),
+}));
+const critterCards = pick(['pelican', 'dolphin', 'alligator', 'water-moccasin', 'mangroves'], wildlifeById).map((w) => toCard('critters', w));
+const boatCards = pick(['mako', 'sea-belle', 'bonefisher', 'airboat', 'seaplane'], boatById).map((b) => toCard('boats', b));
+const tackleItems = pick(['bagley-mullet', 'popping-cork', 'swivel', 'leader', 'reviving-a-fish', 'tides'], gearById);
+const placeItems = pick(['chokoloskee', 'south-point', 'rabbit-key-pass', 'comer-key', 'pavilion-key', 'lostmans-river', 'crooked-creek', 'port-of-the-everglades'], placeById);
+const listItems = todo.slice(0, 7);
+const sketchStrip = ['matt-holding-snook.png', 'pelican-on-dock.png', 'shark-comer-key-beach.png', 'dolphin-vs-hammerhead.png'];
+
+const sections = [
+  { id: 'chapters', label: 'Chapters' },
+  { id: 'chart', label: 'The Chart' },
+  { id: 'fish', label: 'Fish' },
+  { id: 'crew', label: 'Crew' },
+  { id: 'critters', label: 'Critters & Boats' },
+  { id: 'tackle', label: 'Tackle Box' },
+  { id: 'places', label: 'Places' },
+  { id: 'list', label: 'Matt’s List' },
+  { id: 'sketchbook', label: 'Sketchbook' },
+  { id: 'book', label: 'The Book' },
+];
+---
+
+<Base title="Matt’s working journal" description="Everything Matt filled the blank pages of his dad’s Guidebook with: the chapters, the chart, the fish, the crew, the tackle, the places.">
+  <!-- ===== Hero: the journal itself ===== -->
+  <section class="j-hero">
+    <div class="wrap-wide j-hero-grid">
+      <div class="j-hero-copy">
+        <p class="eyebrow">From the back of the book</p>
+        <h1>Matt’s working journal</h1>
+        <p class="lede">
+          Matt’s dad left him the <em>South Florida Fishing Guidebook</em> with blank pages in the back. One summer in the Ten Thousand Islands filled them. This is that journal: every fish, every person, every place, every trick Dan taught him, chapter by chapter.
+        </p>
+        <p class="cluster">
+          <a class="btn btn-primary" href={url('/ch/1/')}>Open to Chapter 1</a>
+          <a class="btn" href="#chapters">Browse the journal ↓</a>
+        </p>
+        <p class="small muted scan-note">
+          Reading the paperback? The code at the top of each chapter opens that chapter’s page here. No spoilers past where you are.
+        </p>
+      </div>
+      <figure class="j-hero-art art">
+        {journal && <Image src={journal} alt="The Guidebook: a thick, water-stained journal with a heron and mangroves painted on its cover" width={900} sizes="(min-width: 900px) 460px, 80vw" loading="eager" fetchpriority="high" />}
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Sticky section links ===== -->
+  <nav class="j-nav" aria-label="Sections of the journal" id="j-nav">
+    <div class="wrap-wide j-nav-row">
+      {sections.map((s) => <a href={`#${s.id}`} data-section={s.id}>{s.label}</a>)}
+    </div>
+  </nav>
+
+  <!-- ===== Chapters ===== -->
+  <section class="j-section" id="chapters">
+    <div class="wrap-wide">
+      <header class="j-head">
+        <SectionEmblem name="sketchbook" size={64} />
+        <div>
+          <p class="eyebrow">Twenty-three chapters</p>
+          <h2>Pick up where you are</h2>
+        </div>
+      </header>
+      <ol class="chapter-grid">
+        {
+          chapters.map((c) => {
+            const spot = artImage('chapters', `ch-${String(c.n).padStart(2, '0')}`);
+            return (
+              <li>
+                <a class="ch-tile" href={url(`/ch/${c.n}/`)}>
+                  <span class="ch-spot art">{spot && <Image src={spot} alt="" width={240} height={240} sizes="120px" loading={c.n <= 6 ? 'eager' : 'lazy'} />}</span>
+                  <span class="ch-n mono">Ch. {c.n}</span>
+                  <span class="ch-t">{c.title}</span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ol>
+    </div>
+  </section>
+
+  <Divider kind="wave" />
+
+  <!-- ===== Chart ===== -->
+  <section class="j-section" id="chart">
+    <div class="wrap-wide chart-grid">
+      <a class="chart-art sketch" href={url('/map/')} aria-label="Open the chart">
+        <Image src={handMap} alt="Linda McKillop’s hand-drawn map of Lostman’s River" width={700} sizes="(min-width: 900px) 420px, 94vw" loading="lazy" />
+      </a>
+      <div>
+        <header class="j-head">
+          <SectionEmblem name="chart" size={64} />
+          <div>
+            <p class="eyebrow">The Chart</p>
+            <h2>Every place on a real chart</h2>
+          </div>
+        </header>
+        <p>
+          Twenty-nine places from Chokoloskee down to Lostman’s River, with Matt’s route drawn for every chapter that goes somewhere. Linda’s hand-drawn map lays over the real coastline so you can see where the houseboat stuck on the oyster bar.
+        </p>
+        <p class="cluster">
+          {routes.map((r) => <a class="pill" href={url(`/map/#ch${r.chapter}`)}>Ch. {r.chapter} · {r.label}</a>)}
+        </p>
+        <p><a class="btn btn-primary" href={url('/map/')}>Open the chart</a></p>
+      </div>
+    </div>
+  </section>
+
+  <Divider kind="rule" />
+
+  <!-- ===== Fish ===== -->
+  <section class="j-section" id="fish">
+    <div class="wrap-wide">
+      <header class="j-head j-head-more">
+        <SectionEmblem name="fish" size={64} />
+        <div>
+          <p class="eyebrow">{fish.length} species</p>
+          <h2>Fish</h2>
+        </div>
+        <a class="more" href={url('/fish/')}>All {fish.length} fish →</a>
+      </header>
+      <ul class="grid-cards">
+        {fishCards.map((c, i) => <EntityCard card={c} eager={i < 4} />)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== Crew ===== -->
+  <section class="j-section" id="crew">
+    <div class="wrap-wide">
+      <header class="j-head j-head-more">
+        <SectionEmblem name="crew" size={64} />
+        <div>
+          <p class="eyebrow">{characters.length} of them, counting the pelicans</p>
+          <h2>Crew</h2>
+        </div>
+        <a class="more" href={url('/crew/')}>Everyone →</a>
+      </header>
+      <ul class="grid-cards">
+        {crewCards.map((c) => <EntityCard card={c} />)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== Critters & Boats ===== -->
+  <section class="j-section" id="critters">
+    <div class="wrap-wide two-col">
+      <div>
+        <header class="j-head j-head-more">
+          <SectionEmblem name="critters" size={64} />
+          <div>
+            <p class="eyebrow">{wildlife.length} critters</p>
+            <h2>Critters</h2>
+          </div>
+          <a class="more" href={url('/critters/')}>All →</a>
+        </header>
+        <ul class="grid-cards tight">
+          {critterCards.map((c) => <EntityCard card={c} />)}
+        </ul>
+      </div>
+      <div>
+        <header class="j-head j-head-more">
+          <SectionEmblem name="boats" size={64} />
+          <div>
+            <p class="eyebrow">{boats.length} boats and a Tahoe</p>
+            <h2>Boats</h2>
+          </div>
+          <a class="more" href={url('/boats/')}>All →</a>
+        </header>
+        <ul class="grid-cards tight">
+          {boatCards.map((c) => <EntityCard card={c} />)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <Divider kind="mullet" />
+
+  <!-- ===== Tackle ===== -->
+  <section class="j-section" id="tackle">
+    <div class="wrap-wide">
+      <header class="j-head j-head-more">
+        <SectionEmblem name="tackle" size={64} />
+        <div>
+          <p class="eyebrow">{gear.length} terms, five knots</p>
+          <h2>Tackle Box</h2>
+        </div>
+        <a class="more" href={url('/tackle/')}>The whole box →</a>
+      </header>
+      <ul class="tackle-strip">
+        {
+          tackleItems.map((t) => {
+            const img = artImage('tackle', t.id);
+            return (
+              <li>
+                <a class="tk" href={url(`/tackle/#${t.id}`)}>
+                  <span class="tk-art art">{img && <Image src={img} alt="" width={240} height={240} sizes="110px" loading="lazy" />}</span>
+                  <span class="tk-term">{t.term}</span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== Places ===== -->
+  <section class="j-section" id="places">
+    <div class="wrap-wide">
+      <header class="j-head j-head-more">
+        <SectionEmblem name="chart" size={64} />
+        <div>
+          <p class="eyebrow">{places.length} places, painted</p>
+          <h2>Places</h2>
+        </div>
+        <a class="more" href={url('/places/')}>All {places.length} →</a>
+      </header>
+    </div>
+    <div class="strip-wrap">
+      <ul class="place-strip">
+        {
+          placeItems.map((p) => {
+            const img = artImage('places', p.id);
+            return (
+              <li>
+                <a class="pl" href={url(`/places/#${p.id}`)}>
+                  <span class="pl-art art">{img && <Image src={img} alt="" width={600} sizes="300px" loading="lazy" />}</span>
+                  <span class="pl-name">{p.name.replace(/\s*\(.*\)$/, '')}</span>
+                  <span class="pl-ch">{chaptersForPlace(p.id).slice(0, 3).map((n) => <ChapterPill n={n} link={false} />)}</span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Divider kind="rule" />
+
+  <!-- ===== Matt's List + Sketchbook ===== -->
+  <section class="j-section" id="list">
+    <div class="wrap-wide two-col">
+      <div>
+        <header class="j-head j-head-more">
+          <SectionEmblem name="list" size={64} />
+          <div>
+            <p class="eyebrow">Summer to-do</p>
+            <h2>Matt’s List</h2>
+          </div>
+          <a class="more" href={url('/list/')}>Tick yours →</a>
+        </header>
+        <ul class="todo-preview">
+          {
+            listItems.map((t) => (
+              <li class:list={{ done: !!t.chapter_checked }}>
+                <span class="box" aria-hidden="true">{t.chapter_checked ? '✓' : ''}</span>
+                <span>
+                  {t.item}
+                  {t.chapter_checked && <span class="muted small"> · Ch. {t.chapter_checked}</span>}
+                </span>
+              </li>
+            ))
+          }
+          <li class="muted small">…and {todo.length - listItems.length} more.</li>
+        </ul>
+      </div>
+      <div id="sketchbook">
+        <header class="j-head j-head-more">
+          <SectionEmblem name="sketchbook" size={64} />
+          <div>
+            <p class="eyebrow">{sketches.length} drawings by {site.artist}</p>
+            <h2>Sketchbook</h2>
+          </div>
+          <a class="more" href={url('/sketchbook/')}>Open →</a>
+        </header>
+        <ul class="sketch-strip">
+          {
+            sketchStrip.map((f) => {
+              const img = sketchImage(f)!;
+              return (
+                <li>
+                  <a class="sk sketch" href={url('/sketchbook/')}>
+                    <Image src={img} alt={sketches.find((s) => s.file === f)?.subject ?? ''} width={400} sizes="(min-width: 720px) 200px, 45vw" loading="lazy" />
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <Divider kind="wave" />
+
+  <!-- ===== The Book ===== -->
+  <section class="j-section" id="book">
+    <div class="wrap-wide book-grid">
+      {
+        cover && (
+          <a class="book" href={site.buyUrl} rel="noopener">
+            <Image src={cover} alt="Cover of Escape to Lostman’s River" width={320} />
+          </a>
+        )
+      }
+      <div>
+        <header class="j-head">
+          <SectionEmblem name="about" size={64} />
+          <div>
+            <p class="eyebrow">The book</p>
+            <h2>Escape to Lostman’s River</h2>
+          </div>
+        </header>
+        <p>
+          An Everglades adventure novel by {site.authors}. One summer, one houseboat, one legendary tarpon. <a href={site.joelbooks.url} rel="noopener">{site.joelbooks.text}</a>.
+        </p>
+        <p class="cluster">
+          <a class="btn btn-primary" href={site.buyUrl} rel="noopener">Amazon</a>
+          <a class="btn" href={url('/about/')}>About the authors</a>
+        </p>
+        <SignupForm id="signup-journal" compact />
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Scroll-spy: highlight the section link for whatever is on screen.
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('#j-nav a[data-section]'));
+    const byId = new Map(links.map((a) => [a.dataset.section!, a]));
+    const nav = document.getElementById('j-nav')!;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          links.forEach((a) => a.classList.remove('is-current'));
+          const a = byId.get(e.target.id);
+          if (a) {
+            a.classList.add('is-current');
+            a.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+          }
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px', threshold: 0 },
+    );
+    document.querySelectorAll<HTMLElement>('.j-section[id], #sketchbook').forEach((s) => io.observe(s));
+    // Offset anchor jumps for the sticky header + nav.
+    document.documentElement.style.scrollPaddingTop = `${56 + nav.offsetHeight + 8}px`;
+  </script>
+</Base>
+
+<style>
+  /* ---- hero ---- */
+  .j-hero {
+    padding-block: 2rem 1.5rem;
+  }
+  .j-hero-grid {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .j-hero {
+      padding-block: 3.5rem 2.5rem;
+    }
+    .j-hero-grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 3rem;
+    }
+  }
+  .j-hero-copy h1 {
+    font-size: clamp(2.4rem, 5.6vw, 3.9rem);
+    line-height: 1.04;
+  }
+  .j-hero-art {
+    margin: 0;
+    display: grid;
+    place-items: center;
+    order: -1;
+  }
+  @media (min-width: 900px) {
+    .j-hero-art {
+      order: 0;
+    }
+  }
+  .j-hero-art img {
+    width: min(80vw, 460px);
+    height: auto;
+    filter: drop-shadow(0 18px 24px rgb(31 42 46 / 0.28));
+    transform: rotate(-3deg);
+  }
+  .scan-note {
+    max-width: 44ch;
+  }
+
+  /* ---- sticky section nav ---- */
+  .j-nav {
+    position: sticky;
+    top: 56px;
+    z-index: 40;
+    background: color-mix(in srgb, var(--paper) 94%, transparent);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+  }
+  .j-nav-row {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-block: 0.4rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .j-nav-row::-webkit-scrollbar {
+    display: none;
+  }
+  .j-nav a {
+    flex: none;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .j-nav a:hover {
+    background: var(--paper-2);
+    color: var(--mangrove);
+  }
+  .j-nav a.is-current {
+    background: var(--sunrise);
+    color: var(--on-sunrise);
+  }
+
+  /* ---- sections ---- */
+  .j-section {
+    padding-block: 2rem;
+    scroll-margin-top: 110px;
+  }
+  @media (min-width: 720px) {
+    .j-section {
+      padding-block: 2.5rem;
+    }
+  }
+  .j-head {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .j-head h2 {
+    margin: 0;
+  }
+  .j-head .eyebrow {
+    font-size: 1.25rem;
+    margin-bottom: 0.1rem;
+  }
+  .j-head-more {
+    flex-wrap: wrap;
+  }
+  .more {
+    margin-left: auto;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .two-col {
+    display: grid;
+    gap: 2.5rem;
+  }
+  @media (min-width: 900px) {
+    .two-col {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .grid-cards.tight {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+  @media (min-width: 520px) {
+    .grid-cards.tight {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+  }
+
+  /* chapters */
+  .chapter-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+  }
+  @media (min-width: 720px) {
+    .chapter-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+    }
+  }
+  .ch-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.2rem;
+    padding: 0.75rem 0.5rem 0.85rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .ch-tile:hover {
+    transform: translateY(-2px);
+    border-color: var(--gulf);
+  }
+  .ch-spot {
+    width: 72px;
+    height: 72px;
+    display: block;
+  }
+  @media (min-width: 720px) {
+    .ch-spot {
+      width: 96px;
+      height: 96px;
+    }
+  }
+  .ch-spot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .ch-n {
+    font-size: 0.7rem;
+    color: var(--sunrise-ink);
+  }
+  .ch-t {
+    font-weight: 600;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    color: var(--mangrove);
+  }
+
+  /* chart */
+  .chart-grid {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .chart-grid {
+      grid-template-columns: 420px 1fr;
+      gap: 3rem;
+    }
+  }
+  .chart-art {
+    display: block;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .chart-art img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* tackle strip */
+  .tackle-strip {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media (min-width: 720px) {
+    .tackle-strip {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+  .tk {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    color: var(--mangrove);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: var(--radius);
+  }
+  .tk:hover {
+    background: var(--paper-2);
+  }
+  .tk-art {
+    width: 96px;
+    height: 96px;
+    display: block;
+  }
+  .tk-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* places strip */
+  .strip-wrap {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-bottom: 0.5rem;
+  }
+  .place-strip {
+    list-style: none;
+    padding: 0 var(--gutter);
+    margin: 0.5rem 0 0;
+    display: flex;
+    gap: 1rem;
+    width: max-content;
+  }
+  @media (min-width: 1100px) {
+    .place-strip {
+      padding-left: calc((100vw - var(--wide)) / 2 + var(--gutter));
+    }
+  }
+  .pl {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 260px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .pl-art {
+    display: block;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .pl-art img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .pl-name {
+    font-weight: 600;
+    color: var(--mangrove);
+  }
+  .pl-ch {
+    display: flex;
+    gap: 4px;
+  }
+
+  /* list preview */
+  .todo-preview {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+  }
+  .todo-preview li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    padding: 0.4rem 0;
+    border-bottom: 1px dashed color-mix(in srgb, var(--oyster) 60%, transparent);
+  }
+  .box {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--ink-soft);
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    font-size: 0.9rem;
+    margin-top: 0.15rem;
+  }
+  .done .box {
+    background: var(--sunrise);
+    border-color: var(--sunrise);
+    color: var(--on-sunrise);
+  }
+  .done > span:last-child {
+    text-decoration: line-through;
+    text-decoration-color: var(--oyster);
+  }
+
+  /* sketch strip */
+  .sketch-strip {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .sk {
+    display: block;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 0.5rem;
+    aspect-ratio: 4 / 3;
+  }
+  .sk img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* book */
+  .book-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .book-grid {
+      grid-template-columns: 180px 1fr;
+      align-items: start;
+    }
+  }
+  .book {
+    display: block;
+    max-width: 180px;
+    filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.3));
+    transform: rotate(-2deg);
+  }
+  .book img {
+    width: 100%;
+    height: auto;
+    border-radius: 2px 6px 6px 2px;
+  }
+</style>
