@@ -375,6 +375,7 @@ const sections = [
     const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('#j-nav a[data-section]'));
     const byId = new Map(links.map((a) => [a.dataset.section!, a]));
     const nav = document.getElementById('j-nav')!;
+    const row = nav.querySelector<HTMLElement>('.j-nav-row')!;
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -383,7 +384,8 @@ const sections = [
           const a = byId.get(e.target.id);
           if (a) {
             a.classList.add('is-current');
-            a.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+            // Scroll the chip row only; scrollIntoView would cancel the page's own smooth scroll.
+            row.scrollTo({ left: a.offsetLeft - row.clientWidth / 2 + a.offsetWidth / 2, behavior: 'smooth' });
           }
         }
       },
