@@ -13,13 +13,16 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { MPEGDecoder } from 'mpg123-decoder';
+import { chapterReport, segmentPitch } from './pitch.mjs';
 
 const root = resolve(import.meta.dirname, '..');
-const MODEL = 'gpt-4o-mini-tts';
+const MODEL = process.env.TTS_MODEL || 'gpt-4o-mini-tts'; // tts-1-hd = older studio model, same voices, no instructions, steadier
+const SEG_LIMIT = Number(process.env.SEG_LIMIT || 0); // for samples: only the first N segments
 const VOICE = 'fable'; // the Socrates voice — keep in step with BourbonBrother.app/docs/VOICE_PORT_DIRECTIONS.md
 const INSTRUCTIONS =
-  'You are narrating a middle-grade adventure novel for a listener aged ten to fifteen. Read like a good audiobook narrator: steady, clear, unhurried but never slow, with warmth and a little grit. Keep dialogue natural and lightly distinct per speaker without doing cartoon voices. Let tension build in action scenes and ease off in quiet ones. No dramatic pauses, no announcer cadence.';
-const STYLE_V = 1; // bump when VOICE or INSTRUCTIONS change so stale files are regenerated
+  'You are the single narrator of a middle-grade adventure novel, reading an audiobook. Use ONE voice for the entire recording: your own natural adult narrator voice, the same pitch and timbre in every sentence, including all dialogue. Do not perform character voices, do not raise your pitch for women or children, do not whisper or shout. Steady audiobook pace, clear and warm with a little grit, tension carried by timing and emphasis only. No dramatic pauses, no announcer cadence.';
+const STYLE_V = 2; // bump when VOICE or INSTRUCTIONS change so stale files are regenerated
 // Short requests: the model drops the tail of long inputs (Socrates, Oct 1) and a 1,800-char
 // request took over two minutes on Oct 13. ~1,100 chars ≈ 75 s of audio per request.
 const SEG_MAX = 1100;
@@ -84,7 +87,7 @@ async function tts(apiKey, text, label) {
       const res = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
         headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
-        body: JSON.stringify({ model: MODEL, voice: VOICE, instructions: INSTRUCTIONS, input: text, response_format: 'mp3' }),
+        body: JSON.stringify({ model: MODEL, voice: VOICE, ...(MODEL.startsWith('gpt-') ? { instructions: INSTRUCTIONS } : {}), input: text, response_format: 'mp3' }),
         signal: AbortSignal.timeout(TIMEOUT_MS),
       });
       if (res.ok) {
@@ -111,14 +114,14 @@ function hasFfmpeg() {
 }
 
 async function narrate(ch, apiKey) {
-  const id = `ch-${String(ch.n).padStart(2, '0')}`;
-  const segs = segments(ch);
+  const id = `ch-${String(ch.n).padStart(2, '0')}${MODEL === 'gpt-4o-mini-tts' ? '' : '-' + MODEL}`;
+  const segs = SEG_LIMIT ? segments(ch).slice(0, SEG_LIMIT) : segments(ch);
   console.log(`Chapter ${ch.n} — ${ch.title}: ${segs.length} segments, ${ch.body.length} chars`);
   if (DRY) return;
   const dir = resolve(root, 'public/audio', id);
   mkdirSync(dir, { recursive: true });
   const stamp = join(dir, 'style.txt');
-  const sig = `${VOICE}:${STYLE_V}:${SEG_MAX}`;
+  const sig = `${MODEL}:${VOICE}:${STYLE_V}:${SEG_MAX}`;
   const fresh = existsSync(stamp) && readFileSync(stamp, 'utf8') === sig;
   const jobs = segs.map((text, i) => ({ i, text, file: join(dir, `seg-${String(i + 1).padStart(2, '0')}.mp3`) })).filter((j) => !(fresh && existsSync(j.file)));
   let next = 0;
@@ -131,6 +134,38 @@ async function narrate(ch, apiKey) {
     }
   };
   await Promise.all(Array.from({ length: Math.min(PARALLEL, jobs.length) }, worker));
+
+  // Register check (Oct 13: the voice flipped high about once a minute on the first render).
+  // Measure every segment's median pitch; re-roll any that sit far from the chapter's
+  // median, keeping the closest of up to three new takes.
+  const decoder = new MPEGDecoder();
+  await decoder.ready;
+  let report = await chapterReport(dir, decoder);
+  console.log(`  register: chapter median ${report.median.toFixed(0)} Hz, ${report.rows.filter((r) => r.flag).length} out of register`);
+  for (const r of report.rows.filter((x) => x.flag)) {
+    const idx = Number(r.file.match(/\d+/)[0]) - 1;
+    const file = join(dir, r.file);
+    let best = { ratio: r.ratio, buf: null };
+    for (let take = 1; take <= 3; take++) {
+      const buf = await tts(apiKey, segs[idx], `${r.file} re-roll ${take}`);
+      const tmp = join(dir, `${r.file}.take`);
+      writeFileSync(tmp, buf);
+      const p = await segmentPitch(tmp, decoder);
+      const ratio = p.f0 / report.median;
+      console.log(`  ${r.file} take ${take}: ${p.f0.toFixed(0)} Hz ×${ratio.toFixed(2)}`);
+      if (Math.abs(Math.log(ratio)) < Math.abs(Math.log(best.ratio))) best = { ratio, buf };
+      if (ratio <= 1.22 && ratio >= 0.8) break;
+    }
+    if (best.buf) writeFileSync(file, best.buf);
+    try {
+      execFileSync(process.platform === 'win32' ? 'cmd' : 'rm', process.platform === 'win32' ? ['/c', 'del', '/q', join(dir, `${r.file}.take`)] : ['-f', join(dir, `${r.file}.take`)], { stdio: 'ignore' });
+    } catch {}
+  }
+  if (report.rows.some((r) => r.flag)) {
+    report = await chapterReport(dir, decoder);
+    console.log(`  register after re-roll: ${report.rows.filter((r) => r.flag).length} still out (${report.rows.filter((r) => r.flag).map((r) => r.file).join(', ') || 'none'})`);
+  }
+  decoder.free();
   writeFileSync(stamp, sig);
   writeFileSync(join(dir, 'segments.json'), JSON.stringify(segs.map((s, i) => ({ file: `seg-${String(i + 1).padStart(2, '0')}.mp3`, chars: s.length })), null, 2));
   const files = readdirSync(dir)

@@ -190,3 +190,16 @@ Everything below can be generated from what the repo already holds (the data fil
 3. **A finish line**: the printed license and the badges give a parent proof the kid completed something.
 4. **Voice**: hearing Chapter 1 before buying. Already on the home page.
 5. **A guided path**: "start here, then this" beats a menu of 40 things.
+
+## 13. Narration quality note (2026-10-13)
+
+First Chapter 1 render (`gpt-4o-mini-tts`, voice `fable`, instruction v1): John heard the voice flip to a high-pitched female register about once a minute. Cause: each chapter is 17 separate requests of about 75 seconds, the model re-interprets the voice per request, and the v1 instruction asked for "lightly distinct per speaker," which it took as permission to perform characters.
+
+Options, cheapest first:
+
+1. **Instruction v2** (done): one narrator, one pitch, no character voices, explicitly "do not raise pitch for women or children." Same model, same voice, 22 cents per chapter to re-roll. Try first.
+2. **`tts-1-hd`** (OpenAI's older studio model, same `fable` voice): no instruction control, flatter delivery, but steadier across requests. `TTS_MODEL=tts-1-hd node scripts/narrate.mjs N`. Same price class.
+3. **ElevenLabs** (professional long-form): continuity stitching between chunks, a stable narrator catalog, and voice cloning from about 30 minutes of John reading, so "read by the author" can be true for the whole book without a studio. About $25 to $70 for the full book depending on plan; needs an account and a key. Best quality; the right move if 1 and 2 still drift.
+4. **Human narration**: John in a quiet room (20 to 30 hours) or a hired narrator ($200 to $400 per finished hour, roughly $1,000 to $2,000 for the book). Required if Audible distribution matters; Audible does not accept AI narration.
+
+Decision rule: ship with whichever of 1 to 3 is consistent across a full chapter; keep the human reading of two or three chapters as the bonus and the ad audio.
