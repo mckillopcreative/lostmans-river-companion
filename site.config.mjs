@@ -2,8 +2,8 @@
 // After changing `domain`, re-run `npm run qr` to regenerate the printed QR codes.
 
 export default {
-  /** Canonical site URL. PLACEHOLDER until the author picks a domain (SPEC.md §8.1). */
-  domain: process.env.SITE_URL || 'https://lostmansriver.example',
+  /** Canonical site URL (lostmansriver.com, registered 2026-10-13 at Cloudflare). */
+  domain: process.env.SITE_URL || 'https://lostmansriver.com',
 
   /**
    * Base path. '/' for a custom domain or a user site (<user>.github.io).
