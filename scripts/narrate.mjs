@@ -34,9 +34,10 @@ function key() {
 
 function chapters() {
   const t = readFileSync(resolve(root, 'source/manuscript.txt'), 'utf8');
-  const parts = t.split(/\r?\n(?=Chapter \d+ [–-] )/).slice(1);
+  // "Chapter 7 –A Tarpon" has no space after its dash in the manuscript, hence \s*.
+  const parts = t.split(/\r?\n(?=Chapter \d+ [–-]\s*)/).slice(1);
   return parts.map((p) => {
-    const m = /^Chapter (\d+) [–-] ([^\r\n]+)/.exec(p);
+    const m = /^Chapter (\d+) [–-]\s*([^\r\n]+)/.exec(p);
     const body = p
       .replace(/^[^\r\n]+\r?\n/, '')
       .replace(/\[[^\]]*Description automatically generated[^\]]*\]/g, '')
@@ -107,10 +108,12 @@ async function narrate(ch, apiKey) {
   for (let i = 0; i < segs.length; i++) {
     const f = join(dir, `seg-${String(i + 1).padStart(2, '0')}.mp3`);
     if (fresh && existsSync(f)) continue;
+    if (DRY) continue;
     process.stdout.write(`  seg ${i + 1}/${segs.length}… `);
     writeFileSync(f, await tts(apiKey, segs[i]));
     console.log('ok');
   }
+  if (DRY) return;
   writeFileSync(stamp, `${VOICE}:${STYLE_V}`);
   writeFileSync(join(dir, 'segments.json'), JSON.stringify(segs.map((s, i) => ({ file: `seg-${String(i + 1).padStart(2, '0')}.mp3`, chars: s.length })), null, 2));
   if (hasFfmpeg()) {
@@ -120,16 +123,22 @@ async function narrate(ch, apiKey) {
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', out]);
     console.log(`  → ${out}`);
   } else {
-    console.log('  (no ffmpeg: left as segments + segments.json; the player can play the list back to back)');
+    // No ffmpeg: MP3 frames from the same encoder concatenate cleanly enough for a player;
+    // install ffmpeg (winget install ffmpeg) for a proper join if a seam is ever audible.
+    const out = resolve(root, 'public/audio', `ch-${String(ch.n).padStart(2, '0')}.mp3`);
+    const files = readdirSync(dir).filter((f) => /^seg-d+.mp3$/.test(f)).sort();
+    writeFileSync(out, Buffer.concat(files.map((f) => readFileSync(join(dir, f)))));
+    console.log(`  → ${out} (byte-joined; no ffmpeg)`);
   }
 }
 
-const arg = process.argv[2];
+const DRY = process.argv.includes('--dry');
+const arg = process.argv.find((a, i) => i >= 2 && !a.startsWith('--'));
 if (!arg) {
   console.log('usage: node scripts/narrate.mjs <chapter number | all>');
   process.exit(0);
 }
-const apiKey = key();
+const apiKey = DRY ? '' : key();
 const all = chapters();
 const todo = arg === 'all' ? all : all.filter((c) => c.n === Number(arg));
 if (!todo.length) {
