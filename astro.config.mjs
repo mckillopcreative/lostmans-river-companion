@@ -6,6 +6,7 @@ export default defineConfig({
   base: site.base,
   output: 'static',
   trailingSlash: 'always',
+  redirects: { '/journal/': '/' },
   compressHTML: true,
   build: { format: 'directory', inlineStylesheets: 'always' },
   image: {

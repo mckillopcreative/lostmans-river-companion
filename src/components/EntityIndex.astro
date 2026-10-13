@@ -34,7 +34,7 @@ const rest = cards.filter((c) => !used.has(c.id));
         {grouped.map((g, gi) => (
           <section>
             <h2 class="group-h">{g.label}</h2>
-            <ul class="grid-cards">
+            <ul class="grid-cards" data-reveal-stagger>
               {g.cards.map((card, i) => (
                 <EntityCard card={card} eager={gi === 0 && i < 4} />
               ))}
@@ -44,7 +44,7 @@ const rest = cards.filter((c) => !used.has(c.id));
         {rest.length > 0 && (
           <section>
             <h2 class="group-h">Also mentioned</h2>
-            <ul class="grid-cards">
+            <ul class="grid-cards" data-reveal-stagger>
               {rest.map((card) => (
                 <EntityCard card={card} />
               ))}
@@ -53,7 +53,7 @@ const rest = cards.filter((c) => !used.has(c.id));
         )}
       </>
     ) : (
-      <ul class="grid-cards">
+      <ul class="grid-cards" data-reveal-stagger>
         {cards.map((card, i) => (
           <EntityCard card={card} eager={i < 4} />
         ))}

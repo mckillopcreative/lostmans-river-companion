@@ -113,7 +113,7 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
         groups.map((g) => (
           <section aria-labelledby={`in-${g.label.toLowerCase()}`}>
             <h2 id={`in-${g.label.toLowerCase()}`}>{g.label} in this chapter</h2>
-            <ul class="grid-cards">
+            <ul class="grid-cards" data-reveal-stagger>
               {g.cards.map((card) => (
                 <EntityCard card={card} current={n} />
               ))}

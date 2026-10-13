@@ -55,3 +55,7 @@ Define on `:root` and redefine under `:root[data-theme="dark"]` only. Paper is t
 - No cartoon mascot. The pelicans are drawn by Linda or not at all.
 - No parallax, no scroll-jacking, no autoplaying audio.
 - No "Welcome to…" hero copy. Open with the tarpon.
+
+
+## Scroll reveal (added 2026-10-13)
+Section headers and grid items carry `data-reveal` (grids use `data-reveal-stagger`, which marks their children and staggers them 70 ms apart, capped at eight). They start at opacity 0 and 18 px low and fade up when they enter the viewport. Only applied when JavaScript runs (`html.js`), never on the hero or the sticky nav, and disabled under `prefers-reduced-motion`. Keep it subtle: one easing, no scaling, nothing that moves after it has appeared.

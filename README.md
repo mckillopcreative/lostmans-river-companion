@@ -43,7 +43,7 @@ qr/                   generated QR SVGs + contact sheet (commit after the domain
 
 | Route | Page |
 |---|---|
-| `/` | Home |
+| `/` | Home: Matt’s working journal — one scrolling page with sticky section links and every section previewed inline (`/journal/` redirects here) |
 | `/ch/1/` … `/ch/23/` | Chapter pages (QR targets, never rename) |
 | `/map/` | The Chart (Leaflet, chapter stepper, hand-drawn overlay). `#ch7` selects a chapter, `#place-id` opens a place. |
 | `/fish/`, `/crew/`, `/critters/`, `/boats/` (+ `/<id>/`) | Field-guide sections |

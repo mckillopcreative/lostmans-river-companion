@@ -62,6 +62,7 @@ const isActive = (href: string) => here.startsWith(url(href));
     <Font cssVariable="--font-serif" preload />
     <Font cssVariable="--font-hand" />
     <script is:inline>
+      document.documentElement.classList.add('js');
       // Apply a saved theme before first paint to avoid a flash.
       try {
         const t = localStorage.getItem('theme');
@@ -161,6 +162,33 @@ const isActive = (href: string) => here.startsWith(url(href));
     </footer>
 
     <script>
+      // Scroll reveal: fade elements up as they enter the viewport, staggered inside grids.
+      const staggers = document.querySelectorAll<HTMLElement>('[data-reveal-stagger]');
+      staggers.forEach((box) => {
+        Array.from(box.children).forEach((child, i) => {
+          const el = child as HTMLElement;
+          el.dataset.reveal = '';
+          el.style.setProperty('--reveal-i', String(i % 8));
+        });
+      });
+      const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      if (targets.length && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-in');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+        );
+        targets.forEach((t) => io.observe(t));
+      } else {
+        targets.forEach((t) => t.classList.add('is-in'));
+      }
+
       const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
       const list = document.getElementById('nav-list');
       toggle?.addEventListener('click', () => {
