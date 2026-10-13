@@ -1,0 +1,198 @@
+---
+// Your summer: the 23 Assistant Guide missions, one per chapter. Progress lives on the device.
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
+import ChapterPill from '@components/ChapterPill.astro';
+import { missions, chapterByN } from '@lib/data';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+
+const badges = [
+  { id: 'snook', label: 'Snook', when: 'Mission 6' },
+  { id: 'tarpon', label: 'Tarpon', when: 'Mission 19' },
+  { id: 'captain', label: 'Captain', when: 'Mission 23' },
+];
+---
+
+<Base title="Your summer" description="Twenty-three missions, one per chapter. Finish them and earn your Assistant Guide license.">
+  <div class="wrap-wide section">
+    <header class="ms-head">
+      <SectionEmblem name="list" size={110} />
+      <div>
+        <p class="eyebrow">Assistant Guide training</p>
+        <h1>Your summer</h1>
+        <p class="lede">One mission per chapter, set by Dan. Read the chapter, do the mission, earn the badge. Your progress stays on this phone; nothing is sent anywhere.</p>
+      </div>
+    </header>
+
+    <div class="status">
+      <p class="pill is-current" id="done-pill">0 of 23 done</p>
+      <ul class="badges" aria-label="Badges">
+        {
+          badges.map((b) => {
+            const img = artImage('emblems', `badge-${b.id}`);
+            return (
+              <li class="badge" data-badge={b.id} title={`${b.label} badge, ${b.when}`}>
+                {img && <Image src={img} alt={`${b.label} badge`} width={160} height={160} loading="lazy" />}
+                <span class="mono">{b.label}</span>
+              </li>
+            );
+          })
+        }
+      </ul>
+      <a class="btn btn-sm" href={url('/license/')}>Your license →</a>
+    </div>
+
+    <ol class="missions" data-reveal-stagger>
+      {
+        missions.map((m) => {
+          const spot = artImage('chapters', `ch-${String(m.chapter).padStart(2, '0')}`);
+          return (
+            <li class="mission" data-mission={m.id}>
+              <a href={url(`/missions/${m.id}/`)}>
+                <span class="m-spot art">{spot && <Image src={spot} alt="" width={200} height={200} sizes="90px" loading="lazy" />}</span>
+                <span class="m-text">
+                  <span class="m-top">
+                    <ChapterPill n={m.chapter} link={false} />
+                    <span class="m-skill mono">{m.skill}</span>
+                  </span>
+                  <span class="m-title">{m.title}</span>
+                  <span class="m-ch small muted">{chapterByN.get(m.chapter)?.title}</span>
+                </span>
+                <span class="m-check" aria-hidden="true">✓</span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ol>
+  </div>
+
+  <script>
+    import { load, countDone } from '../../scripts/progress';
+    const p = load();
+    document.getElementById('done-pill')!.textContent = `${countDone(p)} of 23 done`;
+    for (const id of Object.keys(p.missions)) document.querySelector(`[data-mission="${id}"]`)?.classList.add('done');
+    for (const b of p.badges) document.querySelector(`[data-badge="${b}"]`)?.classList.add('earned');
+  </script>
+</Base>
+
+<style>
+  .ms-head {
+    max-width: var(--measure);
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .ms-head .lede {
+    margin-bottom: 0;
+  }
+  .status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.25rem 0 0.5rem;
+  }
+  .badges {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 0.75rem;
+  }
+  .badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    font-size: 0.65rem;
+    color: var(--ink-soft);
+    filter: grayscale(1);
+    opacity: 0.45;
+  }
+  .badge img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+  }
+  .badge.earned {
+    filter: none;
+    opacity: 1;
+  }
+  .missions {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: grid;
+    gap: 10px;
+  }
+  @media (min-width: 720px) {
+    .missions {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .mission a {
+    display: grid;
+    grid-template-columns: 72px 1fr 32px;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.6rem 0.75rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    min-height: 88px;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .mission a:hover {
+    transform: translateY(-2px);
+    border-color: var(--gulf);
+  }
+  .m-spot {
+    width: 72px;
+    height: 72px;
+    display: block;
+  }
+  .m-spot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .m-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+  .m-top {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .m-skill {
+    font-size: 0.68rem;
+    color: var(--sunrise-ink);
+  }
+  .m-title {
+    font-weight: 700;
+    color: var(--mangrove);
+  }
+  .m-check {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--oyster);
+    display: grid;
+    place-items: center;
+    color: transparent;
+    font-size: 0.9rem;
+  }
+  .mission.done .m-check {
+    background: var(--sunrise);
+    border-color: var(--sunrise);
+    color: var(--on-sunrise);
+  }
+</style>

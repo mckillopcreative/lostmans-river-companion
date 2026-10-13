@@ -1,0 +1,195 @@
+---
+// Chart puzzle: Name that key. A painted place comes up; tap where it is on the real chart.
+import { getImage } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
+import { places } from '@lib/data';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+
+// Only places a kid can reasonably find on the chart (skip the far outliers and the fictional spots).
+const skip = new Set(['naples-airport', 'naples', 'alligator-alley', 'fort-lauderdale', 'key-largo', 'backcountry', 'gulf-of-mexico', 'docs-house', 'dans-cottage', 'anglers-motel-dock', 'south-point']);
+const rounds = [];
+for (const p of places) {
+  if (skip.has(p.id)) continue;
+  const src = artImage('places', p.id);
+  if (!src) continue;
+  const img = await getImage({ src, width: 640, format: 'webp' });
+  rounds.push({ id: p.id, name: p.name, lat: p.lat, lng: p.lng, img: img.src });
+}
+---
+
+<Base title="Name that key" description="A painted place comes up; find it on the chart. Eighteen places from the book." bleed>
+  <link slot="head" rel="preconnect" href="https://tile.openstreetmap.org" crossorigin />
+  <div class="cg-shell">
+    <div class="cg-side">
+      <header class="cg-head">
+        <SectionEmblem name="chart" size={56} />
+        <div>
+          <p class="eyebrow">Chart puzzle</p>
+          <h1>Name that key</h1>
+        </div>
+      </header>
+      <p class="small muted">Tap the chart where this place is. Closer is better; within two miles scores.</p>
+      <p class="round mono"><span id="round">1</span> / 10 · score <span id="score">0</span></p>
+      <figure class="scene art">
+        <img id="scene" alt="A place to find on the chart" width="640" height="427" />
+        <figcaption id="scene-name" class="hand">&nbsp;</figcaption>
+      </figure>
+      <p class="verdict hand" id="verdict">&nbsp;</p>
+      <p class="cluster">
+        <button type="button" class="btn btn-primary" id="next" hidden>Next ›</button>
+        <button type="button" class="btn" id="again" hidden>Play again</button>
+      </p>
+      <p class="small"><a href={url('/map/')}>Study the chart →</a> · <a href={url('/places/')}>All the places →</a></p>
+    </div>
+    <div id="cg-map" role="application" aria-label="Chart for the puzzle" data-rounds={JSON.stringify(rounds)}></div>
+  </div>
+
+  <script>
+    import L from 'leaflet';
+    import 'leaflet/dist/leaflet.css';
+    type R = { id: string; name: string; lat: number; lng: number; img: string };
+    const el = document.getElementById('cg-map')!;
+    const all = JSON.parse(el.dataset.rounds!) as R[];
+    const $ = (id: string) => document.getElementById(id)!;
+    const map = L.map('cg-map', { zoomControl: true, attributionControl: true });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 15, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+    const home = L.latLngBounds([
+      [25.5, -81.52],
+      [25.9, -81.16],
+    ]);
+    const fit = () => {
+      map.invalidateSize();
+      map.fitBounds(home, { padding: [10, 10] });
+    };
+    new ResizeObserver(() => {
+      if (el.clientWidth) fit();
+    }).observe(el);
+    let layer = L.layerGroup().addTo(map);
+    let order: R[] = [],
+      round = 0,
+      score = 0,
+      cur: R | null = null,
+      locked = false;
+    const km = (a: L.LatLng, b: L.LatLng) => a.distanceTo(b) / 1000;
+    function start() {
+      order = [...all].sort(() => Math.random() - 0.5).slice(0, 10);
+      round = 0;
+      score = 0;
+      $('score').textContent = '0';
+      $('again').hidden = true;
+      next();
+    }
+    function next() {
+      layer.clearLayers();
+      if (round >= 10) {
+        $('verdict').textContent = `${score} of 10. ${score >= 8 ? 'You could run the Mako.' : score >= 5 ? 'Getting the lay of the islands.' : 'Open the chart and look again.'}`;
+        $('next').hidden = true;
+        $('again').hidden = false;
+        return;
+      }
+      cur = order[round++];
+      $('round').textContent = String(round);
+      ($('scene') as HTMLImageElement).src = cur.img;
+      $('scene-name').textContent = cur.name;
+      $('verdict').textContent = 'Where is it?';
+      $('next').hidden = true;
+      locked = false;
+      fit();
+    }
+    map.on('click', (e: L.LeafletMouseEvent) => {
+      if (locked || !cur) return;
+      locked = true;
+      const target = L.latLng(cur.lat, cur.lng);
+      const d = km(e.latlng, target);
+      L.circleMarker(e.latlng, { radius: 6, color: '#e8873a', fillColor: '#e8873a', fillOpacity: 1 }).addTo(layer);
+      L.circleMarker(target, { radius: 7, color: '#f6f1e7', fillColor: '#1f2a2e', fillOpacity: 1, weight: 2 }).addTo(layer).bindTooltip(cur.name, { permanent: true, direction: 'top', className: 'cg-label hand' }).openTooltip();
+      L.polyline([e.latlng, target], { color: '#e8873a', dashArray: '4 6', weight: 2 }).addTo(layer);
+      const miles = d * 0.621;
+      if (miles <= 2) {
+        score++;
+        $('verdict').textContent = miles < 0.6 ? 'Dead on.' : `Close: ${miles.toFixed(1)} miles off. That counts.`;
+      } else $('verdict').textContent = `${miles.toFixed(1)} miles off. Here it is.`;
+      $('score').textContent = String(score);
+      $('next').hidden = false;
+    });
+    $('next').addEventListener('click', next);
+    $('again').addEventListener('click', start);
+    setTimeout(start, 0);
+  </script>
+</Base>
+
+<style is:global>
+  .cg-shell {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: calc(100dvh - 57px);
+  }
+  @media (min-width: 900px) {
+    .cg-shell {
+      grid-template-rows: 1fr;
+      grid-template-columns: 380px 1fr;
+    }
+  }
+  .cg-side {
+    padding: 1rem var(--gutter);
+    background: var(--paper);
+    border-bottom: 1px solid var(--oyster);
+    overflow: auto;
+  }
+  @media (min-width: 900px) {
+    .cg-side {
+      border-bottom: 0;
+      border-right: 1px solid var(--oyster);
+    }
+  }
+  .cg-head {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .cg-head h1 {
+    font-size: 1.6rem;
+    margin: 0;
+  }
+  .cg-side .round {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    margin: 0.25rem 0;
+  }
+  .scene {
+    margin: 0.5rem 0;
+  }
+  .scene img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+  .scene figcaption {
+    font-size: 1.4rem;
+    color: var(--sunrise-ink);
+    margin-top: 0.2rem;
+  }
+  .cg-side .verdict {
+    font-size: 1.3rem;
+    color: var(--sunrise-ink);
+    margin: 0.25rem 0;
+    min-height: 1.6em;
+  }
+  #cg-map {
+    min-height: 360px;
+    background: var(--water);
+  }
+  .leaflet-tooltip.cg-label {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    color: var(--ink);
+    font-size: 16px;
+    text-shadow: 0 0 3px var(--paper), 0 0 6px var(--paper);
+  }
+  .leaflet-tooltip.cg-label::before {
+    display: none;
+  }
+</style>

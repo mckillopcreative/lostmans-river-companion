@@ -19,6 +19,7 @@ const entity = {
 };
 const glossary = load('glossary');
 const boatTypes = load('boat-types');
+const missions = load('missions');
 const errors = [];
 const ids = Object.fromEntries(Object.entries(entity).map(([k, v]) => [k, new Set(v.map((e) => e.id))]));
 const words = new Set(glossary.map((g) => g.word));
@@ -67,6 +68,15 @@ for (const s of sketches) {
 
 // 4b. boat types reference real boats
 for (const t of boatTypes) for (const b of t.book_boats) if (!ids.boats.has(b)) errors.push(`boat-types/${t.id}.book_boats: unknown boat "${b}"`);
+
+// 4c. missions: 23, one per chapter, fish/place options resolve
+if (missions.length !== 23) errors.push(`missions: expected 23, got ${missions.length}`);
+missions.forEach((m, i) => {
+  if (m.chapter !== i + 1) errors.push(`missions/${m.id}: expected chapter ${i + 1}`);
+  if (m.type === 'fish') for (const o of m.options) if (!ids.fish.has(o)) errors.push(`missions/${m.id}: unknown fish ${o}`);
+  if (m.type === 'place') for (const o of m.options) if (!ids.places.has(o)) errors.push(`missions/${m.id}: unknown place ${o}`);
+  if (['choice', 'fish', 'place'].includes(m.type) && !(m.answer >= 0 && m.answer < m.options.length)) errors.push(`missions/${m.id}: bad answer index`);
+});
 
 // 5. places have numeric coordinates
 for (const p of entity.places) {

@@ -20,6 +20,7 @@ import {
   quotes,
   todo,
   routeByChapter,
+  missions,
   toCard,
   type Chapter,
 } from '@lib/data';
@@ -47,6 +48,7 @@ const added = todo.filter((t) => t.chapter_added === n && t.chapter_checked !== 
 // Chapters with a route lead with the chart: a reader scanning mid-chapter wants "where are we" first.
 const hasRoute = routeByChapter.has(n);
 const spot = artImage('chapters', `ch-${String(n).padStart(2, '0')}`);
+const mission = missions.find((m) => m.chapter === n);
 
 const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
   { label: 'Fish', cards: fishCards },
@@ -69,6 +71,16 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
       </header>
 
       <ChapterAudio n={n} />
+
+      {
+        mission && (
+          <a class="mission-card" href={url(`/missions/${mission.id}/`)}>
+            <span class="hand mc-eyebrow">Mission {n} · {mission.skill}</span>
+            <span class="mc-title">{mission.title}</span>
+            <span class="mc-go">Take it on →</span>
+          </a>
+        )
+      }
 
       {
         hasRoute && placeItems.length > 0 && (
@@ -185,6 +197,36 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
 </Base>
 
 <style>
+  .mission-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.1rem 1rem;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    background: var(--paper-2);
+    border: 1.5px solid var(--sunrise);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+  }
+  .mc-eyebrow {
+    color: var(--sunrise-ink);
+    font-size: 1.15rem;
+    grid-column: 1;
+  }
+  .mc-title {
+    font-weight: 700;
+    color: var(--mangrove);
+    grid-column: 1;
+  }
+  .mc-go {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    font-weight: 600;
+    color: var(--mangrove);
+    white-space: nowrap;
+  }
   .ch-head {
     margin-bottom: 1rem;
   }

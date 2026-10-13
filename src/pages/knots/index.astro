@@ -1,0 +1,243 @@
+---
+// Knot trainer: step through each knot's four stages, then the stage shuffle game.
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
+import { knots } from '@lib/data';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+---
+
+<Base title="Knots" description="Five knots every assistant guide ties: step through each one, then prove it in the stage shuffle.">
+  <div class="wrap section">
+    <header class="kn-head">
+      <SectionEmblem name="tackle" size={100} />
+      <div>
+        <p class="eyebrow">Tackle Box</p>
+        <h1>Five knots</h1>
+        <p class="lede">Step through each one with a piece of line in your hands, then shuffle the stages and put them back in order. Diagrams are drafts; the written steps and the linked videos are the authority.</p>
+      </div>
+    </header>
+
+    {
+      knots.map((k) => {
+        const img = artImage('tackle', `knot-${k.id}`);
+        return (
+          <section class="knot" id={k.id} data-knot={k.id}>
+            <h2>{k.name}</h2>
+            <p class="muted">{k.use}</p>
+            {img && (
+              <figure class="knot-art art">
+                <Image src={img} alt={`${k.name}, four stages`} width={900} sizes="(min-width: 720px) 680px, 94vw" loading="lazy" />
+              </figure>
+            )}
+            <div class="stepper">
+              <ol class="steps">
+                {k.steps.map((s, i) => (
+                  <li class:list={['step', { current: i === 0 }]} data-i={i}>
+                    <span class="n mono">{i + 1}</span>
+                    <span>{s}</span>
+                  </li>
+                ))}
+              </ol>
+              <div class="cluster">
+                <button type="button" class="btn btn-sm prev">‹ Back</button>
+                <button type="button" class="btn btn-sm btn-primary next">Next step ›</button>
+                <a class="small" href={k.reference} rel="noopener">Watch it tied →</a>
+              </div>
+            </div>
+            <details class="shuffle">
+              <summary>Stage shuffle: put the steps back in order</summary>
+              <ul class="pool" />
+              <ol class="picked" aria-label="Your order" />
+              <p class="cluster">
+                <button type="button" class="btn btn-primary check" disabled>
+                  Check
+                </button>
+                <span class="verdict hand" />
+              </p>
+            </details>
+          </section>
+        );
+      })
+    }
+    <p class="note small">Before trusting a fish to any of these, have someone who ties them watch you. The <a href={url('/tackle/#knots')}>Tackle Box</a> has the full write-up.</p>
+  </div>
+
+  <script>
+    document.querySelectorAll<HTMLElement>('.knot').forEach((sec) => {
+      const steps = Array.from(sec.querySelectorAll<HTMLElement>('.step'));
+      let cur = 0;
+      const show = () => steps.forEach((s, i) => s.classList.toggle('current', i === cur));
+      sec.querySelector('.next')!.addEventListener('click', () => {
+        cur = Math.min(steps.length - 1, cur + 1);
+        show();
+      });
+      sec.querySelector('.prev')!.addEventListener('click', () => {
+        cur = Math.max(0, cur - 1);
+        show();
+      });
+      steps.forEach((s, i) => s.addEventListener('click', () => ((cur = i), show())));
+
+      // shuffle game
+      const texts = steps.map((s) => s.querySelector('span:last-child')!.textContent!);
+      const pool = sec.querySelector<HTMLElement>('.pool')!;
+      const picked = sec.querySelector<HTMLElement>('.picked')!;
+      const check = sec.querySelector<HTMLButtonElement>('.check')!;
+      const verdict = sec.querySelector<HTMLElement>('.verdict')!;
+      const chosen: number[] = [];
+      const order = texts.map((_, i) => i).sort(() => Math.random() - 0.5);
+      const render = () => {
+        pool.innerHTML = '';
+        order
+          .filter((i) => !chosen.includes(i))
+          .forEach((i) => {
+            const li = document.createElement('li');
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'chip';
+            b.textContent = texts[i];
+            b.addEventListener('click', () => {
+              chosen.push(i);
+              render();
+            });
+            li.appendChild(b);
+            pool.appendChild(li);
+          });
+        picked.innerHTML = '';
+        chosen.forEach((i, pos) => {
+          const li = document.createElement('li');
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'chip picked-chip';
+          b.textContent = `${pos + 1}. ${texts[i]}`;
+          b.addEventListener('click', () => {
+            chosen.splice(pos, 1);
+            render();
+          });
+          li.appendChild(b);
+          picked.appendChild(li);
+        });
+        check.disabled = chosen.length !== texts.length;
+        verdict.textContent = '';
+      };
+      render();
+      check.addEventListener('click', () => {
+        const ok = chosen.every((v, i) => v === i);
+        verdict.textContent = ok ? 'In order. Tie it for real now.' : 'Not quite. Tap a step to put it back.';
+      });
+    });
+  </script>
+</Base>
+
+<style>
+  .kn-head {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .kn-head .lede {
+    margin-bottom: 0;
+  }
+  .knot {
+    margin-top: 2.5rem;
+    scroll-margin-top: 80px;
+  }
+  .knot h2 {
+    margin-bottom: 0.2rem;
+  }
+  .knot-art {
+    margin: 0.75rem 0;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 0.75rem;
+  }
+  .knot-art img {
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+    object-fit: contain;
+  }
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0.75rem;
+    display: grid;
+    gap: 6px;
+  }
+  .step {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.55rem 0.75rem;
+    border-radius: var(--radius);
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+  .step.current {
+    border-color: var(--sunrise);
+    background: color-mix(in srgb, var(--sunrise) 14%, var(--paper-2));
+    color: var(--ink);
+  }
+  .step .n {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--paper-2);
+    display: grid;
+    place-items: center;
+    font-size: 0.75rem;
+  }
+  .step.current .n {
+    background: var(--sunrise);
+    color: var(--on-sunrise);
+  }
+  .shuffle {
+    margin-top: 1rem;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+  }
+  .shuffle summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--mangrove);
+  }
+  .pool,
+  .picked {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .picked {
+    min-height: 44px;
+    border: 1.5px dashed var(--oyster);
+    border-radius: var(--radius);
+    padding: 8px;
+  }
+  .chip {
+    font: inherit;
+    font-size: 0.92rem;
+    text-align: left;
+    padding: 0.5rem 0.8rem;
+    min-height: 44px;
+    border-radius: 12px;
+    border: 1.5px solid var(--oyster);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .picked-chip {
+    border-color: var(--sunrise);
+    background: color-mix(in srgb, var(--sunrise) 18%, var(--paper-2));
+  }
+  .verdict {
+    font-size: 1.3rem;
+    color: var(--sunrise-ink);
+  }
+</style>

@@ -14,6 +14,7 @@ import recipesJson from '@data/recipes.json';
 import sketchesJson from '@data/sketches.json';
 import knotsJson from '@data/knots.json';
 import boatTypesJson from '@data/boat-types.json';
+import missionsJson from '@data/missions.json';
 
 export interface Chapter {
   n: number;
@@ -144,6 +145,21 @@ export interface BoatType {
   art_prompt: string;
 }
 export const boatTypeGroups: Record<BoatType['group'], string> = { hulls: 'Hulls: what kind of boat', power: 'Power: what moves it', gear: 'Gear and words' };
+export interface Mission {
+  id: string;
+  chapter: number;
+  title: string;
+  skill: string;
+  type: 'choice' | 'order' | 'text' | 'fish' | 'place' | 'decide' | 'sign';
+  prompt: string;
+  options?: string[];
+  items?: string[];
+  accept?: string[];
+  answer?: number;
+  explain: string;
+  badge?: string;
+  clue?: boolean;
+}
 export interface Sketch {
   file: string;
   subject: string;
@@ -167,6 +183,7 @@ export const recipes = recipesJson as Recipe[];
 export const sketches = sketchesJson as Sketch[];
 export const knots = knotsJson as Knot[];
 export const boatTypes = boatTypesJson as BoatType[];
+export const missions = missionsJson as Mission[];
 
 const byId = <T extends { id: string }>(list: T[]) => new Map(list.map((e) => [e.id, e]));
 export const characterById = byId(characters);

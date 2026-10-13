@@ -1,0 +1,399 @@
+---
+// One mission. The interaction type comes from data/missions.json; checking and saving run on the device.
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import ChapterPill from '@components/ChapterPill.astro';
+import { missions, chapterByN, fishById, placeById, type Mission } from '@lib/data';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+
+export function getStaticPaths() {
+  return missions.map((m) => ({ params: { id: m.id }, props: { m } }));
+}
+const { m } = Astro.props as { m: Mission };
+const idx = missions.findIndex((x) => x.id === m.id);
+const next = missions[idx + 1];
+const spot = artImage('chapters', `ch-${String(m.chapter).padStart(2, '0')}`);
+const badgeArt = m.badge ? artImage('emblems', `badge-${m.badge}`) : null;
+const imageOptions =
+  m.type === 'fish'
+    ? m.options!.map((id) => ({ id, label: fishById.get(id)!.common, img: artImage('fish', id) }))
+    : m.type === 'place'
+      ? m.options!.map((id) => ({ id, label: placeById.get(id)!.name, img: artImage('places', id) }))
+      : null;
+// Everything the client script needs, without the answer text leaking into the markup where a kid can read it first.
+const payload = { id: m.id, type: m.type, answer: m.answer ?? null, accept: m.accept ?? null, order: m.items ?? null, badge: m.badge ?? null, next: next ? url(`/missions/${next.id}/`) : url('/license/') };
+---
+
+<Base title={`Mission ${m.chapter}: ${m.title}`} description={m.prompt}>
+  <article class="frame">
+    <div class="wrap">
+      <p class="crumbs small"><a href={url('/missions/')}>← Your summer</a></p>
+      <header class="mi-head">
+        {spot && <Image class="mi-spot art" src={spot} alt="" width={240} height={240} loading="eager" />}
+        <div>
+          <p class="eyebrow">Mission {m.chapter} · {m.skill}</p>
+          <h1>{m.title}</h1>
+          <p class="small muted">
+            From <ChapterPill n={m.chapter} /> <a href={url(`/ch/${m.chapter}/`)}>{chapterByN.get(m.chapter)?.title}</a>
+          </p>
+        </div>
+      </header>
+
+      <p class="prompt">{m.prompt}</p>
+
+      <div class="play" id="play" data-mission={JSON.stringify(payload)}>
+        {
+          (m.type === 'choice' || m.type === 'decide') && (
+            <ul class="choices">
+              {m.options!.map((o, i) => (
+                <li>
+                  <button type="button" class="choice" data-i={i}>
+                    {o}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        {
+          imageOptions && (
+            <ul class="choices img-choices">
+              {imageOptions.map((o, i) => (
+                <li>
+                  <button type="button" class="choice img-choice art" data-i={i} aria-label={o.label}>
+                    {o.img && <Image src={o.img} alt="" width={400} sizes="(min-width: 600px) 240px, 45vw" loading="lazy" />}
+                    <span class="img-label">{o.label}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        {
+          m.type === 'order' && (
+            <div class="order">
+              <p class="small muted">Tap the steps in order. Tap a chosen step to put it back.</p>
+              <ul class="pool" id="pool">
+                {m.items!.map((it, i) => (
+                  <li>
+                    <button type="button" class="chip" data-i={i}>
+                      {it}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <ol class="picked" id="picked" aria-label="Your order" />
+              <button type="button" class="btn btn-primary" id="check-order" disabled>
+                Check
+              </button>
+            </div>
+          )
+        }
+        {
+          (m.type === 'text' || m.type === 'sign') && (
+            <form class="textform" id="textform">
+              <label class="sr-only" for="answer">{m.type === 'sign' ? 'Your name' : 'Your answer'}</label>
+              <input id="answer" type="text" autocomplete={m.type === 'sign' ? 'given-name' : 'off'} maxlength="40" placeholder={m.type === 'sign' ? 'Your first name' : 'Write it here'} required />
+              <button class="btn btn-primary" type="submit">
+                {m.type === 'sign' ? 'Sign' : 'Log it'}
+              </button>
+            </form>
+          )
+        }
+      </div>
+
+      <div class="result" id="result" hidden>
+        <p class="hand result-word" id="result-word" />
+        <p id="result-explain">{m.explain}</p>
+        {
+          badgeArt && (
+            <div class="badge-earned" id="badge-earned" hidden>
+              <Image src={badgeArt} alt={`${m.badge} badge`} width={200} height={200} />
+              <p class="hand">Badge earned</p>
+            </div>
+          )
+        }
+        <p class="cluster">
+          <a class="btn btn-primary" id="next-link" href={payload.next}>
+            {next ? `Next: Mission ${next.chapter} →` : 'Print your license →'}
+          </a>
+          <a class="btn" href={url(`/ch/${m.chapter}/`)}>Back to the chapter</a>
+        </p>
+      </div>
+    </div>
+  </article>
+
+  <script>
+    import { completeMission, setName } from '../../scripts/progress';
+    const play = document.getElementById('play')!;
+    const data = JSON.parse(play.dataset.mission!) as { id: string; type: string; answer: number | null; accept: string[] | null; order: string[] | null; badge: string | null; next: string };
+    const result = document.getElementById('result')!;
+    const word = document.getElementById('result-word')!;
+    const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+
+    function finish(ok: boolean, msg: string) {
+      word.textContent = msg;
+      result.hidden = false;
+      if (ok) {
+        completeMission(data.id, data.badge);
+        const b = document.getElementById('badge-earned');
+        if (b) b.hidden = false;
+        play.classList.add('is-done');
+      }
+      result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // choice / decide / fish / place
+    play.querySelectorAll<HTMLButtonElement>('.choice').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.i);
+        if (data.type === 'decide') {
+          play.querySelectorAll('.choice').forEach((b) => b.classList.toggle('picked', b === btn));
+          finish(true, i === 0 ? 'Same call Matt made.' : 'A tournament call. Here’s what Matt did:');
+          return;
+        }
+        if (i === data.answer) {
+          btn.classList.add('right');
+          play.querySelectorAll<HTMLButtonElement>('.choice').forEach((b) => (b.disabled = true));
+          finish(true, 'That’s it.');
+        } else {
+          btn.classList.add('wrong');
+          btn.disabled = true;
+          word.textContent = 'Not that one. Try again.';
+          result.hidden = false;
+          document.getElementById('result-explain')!.hidden = true;
+          document.getElementById('next-link')!.hidden = true;
+        }
+      });
+    });
+    // when they get it right, show the explanation and the next link again
+    const explainEl = document.getElementById('result-explain')!;
+    const nextEl = document.getElementById('next-link')!;
+    const obs = new MutationObserver(() => {
+      if (play.classList.contains('is-done')) {
+        explainEl.hidden = false;
+        nextEl.hidden = false;
+      }
+    });
+    obs.observe(play, { attributes: true, attributeFilter: ['class'] });
+
+    // order
+    if (data.type === 'order') {
+      const pool = document.getElementById('pool')!;
+      const picked = document.getElementById('picked')!;
+      const check = document.getElementById('check-order') as HTMLButtonElement;
+      // shuffle the pool
+      const lis = Array.from(pool.children);
+      lis.sort(() => Math.random() - 0.5).forEach((li) => pool.appendChild(li));
+      const chosen: number[] = [];
+      const render = () => {
+        picked.innerHTML = '';
+        chosen.forEach((i, pos) => {
+          const li = document.createElement('li');
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'chip picked-chip';
+          b.textContent = `${pos + 1}. ${data.order![i]}`;
+          b.addEventListener('click', () => {
+            chosen.splice(pos, 1);
+            pool.querySelector<HTMLButtonElement>(`.chip[data-i="${i}"]`)!.parentElement!.hidden = false;
+            render();
+          });
+          li.appendChild(b);
+          picked.appendChild(li);
+        });
+        check.disabled = chosen.length !== data.order!.length;
+      };
+      pool.querySelectorAll<HTMLButtonElement>('.chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          chosen.push(Number(chip.dataset.i));
+          chip.parentElement!.hidden = true;
+          render();
+        });
+      });
+      check.addEventListener('click', () => {
+        const ok = chosen.every((v, i) => v === i);
+        if (ok) finish(true, 'In order. Nicely done.');
+        else {
+          word.textContent = 'Not quite. Tap a step to put it back and try again.';
+          result.hidden = false;
+          explainEl.hidden = true;
+          nextEl.hidden = true;
+        }
+      });
+    }
+
+    // text / sign
+    const form = document.getElementById('textform') as HTMLFormElement | null;
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = (document.getElementById('answer') as HTMLInputElement).value;
+      if (data.type === 'sign') {
+        if (!v.trim()) return;
+        setName(v);
+        finish(true, `Signed, ${v.trim()}.`);
+        return;
+      }
+      const ok = (data.accept ?? []).some((a) => norm(a) === norm(v));
+      if (ok) finish(true, 'Logged.');
+      else {
+        word.textContent = 'Not the name in the log. Think back to the chapter.';
+        result.hidden = false;
+        explainEl.hidden = true;
+        nextEl.hidden = true;
+      }
+    });
+  </script>
+</Base>
+
+<style>
+  .crumbs {
+    margin-bottom: 0.5rem;
+  }
+  .mi-head {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  .mi-spot {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    flex: none;
+  }
+  .prompt {
+    font-size: 1.2rem;
+    margin: 1.25rem 0 1rem;
+  }
+  .choices {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .choice {
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    font-size: 1.05rem;
+    padding: 0.8rem 1rem;
+    min-height: 52px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--oyster);
+    background: var(--paper-2);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .choice:hover:not(:disabled) {
+    border-color: var(--gulf);
+  }
+  .choice.right,
+  .choice.picked {
+    border-color: var(--sunrise);
+    background: color-mix(in srgb, var(--sunrise) 18%, var(--paper-2));
+  }
+  .choice.wrong {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+  .img-choices {
+    grid-template-columns: 1fr 1fr;
+  }
+  .img-choice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem;
+  }
+  .img-choice img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+  }
+  .img-label {
+    font-weight: 600;
+    color: var(--mangrove);
+    font-size: 0.95rem;
+    text-align: center;
+  }
+  .play.is-done .img-label {
+    visibility: visible;
+  }
+  .pool,
+  .picked {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .picked {
+    min-height: 44px;
+    border: 1.5px dashed var(--oyster);
+    border-radius: var(--radius);
+    padding: 8px;
+  }
+  .chip {
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.8rem;
+    min-height: 44px;
+    border-radius: 999px;
+    border: 1.5px solid var(--oyster);
+    background: var(--paper-2);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .picked-chip {
+    border-color: var(--sunrise);
+    background: color-mix(in srgb, var(--sunrise) 18%, var(--paper-2));
+  }
+  .textform {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .textform input {
+    flex: 1 1 200px;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 1.5px solid var(--oyster);
+    border-radius: var(--radius);
+    background: var(--paper-2);
+    color: var(--ink);
+    font: inherit;
+  }
+  .result {
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--paper-2);
+    border-left: 4px solid var(--sunrise);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .result-word {
+    font-size: 1.6rem;
+    color: var(--sunrise-ink);
+    margin: 0 0 0.25rem;
+  }
+  .badge-earned {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.5rem 0 1rem;
+  }
+  .badge-earned img {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+  }
+  .badge-earned p {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--sunrise-ink);
+  }
+</style>

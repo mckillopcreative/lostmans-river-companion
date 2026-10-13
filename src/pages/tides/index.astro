@@ -1,0 +1,166 @@
+---
+// Today's tides from NOAA, with the "fish the hour either side of the high" window drawn on.
+import Base from '@layouts/Base.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
+import { url } from '@lib/url';
+// NOAA CO-OPS reference station nearest the Ten Thousand Islands. Naples (8725110) is the
+// reference; Chokoloskee's water runs later by up to an hour. Everglades City has a subordinate
+// station on the NOAA tables; swap the id here if the author prefers it after checking.
+const STATION = '8725110';
+const STATION_NAME = 'Naples, FL (NOAA 8725110)';
+---
+
+<Base title="Tides" description="Today's high and low tides near Chokoloskee, and the hour either side of the high when Dan says to fish.">
+  <div class="wrap section">
+    <header class="td-head">
+      <SectionEmblem name="chart" size={100} />
+      <div>
+        <p class="eyebrow">Reading the tide</p>
+        <h1>Today at Chokoloskee</h1>
+        <p class="lede">Two highs and two lows most days, each about fifty minutes later than yesterday. Fish the hour either side of the high and there is water over the bars.</p>
+      </div>
+    </header>
+
+    <div class="tides" id="tides" data-station={STATION}>
+      <p class="muted small" id="status">Fetching NOAA predictions…</p>
+      <div id="days"></div>
+    </div>
+    <p class="note small">
+      Predictions from NOAA for {STATION_NAME}, the nearest reference station. Chokoloskee and Lostman’s River run later by up to an hour and the wind moves the water too; treat this as a guide, not a timetable. More in the <a href={url('/tackle/#tide')}>Tackle Box</a>.
+    </p>
+  </div>
+
+  <script>
+    const el = document.getElementById('tides')!;
+    const station = el.dataset.station!;
+    const status = document.getElementById('status')!;
+    const days = document.getElementById('days')!;
+    const fmt = (d: Date) => d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const dkey = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '');
+    const today = new Date();
+    const tomorrow = new Date(today.getTime() + 864e5);
+    const urlN = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=lostmansriver&begin_date=${dkey(today)}&end_date=${dkey(tomorrow)}&datum=MLLW&station=${station}&time_zone=lst_ldt&units=english&interval=hilo&format=json`;
+    fetch(urlN)
+      .then((r) => r.json())
+      .then((j: { predictions?: { t: string; v: string; type: 'H' | 'L' }[] }) => {
+        if (!j.predictions?.length) throw new Error('no data');
+        status.hidden = true;
+        const now = new Date();
+        const byDay = new Map<string, typeof j.predictions>();
+        for (const p of j.predictions) {
+          const day = p.t.slice(0, 10);
+          if (!byDay.has(day)) byDay.set(day, []);
+          byDay.get(day)!.push(p);
+        }
+        let nextHigh: Date | null = null;
+        for (const [day, list] of byDay) {
+          const sec = document.createElement('section');
+          const d = new Date(day + 'T12:00:00');
+          sec.innerHTML = `<h2>${d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</h2>`;
+          const ul = document.createElement('ul');
+          ul.className = 'tide-list';
+          for (const p of list) {
+            const t = new Date(p.t.replace(' ', 'T'));
+            const high = p.type === 'H';
+            const li = document.createElement('li');
+            li.className = high ? 'high' : 'low';
+            const win = high ? `<span class="win hand">fish ${fmt(new Date(t.getTime() - 36e5))} – ${fmt(new Date(t.getTime() + 36e5))}</span>` : '';
+            li.innerHTML = `<span class="kind mono">${high ? 'HIGH' : 'low'}</span><span class="time">${fmt(t)}</span><span class="ft mono">${Number(p.v).toFixed(1)} ft</span>${win}`;
+            if (high && !nextHigh && t > now) {
+              nextHigh = t;
+              li.classList.add('next');
+            }
+            ul.appendChild(li);
+          }
+          sec.appendChild(ul);
+          days.appendChild(sec);
+        }
+        if (nextHigh) {
+          const p = document.createElement('p');
+          p.className = 'next-line';
+          const mins = Math.round((nextHigh.getTime() - now.getTime()) / 6e4);
+          p.innerHTML = `<span class="hand">Next high</span> ${fmt(nextHigh)}, in ${mins >= 60 ? Math.floor(mins / 60) + ' h ' + (mins % 60) + ' min' : mins + ' min'}. Be on the water an hour before.`;
+          days.prepend(p);
+        }
+      })
+      .catch(() => {
+        status.textContent = 'Could not reach NOAA just now. The Tackle Box explains how to read a tide table yourself.';
+      });
+  </script>
+</Base>
+
+<style is:global>
+  .td-head {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .td-head .lede {
+    margin-bottom: 0;
+  }
+  .tides {
+    margin: 1.25rem 0;
+  }
+  .tides h2 {
+    font-size: 1.2rem;
+    margin: 1.25rem 0 0.4rem;
+  }
+  .next-line {
+    background: var(--paper-2);
+    border-left: 4px solid var(--sunrise);
+    padding: 0.75rem 1rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 1.05rem;
+  }
+  .next-line .hand {
+    color: var(--sunrise-ink);
+    font-size: 1.3rem;
+    margin-right: 0.4rem;
+  }
+  .tide-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .tide-list li {
+    display: grid;
+    grid-template-columns: 52px 90px 60px 1fr;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius);
+    background: var(--paper-2);
+  }
+  .tide-list .kind {
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+  }
+  .tide-list .high .kind {
+    color: var(--gulf);
+    font-weight: 700;
+  }
+  .tide-list .time {
+    font-weight: 600;
+  }
+  .tide-list .ft {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+  }
+  .tide-list .win {
+    color: var(--sunrise-ink);
+    font-size: 1.1rem;
+  }
+  .tide-list .next {
+    outline: 2px solid var(--sunrise);
+  }
+  @media (max-width: 480px) {
+    .tide-list li {
+      grid-template-columns: 48px 1fr 56px;
+    }
+    .tide-list .win {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

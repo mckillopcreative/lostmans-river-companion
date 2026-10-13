@@ -1,0 +1,157 @@
+[
+  {
+    "id": "m01", "chapter": 1, "title": "Find starboard", "skill": "Boat sense", "type": "choice",
+    "prompt": "You’re standing at the console of the Mako, facing the bow. Starboard is…",
+    "options": ["Your right", "Your left", "Behind you", "Whichever side is deeper"],
+    "answer": 0,
+    "explain": "Starboard is the right side when you face forward, on a boat or a plane. Matt checked it in the Guidebook on his first flight; Josh and Ben already knew."
+  },
+  {
+    "id": "m02", "chapter": 2, "title": "Rig the poles", "skill": "Rigging", "type": "order",
+    "prompt": "Dan rigs eight poles the night Matt arrives. Put the rig in order from the rod tip down.",
+    "items": ["Main line", "Swivel", "Weight", "Leader", "Lure or hook"],
+    "explain": "Main line to a swivel so the line doesn’t twist, a small weight to get the bait down, a short heavier leader that gill plates and oysters can’t cut, then the lure."
+  },
+  {
+    "id": "m03", "chapter": 3, "title": "Read the water", "skill": "Reading the water", "type": "choice",
+    "prompt": "The Mako drifts over a seagrass bed. Which fish should you expect, and with what?",
+    "options": ["Seatrout, on a yellow feather tipped with shrimp", "Snook, deep under the mangrove roots", "Grouper, in a deep hole", "Redfish, popping cork over an oyster bar"],
+    "answer": 0,
+    "explain": "“Grass bed fishing meant trout.” Mangroves and oysters hold snook and reds; deep holes hold grouper."
+  },
+  {
+    "id": "m04", "chapter": 4, "title": "Pick the tide", "skill": "Tides", "type": "choice",
+    "prompt": "Matt wants water over the oyster bars at South Point and bait moving along the mangroves. When does Dan say to fish?",
+    "options": ["The hour either side of high tide", "Dead low tide", "Only at slack water", "Noon, whatever the tide"],
+    "answer": 0,
+    "explain": "Fish the hour either side of the high. A ‘morning high’ means plenty of water over the bars."
+  },
+  {
+    "id": "m05", "chapter": 5, "title": "Log the night meeting", "skill": "Observation · clue 1", "type": "text",
+    "prompt": "Two boats and a car meet in the dark at South Point. Matt hears one name. Write it in the log.",
+    "accept": ["rawley", "rawley simms", "simms"],
+    "explain": "“Rawley.” The grocery-store owner. Keep that name; it matters in Chapter 20.",
+    "clue": true
+  },
+  {
+    "id": "m06", "chapter": 6, "title": "Revive the snook", "skill": "Catch and release", "type": "order", "badge": "snook",
+    "prompt": "The 36-inch snook is beside the boat and tired. Put the release in order.",
+    "items": ["Hold it upright in the water", "Move it gently back and forth so water passes over the gills", "Wait for the tail to kick on its own", "Open your hands and let it swim"],
+    "explain": "Snook are closed season in summer and go back every time. Matt did exactly this, and earned the first badge."
+  },
+  {
+    "id": "m07", "chapter": 7, "title": "Name the fish in the cooler", "skill": "Fish ID", "type": "fish",
+    "prompt": "The Rabbit Key cooler holds trout, redfish, snapper and one rare one. Tap the black drum.",
+    "options": ["trout", "redfish", "snapper", "black-drum"],
+    "answer": 3,
+    "explain": "Deep-bodied, gray-black, chin barbels, vertical bars when young. ‘Hard to find these days,’ Dan says."
+  },
+  {
+    "id": "m08", "chapter": 8, "title": "Which snake?", "skill": "Wildlife", "type": "choice",
+    "prompt": "A snake swims toward the lantern at Comer Key. How can you tell a cottonmouth from a harmless water snake while it swims?",
+    "options": ["A cottonmouth swims with its whole body on the surface", "A cottonmouth swims underwater", "Cottonmouths can’t swim", "By its color alone"],
+    "answer": 0,
+    "explain": "Cottonmouths float high with the whole body on top; harmless water snakes swim with just the head up. The white mouth gape is a warning, not an attack."
+  },
+  {
+    "id": "m09", "chapter": 9, "title": "Plot the drop", "skill": "Navigation · clue 2", "type": "place",
+    "prompt": "A seaplane lands without lights and flashes three times. Which key?",
+    "options": ["pavilion-key", "comer-key", "rabbit-key-pass", "lopez-river"],
+    "answer": 0,
+    "explain": "Pavilion Key, before dawn. Snapper poles the Mako into the mangroves so nobody hears a motor.",
+    "clue": true
+  },
+  {
+    "id": "m10", "chapter": 10, "title": "Decode the call", "skill": "Radio · clue 3", "type": "choice",
+    "prompt": "Dan’s voice on the phone: “Trust me. Head to Lostman’s River in the Sea Belle.” Which channel, and when?",
+    "options": ["Channel 16, nine to ten p.m.", "Channel 9, at dawn", "Channel 68, at noon", "Channel 16, all day"],
+    "answer": 0,
+    "explain": "Channel 16 is the international hailing and distress channel. Dan says to leave it open from nine to ten at night.",
+    "clue": true
+  },
+  {
+    "id": "m11", "chapter": 11, "title": "Provision the Sea Belle", "skill": "Planning", "type": "choice",
+    "prompt": "A week of solid eating for two goes aboard at Everglades Marina. Which of these did Dan’s list definitely include?",
+    "options": ["Peanut butter and three loaves of bread", "A tuxedo", "A case of lobster", "Nothing, they planned to catch it all"],
+    "answer": 0,
+    "explain": "Peanut butter, three loaves, cereal, cans, meat, milk, eggs, butter. Plus donuts, which are power food."
+  },
+  {
+    "id": "m12", "chapter": 12, "title": "Tie off for the storm", "skill": "Seamanship", "type": "order",
+    "prompt": "The squall drives the Sea Belle onto an oyster bar. Secure the houseboat in order.",
+    "items": ["Run a bow rope to a solid mangrove", "Set the stern anchor out behind", "Check both lines are tight", "Get aboard and wait it out"],
+    "explain": "Bow to the mangrove, stern anchor out: the boat ‘stretched secure from end to end.’ Then don’t swim back through a ghost net."
+  },
+  {
+    "id": "m13", "chapter": 13, "title": "Why the gator came", "skill": "Wildlife", "type": "choice",
+    "prompt": "An alligator takes half of Snapper’s grouper at the Sea Belle. What drew it in?",
+    "options": ["The splashing of a hooked fish", "The smell of peanut butter", "The radio", "The color of the boat"],
+    "answer": 0,
+    "explain": "Splashing says ‘something is hurt here.’ Matt’s rule about not splashing is real guide wisdom."
+  },
+  {
+    "id": "m14", "chapter": 14, "title": "Size the unseen giant", "skill": "Fish", "type": "choice",
+    "prompt": "Something drags the anchored Bonefisher across the channel before the line snaps. Snapper’s guess?",
+    "options": ["A grouper, three hundred pounds or more", "A twenty-pound snook", "A dolphin", "The anchor was just loose"],
+    "answer": 0,
+    "explain": "A goliath grouper in a deep hole between the islands. Dan’s line: there is such a thing as too much fish."
+  },
+  {
+    "id": "m15", "chapter": 15, "title": "The Everglades choir", "skill": "Listening", "type": "choice",
+    "prompt": "Matt lies awake on deck listening. Which sound is NOT part of the choir?",
+    "options": ["A car alarm", "Mullet splashing", "Frogs croaking", "Birds singing"],
+    "answer": 0,
+    "explain": "Mullet, frogs, birds. No roads for twenty miles."
+  },
+  {
+    "id": "m16", "chapter": 16, "title": "The dolphin and the shark", "skill": "Wildlife", "type": "choice",
+    "prompt": "Matt is cutting a calf free of a ghost net when a hammerhead arrives. The mother dolphin rams the shark. Why?",
+    "options": ["To protect her calf", "Because sharks and dolphins always fight", "She mistook it for a fish", "To protect Matt"],
+    "answer": 0,
+    "explain": "Dolphin mothers defend calves hard, and dolphins have been seen ramming sharks. Then she bit the last strand of net herself."
+  },
+  {
+    "id": "m17", "chapter": 17, "title": "Close the cut", "skill": "First aid", "type": "order",
+    "prompt": "Doc is bleeding ‘like a dang amberjack’ and talks Matt through it. Put the steps in order.",
+    "items": ["Clean the cut with antiseptic", "Numb it with the novocain", "Stitch it with needle and thread", "Cover it with gauze"],
+    "explain": "‘Just sew me up like two pieces of clothes.’ Matt’s first stitches."
+  },
+  {
+    "id": "m18", "chapter": 18, "title": "Float her off", "skill": "Tides", "type": "choice",
+    "prompt": "The Sea Belle is stuck on the bar. Which tide gets her off?",
+    "options": ["The 9 a.m. high tide, with Doc towing and the boys pushing", "Low tide, when the bar is dry", "Any tide if you push hard enough", "The next storm"],
+    "answer": 0,
+    "explain": "Wait for the water to come back. Push and pull on the morning high, and mind the propeller."
+  },
+  {
+    "id": "m19", "chapter": 19, "title": "Old Scarface", "skill": "Your call", "type": "decide", "badge": "tarpon",
+    "prompt": "Ninety minutes, and Old Scarface is on the deck. Weigh him in for the tournament, or put him back?",
+    "options": ["Put him back", "Weigh him in"],
+    "explain": "Matt let him go. ‘Tough call. Good call,’ said Snapper. Either way, you earned the tarpon badge for landing him."
+  },
+  {
+    "id": "m20", "chapter": 20, "title": "Name the informant", "skill": "The mystery", "type": "text",
+    "prompt": "Three clues: the name at South Point, the drop at Pavilion Key, the call on channel 16. Who is the FBI’s informant?",
+    "accept": ["dan", "uncle dan", "daniel", "daniel panther", "daniel walter panther", "dan panther"],
+    "explain": "Uncle Dan. Rawley was the undercover agent, the real smugglers are in jail, and the cargo was sunken treasure."
+  },
+  {
+    "id": "m21", "chapter": 21, "title": "Follow the money", "skill": "Reading", "type": "choice",
+    "prompt": "Matt gets a share of a $20,000 reward. What does he try to do with it?",
+    "options": ["Pay for Doc’s heart procedure", "Buy a jet boat", "Enter next year’s tournament", "Keep it in a Dorito bag forever"],
+    "answer": 0,
+    "explain": "He offers it to Doc, and Rose walks in with the trophy having already done the same."
+  },
+  {
+    "id": "m22", "chapter": 22, "title": "The airboat", "skill": "Boats", "type": "choice",
+    "prompt": "Dad’s red airboat, restored. What lets it run on inches of water?",
+    "options": ["Nothing hangs below the hull; a caged propeller above the stern pushes it", "A very small outboard", "A jet pump", "Oars"],
+    "answer": 0,
+    "explain": "No prop or rudder in the water, so it slides over grass and mud. Loud, no brakes, and it needs a license, hence the DMV."
+  },
+  {
+    "id": "m23", "chapter": 23, "title": "Sign the Guidebook", "skill": "Finish", "type": "sign", "badge": "captain",
+    "prompt": "Dad’s name, then Matt’s, then two blank lines. Sign yours.",
+    "explain": "‘Dad always said we were in it together.’ Your license is ready to print."
+  }
+]

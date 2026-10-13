@@ -1,0 +1,214 @@
+---
+// Fish ID: name the plate. Three difficulties, ten rounds, best score kept on the device.
+import { getImage } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
+import { fish } from '@lib/data';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+
+const core = ['snook', 'tarpon', 'redfish', 'trout', 'snapper', 'grouper'];
+const mid = [...core, 'black-drum', 'cobia', 'jack', 'mullet', 'sheepshead', 'flounder', 'ladyfish', 'pufferfish', 'bonefish'];
+const plates = [];
+for (const f of fish) {
+  const src = artImage('fish', f.id);
+  if (!src) continue;
+  const img = await getImage({ src, width: 640, format: 'webp' });
+  plates.push({ id: f.id, name: f.common, hint: f.identify ?? '', img: img.src });
+}
+const levels = { easy: core, medium: mid, hard: plates.map((p) => p.id) };
+---
+
+<Base title="Fish ID" description="Name the fish from its plate. Twenty-three species from the book, three difficulties.">
+  <div class="wrap section">
+    <header class="fi-head">
+      <SectionEmblem name="fish" size={100} />
+      <div>
+        <p class="eyebrow">Game</p>
+        <h1>Fish ID</h1>
+        <p class="lede">A plate comes up; name it. Ten rounds. Dave couldn’t tell a trout from a snapper on day one; by Chapter 7 he could.</p>
+      </div>
+    </header>
+
+    <div class="levels cluster" role="group" aria-label="Difficulty">
+      <button type="button" class="btn btn-sm level is-on" data-level="easy">The six that matter</button>
+      <button type="button" class="btn btn-sm level" data-level="medium">Fifteen species</button>
+      <button type="button" class="btn btn-sm level" data-level="hard">All twenty-three</button>
+    </div>
+
+    <div class="board" id="board" data-plates={JSON.stringify(plates)} data-levels={JSON.stringify(levels)}>
+      <p class="round mono"><span id="round">1</span> / 10 · score <span id="score">0</span> · best <span id="best">0</span></p>
+      <figure class="plate art">
+        <img id="plate" alt="A fish to identify" width="640" height="640" />
+      </figure>
+      <ul class="choices" id="choices" />
+      <p class="verdict hand" id="verdict"></p>
+      <p class="hint small muted" id="hint"></p>
+      <p class="cluster">
+        <button type="button" class="btn btn-primary" id="next" hidden>Next ›</button>
+        <button type="button" class="btn" id="again" hidden>Play again</button>
+      </p>
+    </div>
+    <p class="small"><a href={url('/fish/')}>Study the field guide →</a></p>
+  </div>
+
+  <script>
+    type Plate = { id: string; name: string; hint: string; img: string };
+    const board = document.getElementById('board')!;
+    const plates = JSON.parse(board.dataset.plates!) as Plate[];
+    const levels = JSON.parse(board.dataset.levels!) as Record<string, string[]>;
+    const byId = new Map(plates.map((p) => [p.id, p]));
+    let level = 'easy';
+    let pool: Plate[] = [];
+    let round = 0,
+      score = 0,
+      current: Plate | null = null;
+    const $ = (id: string) => document.getElementById(id)!;
+    const bestKey = () => `fish-id-best:${level}`;
+    const shuffle = <T,>(a: T[]) => [...a].sort(() => Math.random() - 0.5);
+
+    function start() {
+      pool = shuffle(levels[level].map((id) => byId.get(id)!).filter(Boolean));
+      round = 0;
+      score = 0;
+      $('score').textContent = '0';
+      try {
+        $('best').textContent = localStorage.getItem(bestKey()) || '0';
+      } catch {}
+      $('again').hidden = true;
+      next();
+    }
+    function next() {
+      if (round >= 10) return end();
+      current = pool[round % pool.length];
+      round++;
+      $('round').textContent = String(round);
+      ($('plate') as HTMLImageElement).src = current.img;
+      $('verdict').textContent = '';
+      $('hint').textContent = '';
+      $('next').hidden = true;
+      const wrong = shuffle(plates.filter((p) => p.id !== current!.id)).slice(0, 3);
+      const options = shuffle([current, ...wrong]);
+      const ul = $('choices');
+      ul.innerHTML = '';
+      for (const o of options) {
+        const li = document.createElement('li');
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'choice';
+        b.textContent = o.name;
+        b.addEventListener('click', () => answer(o, b));
+        li.appendChild(b);
+        ul.appendChild(li);
+      }
+    }
+    function answer(o: Plate, b: HTMLButtonElement) {
+      const ok = o.id === current!.id;
+      if (ok) {
+        score++;
+        b.classList.add('right');
+        $('verdict').textContent = 'Yes.';
+      } else {
+        b.classList.add('wrong');
+        $('verdict').textContent = `No, that’s the ${current!.name.toLowerCase()}.`;
+      }
+      $('hint').textContent = current!.hint;
+      $('score').textContent = String(score);
+      document.querySelectorAll<HTMLButtonElement>('.choice').forEach((c) => (c.disabled = true));
+      $('next').hidden = false;
+    }
+    function end() {
+      $('verdict').textContent = `${score} of 10. ${score >= 9 ? 'Guide material.' : score >= 6 ? 'Dan would nod.' : 'Back to the field guide, then try again.'}`;
+      try {
+        const best = Number(localStorage.getItem(bestKey()) || '0');
+        if (score > best) localStorage.setItem(bestKey(), String(score));
+        $('best').textContent = String(Math.max(best, score));
+      } catch {}
+      $('next').hidden = true;
+      $('again').hidden = false;
+    }
+    $('next').addEventListener('click', next);
+    $('again').addEventListener('click', start);
+    document.querySelectorAll<HTMLButtonElement>('.level').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        level = btn.dataset.level!;
+        document.querySelectorAll('.level').forEach((b) => b.classList.toggle('is-on', b === btn));
+        start();
+      }),
+    );
+    start();
+  </script>
+</Base>
+
+<style>
+  .fi-head {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .fi-head .lede {
+    margin-bottom: 0;
+  }
+  .levels {
+    margin: 1rem 0;
+  }
+  .level.is-on {
+    background: var(--sunrise);
+    border-color: var(--sunrise);
+    color: var(--on-sunrise);
+  }
+  .board {
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .round {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    margin: 0 0 0.5rem;
+  }
+  .plate {
+    margin: 0 auto 0.75rem;
+    max-width: 420px;
+  }
+  .plate img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+  .choices {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .choice {
+    width: 100%;
+    font: inherit;
+    font-size: 0.98rem;
+    padding: 0.7rem 0.8rem;
+    min-height: 48px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--oyster);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .choice.right {
+    border-color: var(--sunrise);
+    background: color-mix(in srgb, var(--sunrise) 18%, var(--paper));
+  }
+  .choice.wrong {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+  .verdict {
+    font-size: 1.4rem;
+    color: var(--sunrise-ink);
+    margin: 0.75rem 0 0.1rem;
+    min-height: 1.6em;
+  }
+</style>

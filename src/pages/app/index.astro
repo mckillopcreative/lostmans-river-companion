@@ -15,7 +15,7 @@ type Tile = { id: string; label: string; sub?: string; href: string; emblem?: st
 const tiles: Tile[] = [
   { id: 'read', label: 'Read the book', sub: `${chapters.length} chapters`, href: '/ch/1/', emblem: 'about', size: 'big' },
   { id: 'listen', label: 'Listen to the book', sub: 'Chapter 1 ready', href: '/ch/1/#listen-ch-01', emblem: 'sketchbook', size: 'wide' },
-  { id: 'missions', label: 'Your summer', sub: '23 missions · 3 badges', href: '/list/', emblem: 'list', size: 'tall', soon: true },
+  { id: 'missions', label: 'Your summer', sub: '23 missions · 3 badges', href: '/missions/', emblem: 'list', size: 'tall' },
   { id: 'chart', label: 'The Chart', href: '/map/', emblem: 'chart' },
   { id: 'fish', label: 'Fish', sub: `${fish.length} species`, href: '/fish/', emblem: 'fish' },
   { id: 'crew', label: 'Crew', href: '/crew/', emblem: 'crew' },
@@ -23,14 +23,14 @@ const tiles: Tile[] = [
   { id: 'boats', label: 'Boats', sub: 'in the book', href: '/boats/', emblem: 'boats' },
   { id: 'boat-types', label: 'Types of boats', sub: 'skiffs · airboats · kayaks', href: '/boats/types/', emblem: 'boats' },
   { id: 'tackle', label: 'Tackle Box', href: '/tackle/', emblem: 'tackle' },
-  { id: 'knots', label: 'Knots', sub: 'five to master', href: '/tackle/#knots', emblem: 'tackle', soon: true },
-  { id: 'fish-id', label: 'Fish ID game', href: '/fish/', emblem: 'fish', soon: true },
-  { id: 'chart-puzzles', label: 'Chart puzzles', sub: 'plot the routes', href: '/map/', emblem: 'chart', soon: true },
-  { id: 'tides', label: 'Tides', sub: 'today at Chokoloskee', href: '/tackle/#tide', emblem: 'chart', soon: true },
+  { id: 'knots', label: 'Knots', sub: 'five to master', href: '/knots/', emblem: 'tackle' },
+  { id: 'fish-id', label: 'Fish ID game', sub: 'ten rounds', href: '/games/fish-id/', emblem: 'fish' },
+  { id: 'chart-puzzles', label: 'Name that key', sub: 'chart puzzle', href: '/games/chart/', emblem: 'chart' },
+  { id: 'tides', label: 'Tides', sub: 'today at Chokoloskee', href: '/tides/', emblem: 'chart' },
   { id: 'places', label: 'Places', sub: `${places.length} painted`, href: '/places/', emblem: 'chart', size: 'wide' },
   { id: 'list', label: 'Matt’s List', sub: `${todo.length} items`, href: '/list/', emblem: 'list' },
   { id: 'sketchbook', label: 'Sketchbook', href: '/sketchbook/', emblem: 'sketchbook' },
-  { id: 'printables', label: 'Printables', sub: 'cards · coloring · license', href: '/about/', emblem: 'list', soon: true },
+  { id: 'printables', label: 'Your license', sub: 'print it', href: '/license/', emblem: 'list' },
   { id: 'catch-log', label: 'Catch log', sub: 'your own', href: '/list/#mine', emblem: 'fish', soon: true },
 ];
 const art = (t: Tile) => artImage('tiles', t.id) ?? (t.emblem ? artImage('emblems', `emblem-${t.emblem}`) : null);
@@ -44,9 +44,9 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.emblem ? artImage('emblem
         <h1>You’re the assistant guide this summer.</h1>
         <p class="lede">Same job Matt had. Read the book, listen along, learn the water, and earn your license.</p>
         <div class="progress" role="group" aria-label="Your progress">
-          <span class="pill is-current">0 of 23 missions</span>
-          <span class="pill">0 badges</span>
-          <span class="pill">Chapter 1</span>
+          <span class="pill is-current" id="p-missions">0 of 23 missions</span>
+          <span class="pill" id="p-badges">0 badges</span>
+          <a class="pill" id="p-next" href={url('/missions/m01/')}>Start: Mission 1</a>
         </div>
       </div>
       <ChapterAudio n={1} title="Start listening: Chapter 1" compact />
@@ -77,6 +77,21 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.emblem ? artImage('emblem
       }
     </ul>
   </section>
+
+  <script>
+    import { load, countDone } from '../../scripts/progress';
+    const p = load();
+    const done = countDone(p);
+    document.getElementById('p-missions')!.textContent = `${done} of 23 missions`;
+    document.getElementById('p-badges')!.textContent = `${p.badges.length} badge${p.badges.length === 1 ? '' : 's'}`;
+    const next = document.getElementById('p-next') as HTMLAnchorElement;
+    // first unfinished mission (they may be done out of order)
+    const firstOpen = Array.from({ length: 23 }, (_, i) => i + 1).find((i) => !p.missions['m' + String(i).padStart(2, '0')]);
+    const n = firstOpen ?? 23;
+    next.textContent = done >= 23 ? 'Print your license' : `${done ? 'Next' : 'Start'}: Mission ${n}`;
+    // the server renders the link to Mission 1; swap it for the next mission or the license
+    next.href = done >= 23 ? next.href.replace('missions/m01/', 'license/') : next.href.replace('m01', 'm' + String(n).padStart(2, '0'));
+  </script>
 
   <section class="wrap section">
     <AuthorsCard />
