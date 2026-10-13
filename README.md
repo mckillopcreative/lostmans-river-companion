@@ -35,7 +35,7 @@ src/lib/data.ts       typed access to the JSON
 src/lib/url.ts        base-path-aware url() helper — always use it for internal links
 src/pages/            one file per route; ch/[n].astro is the QR landing page
 scripts/              validate, trim-sketches, make-qr, linkcheck
-docs/                 DESIGN.md, OPEN-ITEMS.md (things only the author can decide), CREDITS.md
+docs/                 DESIGN.md, OPEN-ITEMS.md, CREDITS.md, VISUAL-BRIEF.md, DIGITAL-EDITION-PLAN.md (the paid edition proposal)
 qr/                   generated QR SVGs + contact sheet (commit after the domain is final)
 ```
 

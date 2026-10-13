@@ -5,3 +5,6 @@ dist/
 src/assets/sketches/
 # the manuscript is reference only and is never published (CLAUDE.md)
 source/
+
+# narration output is generated, not committed (public/audio is ~300 MB when complete)
+public/audio/

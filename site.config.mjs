@@ -49,7 +49,7 @@ export default {
     { text: 'The first time my son ever said he connected to the main character.', who: 'Amazon reviewer' },
   ],
   joelbooks: {
-    text: "Named one of Joelbooks' Top Short Adventure Books for Teens",
+    text: "One of Joelbooks' Top 8 Short Adventure Books for Teens",
     url: 'https://joelbooks.com/top-short-adventure-books-for-teens/',
   },
 };
