@@ -3,7 +3,7 @@ See SPEC.md §8. Placeholders used during the build are listed here with where t
 
 ## Needed before printing QR codes
 - [x] **Domain name** — lostmansriver.com, registered at Cloudflare 2026-10-13. GitHub side done: `public/CNAME`, repo variables `SITE_URL`/`BASE_PATH`, Pages custom domain set, QR codes regenerated.
-- [ ] **Cloudflare DNS** (dash.cloudflare.com → lostmansriver.com → DNS → Records), all with the proxy OFF (grey cloud, “DNS only”):
+- [x] **Cloudflare DNS** — nine records added 2026-10-13 (4 A, 4 AAAA, CNAME www), all DNS only; SSL/TLS mode Full. Records for reference (dash.cloudflare.com → lostmansriver.com → DNS → Records), all with the proxy OFF (grey cloud, “DNS only”):
   - A `@` → 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153 (four records)
   - AAAA `@` → 2606:50c0:8000::153, 2606:50c0:8001::153, 2606:50c0:8002::153, 2606:50c0:8003::153
   - CNAME `www` → mckillopcreative.github.io
