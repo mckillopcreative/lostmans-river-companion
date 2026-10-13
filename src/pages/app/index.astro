@@ -1,7 +1,7 @@
 ---
 // The Lostman's River Experience — the app home a buyer lands on. Visual-first: a grid of
 // tiles, one to three words each. Tile art comes from assets/art/tiles/<id>.(png|webp)
-// (docs/APP-HOME-BRIEF.md); until GPT delivers it, the section emblems stand in.
+// (docs/APP-HOME-BRIEF.md); the section emblems stand in for any tile without art.
 import { Image } from 'astro:assets';
 import Base from '@layouts/Base.astro';
 import AuthorsCard from '@components/AuthorsCard.astro';
@@ -199,13 +199,17 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.emblem ? artImage('emblem
     height: 62%;
     transform: translateY(-10%);
   }
-  /* real tile art fills the card (edge-to-edge tiles per the brief; transparent subjects sit centred) */
+  /* real tile art is painted edge to edge (brief §5): fill the card, keep the quiet bottom for the label */
   .tile-art:not(.placeholder) {
-    padding: 4%;
+    padding: 0;
   }
   .tile-art:not(.placeholder) img {
-    object-fit: contain;
-    transform: translateY(-6%);
+    object-fit: cover;
+    object-position: center 35%;
+  }
+  .tile-art:not(.placeholder) + .tile-text {
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--paper-2) 88%, transparent) 45%);
+    padding-top: 1.4rem;
   }
   .tile-text {
     position: relative;

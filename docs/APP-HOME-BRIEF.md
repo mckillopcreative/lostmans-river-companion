@@ -1,6 +1,6 @@
 # The Lostman's River Experience — app home
 
-*Design brief and GPT tile directions, 2026-10-13. A first build of this page is at `/app/` using the section emblems as stand-ins; drop tile art into `assets/art/tiles/<tile-id>.png` and it replaces them.*
+*Design brief and GPT tile directions, 2026-10-13. Built at `/app/`. GPT delivered all 18 tiles plus a Types-of-boats tile on 2026-10-13 (pack kept at `../assets/GPT assets/Lostmans_River_Oct13/`); they are installed as WebP in `assets/art/tiles/`. Still open from §5: `app-hero.png` and `license-blank.png`. From §9: only jon-boat, flats-skiff, bay-boat and deep-v arrived; the other 13 boat-type slots and `boat-types-hero.png` are still wanted.*
 
 ## 1. The idea in one line
 

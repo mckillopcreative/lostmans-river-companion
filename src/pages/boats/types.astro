@@ -100,30 +100,34 @@ const groups = (Object.keys(boatTypeGroups) as BoatType['group'][]).map((g) => (
   }
   @media (min-width: 900px) {
     .types {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
   }
   .type {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
     background: var(--paper-2);
     border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
     border-radius: var(--radius);
     overflow: hidden;
     scroll-margin-top: 80px;
   }
-  @media (min-width: 560px) {
-    .type {
-      grid-template-columns: 200px 1fr;
-    }
-  }
+  /* painted scenes are landscape: run them full width above the text so the whole boat shows */
   .type-art {
     display: grid;
     place-items: center;
     background: var(--paper-2);
+    aspect-ratio: 3 / 2;
+    min-width: 0;
+  }
+  .type-art.placeholder {
+    aspect-ratio: auto;
     min-height: 150px;
   }
   .type-art img {
+    display: block;
+    min-width: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
