@@ -13,6 +13,7 @@ import glossaryJson from '@data/glossary.json';
 import recipesJson from '@data/recipes.json';
 import sketchesJson from '@data/sketches.json';
 import knotsJson from '@data/knots.json';
+import boatTypesJson from '@data/boat-types.json';
 
 export interface Chapter {
   n: number;
@@ -131,6 +132,18 @@ export interface Knot {
   steps: string[];
   reference: string;
 }
+export interface BoatType {
+  id: string;
+  name: string;
+  group: 'hulls' | 'power' | 'gear';
+  what: string;
+  why: string;
+  watch_out: string;
+  specs: string;
+  book_boats: string[];
+  art_prompt: string;
+}
+export const boatTypeGroups: Record<BoatType['group'], string> = { hulls: 'Hulls: what kind of boat', power: 'Power: what moves it', gear: 'Gear and words' };
 export interface Sketch {
   file: string;
   subject: string;
@@ -153,6 +166,7 @@ export const glossary = glossaryJson as GlossaryWord[];
 export const recipes = recipesJson as Recipe[];
 export const sketches = sketchesJson as Sketch[];
 export const knots = knotsJson as Knot[];
+export const boatTypes = boatTypesJson as BoatType[];
 
 const byId = <T extends { id: string }>(list: T[]) => new Map(list.map((e) => [e.id, e]));
 export const characterById = byId(characters);

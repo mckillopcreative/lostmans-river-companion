@@ -203,3 +203,8 @@ Options, cheapest first:
 4. **Human narration**: John in a quiet room (20 to 30 hours) or a hired narrator ($200 to $400 per finished hour, roughly $1,000 to $2,000 for the book). Required if Audible distribution matters; Audible does not accept AI narration.
 
 Decision rule: ship with whichever of 1 to 3 is consistent across a full chapter; keep the human reading of two or three chapters as the bonus and the ad audio.
+
+
+## 14. The free layer (2026-10-13)
+
+Marketing angle: **“Your child learns the basics of saltwater fishing in the Florida Everglades.”** The teaching content is free and open, and is the ad’s landing content: the fish and critter field guide, Types of boats, the tackle box, the knot trainer, the chart puzzles and the tide window. The paid edition is the story: the novel on the site, the narration, the Assistant Guide missions and badges, the printable license and the downloads. Rule of thumb: anything a scout leader could use in an afternoon is free; anything that needs the book is paid.

@@ -2,6 +2,7 @@
 import Base from '@layouts/Base.astro';
 import EntityIndex from '@components/EntityIndex.astro';
 import { boats, toCard, sectionMeta } from '@lib/data';
+import { url } from '@lib/url';
 
 const cards = boats.map((b) => toCard('boats', b));
 const groups = [
@@ -12,4 +13,10 @@ const groups = [
 
 <Base title="Boats" description={sectionMeta.boats.blurb}>
   <EntityIndex section="boats" cards={cards} groups={groups} />
+  <div class="wrap">
+    <p class="note">
+      <strong>What are these boats, really?</strong> Jon boats, flats skiffs, bay boats, houseboats, airboats, jet drives, kayaks, outboards and push poles, explained for a first-time mate:
+      <a href={url('/boats/types/')}>Types of boats →</a>
+    </p>
+  </div>
 </Base>

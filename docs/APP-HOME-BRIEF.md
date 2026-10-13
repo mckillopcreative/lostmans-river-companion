@@ -99,3 +99,32 @@ John is an MD, a children's novelist, and a father of four. Years ago he wrote *
 4. Missions page and badge progress (local first, then account-bound after the gate).
 5. Knots trainer, Fish ID, chart puzzles, tides — one each, in that order.
 6. Gate + checkout, then `/app/` becomes the post-purchase home and `/` the landing page.
+
+
+## 9. Visual build request: Types of boats (added 2026-10-13)
+
+A new free section at `/boats/types/` teaches the real-life boats of the Ten Thousand Islands, cross-referenced to the boats in the book. One picture per entry. Save each as **`assets/art/boat-types/<id>.png`**; the page picks them up automatically (a line-drawing placeholder shows until then).
+
+> **Style:** the same pen-and-ink line and loose watercolor wash as the fish plates and place scenes, soft daylight from upper left, muted palette (paper #f6f1e7, ink #1f2a2e, mangrove #2f5d50, gulf #2a7f8e, sky #6ab8e8, seafoam #cfeacb, one warm accent #e8873a). **Landscape 3:2, 2048 × 1365, filled edge to edge** (these are card images, not cut-outs), no text, no logos, no people unless the subject says a guide or hands. Boats must be mechanically right: an outboard has its propeller below the transom, an airboat has a caged propeller above the stern and nothing below the hull, a jet drive has no propeller, a poling skiff is low and flat with a stern platform.
+
+| id | Name | Group | What to paint |
+|---|---|---|---|
+| `jon-boat` | Jon boat (flat-bottom) | Hulls | A 14-foot aluminum jon boat, flat bottom, three bench seats, a small tiller outboard, tied to mangrove roots on a tea-colored creek. |
+| `flats-skiff` | Flats skiff (technical poling skiff) | Hulls | A pale-green poling skiff at rest on glassy flats, a guide on the stern platform leaning on a long push pole, an empty casting deck forward, seagrass visible through the water. |
+| `bay-boat` | Bay boat (center console) | Hulls | A classic Mako-style center console bay boat, white hull, running across a bay at sunrise with a light wake, rods in holders, no people. |
+| `deep-v` | Deep-V offshore boat | Hulls | A 22-foot deep-V center console offshore boat cutting through Gulf chop, bow lifting, twin outboards, dark water, no people. |
+| `houseboat` | Houseboat | Hulls | A weathered small houseboat, cabin with square windows and a covered rear deck, anchored in a mangrove-lined river at dusk, a skiff tied alongside, no people. |
+| `airboat` | Airboat | Hulls | A fire-engine-red airboat with a white bow and a caged propeller, parked on a sawgrass flat with water and sky behind, slight rust, no people. |
+| `jet-boat` | Jet boat (jet drive) | Hulls | A dark, low jet-drive powerboat at speed in a shallow bay throwing a rooster tail of spray, the water behind it churned to mud, no people. |
+| `fishing-kayak` | Fishing kayak | Hulls | A wide olive-green sit-on-top fishing kayak with a pedal drive, two rod holders behind the seat and a milk crate in the tank well, nosed into a mangrove tunnel, a rod across the deck, dappled light on dark water, no people. |
+| `canoe` | Canoe | Hulls | An aluminum canoe pulled up on a shell beach on a small key, two paddles across the thwarts, dry bags inside, mangroves and open water beyond, no people. |
+| `outboard` | Outboard motor | Power | A modern four-stroke outboard motor tilted up on a boat's transom, propeller clear of the water, barnacled dock piling behind, cutaway not needed. |
+| `trolling-motor` | Trolling motor | Power | A bow-mounted electric trolling motor deployed off the front of a skiff, foot pedal on the deck, calm water, no people. |
+| `push-pole` | Push pole | Power | A long graphite push pole with a forked foot, resting across the stern platform of a skiff, the foot close to the viewer, shallow water beyond. |
+| `inboard` | Inboard and sterndrive | Power | The stern of a houseboat with a sterndrive unit visible at the waterline, dock lines, mangroves behind, no people. |
+| `kayak-setup` | How a fishing kayak is rigged | Gear and words | Top-down view of a rigged fishing kayak on calm water: raised seat, rod holders with two rods, a milk crate with tackle boxes, a paddle leashed alongside, an anchor trolley line along one side, a net and pliers on the deck, no people, no text. |
+| `shallow-anchor` | Shallow-water anchors and stakes | Gear and words | A skiff held still on a flat by a stake-out pole pushed into the sand off the stern, light chop, no people. |
+| `safety-kit` | What every boat carries | Gear and words | A flat lay on a boat deck: an orange life jacket, a handheld VHF radio, a whistle, a small fire extinguisher, a folded chart, and an anchor, ink and watercolor. |
+| `hull-words` | Boat words worth knowing | Gear and words | A simple labeled-free ink diagram of a center console boat seen from above and from the side, with small arrows at bow, stern, both sides and the transom, no text. |
+
+**Also:** `boat-types-hero.png` (2048 × 1024): the Chokoloskee marina at first light with four boats side by side at the dock, a poling skiff, a center console, a jon boat and a kayak on the beach, a houseboat anchored beyond; bottom third calm water for a title.

@@ -1,0 +1,214 @@
+[
+  {
+    "id": "jon-boat",
+    "name": "Jon boat (flat-bottom)",
+    "group": "hulls",
+    "what": "A flat-bottomed aluminum boat, usually 10 to 16 feet, with bench seats and a small outboard on the back steered by a tiller.",
+    "why": "It floats in a few inches of water, sits steady while you stand and cast, and costs less than almost anything else with a motor. Thousands of Florida kids learned to fish from one.",
+    "watch_out": "The flat bottom slaps and pounds in chop, so it belongs in creeks, canals and calm bays, not open water on a windy day.",
+    "specs": "Draft 4–8 in · 10–16 ft · 5–25 hp tiller outboard",
+    "book_boats": [],
+    "art_prompt": "A 14-foot aluminum jon boat, flat bottom, three bench seats, a small tiller outboard, tied to mangrove roots on a tea-colored creek."
+  },
+  {
+    "id": "flats-skiff",
+    "name": "Flats skiff (technical poling skiff)",
+    "group": "hulls",
+    "what": "A light, low 16- to 18-foot boat built to float in six to ten inches of water, with a raised platform at the stern where the guide stands and pushes the boat along with a pole.",
+    "why": "Shallow water is where redfish, snook and bonefish feed, and a motor would spook them. A skiff glides in silently, the guide sees the fish from the platform, and the angler casts from the bow.",
+    "watch_out": "Wet and bouncy in a chop, little room for gear, and the push pole takes practice. A tunnel hull lets the prop sit higher for even shallower running.",
+    "specs": "Draft 6–10 in · 16–18 ft · 40–90 hp · poling platform, push pole, bow casting deck",
+    "book_boats": [
+      "bonefisher"
+    ],
+    "art_prompt": "A pale-green poling skiff at rest on glassy flats, a guide on the stern platform leaning on a long push pole, an empty casting deck forward, seagrass visible through the water."
+  },
+  {
+    "id": "bay-boat",
+    "name": "Bay boat (center console)",
+    "group": "hulls",
+    "what": "An 18- to 24-foot boat with a modified-V hull and the steering console in the middle, so you can walk all the way around it while fighting a fish.",
+    "why": "It is the all-rounder of the Ten Thousand Islands: shallow enough for most backcountry bays, deep enough to cross open water to the outside keys, and roomy enough for four anglers and a cooler.",
+    "watch_out": "It drafts more than a skiff, so the deepest backcountry is off limits, and a hard chop still gets wet. Most guides run one; Dan's Mako is this kind of boat.",
+    "specs": "Draft 12–16 in · 18–24 ft · 90–250 hp · center console, T-top optional, live well",
+    "book_boats": [
+      "mako"
+    ],
+    "art_prompt": "A classic Mako-style center console bay boat, white hull, running across a bay at sunrise with a light wake, rods in holders, no people."
+  },
+  {
+    "id": "deep-v",
+    "name": "Deep-V offshore boat",
+    "group": "hulls",
+    "what": "A boat with a sharply angled bottom that slices through waves instead of slapping them, usually 20 feet and up, built for the open Gulf.",
+    "why": "When the wind is up and the water is big, the deep-V keeps running. Captain Homer's twenty-one-footer is the sort of boat that takes a crowd out past the islands.",
+    "watch_out": "Draft: a deep-V needs two feet of water or more and will plough into an oyster bar that a skiff slides over. Fuel use is high.",
+    "specs": "Draft 18–30 in · 20–30 ft · 150–400 hp · twin engines common",
+    "book_boats": [
+      "the-marina"
+    ],
+    "art_prompt": "A 22-foot deep-V center console offshore boat cutting through Gulf chop, bow lifting, twin outboards, dark water, no people."
+  },
+  {
+    "id": "houseboat",
+    "name": "Houseboat",
+    "group": "hulls",
+    "what": "A floating cabin on a wide, flat barge or pontoon hull, with bunks, a galley and a deck, pushed along by an outboard or a small inboard at walking pace.",
+    "why": "It turns a fishing trip into a week on the water. You anchor in a lee, fish from the deck, sleep on board and move camp with the tide. The Sea Belle is Matt and Snapper's home at Lostman's River.",
+    "watch_out": "Slow (five to eight knots), clumsy in wind, and heavy; when it grounds on an oyster bar at a falling tide you wait for the water to come back, which is exactly what happens in Chapter 12.",
+    "specs": "Draft 1.5–3 ft · 30–50 ft · 40–115 hp · cabin, galley, bunks, covered deck",
+    "book_boats": [
+      "sea-belle"
+    ],
+    "art_prompt": "A weathered small houseboat, cabin with square windows and a covered rear deck, anchored in a mangrove-lined river at dusk, a skiff tied alongside, no people."
+  },
+  {
+    "id": "airboat",
+    "name": "Airboat",
+    "group": "hulls",
+    "what": "A flat-bottomed boat driven by an aircraft-style propeller in a cage at the stern, steered by rudders in the prop wash. Nothing hangs below the hull.",
+    "why": "With no propeller or rudder in the water, an airboat runs on inches of water, wet grass and even mud, which is how Everglades hunters, rangers and guides reach the sawgrass country nothing else can. Dad's red airboat is the one in the garage.",
+    "watch_out": "Loud enough to need ear protection, no brakes and no reverse, and it slides in turns. Florida requires boater education for operators and a special course for commercial airboat guides.",
+    "specs": "Draft 2–4 in on plane · 12–18 ft · 350–500 hp car or aircraft engine · cage propeller, twin rudders",
+    "book_boats": [
+      "airboat"
+    ],
+    "art_prompt": "A fire-engine-red airboat with a white bow and a caged propeller, parked on a sawgrass flat with water and sky behind, slight rust, no people."
+  },
+  {
+    "id": "jet-boat",
+    "name": "Jet boat (jet drive)",
+    "group": "hulls",
+    "what": "A boat pushed by a pump that sucks water in through a grate on the bottom and shoots it out the back, instead of a propeller.",
+    "why": "Fast, and with no prop to hit a rock or a swimmer. In rivers with gravel and rock it is the safe choice.",
+    "watch_out": "The pump needs clean water to drink. In soft mud and silt it sucks in bottom, loses thrust and bogs down, which is why the smugglers' jet boat stalls three times chasing the Mako into one-foot bays. Steering also fades at idle.",
+    "specs": "Draft 8–12 in moving, more at rest · 14–24 ft · 90–300 hp · jet pump instead of a lower unit",
+    "book_boats": [
+      "jet-boat"
+    ],
+    "art_prompt": "A dark, low jet-drive powerboat at speed in a shallow bay throwing a rooster tail of spray, the water behind it churned to mud, no people."
+  },
+  {
+    "id": "fishing-kayak",
+    "name": "Fishing kayak",
+    "group": "hulls",
+    "what": "A wide, stable sit-on-top kayak, 10 to 14 feet, built to be fished from: a flat deck you can stand on, molded rod holders, a seat up off the water, and a hatch or tank well behind you for a crate. Three ways to move it: a paddle, a pedal drive that turns a propeller or fins, or a small electric motor.",
+    "why": "Silent, cheap to run, and able to slide into mangrove tunnels and over flats no powerboat can reach. The Wilderness Waterway through the Ten Thousand Islands is a famous paddle route, and plenty of snook and redfish are caught from a kayak at the mangrove edge. Pedal drives leave both hands free for the rod.",
+    "watch_out": "Tide and wind set the day: plan to go out on the ebb and come home on the flood, or the other way around, never against both. Carry water, a chart, a whistle, a light, and leave a float plan. Stay out of the main channels where powerboats run.",
+    "specs": "Draft 3–5 in · 10–14 ft · 30–36 in wide · paddle, pedal drive, or 1–3 hp electric · 350–500 lb capacity",
+    "book_boats": [],
+    "art_prompt": "A wide olive-green sit-on-top fishing kayak with a pedal drive, two rod holders behind the seat and a milk crate in the tank well, nosed into a mangrove tunnel, a rod across the deck, dappled light on dark water, no people."
+  },
+  {
+    "id": "canoe",
+    "name": "Canoe",
+    "group": "hulls",
+    "what": "The original Everglades boat: 15 to 17 feet, two paddlers, gear in the middle. Rangers and old-timers still cover the backcountry this way.",
+    "why": "Carries a week of camping gear, floats in inches, and costs nothing to run. Quiet enough to drift up on tailing redfish.",
+    "watch_out": "Tippy when you stand; a crosswind on open bay is hard work. Kneel in chop and keep the load low.",
+    "specs": "Draft 3–5 in · 15–17 ft · two paddlers · 700–900 lb capacity",
+    "book_boats": [],
+    "art_prompt": "An aluminum canoe pulled up on a shell beach on a small key, two paddles across the thwarts, dry bags inside, mangroves and open water beyond, no people."
+  },
+  {
+    "id": "outboard",
+    "name": "Outboard motor",
+    "group": "power",
+    "what": "The engine that hangs on the back of almost every boat in the islands, from a 5-horsepower tiller on a jon boat to a 250-horsepower console-steered engine on a bay boat.",
+    "why": "Simple to service, easy to tilt up over oyster bars, and the whole drive comes out of the water at the dock. Four-strokes are quiet and sip fuel; older two-strokes are lighter and louder.",
+    "watch_out": "The lower unit and propeller are the first things to hit bottom. A jack plate lifts the engine to run shallower; a kill-switch lanyard clipped to the driver stops the engine if they go overboard.",
+    "specs": "5–300 hp · tiller or console steering · four-stroke standard today",
+    "book_boats": [
+      "mako",
+      "bonefisher",
+      "doc-skiff"
+    ],
+    "art_prompt": "A modern four-stroke outboard motor tilted up on a boat's transom, propeller clear of the water, barnacled dock piling behind, cutaway not needed."
+  },
+  {
+    "id": "trolling-motor",
+    "name": "Trolling motor",
+    "group": "power",
+    "what": "A small electric motor on the bow, controlled by a foot pedal or a remote, used to creep along a shoreline without starting the outboard.",
+    "why": "It moves the boat at fish-stalking speed and stays quiet. Newer ones have GPS that holds the boat in one spot against wind and current, an electric anchor.",
+    "watch_out": "Batteries run down; the prop fouls in grass; and in the Everglades a push pole is still quieter.",
+    "specs": "12–36 volt · 55–112 lb thrust · bow mount · GPS anchor on newer models",
+    "book_boats": [],
+    "art_prompt": "A bow-mounted electric trolling motor deployed off the front of a skiff, foot pedal on the deck, calm water, no people."
+  },
+  {
+    "id": "push-pole",
+    "name": "Push pole",
+    "group": "power",
+    "what": "An 18- to 24-foot pole, usually graphite or fiberglass, with a forked foot that grips mud and a point for hard bottom, used from the stern platform to move a skiff silently.",
+    "why": "Zero noise, zero wake. Snapper poles the Mako into the mangroves at Pavilion Key so the smugglers never hear a motor.",
+    "watch_out": "It takes shoulders and practice: push, recover, steer by planting the foot behind the boat. Don't pole with the point into soft mud.",
+    "specs": "18–24 ft · graphite or fiberglass · forked foot and pointed tip",
+    "book_boats": [
+      "mako"
+    ],
+    "art_prompt": "A long graphite push pole with a forked foot, resting across the stern platform of a skiff, the foot close to the viewer, shallow water beyond."
+  },
+  {
+    "id": "inboard",
+    "name": "Inboard and sterndrive",
+    "group": "power",
+    "what": "An engine mounted inside the hull, driving a propeller through a shaft (inboard) or through a drive unit on the transom that tilts like an outboard (sterndrive).",
+    "why": "Common on bigger boats and houseboats: more power low in the hull, quieter inside the cabin, and the engine stays dry.",
+    "watch_out": "A true inboard's prop and rudder cannot be raised, so it needs deeper water; service means opening the deck.",
+    "specs": "Houseboats, cruisers and larger offshore boats",
+    "book_boats": [
+      "sea-belle"
+    ],
+    "art_prompt": "The stern of a houseboat with a sterndrive unit visible at the waterline, dock lines, mangroves behind, no people."
+  },
+  {
+    "id": "kayak-setup",
+    "name": "How a fishing kayak is rigged",
+    "group": "gear",
+    "what": "The basics on almost every Everglades fishing kayak: a comfortable raised seat; two or three rod holders (flush-mounted behind the seat, one adjustable up front); a paddle leash so the paddle can’t float off; an anchor trolley, a line that runs the length of the hull so the anchor or stake-out pole can be set from bow or stern; a small crate or tackle bag in the tank well; a landing net; pliers on a lanyard; a fish grip; and a measuring board.",
+    "why": "A kayak has no room to move, so everything is within reach of the seat. The anchor trolley is the trick most beginners miss: it lets you point the bow into the wind and fish facing the mangroves without paddling to stay put.",
+    "watch_out": "Wear the life jacket, not just carry it; the Coast Guard requires one aboard and Florida requires kids under six to wear one. A whistle is required, a white light after dark. A fish finder is nice but a paper chart in a bag matters more out here.",
+    "specs": "Seat · 2–3 rod holders · paddle leash · anchor trolley with stake-out pole or 1.5 lb anchor · crate or tackle bag · net · pliers · fish grip · measuring board · PFD · whistle · light · dry bag · chart",
+    "book_boats": [],
+    "art_prompt": "Top-down view of a rigged fishing kayak on calm water: raised seat, rod holders with two rods, a milk crate with tackle boxes, a paddle leashed alongside, an anchor trolley line along one side, a net and pliers on the deck, no people, no text."
+  },
+  {
+    "id": "shallow-anchor",
+    "name": "Shallow-water anchors and stakes",
+    "group": "gear",
+    "what": "A pole that drives into the bottom to hold the boat still: a stake-out pole pushed in by hand, or a hydraulic one on the transom that drops at the push of a button.",
+    "why": "Holding position quietly on a flat beats dragging an anchor and chain. At Comer Key the sand pipes do the same job for the rods.",
+    "watch_out": "Only in soft bottom and shallow water; don't stake out in a channel with boat traffic.",
+    "specs": "6–10 ft stake-out pole · 4–10 ft hydraulic transom anchors",
+    "book_boats": [],
+    "art_prompt": "A skiff held still on a flat by a stake-out pole pushed into the sand off the stern, light chop, no people."
+  },
+  {
+    "id": "safety-kit",
+    "name": "What every boat carries",
+    "group": "gear",
+    "what": "Life jackets for everyone aboard, a throwable cushion, a fire extinguisher, a sound signal, lights for night, a VHF radio on channel 16, an anchor, a bailer, a chart, and a float plan left with someone ashore.",
+    "why": "The Ten Thousand Islands look alike, cell service fades past the causeway, and a falling tide can strand a boat for six hours. Dan's rule in the book is channel sixteen, nine to ten p.m.",
+    "watch_out": "Florida requires anyone born on or after January 1, 1988 to carry a boater education card to run a boat of 10 hp or more. Kids under six must wear a life jacket on boats under 26 feet while underway.",
+    "specs": "PFDs · throwable · extinguisher · horn or whistle · nav lights · VHF · anchor · bailer · chart · float plan",
+    "book_boats": [
+      "sea-belle",
+      "mako"
+    ],
+    "art_prompt": "A flat lay on a boat deck: an orange life jacket, a handheld VHF radio, a whistle, a small fire extinguisher, a folded chart, and an anchor, ink and watercolor."
+  },
+  {
+    "id": "hull-words",
+    "name": "Boat words worth knowing",
+    "group": "gear",
+    "what": "Bow (front), stern (back), port (left), starboard (right). Draft: how deep the boat sits. Deadrise: how V-shaped the bottom is. Chine: the edge where bottom meets side. Transom: the flat back where the motor hangs. Gunwale: the top edge of the side. Deck, console, live well, bilge.",
+    "why": "Matt checks starboard in the Guidebook on his first flight; the twins already know it. A crew that shares words moves faster when a fish is on.",
+    "watch_out": "Port and left both have four letters. That is the trick.",
+    "specs": "",
+    "book_boats": [
+      "boeing-737"
+    ],
+    "art_prompt": "A simple labeled-free ink diagram of a center console boat seen from above and from the side, with small arrows at bow, stern, both sides and the transom, no text."
+  }
+]

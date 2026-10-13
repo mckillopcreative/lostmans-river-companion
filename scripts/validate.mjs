@@ -18,6 +18,7 @@ const entity = {
   places: load('places'),
 };
 const glossary = load('glossary');
+const boatTypes = load('boat-types');
 const errors = [];
 const ids = Object.fromEntries(Object.entries(entity).map(([k, v]) => [k, new Set(v.map((e) => e.id))]));
 const words = new Set(glossary.map((g) => g.word));
@@ -63,6 +64,9 @@ for (const s of sketches) {
   if (!existsSync(resolve(root, 'assets/sketches', s.file))) errors.push(`sketches: missing file assets/sketches/${s.file}`);
   for (const n of s.chapters) if (n < 1 || n > 23) errors.push(`sketches/${s.file}: chapter out of range ${n}`);
 }
+
+// 4b. boat types reference real boats
+for (const t of boatTypes) for (const b of t.book_boats) if (!ids.boats.has(b)) errors.push(`boat-types/${t.id}.book_boats: unknown boat "${b}"`);
 
 // 5. places have numeric coordinates
 for (const p of entity.places) {

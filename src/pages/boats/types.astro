@@ -1,0 +1,152 @@
+---
+// Types of boats: real-world hulls, power and gear, cross-referenced to the boats in the book.
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SectionEmblem from '@components/SectionEmblem.astro';
+import Divider from '@components/Divider.astro';
+import Silhouette from '@components/Silhouette.astro';
+import { boatTypes, boatTypeGroups, boatById, type BoatType } from '@lib/data';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../../site.config.mjs';
+
+const groups = (Object.keys(boatTypeGroups) as BoatType['group'][]).map((g) => ({ key: g, label: boatTypeGroups[g], items: boatTypes.filter((t) => t.group === g) }));
+---
+
+<Base title="Types of boats" description="Jon boats, skiffs, bay boats, houseboats, airboats, jet drives, outboards, trolling motors and push poles: what each one is for in the Ten Thousand Islands.">
+  <div class="wrap-wide section">
+    <header class="bt-head">
+      <SectionEmblem name="boats" size={110} />
+      <div>
+        <p class="eyebrow">Real-life boats</p>
+        <h1>Types of boats</h1>
+        <p class="lede">What every boat in the book really is, what it is for, and what it can’t do. The kind of thing Dan would tell you on the dock before you ever stepped aboard.</p>
+      </div>
+    </header>
+    <nav class="cluster small jump" aria-label="Sections">
+      {groups.map((g) => <a class="pill" href={`#${g.key}`}>{g.label.split(':')[0]}</a>)}
+      <a class="pill" href={url('/boats/')}>Boats in the book →</a>
+    </nav>
+
+    {
+      groups.map((g, gi) => (
+        <section id={g.key} aria-labelledby={`${g.key}-h`}>
+          {gi > 0 && <Divider kind={gi === 1 ? 'wave' : 'rule'} />}
+          <h2 id={`${g.key}-h`}>{g.label}</h2>
+          <ul class="types" data-reveal-stagger>
+            {g.items.map((t) => {
+              const img = artImage('boat-types', t.id);
+              const inBook = t.book_boats.map((id) => boatById.get(id)!).filter(Boolean);
+              return (
+                <li class="type" id={t.id}>
+                  <div class:list={['type-art', 'art', { placeholder: !img }]}>
+                    {img ? <Image src={img} alt={t.name} width={720} sizes="(min-width: 720px) 340px, 94vw" loading="lazy" /> : <Silhouette kind="boats" />}
+                  </div>
+                  <div class="type-body">
+                    <h3>{t.name}</h3>
+                    <p>{t.what}</p>
+                    <p>
+                      <strong>Why guides use it.</strong> {t.why}
+                    </p>
+                    <p>
+                      <strong>Watch out.</strong> {t.watch_out}
+                    </p>
+                    {t.specs && <p class="mono specs-line">{t.specs}</p>}
+                    {inBook.length > 0 && (
+                      <p class="small in-book">
+                        In the book:{' '}
+                        {inBook.map((b, i) => (
+                          <>
+                            <a href={url(`/boats/${b.id}/`)}>{b.name}</a>
+                            {i < inBook.length - 1 ? ', ' : ''}
+                          </>
+                        ))}
+                      </p>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))
+    }
+
+    <p class="note small">
+      General guidance, not a safety course. Florida’s boating rules change; check the <a href="https://myfwc.com/boating/" rel="noopener">FWC boating pages</a> before you run a boat, and take the free boater education course if you were born in 1988 or later. {site.artCredit} for the pictures.
+    </p>
+  </div>
+</Base>
+
+<style>
+  .bt-head {
+    max-width: var(--measure);
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .bt-head .lede {
+    margin-bottom: 0;
+  }
+  .jump {
+    margin: 1rem 0 0.5rem;
+  }
+  .types {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 900px) {
+    .types {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .type {
+    display: grid;
+    grid-template-columns: 1fr;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-radius: var(--radius);
+    overflow: hidden;
+    scroll-margin-top: 80px;
+  }
+  @media (min-width: 560px) {
+    .type {
+      grid-template-columns: 200px 1fr;
+    }
+  }
+  .type-art {
+    display: grid;
+    place-items: center;
+    background: var(--paper-2);
+    min-height: 150px;
+  }
+  .type-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .type-art.placeholder svg {
+    width: 120px;
+  }
+  .type-body {
+    padding: 0.9rem 1rem 1rem;
+  }
+  .type-body h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1.15rem;
+  }
+  .type-body p {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+  }
+  .specs-line {
+    color: var(--ink-soft);
+    font-size: 0.72rem;
+  }
+  .in-book {
+    margin-top: 0.3rem;
+  }
+</style>
