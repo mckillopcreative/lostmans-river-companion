@@ -2,7 +2,13 @@
 See SPEC.md §8. Placeholders used during the build are listed here with where they live.
 
 ## Needed before printing QR codes
-- [ ] **Domain name.** Set `domain` in `site.config.mjs` (currently `https://lostmansriver.example`), add a `CNAME` file in `public/` with the bare domain, point DNS at GitHub Pages, then run `npm run qr`. Until a custom domain is set, GitHub builds the site under `/<repo-name>/`, which does not match the printed `/ch/<n>/` paths.
+- [x] **Domain name** — lostmansriver.com, registered at Cloudflare 2026-10-13. GitHub side done: `public/CNAME`, repo variables `SITE_URL`/`BASE_PATH`, Pages custom domain set, QR codes regenerated.
+- [ ] **Cloudflare DNS** (dash.cloudflare.com → lostmansriver.com → DNS → Records), all with the proxy OFF (grey cloud, “DNS only”):
+  - A `@` → 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153 (four records)
+  - AAAA `@` → 2606:50c0:8000::153, 2606:50c0:8001::153, 2606:50c0:8002::153, 2606:50c0:8003::153
+  - CNAME `www` → mckillopcreative.github.io
+  - Cloudflare → SSL/TLS → set mode to **Full** (not Flexible), and leave “Always use HTTPS” off until GitHub’s certificate is issued.
+  Then in GitHub (Settings → Pages) wait for the DNS check to pass and tick **Enforce HTTPS**, or run `gh api -X PUT repos/mckillopcreative/lostmans-river-companion/pages -f https_enforced=true`.
 
 ## Content placeholders on the live site
 - [ ] **Dedication photo caption** — `src/pages/about.astro`, marked `[Caption to come from the author.]`. Who are the three anglers?
