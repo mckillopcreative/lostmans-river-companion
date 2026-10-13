@@ -135,3 +135,58 @@ Today the site is static on GitHub Pages behind the Cloudflare domain. A paid ed
 - KDP Select status.
 - Whether the trail's mystery may reveal the informant inside the product (it is the book's twist; the task is designed so the reader guesses, the book confirms).
 - The product name.
+
+## 12. Games and sellable content (added 2026-10-13)
+
+Everything below can be generated from what the repo already holds (the data files, Linda's sketches, the 183 art pieces, the knot SVGs in GPT's pack) plus modest code. Ranked inside each group by value to a reader against effort.
+
+### Knot-tying
+
+| Idea | How it plays | Effort | Where it sells |
+|---|---|---|---|
+| **Knot trainer** | The five knot drawings become four-stage, step-by-step tappable sequences with the written steps; "show me again" replays; a practice checklist per knot. | Small | In the edition |
+| **Stage shuffle** | The four stages of a knot are shuffled; drag them into order. Then "which knot for the job": lure that must swing → non-slip loop; line to leader → Albright. | Small | Edition + free sample (one knot) |
+| **Trace the line** | The rope in each stage is an SVG path; the reader drags along it and the strand highlights as it goes, teaching which strand passes where. Built from GPT's editable knot SVGs after an angler verifies them. | Medium | Edition |
+| **Knot cards** | Five printable cards, one knot per card, four stages plus steps, with a QR to the trainer. | Small | Printable pack; also a physical card set |
+| **Knot kit** | A 6 ft length of 30-lb mono, a practice hook with the barb cut off, the five cards, in a small envelope. | Logistics, not code | Gift bundle add-on, marina counters |
+
+### Chart and navigation
+
+| Idea | How it plays | Effort | Where it sells |
+|---|---|---|---|
+| **Plot the route** | The chapter's waypoints appear as pins; the reader drags them into order and the route draws; scored by how close to Matt's. Thirteen chapter routes = thirteen puzzles. | Small (Leaflet already there) | Edition |
+| **Name that key** | A place scene appears; tap the right spot on the chart. Twenty-nine rounds, three difficulties. | Small | Edition + free sample |
+| **Find the Sea Belle** | Clues from Chapter 12 (two bends past the mouth, oyster bar to port, mangroves to starboard, a creek on the right) lead to a spot on Linda's hand-drawn map. | Small | Edition |
+| **Dead reckoning** | Speed, heading and time give a position; the Mako at 25 knots for 12 minutes from the marina lands where? | Small | Edition |
+| **Tide window** | Live NOAA tides for Chokoloskee; the reader picks the hour to cross the bars at South Point. Different answer every day. | Medium | Edition |
+| **Chart your own trip** | The reader draws a route on the chart, names the stops, and exports a printable chart page in the Guidebook style with their name on it. | Medium | Edition; the printable is a keepsake |
+| **The big chart poster** | Linda's hand-drawn map plus the real chart with all 29 painted places arranged around the edge, 18 × 24 in. | Design only | Print on demand |
+
+### Field-guide games
+
+- **Fish ID**: plate shown, name it; or name shown, pick the plate. Twenty-three species, three difficulties, a "fish of the day."
+- **Right lure, right water**: grass beds, oyster bar, mangrove edge, deep hole, each with the lures that work; drag to match.
+- **Keeper or release**: the fish, the tape measure, and the FWC rule link; the game teaches reading the rule rather than memorising numbers.
+- **The Everglades choir**: short soundscape clips (mullet, frogs, pelican, outboard, seaplane); name the sound. Needs licensed or recorded sounds.
+
+### Printable and physical products (sellable on their own)
+
+| Product | Source material | Channel |
+|---|---|---|
+| **Field guide cards** (23 fish + 19 critters) | the art plates and the data | PDF in the edition; physical deck print-on-demand |
+| **Coloring book**: Linda's sketches plus line versions of the chapter spots | existing scans; spot art converted to line | KDP paperback (print-on-demand, no inventory) |
+| **The Guidebook journal**: a blank "South Florida Fishing Guidebook" with the plaque quote, Dad's sayings, tide tables, catch-log pages | site copy and data | KDP low-content paperback |
+| **Sticker sheet**: the 23 chapter spots and the three badges | existing art | Print-on-demand sticker sheets; bundle add-on |
+| **Postcards**: the 29 painted places | existing art | Print-on-demand set; marina retail |
+| **Recipe cards**: Dan's mac-n-cheese with seared redfish, the camp cookies, breakfast for dinner | data/recipes.json | Printable pack |
+| **Assistant Guide license** and the three badges as a printable certificate set | existing art | Edition; a physical embossed version mailed with the gift bundle |
+| **Audiobook** as a standalone | the narration | Own site, Google Play Books and Spotify accept disclosed AI narration; Audible/ACX does not, so the human-read chapters matter if Audible is a goal |
+| **Classroom pack**: discussion guide, fish cards, chart puzzles, a reading schedule | data + the games | $99 tier; librarians and homeschool groups |
+
+### What raises perceived value most, in order
+
+1. **Numbers on the box**: "23 chapters · 4.6 hours of narration · 23 missions · 23 fish plates · 29 painted places · 5 knots · 3 badges · 12 printables." Counts are what the printable-puzzle sellers lean on, and ours are real.
+2. **Something physical arrives**: the license card, the stickers or the knot kit in the mail turns a download into a gift.
+3. **A finish line**: the printed license and the badges give a parent proof the kid completed something.
+4. **Voice**: hearing Chapter 1 before buying. Already on the home page.
+5. **A guided path**: "start here, then this" beats a menu of 40 things.

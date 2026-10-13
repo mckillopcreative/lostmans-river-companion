@@ -7,6 +7,7 @@ import EntityCard from '@components/EntityCard.astro';
 import SectionEmblem from '@components/SectionEmblem.astro';
 import Divider from '@components/Divider.astro';
 import SignupForm from '@components/SignupForm.astro';
+import ChapterAudio from '@components/ChapterAudio.astro';
 import ChapterPill from '@components/ChapterPill.astro';
 import {
   chapters,
@@ -78,6 +79,7 @@ const sections = [
           <a class="btn btn-primary" href={url('/ch/1/')}>Open to Chapter 1</a>
           <a class="btn" href="#chapters">Browse the journal ↓</a>
         </p>
+        <ChapterAudio n={1} title="Hear Chapter 1 read aloud" compact />
         <p class="small muted scan-note">
           Reading the paperback? The code at the top of each chapter opens that chapter’s page here. No spoilers past where you are.
         </p>

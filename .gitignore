@@ -7,4 +7,5 @@ src/assets/sketches/
 source/
 
 # narration output is generated, not committed (public/audio is ~300 MB when complete)
-public/audio/
+public/audio/*
+!public/audio/ch-01.mp3

@@ -4,10 +4,11 @@
 //
 //   OPENAI_API_KEY=... node scripts/narrate.mjs 1          # one chapter
 //   OPENAI_API_KEY=... node scripts/narrate.mjs all        # all 23
-//   OPENAI_KEY_FILE=../BedsideStories_Project/worker/.dev.vars node scripts/narrate.mjs 1
+//   OPENAI_KEY_FILE=<path to a KEY=VALUE file> node scripts/narrate.mjs 1
+//   node scripts/narrate.mjs all --dry                     # segment counts and cost, no calls
 //
-// Output: public/audio/ch-NN.mp3 (joined with ffmpeg when available) or
-//         public/audio/ch-NN/seg-XX.mp3 + public/audio/ch-NN.json (a playlist) without ffmpeg.
+// Output: public/audio/ch-NN.mp3 (joined with ffmpeg when available, byte-joined otherwise)
+//         plus public/audio/ch-NN/seg-XX.mp3 and segments.json for the segmented player.
 // The key is read from the environment or a KEY=VALUE file; it is never printed or logged.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
 import { resolve, join } from 'node:path';
@@ -19,7 +20,12 @@ const VOICE = 'fable'; // the Socrates voice — keep in step with BourbonBrothe
 const INSTRUCTIONS =
   'You are narrating a middle-grade adventure novel for a listener aged ten to fifteen. Read like a good audiobook narrator: steady, clear, unhurried but never slow, with warmth and a little grit. Keep dialogue natural and lightly distinct per speaker without doing cartoon voices. Let tension build in action scenes and ease off in quiet ones. No dramatic pauses, no announcer cadence.';
 const STYLE_V = 1; // bump when VOICE or INSTRUCTIONS change so stale files are regenerated
-const SEG_MAX = 1800; // chars per request; the model drops the tail of long inputs (Socrates, Oct 1)
+// Short requests: the model drops the tail of long inputs (Socrates, Oct 1) and a 1,800-char
+// request took over two minutes on Oct 13. ~1,100 chars ≈ 75 s of audio per request.
+const SEG_MAX = 1100;
+const PARALLEL = 3;
+const TIMEOUT_MS = 180000;
+const DRY = process.argv.includes('--dry');
 
 function key() {
   if (process.env.OPENAI_API_KEY) return process.env.OPENAI_API_KEY;
@@ -49,7 +55,7 @@ function chapters() {
   });
 }
 
-// Paragraph-first packing, sentence split only for a paragraph longer than SEG_MAX.
+// Paragraph-first packing; a paragraph longer than SEG_MAX is split at sentence ends.
 function segments(ch) {
   const open = `Chapter ${ch.n}. ${ch.title}.`;
   const paras = [open, ...ch.body.split(/\n\s*\n/).map((p) => p.replace(/\s+/g, ' ').trim()).filter(Boolean)];
@@ -60,33 +66,39 @@ function segments(ch) {
     cur = '';
   };
   for (const p of paras) {
-    const units = p.length > SEG_MAX ? p.match(/[^.!?]+[.!?]+["’”]?\s*|[^.!?]+$/g) ?? [p] : [p];
+    const units = p.length > SEG_MAX ? (p.match(/[^.!?]+[.!?]+["’”]?\s*|[^.!?]+$/g) ?? [p]) : [p];
     for (const u of units) {
       if ((cur + ' ' + u).length > SEG_MAX) push();
       cur += (cur ? ' ' : '') + u.trim();
     }
-    if (p.length <= SEG_MAX && cur.length > SEG_MAX * 0.7) push(); // keep paragraph ends as natural seams
+    if (p.length <= SEG_MAX && cur.length > SEG_MAX * 0.6) push(); // paragraph ends make natural seams
   }
   push();
   return out;
 }
 
-async function tts(apiKey, text) {
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    const res = await fetch('https://api.openai.com/v1/audio/speech', {
-      method: 'POST',
-      headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
-      body: JSON.stringify({ model: MODEL, voice: VOICE, instructions: INSTRUCTIONS, input: text, response_format: 'mp3' }),
-      signal: AbortSignal.timeout(120000),
-    });
-    if (res.ok) {
-      const buf = Buffer.from(await res.arrayBuffer());
-      if (buf.length > 2000) return buf;
+async function tts(apiKey, text, label) {
+  let last = 'unknown';
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    try {
+      const res = await fetch('https://api.openai.com/v1/audio/speech', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ model: MODEL, voice: VOICE, instructions: INSTRUCTIONS, input: text, response_format: 'mp3' }),
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      if (res.ok) {
+        const buf = Buffer.from(await res.arrayBuffer());
+        if (buf.length > 2000) return buf;
+        last = `short body ${buf.length}B`;
+      } else last = `status ${res.status}`;
+    } catch (e) {
+      last = e.name === 'TimeoutError' ? 'timeout' : e.message;
     }
-    console.warn(`  retry ${attempt}: status ${res.status}`);
-    await new Promise((r) => setTimeout(r, 2000 * attempt));
+    console.warn(`  ${label}: retry ${attempt} (${last})`);
+    await new Promise((r) => setTimeout(r, 3000 * attempt));
   }
-  throw new Error('TTS failed after 3 attempts');
+  throw new Error(`${label}: TTS failed after 4 attempts (${last})`);
 }
 
 function hasFfmpeg() {
@@ -99,46 +111,50 @@ function hasFfmpeg() {
 }
 
 async function narrate(ch, apiKey) {
-  const dir = resolve(root, 'public/audio', `ch-${String(ch.n).padStart(2, '0')}`);
-  mkdirSync(dir, { recursive: true });
+  const id = `ch-${String(ch.n).padStart(2, '0')}`;
   const segs = segments(ch);
-  const stamp = join(dir, 'style.txt');
-  const fresh = existsSync(stamp) && readFileSync(stamp, 'utf8') === `${VOICE}:${STYLE_V}`;
   console.log(`Chapter ${ch.n} — ${ch.title}: ${segs.length} segments, ${ch.body.length} chars`);
-  for (let i = 0; i < segs.length; i++) {
-    const f = join(dir, `seg-${String(i + 1).padStart(2, '0')}.mp3`);
-    if (fresh && existsSync(f)) continue;
-    if (DRY) continue;
-    process.stdout.write(`  seg ${i + 1}/${segs.length}… `);
-    writeFileSync(f, await tts(apiKey, segs[i]));
-    console.log('ok');
-  }
   if (DRY) return;
-  writeFileSync(stamp, `${VOICE}:${STYLE_V}`);
+  const dir = resolve(root, 'public/audio', id);
+  mkdirSync(dir, { recursive: true });
+  const stamp = join(dir, 'style.txt');
+  const sig = `${VOICE}:${STYLE_V}:${SEG_MAX}`;
+  const fresh = existsSync(stamp) && readFileSync(stamp, 'utf8') === sig;
+  const jobs = segs.map((text, i) => ({ i, text, file: join(dir, `seg-${String(i + 1).padStart(2, '0')}.mp3`) })).filter((j) => !(fresh && existsSync(j.file)));
+  let next = 0;
+  const worker = async () => {
+    while (next < jobs.length) {
+      const j = jobs[next++];
+      const buf = await tts(apiKey, j.text, `seg ${j.i + 1}/${segs.length}`);
+      writeFileSync(j.file, buf);
+      console.log(`  seg ${j.i + 1}/${segs.length} ok (${Math.round(buf.length / 1024)} KB)`);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(PARALLEL, jobs.length) }, worker));
+  writeFileSync(stamp, sig);
   writeFileSync(join(dir, 'segments.json'), JSON.stringify(segs.map((s, i) => ({ file: `seg-${String(i + 1).padStart(2, '0')}.mp3`, chars: s.length })), null, 2));
+  const files = readdirSync(dir)
+    .filter((f) => /^seg-\d+\.mp3$/.test(f))
+    .sort();
+  const out = resolve(root, 'public/audio', `${id}.mp3`);
   if (hasFfmpeg()) {
     const list = join(dir, 'concat.txt');
-    writeFileSync(list, readdirSync(dir).filter((f) => /^seg-\d+\.mp3$/.test(f)).sort().map((f) => `file '${join(dir, f).replace(/'/g, "'\\''")}'`).join('\n'));
-    const out = resolve(root, 'public/audio', `ch-${String(ch.n).padStart(2, '0')}.mp3`);
+    writeFileSync(list, files.map((f) => `file '${join(dir, f).replace(/'/g, "'\\''")}'`).join('\n'));
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', out]);
     console.log(`  → ${out}`);
   } else {
-    // No ffmpeg: MP3 frames from the same encoder concatenate cleanly enough for a player;
-    // install ffmpeg (winget install ffmpeg) for a proper join if a seam is ever audible.
-    const out = resolve(root, 'public/audio', `ch-${String(ch.n).padStart(2, '0')}.mp3`);
-    const files = readdirSync(dir).filter((f) => /^seg-d+.mp3$/.test(f)).sort();
+    // MP3 frames from the same encoder concatenate cleanly enough for a player; install
+    // ffmpeg (winget install ffmpeg) for a proper join if a seam is ever audible.
     writeFileSync(out, Buffer.concat(files.map((f) => readFileSync(join(dir, f)))));
     console.log(`  → ${out} (byte-joined; no ffmpeg)`);
   }
 }
 
-const DRY = process.argv.includes('--dry');
 const arg = process.argv.find((a, i) => i >= 2 && !a.startsWith('--'));
 if (!arg) {
-  console.log('usage: node scripts/narrate.mjs <chapter number | all>');
+  console.log('usage: node scripts/narrate.mjs <chapter number | all> [--dry]');
   process.exit(0);
 }
-const apiKey = DRY ? '' : key();
 const all = chapters();
 const todo = arg === 'all' ? all : all.filter((c) => c.n === Number(arg));
 if (!todo.length) {
@@ -147,5 +163,6 @@ if (!todo.length) {
 }
 const chars = todo.reduce((a, c) => a + c.body.length, 0);
 console.log(`${todo.length} chapter(s), ${chars} characters, voice ${VOICE}, est. cost $${((chars / 1e6) * 15).toFixed(2)}`);
+const apiKey = DRY ? '' : key();
 for (const ch of todo) await narrate(ch, apiKey);
 console.log('done');

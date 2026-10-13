@@ -26,6 +26,7 @@ import {
 import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 import PlaceList from '@components/PlaceList.astro';
+import ChapterAudio from '@components/ChapterAudio.astro';
 
 export function getStaticPaths() {
   return chapters.map((c) => ({ params: { n: String(c.n) }, props: { chapter: c } }));
@@ -66,6 +67,8 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
           <p class="lede">{chapter.summary}</p>
         </div>
       </header>
+
+      <ChapterAudio n={n} />
 
       {
         hasRoute && placeItems.length > 0 && (
