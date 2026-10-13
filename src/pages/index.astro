@@ -34,7 +34,8 @@ import { artImage, sketchImage, coverImage } from '@lib/images';
 import { url } from '@lib/url';
 import site from '../../site.config.mjs';
 
-const journal = artImage('emblems', 'emblem-about');
+// The titled journal (GPT, Oct 13) with the untitled emblem as fallback.
+const journal = artImage('emblems', 'journal-titled') ?? artImage('emblems', 'emblem-about');
 const cover = coverImage();
 const handMap = sketchImage('lostmans-river-hand-map.png')!;
 
@@ -80,6 +81,7 @@ const sections = [
           <a class="btn" href="#chapters">Browse the journal ↓</a>
         </p>
         <ChapterAudio n={1} title="Hear Chapter 1 read aloud" compact />
+        <p class="small"><a href={url('/app/')}>Open the Experience (preview) →</a></p>
         <p class="small muted scan-note">
           Reading the paperback? The code at the top of each chapter opens that chapter’s page here. No spoilers past where you are.
         </p>

@@ -1,0 +1,232 @@
+---
+// The Lostman's River Experience — the app home a buyer lands on. Visual-first: a grid of
+// tiles, one to three words each. Tile art comes from assets/art/tiles/<id>.(png|webp)
+// (docs/APP-HOME-BRIEF.md); until GPT delivers it, the section emblems stand in.
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import AuthorsCard from '@components/AuthorsCard.astro';
+import ChapterAudio from '@components/ChapterAudio.astro';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+import { chapters, fish, places, todo } from '@lib/data';
+import site from '../../../site.config.mjs';
+
+type Tile = { id: string; label: string; sub?: string; href: string; emblem?: string; size?: 'wide' | 'tall' | 'big'; soon?: boolean };
+const tiles: Tile[] = [
+  { id: 'read', label: 'Read the book', sub: `${chapters.length} chapters`, href: '/ch/1/', emblem: 'about', size: 'big' },
+  { id: 'listen', label: 'Listen to the book', sub: 'Chapter 1 ready', href: '/ch/1/#listen-ch-01', emblem: 'sketchbook', size: 'wide' },
+  { id: 'missions', label: 'Your summer', sub: '23 missions · 3 badges', href: '/list/', emblem: 'list', size: 'tall', soon: true },
+  { id: 'chart', label: 'The Chart', href: '/map/', emblem: 'chart' },
+  { id: 'fish', label: 'Fish', sub: `${fish.length} species`, href: '/fish/', emblem: 'fish' },
+  { id: 'crew', label: 'Crew', href: '/crew/', emblem: 'crew' },
+  { id: 'critters', label: 'Critters', href: '/critters/', emblem: 'critters' },
+  { id: 'boats', label: 'Boats', href: '/boats/', emblem: 'boats' },
+  { id: 'tackle', label: 'Tackle Box', href: '/tackle/', emblem: 'tackle' },
+  { id: 'knots', label: 'Knots', sub: 'five to master', href: '/tackle/#knots', emblem: 'tackle', soon: true },
+  { id: 'fish-id', label: 'Fish ID game', href: '/fish/', emblem: 'fish', soon: true },
+  { id: 'chart-puzzles', label: 'Chart puzzles', sub: 'plot the routes', href: '/map/', emblem: 'chart', soon: true },
+  { id: 'tides', label: 'Tides', sub: 'today at Chokoloskee', href: '/tackle/#tide', emblem: 'chart', soon: true },
+  { id: 'places', label: 'Places', sub: `${places.length} painted`, href: '/places/', emblem: 'chart', size: 'wide' },
+  { id: 'list', label: 'Matt’s List', sub: `${todo.length} items`, href: '/list/', emblem: 'list' },
+  { id: 'sketchbook', label: 'Sketchbook', href: '/sketchbook/', emblem: 'sketchbook' },
+  { id: 'printables', label: 'Printables', sub: 'cards · coloring · license', href: '/about/', emblem: 'list', soon: true },
+  { id: 'catch-log', label: 'Catch log', sub: 'your own', href: '/list/#mine', emblem: 'fish', soon: true },
+];
+const art = (t: Tile) => artImage('tiles', t.id) ?? (t.emblem ? artImage('emblems', `emblem-${t.emblem}`) : null);
+---
+
+<Base title="Lostman’s River Experience" description="Your summer as an assistant fishing guide: read, listen, learn the water, earn the license.">
+  <section class="app-hero">
+    <div class="wrap-wide app-hero-grid">
+      <div>
+        <p class="eyebrow">Welcome aboard</p>
+        <h1>You’re the assistant guide this summer.</h1>
+        <p class="lede">Same job Matt had. Read the book, listen along, learn the water, and earn your license.</p>
+        <div class="progress" role="group" aria-label="Your progress">
+          <span class="pill is-current">0 of 23 missions</span>
+          <span class="pill">0 badges</span>
+          <span class="pill">Chapter 1</span>
+        </div>
+      </div>
+      <ChapterAudio n={1} title="Start listening: Chapter 1" compact />
+    </div>
+  </section>
+
+  <section class="wrap-wide tiles-wrap" aria-label="The experience">
+    <ul class="tiles" data-reveal-stagger>
+      {
+        tiles.map((t) => {
+          const img = art(t);
+          const own = !!artImage('tiles', t.id);
+          return (
+            <li class:list={['tile', t.size, { soon: t.soon }]}>
+              <a href={url(t.href)} aria-label={`${t.label}${t.sub ? ', ' + t.sub : ''}${t.soon ? ' (coming soon)' : ''}`}>
+                <span class:list={['tile-art', 'art', { placeholder: !own }]}>
+                  {img && <Image src={img} alt="" width={own ? 800 : 400} sizes={t.size === 'big' ? '(min-width: 900px) 520px, 94vw' : '(min-width: 900px) 260px, 45vw'} loading="lazy" />}
+                </span>
+                <span class="tile-text">
+                  <span class="tile-label">{t.label}</span>
+                  {t.sub && <span class="tile-sub mono">{t.sub}</span>}
+                </span>
+                {t.soon && <span class="tile-soon hand">soon</span>}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </section>
+
+  <section class="wrap section">
+    <AuthorsCard />
+    <p class="small muted center">
+      <a href={url('/about/')}>About the book</a> · <a href={site.buyUrl} rel="noopener">The paperback on Amazon</a>
+    </p>
+  </section>
+</Base>
+
+<style>
+  .app-hero {
+    padding-block: 2rem 1.5rem;
+  }
+  .app-hero-grid {
+    display: grid;
+    gap: 1.5rem;
+    align-items: end;
+  }
+  @media (min-width: 900px) {
+    .app-hero-grid {
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3rem;
+    }
+  }
+  .app-hero h1 {
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    margin-bottom: 0.4rem;
+  }
+  .progress {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+  }
+  .tiles-wrap {
+    padding-block: 0.5rem 2rem;
+  }
+  .tiles {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 150px;
+    grid-auto-flow: dense;
+    gap: 12px;
+  }
+  @media (min-width: 640px) {
+    .tiles {
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 170px;
+      gap: 14px;
+    }
+  }
+  @media (min-width: 1000px) {
+    .tiles {
+      grid-template-columns: repeat(6, 1fr);
+      grid-auto-rows: 180px;
+      gap: 16px;
+    }
+  }
+  .tile.wide {
+    grid-column: span 2;
+  }
+  .tile.tall {
+    grid-row: span 2;
+  }
+  .tile.big {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .tile a {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .tile a:hover {
+    transform: translateY(-3px);
+    border-color: var(--gulf);
+  }
+  .tile-art {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 10%;
+  }
+  .tile-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .tile-art.placeholder img {
+    width: 62%;
+    height: 62%;
+    transform: translateY(-10%);
+  }
+  /* real tile art fills the card (edge-to-edge tiles per the brief; transparent subjects sit centred) */
+  .tile-art:not(.placeholder) {
+    padding: 4%;
+  }
+  .tile-art:not(.placeholder) img {
+    object-fit: contain;
+    transform: translateY(-6%);
+  }
+  .tile-text {
+    position: relative;
+    padding: 0.6rem 0.75rem 0.7rem;
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--paper-2) 92%, transparent) 40%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .tile-label {
+    font-weight: 700;
+    color: var(--mangrove);
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+  .tile.big .tile-label {
+    font-size: 1.4rem;
+  }
+  .tile-sub {
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+  }
+  .tile-soon {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: var(--sunrise-ink);
+    font-size: 1.1rem;
+    background: color-mix(in srgb, var(--paper) 85%, transparent);
+    padding: 0 0.45rem;
+    border-radius: 999px;
+  }
+  .tile.soon a {
+    opacity: 0.85;
+  }
+  .center {
+    text-align: center;
+    margin-top: 1rem;
+  }
+</style>

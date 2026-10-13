@@ -1,0 +1,81 @@
+---
+// The mother-and-son card: the photo in a ring, the headline, the bio from site.config.
+import { Image } from 'astro:assets';
+import { photoImages } from '@lib/images';
+import site from '../../site.config.mjs';
+
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+const photo = photoImages.get('authors.jpg') ?? photoImages.get('authors.png') ?? null;
+---
+
+<section class:list={['authors-card', { compact }]} aria-labelledby="authors-h">
+  {
+    photo && (
+      <div class="ring">
+        <Image src={photo} alt="John McKillop and his mother Linda, the authors" width={360} height={360} loading="lazy" />
+      </div>
+    )
+  }
+  <p id="authors-h" class="headline">{site.authorsHeadline}</p>
+  <p class="bio" set:html={site.authorsBio} />
+</section>
+
+<style>
+  .authors-card {
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+    max-width: 640px;
+    margin-inline: auto;
+  }
+  .ring {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--sunrise);
+    box-shadow: 0 6px 18px -8px rgb(31 42 46 / 0.4);
+  }
+  .ring img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+  }
+  .headline {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--mangrove);
+    margin: 0 0 0.5rem;
+    text-wrap: balance;
+  }
+  .bio {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+  .bio :global(em) {
+    color: var(--sunrise-ink);
+    font-style: italic;
+  }
+  .compact {
+    padding: 1.25rem 1rem;
+  }
+  .compact .ring {
+    width: 120px;
+    height: 120px;
+  }
+  .compact .headline {
+    font-size: 1.05rem;
+  }
+  .compact .bio {
+    font-size: 0.9rem;
+  }
+</style>

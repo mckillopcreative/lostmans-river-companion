@@ -20,7 +20,9 @@ export default {
   /** Credit line under commissioned / generated art in assets/art (docs/VISUAL-BRIEF.md). */
   artCredit: 'Companion-site illustration (AI-generated from the author’s brief)',
   /** About the authors. PLACEHOLDER: paste the bio from the back of the book (docs/OPEN-ITEMS.md). */
-  authorsBio: null,
+  authorsBio:
+    'John is an MD, a children’s novelist, and a father of four. Years ago he wrote <em>Escape to Lostman’s River</em> with his mom, Linda, who drew every picture in it. The Lostman’s River Experience is what came after: a way for kids to step into the Florida Everglades through an immersive story adventure that blends the novel with real-life angling skills, puzzles, and the places where it all happens.',
+  authorsHeadline: 'Built by a son and his mother, children’s-book co-authors.',
 
   /** Amazon listing. */
   buyUrl: 'https://www.amazon.com/dp/B0BVJ4XR65',
