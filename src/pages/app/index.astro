@@ -13,7 +13,7 @@ import site from '../../../site.config.mjs';
 
 type Tile = { id: string; label: string; sub?: string; href: string; emblem?: string; size?: 'wide' | 'tall' | 'big'; soon?: boolean; art?: [string, string] };
 const tiles: Tile[] = [
-  { id: 'read', label: 'Read the book', sub: `${chapters.length} chapters`, href: '/ch/1/', emblem: 'about', size: 'big', art: ['emblems', 'journal-titled'] },
+  { id: 'read', label: 'Read the book', sub: `${chapters.length} chapters`, href: '/ch/1/', emblem: 'about', size: 'big', art: ['emblems', 'journal-card'] },
   { id: 'listen', label: 'Listen to the book', sub: 'Chapter 1 ready', href: '/ch/1/#listen-ch-01', emblem: 'sketchbook', size: 'wide' },
   { id: 'missions', label: 'Your summer', sub: '23 missions · 3 badges', href: '/missions/', emblem: 'list', size: 'tall' },
   { id: 'chart', label: 'The Chart', href: '/map/', emblem: 'chart' },
@@ -211,7 +211,7 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
   }
   /* a plate (transparent subject) is shown whole on the paper, like the journal on the Read tile */
   .tile-art.plate {
-    padding: 5% 6% 14%;
+    padding: 2% 3% 11%;
   }
   .tile-art.plate img {
     object-fit: contain;
