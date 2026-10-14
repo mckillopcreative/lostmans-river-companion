@@ -47,7 +47,7 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
             <Image src={hero} alt="Heading out of Chokoloskee Bay at sunrise, seen from the console of the Mako" width={1600} sizes="(min-width: 1200px) 1140px, 96vw" loading="eager" />
             <div class="app-banner-text">
               <p class="eyebrow">Welcome aboard</p>
-              <h1>You’re the assistant guide this summer.</h1>
+              <h1>You’re the assistant fishing guide this summer. Lots to learn.</h1>
             </div>
           </div>
         </div>
@@ -56,8 +56,8 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
     <div class="wrap-wide app-hero-grid">
       <div>
         {!hero && <p class="eyebrow">Welcome aboard</p>}
-        {!hero && <h1>You’re the assistant guide this summer.</h1>}
-        <p class="lede">Same job Matt had. Read the book, listen along, learn the water, and earn your license.</p>
+        {!hero && <h1>You’re the assistant fishing guide this summer. Lots to learn.</h1>}
+        <p class="lede">Same job Matt had. Read the book, listen along, learn the water, and earn your Lostman’s River Fishing Guide license.</p>
         <div class="progress" role="group" aria-label="Your progress">
           <span class="pill is-current" id="p-missions">0 of 23 missions</span>
           <span class="pill" id="p-badges">0 badges</span>
@@ -149,12 +149,12 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
   .app-banner-text {
     position: absolute;
     inset: auto 0 0 0;
-    padding: 3.5rem 1.25rem 1rem;
-    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--paper) 90%, transparent) 55%);
+    padding: 5rem 1.25rem 1rem;
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--paper) 92%, transparent) 50%);
   }
   .app-banner-text h1 {
     margin: 0;
-    max-width: 18ch;
+    max-width: 24ch;
   }
   .app-banner-text .eyebrow {
     margin-bottom: 0.1rem;
