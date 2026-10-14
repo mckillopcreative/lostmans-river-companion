@@ -1,6 +1,6 @@
 # The Lostman's River Experience — app home
 
-*Design brief and GPT tile directions, 2026-10-13. Built at `/app/`. GPT delivered all 18 tiles plus a Types-of-boats tile on 2026-10-13 (pack kept at `../assets/GPT assets/Lostmans_River_Oct13/`); they are installed as WebP in `assets/art/tiles/`. Still open from §5: `app-hero.png` and `license-blank.png`. From §9: only jon-boat, flats-skiff, bay-boat and deep-v arrived; the other 13 boat-type slots and `boat-types-hero.png` are still wanted.*
+*Design brief and GPT tile directions, 2026-10-13. Built at `/app/`. Art status: all 18 tiles, the Types-of-boats tile, `app-hero` and `license-blank` are installed (packs kept under `../assets/GPT assets/Lostmans_River_Oct13/` and `Lostmans_River_Remaining_16/`). Of the 17 boat-type scenes plus hero, 14 are installed; `airboat.png`, `push-pole.png` and `safety-kit.png` in the Remaining_16 pack were truncated files (a black band through the middle) and need re-exporting from GPT.*
 
 ## 1. The idea in one line
 

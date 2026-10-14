@@ -10,6 +10,7 @@ import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 import site from '../../../site.config.mjs';
 
+const hero = artImage('boat-types', 'boat-types-hero');
 const groups = (Object.keys(boatTypeGroups) as BoatType['group'][]).map((g) => ({ key: g, label: boatTypeGroups[g], items: boatTypes.filter((t) => t.group === g) }));
 ---
 
@@ -23,6 +24,11 @@ const groups = (Object.keys(boatTypeGroups) as BoatType['group'][]).map((g) => (
         <p class="lede">What every boat in the book really is, what it is for, and what it can’t do. The kind of thing Dan would tell you on the dock before you ever stepped aboard.</p>
       </div>
     </header>
+    {hero && (
+      <div class="bt-hero">
+        <Image src={hero} alt="The marina at Chokoloskee: a skiff, a bay boat and a houseboat at the dock" width={1600} sizes="(min-width: 1200px) 1140px, 96vw" loading="eager" />
+      </div>
+    )}
     <nav class="cluster small jump" aria-label="Sections">
       {groups.map((g) => <a class="pill" href={`#${g.key}`}>{g.label.split(':')[0]}</a>)}
       <a class="pill" href={url('/boats/')}>Boats in the book →</a>
@@ -87,6 +93,23 @@ const groups = (Object.keys(boatTypeGroups) as BoatType['group'][]).map((g) => (
   }
   .bt-head .lede {
     margin-bottom: 0;
+  }
+  .bt-hero {
+    margin-top: 1.25rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+    aspect-ratio: 2 / 1;
+    box-shadow: var(--shadow);
+  }
+  @media (min-width: 900px) {
+    .bt-hero {
+      aspect-ratio: 5 / 2;
+    }
+  }
+  .bt-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .jump {
     margin: 1rem 0 0.5rem;

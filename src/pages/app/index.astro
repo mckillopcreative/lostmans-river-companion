@@ -34,15 +34,29 @@ const tiles: Tile[] = [
   { id: 'catch-log', label: 'Catch log', sub: 'your own', href: '/list/#mine', emblem: 'fish', soon: true },
 ];
 // a tile's art: its own file in tiles/, or a named plate (shown whole, not cropped), else the section emblem
+const hero = artImage('tiles', 'app-hero');
 const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], t.art[1]) : null) ?? (t.emblem ? artImage('emblems', `emblem-${t.emblem}`) : null);
 ---
 
 <Base title="Lostman’s River Experience" description="Your summer as an assistant fishing guide: read, listen, learn the water, earn the license.">
   <section class="app-hero">
+    {
+      hero && (
+        <div class="wrap-wide">
+          <div class="app-banner">
+            <Image src={hero} alt="Heading out of Chokoloskee Bay at sunrise, seen from the console of the Mako" width={1600} sizes="(min-width: 1200px) 1140px, 96vw" loading="eager" />
+            <div class="app-banner-text">
+              <p class="eyebrow">Welcome aboard</p>
+              <h1>You’re the assistant guide this summer.</h1>
+            </div>
+          </div>
+        </div>
+      )
+    }
     <div class="wrap-wide app-hero-grid">
       <div>
-        <p class="eyebrow">Welcome aboard</p>
-        <h1>You’re the assistant guide this summer.</h1>
+        {!hero && <p class="eyebrow">Welcome aboard</p>}
+        {!hero && <h1>You’re the assistant guide this summer.</h1>}
         <p class="lede">Same job Matt had. Read the book, listen along, learn the water, and earn your license.</p>
         <div class="progress" role="group" aria-label="Your progress">
           <span class="pill is-current" id="p-missions">0 of 23 missions</span>
@@ -106,6 +120,47 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
 <style>
   .app-hero {
     padding-block: 2rem 1.5rem;
+  }
+  /* the sunrise banner: the headline sits in the painting's calm bottom third on a paper scrim */
+  .app-banner {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .app-banner {
+      aspect-ratio: 2 / 1;
+    }
+  }
+  @media (min-width: 1000px) {
+    .app-banner {
+      aspect-ratio: 5 / 2;
+    }
+  }
+  .app-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+  .app-banner-text {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 3.5rem 1.25rem 1rem;
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--paper) 90%, transparent) 55%);
+  }
+  .app-banner-text h1 {
+    margin: 0;
+    max-width: 18ch;
+  }
+  .app-banner-text .eyebrow {
+    margin-bottom: 0.1rem;
+  }
+  .app-hero:has(.app-banner) .app-hero-grid {
+    align-items: center;
   }
   .app-hero-grid {
     display: grid;
