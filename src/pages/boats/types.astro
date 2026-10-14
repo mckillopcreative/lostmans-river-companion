@@ -106,6 +106,7 @@ const groups = (Object.keys(boatTypeGroups) as BoatType['group'][]).map((g) => (
   .type {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+    align-content: start;
     min-width: 0;
     background: var(--paper-2);
     border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
