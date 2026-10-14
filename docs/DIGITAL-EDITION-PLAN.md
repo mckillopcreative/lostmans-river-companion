@@ -226,7 +226,7 @@ Keep the 23 missions, but mark a third of them as **field missions** that cannot
 
 | Mission | Off-screen task | Needs |
 |---|---|---|
-| Knots (none) | Tie the improved clinch and the uni knot with a shoelace or a length of string around a pencil. Show someone. | shoelace |
+| Knots (new mission) | Tie the improved clinch and the uni knot with a shoelace or a length of string around a pencil. Show someone. | shoelace |
 | Tides | Find today's tide for the water nearest your house (any coast, or a lake: write "no tide" and say why). Write the high in the logbook. | printed logbook |
 | Fish ID | Draw one fish from the field guide from memory, then check it. | pencil |
 | Measure | Measure something the length of a keeper snook (28 in) with a tape or a string. Find three things that long in the house. | tape |
