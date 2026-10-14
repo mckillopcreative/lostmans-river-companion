@@ -266,7 +266,8 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
   }
   /* a plate (transparent subject) is shown whole on the paper, like the journal on the Read tile */
   .tile-art.plate {
-    padding: 2% 3% 11%;
+    padding: 0 3% 13%;
+    transform: translateY(-10px);
   }
   .tile-art.plate img {
     object-fit: contain;
