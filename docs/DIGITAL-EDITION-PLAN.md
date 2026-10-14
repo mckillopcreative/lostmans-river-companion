@@ -208,3 +208,55 @@ Decision rule: ship with whichever of 1 to 3 is consistent across a full chapter
 ## 14. The free layer (2026-10-13)
 
 Marketing angle: **“Your child learns the basics of saltwater fishing in the Florida Everglades.”** The teaching content is free and open, and is the ad’s landing content: the fish and critter field guide, Types of boats, the tackle box, the knot trainer, the chart puzzles and the tide window. The paid edition is the story: the novel on the site, the narration, the Assistant Guide missions and badges, the printable license and the downloads. Rule of thumb: anything a scout leader could use in an afternoon is free; anything that needs the book is paid.
+
+
+## 15. Off the screen (2026-10-14)
+
+The author's worry: unless they buy the paperback, the whole thing happens on a screen, and that is what the parents we are advertising to are tired of. Two honest answers, and a set of things to build so the claim "half of it off the screen" is true.
+
+### What is already off the screen
+
+- **The narration.** 4½ hours of audio is a car-ride and bedtime product. A phone in a pocket with the screen off is not screen time in any parent's mind. This is the strongest line in the ad and it is already built for chapter 1.
+- **The paperback.** The printed book, with the QR codes at every chapter, is the physical half. Sell it as an add-on on the same checkout (+$15, signed) rather than as a separate product. A kid with the book in a hammock and a phone for the chart is the picture we want in the ad.
+- **The license.** Printed, signed by hand, pinned to a wall. Built.
+
+### What to build so the missions leave the screen
+
+Keep the 23 missions, but mark a third of them as **field missions** that cannot be completed on the site. A field mission shows the instructions, then a single "Done, and a grown-up saw it" checkbox. Nothing is uploaded; the honour system is the point.
+
+| Mission | Off-screen task | Needs |
+|---|---|---|
+| Knots (none) | Tie the improved clinch and the uni knot with a shoelace or a length of string around a pencil. Show someone. | shoelace |
+| Tides | Find today's tide for the water nearest your house (any coast, or a lake: write "no tide" and say why). Write the high in the logbook. | printed logbook |
+| Fish ID | Draw one fish from the field guide from memory, then check it. | pencil |
+| Measure | Measure something the length of a keeper snook (28 in) with a tape or a string. Find three things that long in the house. | tape |
+| Birds | Sit still for ten minutes outside and count the birds. Name two. | outside |
+| Chart | Print the hand-drawn chart, plot the Mako's route for chapter 7 in pencil, bring it to the screen to check. | printer |
+| Weather | Read the sky at sunset for three nights and write a one-line forecast each night. Were you right? | outside |
+| Cast | With a rod, or a stick and string with a washer on the end, practise a sidearm cast at a bucket from ten paces until three in a row land. | yard |
+| Cook | Make the mullet or the hush puppies from the recipes page with a grown-up. | kitchen |
+| Catch log | Go fishing with someone, or to a pier, or a bait shop, and log one thing you saw caught. | a day out |
+
+### Printables to make (all from assets we have)
+
+- **Summer logbook** (PDF, 24 pages, Linda's sketchbook style): a page per chapter with a blank for "what Dan would say", a catch log, a tide page, a bird list, a knot checklist, and the last page is the license. This is the single most important off-screen artefact: it is what the kid holds.
+- **Fish cards** (PDF, 23 cards, print and cut): art front, identification notes back. Fish ID game on the kitchen table.
+- **Coloring pages** from Linda's sketches (already trimmed in `src/assets/sketches/`).
+- **The chart** at letter size for route plotting.
+- **Knot cards**: one per knot, step diagrams, with the note "practise with a shoelace".
+
+### The ad angle
+
+Lead with the parent's objection and answer it:
+
+- **"Half of it off the screen."** Show the kid with the paperback and the logbook, the phone face down with the audio playing.
+- **"Listen on the way to the water."** The audiobook line, for the car.
+- **"They'll tie a real knot by Tuesday."** The field missions line.
+- Proof: the mother-son photo, "Written by a mother and son. Illustrated by Mom."
+
+Make the ad creative from what exists: the authors' photo, the journal, the license, the knot tile, and a photo of a printed logbook once it exists. Do not show a tablet.
+
+### What not to promise
+
+- Do not call it "screen-free". It is not. "Half of it off the screen" is defensible once the field missions and the logbook exist; until then say "listen screen-off" and "print and sign the license".
+- Do not count paperback reading in the 15-hour figure unless the paperback is in the cart.

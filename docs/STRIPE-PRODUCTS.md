@@ -1,6 +1,6 @@
-# Stripe products and checkout copy
+# Stripe: one product
 
-*Drafted 2026-10-13 for Stripe Payment Links / Checkout. Prices are the proposal from DIGITAL-EDITION-PLAN.md §7; change them in Stripe, not here.*
+*Revised 2026-10-14. The author's call: launch a single experience and see whether it sells before adding anything else. The earlier four-product plan is kept at the bottom for later.*
 
 ## Account settings (once)
 
@@ -10,103 +10,71 @@
 - **Customer emails:** enable receipts; the receipt is the delivery mechanism until the app gate exists.
 - **Branding:** icon `assets/art/emblems/site-mark.png` (the leaping tarpon), accent color `#e8873a`, background `#f6f1e7`.
 - **Success URL:** `https://lostmansriver.com/app/?welcome=1` · **Cancel URL:** `https://lostmansriver.com/`
-- **Refunds:** 30 days, no questions, stated on every product page. Refund rate is the metric that tells you whether the product is honest.
+- **Refunds:** 30 days, no questions, stated on the page. Refund rate is the metric that tells you whether the product is honest.
 
-## Product 1 — The Digital Adventure Edition
+## The product — The Lostman’s River Experience
 
 | Field | Value |
 |---|---|
-| Name | **Lostman’s River: Digital Adventure Edition** |
+| Name | **The Lostman’s River Experience** |
 | Price | $24.99 one-time (launch: $19.99 with coupon `SUMMER`) |
 | Tax category | Digital goods (e-book / audio) |
 | Image | the titled journal, `assets/art/emblems/journal-titled.png` |
-| Metadata | `product=edition`, `grants=read,listen,missions,downloads` |
+| Metadata | `product=experience`, `grants=read,listen,missions,downloads` |
+| Optional add-on at checkout | **Signed paperback, shipped** +$15 (US only; collect shipping address only when chosen) |
+
+The paperback is an add-on line on the same checkout, not a second product. It is the one thing that takes the reading off the screen, so it belongs beside the Buy button, not on a separate page.
 
 **Short description (Checkout, ≤ 250 chars):**
-> The complete novel *Escape to Lostman’s River* to read online and listen to, plus 23 Assistant Guide missions, three badges, a printable license, and the field guide, knots, chart puzzles and tides. For readers 10 to 15. 15+ hours of adventure.
+> A summer as an assistant fishing guide in the Everglades: the novel *Escape to Lostman’s River* to read and hear, 23 missions, real fishing skills, puzzles, and a license to earn and print. Ages 10 to 15. 15+ hours, much of it off the screen.
 
 **Long description (Payment Link page):**
 > Your child spends a summer in the Florida Everglades as an assistant fishing guide, the same job fifteen-year-old Matt Creek had in *Escape to Lostman’s River*, one of Joelbooks’ Top 8 Short Adventure Books for Teens.
 >
-> **Read.** All 23 chapters on the site, each with its chart, its fish, its crew and its tackle alongside.
-> **Listen.** Every chapter narrated, about 4½ hours, so they can listen while they explore the chart.
+> **Listen.** Every chapter read aloud, about 4½ hours: in the car, at bedtime, on the way to the water. Screen off.
+> **Read.** All 23 chapters on the site, each with its chart, its fish, its crew and its tackle alongside. Add the signed paperback and read it in a hammock.
+> **Do.** 23 missions set by Uncle Dan. Some are on the chart; some send them outside: tie the knots with a shoelace, read a real tide table, measure a real fish, draw what they saw.
 > **Learn.** Real saltwater fishing: 23 fish, 19 critters, the boats of the Ten Thousand Islands, 34 tackle terms, five knots, how to read a tide.
-> **Play.** One mission per chapter set by Uncle Dan, three badges to earn, and a mystery to solve before Matt does.
-> **Keep.** Download the book as PDF and EPUB, the audio as MP3, fish cards, coloring pages from Linda McKillop’s sketches, and the Assistant Guide license to print and sign.
+> **Keep.** The Assistant Guide license to print and sign, fish cards, coloring pages from Linda McKillop’s sketches, a summer logbook to fill in by hand.
 >
 > Written by a mother and son. Illustrated by Mom. Nothing is collected from your child: progress stays on the device, and the license is filled in by hand.
 >
 > 30-day refund, no questions asked.
 
 **Feature list (Stripe “features” bullets):**
-- Full novel, read online, 23 chapters
-- Narration, every chapter, ~4.5 hours
-- 23 missions, 3 badges, printable Assistant Guide license
+- Full novel, read online, 23 chapters · add the signed paperback
+- Narration, every chapter, ~4.5 hours, screen off
+- 23 missions, 3 badges, a license to print and sign
 - Field guide: 23 fish, 19 critters, boats, tackle, knots, tides
-- PDF + EPUB + MP3 downloads, fish cards, coloring pages
+- Printables: fish cards, coloring pages, summer logbook
 - Ages 10–15 · no accounts, no child data · 30-day refund
-
-## Product 2 — Gift Bundle (edition + signed paperback)
-
-| Field | Value |
-|---|---|
-| Name | **Lostman’s River Gift Bundle** |
-| Price | $39.99 one-time, shipping to US addresses included |
-| Tax category | Mixed: physical book + digital goods |
-| Checkout | collect shipping address; add a “gift message” custom field (optional, 120 chars) |
-| Image | the paperback cover beside the journal |
-| Metadata | `product=gift`, `grants=read,listen,missions,downloads`, `ships=paperback` |
-
-**Short description:**
-> The Digital Adventure Edition plus a signed paperback of *Escape to Lostman’s River*, shipped to the reader. Add a gift message at checkout.
-
-**Long description:**
-> Everything in the Digital Adventure Edition, and the real book in their hands: a paperback signed by the authors, with the QR codes at every chapter that open the adventure on their phone. We ship within three business days to US addresses. Write a gift message at checkout and we print it on the card.
-
-## Product 3 — Classroom Edition
-
-| Field | Value |
-|---|---|
-| Name | **Lostman’s River Classroom Edition (30 readers)** |
-| Price | $99 one-time |
-| Tax category | Digital goods |
-| Checkout | collect school name (custom field) |
-| Metadata | `product=classroom`, `seats=30`, `grants=read,listen,missions,downloads,guide` |
-
-**Short description:**
-> Thirty readers, the discussion guide, printable fish cards and chart puzzles, and a reading schedule. For grades 4 to 8, homeschool groups and libraries.
-
-**Long description:**
-> One purchase, thirty readers. Your class reads a real novel set in a real place, with the science and seamanship taught alongside it: tides, knots, fish identification, navigation on a chart, Everglades wildlife and conservation. Includes the teacher’s discussion guide by chapter, printables, and the classroom reading schedule. No student accounts and no student data.
-
-## Product 4 — Audiobook only (optional, later)
-
-| Field | Value |
-|---|---|
-| Name | **Escape to Lostman’s River — Audiobook** |
-| Price | $9.99 |
-| Metadata | `product=audio`, `grants=listen` |
-
-**Short description:**
-> The complete novel narrated, 23 chapters, about 4½ hours. Stream on the site or download the MP3s.
 
 ## Coupons
 
-- `SUMMER` — 20% off the edition for launch (ends on a date you choose).
-- `CLASSROOM10` — 10% off the classroom edition for a school that already bought one.
+- `SUMMER` — 20% off at launch (ends on a date you choose).
 - A 100%-off code for family and reviewers (limit redemptions).
 
 ## Delivery, until the gate is built
 
-Stripe sends the receipt; add a custom receipt message per product:
+Stripe sends the receipt; add a custom receipt message:
 
-> Welcome aboard. Open your adventure at https://lostmansriver.com/app/ — bookmark it on the reader’s phone. Downloads are at https://lostmansriver.com/downloads/ (link valid for your purchase). Questions: hello@lostmansriver.com.
+> Welcome aboard. Open the Experience at https://lostmansriver.com/app/ and bookmark it on the reader’s phone. Printables are at https://lostmansriver.com/app/#print. Questions: hello@lostmansriver.com.
 
 When the Cloudflare gate ships, the Stripe webhook (`checkout.session.completed`) writes the purchase key to KV and the receipt link carries it; nothing in the product copy changes.
 
-## Ad-to-checkout copy that matches the products
+## Ad-to-checkout copy
 
-- Headline: **A summer in the Everglades, read aloud.**
-- Sub: One of Joelbooks’ Top 8 teen adventure novels, now a 15-hour read-and-listen adventure with real fishing skills, puzzles and a license to earn.
+- Headline: **A summer in the Everglades. Half of it off the screen.**
+- Sub: One of Joelbooks’ Top 8 teen adventure novels, read aloud, with real fishing skills to learn, knots to tie, tides to read and a license to earn.
 - Proof line: Written by a mother and son. Illustrated by Mom.
-- Button: **Hear Chapter 1 free** → lostmansriver.com (then **Get the edition** on the page).
+- Button: **Hear Chapter 1 free** → lostmansriver.com (then **Get the Experience** on the page).
+
+---
+
+## Later, only if the single product sells
+
+Kept from the first draft so nothing is lost. None of these should exist in Stripe at launch.
+
+- **Gift bundle** ($39.99): the Experience plus a signed paperback with a printed gift card. Covered now by the paperback add-on.
+- **Classroom edition** ($99, 30 readers): adds the discussion guide, printables and a reading schedule; collect the school name at checkout. Worth building only after a teacher asks.
+- **Audiobook only** ($9.99): `grants=listen`. Skip; the narration is the reason to buy the whole thing.
