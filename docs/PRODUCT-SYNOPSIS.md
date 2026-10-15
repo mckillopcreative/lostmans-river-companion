@@ -1,6 +1,6 @@
 # Lostman's River Fishing Guide Experience — product synopsis for review
 
-*Written 2026-10-15 so that other models (or people) can evaluate the product and suggest improvements. Everything marked **built** is live at https://lostmansriver.com. Everything marked **planned** is not. Nothing has been sold yet; there is no checkout. Please be blunt.*
+*Written 2026-10-15 so that other models (or people) can evaluate the product and suggest improvements, especially ways to improve revenue. Everything marked **built** is live at https://lostmansriver.com. Everything marked **planned** is not. Nothing has been sold yet; there is no checkout. Please be blunt.*
 
 ## 1. One paragraph
 
@@ -93,17 +93,54 @@ Parked until the single product proves itself: gift bundle, classroom edition (3
 - Static site, no paid APIs at runtime; the only backend will be a small Cloudflare Worker.
 - Windows machine, Node, no Python, no ffmpeg.
 
-## 10. Questions for the reviewer
+## 10. Revenue: the model as it stands, and the levers on the table
 
-1. Is $24.99 right for what exists today, and what would have to be true for $34.99 or $14.99?
-2. Should the paperback be in the box by default (a $39.99 physical-plus-digital product) rather than an add-on?
-3. What is the single highest-leverage thing to build before spending the first ad dollar: the gate, the full narration, the logbook, or something not listed?
-4. Which ad angle do you think converts: "learn real saltwater fishing," "a summer off the screen," "a novel read aloud with the places on a chart," or "a gift from a mother-and-son author team"?
-5. What would make a 12-year-old come back on day three?
-6. What is the biggest risk in this plan that the author is not seeing?
-7. Which parts of §4 would you cut, and which would you make the headline?
+**The model.** One-time $24.99 digital sale, sold direct, driven by paid social. No subscription, no in-app purchases, no ads inside the product. The paperback add-on is the only second line.
 
-## 11. Pointers
+**Working assumptions (unproven):**
+
+| | |
+|---|---|
+| Price | $24.99 (launch $19.99) |
+| Net after Stripe | ~$23.90 |
+| Target cost per sale from ads | ≤ $12 (breaks even above ~$22 with refunds) |
+| Refund rate tolerated | ≤ 8% |
+| Paperback add-on take rate guessed | 25%, margin ~$5–7 each |
+| Season | spring and early summer (gift and "summer activity" buying), December gifts |
+
+**Levers being considered, none decided.** Reviewers are asked to rank these or add to them.
+
+1. **Make the paperback default**: a $39.99 physical-plus-digital product. Higher ticket, higher perceived value, a real object in the ad, but shipping work and a $8–10 unit cost.
+2. **Tiering**: a $14.99 "read and listen" tier and a $29.99 "guide" tier with missions, license and printables. Risk: the cheap tier cannibalises.
+3. **Gift framing**: a gift card to print, a "from Grandpa" line on the license, gift-season ads. Gifts tolerate higher prices.
+4. **Classroom and homeschool**: $99 for 30 readers with a discussion guide; sold by email to Florida teachers and homeschool co-ops. Few sales, big tickets, slow.
+5. **Affiliate and partner**: tackle shops and fishing guides in SW Florida sell or hand out a code; bait-shop counter cards with the QR; a cut to the shop.
+6. **The free layer as the funnel**: the fish guide, tides, knots and boat types stay free (SEO for "how to tie a uni knot," "snook identification," "tides Chokoloskee") and the paid product is the novel, narration, missions and license. Slow, cheap traffic that compounds.
+7. **A second book**: the pipeline (data, art, narration, missions) is reusable; a sequel or a second title doubles the catalogue for a fraction of the first build.
+8. **Audiobook as a separate SKU** on the author's own site ($9.99) for adults who just want the story.
+9. **Seasonal "summer cohorts"**: open enrolment in May, a shared start date, a weekly email with the next mission, so parents have a reason to buy now. No accounts needed; the email list does the work.
+10. **Licensing the format** to other children's authors (a companion-site-plus-missions kit). Far off.
+
+**What the author wants to avoid:** subscriptions for a children's product, accounts and data collection, anything that makes the site worse for the kid in order to make the number better.
+
+## 11. Questions for the reviewer
+
+Revenue first:
+
+1. Given §4 as it stands, what is the most money this can make in its first year, and what is the one change that would most raise that number?
+2. Is $24.99 right? What would have to be true for $34.99 or $14.99? Should the paperback be in the box by default?
+3. Which of the levers in §10 would you pull first, which never, and what is missing from the list?
+4. Which ad angle converts a parent: "learn real saltwater fishing," "a summer off the screen," "a novel read aloud with the places on a chart," or "a gift from a mother-and-son author team"? Write the headline you would run.
+5. What is the cheapest way to get the first 50 paying customers without ads?
+
+Then product:
+
+6. What is the single highest-leverage thing to build before the first ad dollar: the gate, the full narration, the logbook, or something not listed?
+7. What would make a 12-year-old come back on day three, and does that matter for a one-time purchase?
+8. What is the biggest risk in this plan that the author is not seeing?
+9. Which parts of §4 would you cut, and which would you make the headline?
+
+## 12. Pointers
 
 - Live site: https://lostmansriver.com · Experience home: https://lostmansriver.com/app/ · license: https://lostmansriver.com/license/ · a chapter: https://lostmansriver.com/ch/7/
 - Repo: https://github.com/mckillopcreative/lostmans-river-companion (public; the manuscript is not in it)
