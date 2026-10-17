@@ -101,3 +101,11 @@ Yes, deliver by email; it is how everyone outside Audible does it. From the work
 5. RSS feed.
 6. Stripe webhook → token → email.
 7. Chapter 1 as a public podcast episode and on the landing page.
+
+
+## 7. Update 2026-10-17, from the Bourbon session
+
+- The Bourbon Brothers book shipped all 25 chapters on OpenAI `gpt-4o-mini-tts` (ash, 1.1x, the v2 one-voice instruction) and the author's verdict was **too flat, no intonation or intrigue**. The one-voice instruction cures the register drift by forbidding expression. ElevenLabs beat it on the same passage.
+- Two ElevenLabs voices the author picked by ear: **A George** (`JBFqnCBsd6RMkjVDRZzb`, `eleven_v4`, stability 0.35, similarity 0.75, style 0, speaker boost) and **B Brian** (`nPczCjzI2devNBz1zQrb`, `eleven_multilingual_v2`, stability 0.30, similarity 0.75, style 0.45, speaker boost). No instructions field; stability is the expressiveness knob (low = more range).
+- `scripts/narrate.mjs` in the Lostman's repo now supports `TTS_ENGINE=elevenlabs EL_VOICE=A|B` with the same chunking, retries, resume and byte-join; it stops on 401/402/429 instead of retrying, and it drops any segment with no letters or digits (a lone ":" once became two seconds of noise).
+- **Budget:** ElevenLabs Creator is 131,000 characters a month, overage disabled, one account for both books. Bourbon needs ~301,000; Lostman's needs ~234,000 (chapter 1 alone is ~14,300, 11%). Whoever runs second in a month gets refused mid-job. Sequence with the author before any full run; use `--dry` to see the share.

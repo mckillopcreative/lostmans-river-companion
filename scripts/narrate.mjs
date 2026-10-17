@@ -23,6 +23,19 @@ const VOICE = 'fable'; // the Socrates voice — keep in step with BourbonBrothe
 const INSTRUCTIONS =
   'You are the single narrator of a middle-grade adventure novel, reading an audiobook. Use ONE voice for the entire recording: your own natural adult narrator voice, the same pitch and timbre in every sentence, including all dialogue. Do not perform character voices, do not raise your pitch for women or children, do not whisper or shout. Steady audiobook pace, clear and warm with a little grit, tension carried by timing and emphasis only. No dramatic pauses, no announcer cadence.';
 const STYLE_V = 2; // bump when VOICE or INSTRUCTIONS change so stale files are regenerated
+// Engine. 'openai' (default) is the stack above. 'elevenlabs' uses the two voices John picked
+// by ear in the Bourbon Brothers session (2026-10-17) after the OpenAI render of that book came
+// back "too flat": ElevenLabs has no instructions field; low stability = more expression.
+// Budget: the Creator plan is 131,000 characters a month with overage disabled, shared with
+// the Bourbon Brothers book, so run --dry first and sequence with John before a full run.
+const ENGINE = process.env.TTS_ENGINE === 'elevenlabs' ? 'elevenlabs' : 'openai';
+const EL_VOICES = {
+  A: { name: 'George', voice_id: 'JBFqnCBsd6RMkjVDRZzb', model_id: 'eleven_v4', voice_settings: { stability: 0.35, similarity_boost: 0.75, style: 0.0, use_speaker_boost: true } },
+  B: { name: 'Brian', voice_id: 'nPczCjzI2devNBz1zQrb', model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.3, similarity_boost: 0.75, style: 0.45, use_speaker_boost: true } },
+};
+const EL_VOICE = (process.env.EL_VOICE || 'A').toUpperCase();
+const EL = EL_VOICES[EL_VOICE] ?? EL_VOICES.A;
+const EL_MONTHLY = 131000;
 // Short requests: the model drops the tail of long inputs (Socrates, Oct 1) and a 1,800-char
 // request took over two minutes on Oct 13. ~1,100 chars ≈ 75 s of audio per request.
 const SEG_MAX = 1100;
@@ -31,13 +44,14 @@ const TIMEOUT_MS = 180000;
 const DRY = process.argv.includes('--dry');
 
 function key() {
-  if (process.env.OPENAI_API_KEY) return process.env.OPENAI_API_KEY;
+  const name = ENGINE === 'elevenlabs' ? 'ELEVENLABS_API_KEY' : 'OPENAI_API_KEY';
+  if (process.env[name]) return process.env[name];
   const f = process.env.OPENAI_KEY_FILE;
   if (f && existsSync(f)) {
-    const m = /^\s*OPENAI_API_KEY\s*=\s*"?([^"\r\n]+)"?/m.exec(readFileSync(f, 'utf8'));
+    const m = new RegExp('^\\s*' + name + '\\s*=\\s*"?([^"\\r\\n]+)"?', 'm').exec(readFileSync(f, 'utf8'));
     if (m) return m[1].trim();
   }
-  console.error('No key: set OPENAI_API_KEY or OPENAI_KEY_FILE=<path to a KEY=VALUE file>.');
+  console.error(`No key: set ${name} or OPENAI_KEY_FILE=<path to a KEY=VALUE file that holds it>.`);
   process.exit(1);
 }
 
@@ -77,19 +91,31 @@ function segments(ch) {
     if (p.length <= SEG_MAX && cur.length > SEG_MAX * 0.6) push(); // paragraph ends make natural seams
   }
   push();
-  return out;
+  return out.filter((t) => /[\p{L}\p{N}]/u.test(t));
 }
 
 async function tts(apiKey, text, label) {
   let last = 'unknown';
   for (let attempt = 1; attempt <= 4; attempt++) {
     try {
-      const res = await fetch('https://api.openai.com/v1/audio/speech', {
-        method: 'POST',
-        headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
-        body: JSON.stringify({ model: MODEL, voice: VOICE, ...(MODEL.startsWith('gpt-') ? { instructions: INSTRUCTIONS } : {}), input: text, response_format: 'mp3' }),
-        signal: AbortSignal.timeout(TIMEOUT_MS),
-      });
+      const res =
+        ENGINE === 'elevenlabs'
+          ? await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${EL.voice_id}?output_format=mp3_44100_128`, {
+              method: 'POST',
+              headers: { 'xi-api-key': apiKey, 'content-type': 'application/json' },
+              body: JSON.stringify({ text, model_id: EL.model_id, voice_settings: EL.voice_settings }),
+              signal: AbortSignal.timeout(TIMEOUT_MS),
+            })
+          : await fetch('https://api.openai.com/v1/audio/speech', {
+              method: 'POST',
+              headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
+              body: JSON.stringify({ model: MODEL, voice: VOICE, ...(MODEL.startsWith('gpt-') ? { instructions: INSTRUCTIONS } : {}), input: text, response_format: 'mp3' }),
+              signal: AbortSignal.timeout(TIMEOUT_MS),
+            });
+      if (res.status === 401 || res.status === 402 || res.status === 429) {
+        // quota or auth: retrying will not help, and on ElevenLabs a spent allowance refuses
+        throw new Error(`${label}: ${ENGINE} refused with status ${res.status} (${(await res.text()).slice(0, 160)})`);
+      }
       if (res.ok) {
         const buf = Buffer.from(await res.arrayBuffer());
         if (buf.length > 2000) return buf;
@@ -114,14 +140,14 @@ function hasFfmpeg() {
 }
 
 async function narrate(ch, apiKey) {
-  const id = `ch-${String(ch.n).padStart(2, '0')}${MODEL === 'gpt-4o-mini-tts' ? '' : '-' + MODEL}`;
+  const id = `ch-${String(ch.n).padStart(2, '0')}${ENGINE === 'elevenlabs' ? '-el-' + EL_VOICE.toLowerCase() : MODEL === 'gpt-4o-mini-tts' ? '' : '-' + MODEL}`;
   const segs = SEG_LIMIT ? segments(ch).slice(0, SEG_LIMIT) : segments(ch);
   console.log(`Chapter ${ch.n} — ${ch.title}: ${segs.length} segments, ${ch.body.length} chars`);
   if (DRY) return;
   const dir = resolve(root, 'public/audio', id);
   mkdirSync(dir, { recursive: true });
   const stamp = join(dir, 'style.txt');
-  const sig = `${MODEL}:${VOICE}:${STYLE_V}:${SEG_MAX}`;
+  const sig = ENGINE === 'elevenlabs' ? `el:${EL.voice_id}:${EL.model_id}:${JSON.stringify(EL.voice_settings)}:${SEG_MAX}` : `${MODEL}:${VOICE}:${STYLE_V}:${SEG_MAX}`;
   const fresh = existsSync(stamp) && readFileSync(stamp, 'utf8') === sig;
   const jobs = segs.map((text, i) => ({ i, text, file: join(dir, `seg-${String(i + 1).padStart(2, '0')}.mp3`) })).filter((j) => !(fresh && existsSync(j.file)));
   let next = 0;
@@ -197,7 +223,10 @@ if (!todo.length) {
   process.exit(1);
 }
 const chars = todo.reduce((a, c) => a + c.body.length, 0);
-console.log(`${todo.length} chapter(s), ${chars} characters, voice ${VOICE}, est. cost $${((chars / 1e6) * 15).toFixed(2)}`);
+if (ENGINE === 'elevenlabs') {
+  const segChars = todo.reduce((a, c) => a + segments(c).reduce((x, t) => x + t.length, 0), 0);
+  console.log(`${todo.length} chapter(s), ${segChars} characters to send, ElevenLabs voice ${EL_VOICE} (${EL.name}, ${EL.model_id}): ${((segChars / EL_MONTHLY) * 100).toFixed(0)}% of the ${EL_MONTHLY.toLocaleString()}-character monthly allowance, before any re-rolls`);
+} else console.log(`${todo.length} chapter(s), ${chars} characters, voice ${VOICE}, est. cost ${((chars / 1e6) * 15).toFixed(2)}`);
 const apiKey = DRY ? '' : key();
 for (const ch of todo) await narrate(ch, apiKey);
 console.log('done');
