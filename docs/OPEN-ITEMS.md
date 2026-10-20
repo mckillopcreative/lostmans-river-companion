@@ -14,7 +14,7 @@ See SPEC.md §8. Placeholders used during the build are listed here with where t
 - [ ] **Dedication photo caption** — `src/pages/about.astro`, marked `[Caption to come from the author.]`. Who are the three anglers?
 - [ ] **Email sign-up** — `site.config.mjs` → `email.provider` and `email.action`. Forms show "Sign-up opens soon." until set. Buttondown is simplest (free tier, no cookies): the action URL is `https://buttondown.com/api/emails/embed-subscribe/<username>`.
 - [ ] **Analytics** — `site.config.mjs` → `analytics`. Plausible (paid) or GoatCounter (free). Both cookieless. QR landings show up as visits to `/ch/<n>/`.
-- [ ] **Review pull-quotes** — `site.config.mjs` → `pullQuotes`. Two suggested quotes are in place; confirm wording and attribution, or remove.
+- [x] **Review quotes** — `site.config.mjs` → `reviews` (rating, count, six short Amazon quotes with reviewer display names), shown on the landing page and under the Buy button since 2026-10-20.
 - [ ] **Joelbooks mention** — kept on Home and About; remove from `site.config.mjs` if unwanted.
 
 ## The chart

@@ -10,6 +10,7 @@ import SignupForm from '@components/SignupForm.astro';
 import ChapterAudio from '@components/ChapterAudio.astro';
 import BuyButton from '@components/BuyButton.astro';
 import ExperienceBanner from '@components/ExperienceBanner.astro';
+import ReviewsStrip from '@components/ReviewsStrip.astro';
 import ChapterPill from '@components/ChapterPill.astro';
 import {
   chapters,
@@ -101,6 +102,9 @@ const sections = [
       </figure>
     </div>
   </section>
+
+  <!-- ===== What readers say ===== -->
+  <ReviewsStrip />
 
   <!-- ===== Sticky section links ===== -->
   <nav class="j-nav" aria-label="Sections of the journal" id="j-nav">

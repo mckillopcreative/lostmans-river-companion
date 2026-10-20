@@ -19,7 +19,7 @@ const c = site.checkout;
         {label} <span class="buy-price mono">{c.price}</span>
       </a>
       <p class="small muted buy-note">
-        One-time purchase, 30-day refund. Want the paperback? <a href={site.buyUrl} rel="noopener">It’s on Amazon</a>.
+        One-time purchase, 30-day refund. Want the paperback? <a href={site.buyUrl} rel="noopener">It’s on Amazon</a>{site.reviews && <>, rated <strong>{site.reviews.rating}</strong> by {site.reviews.count} readers</>}.
       </p>
     </div>
   )

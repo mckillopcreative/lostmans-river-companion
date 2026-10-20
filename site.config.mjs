@@ -48,11 +48,20 @@ export default {
     id: '',
   },
 
-  /** Review pull-quotes for the Home page (SPEC.md §8.7 — author to confirm). */
-  pullQuotes: [
-    { text: "If you love fishing, you'll be hooked… if you don't, you'll still love it!", who: 'Amazon reviewer' },
-    { text: 'The first time my son ever said he connected to the main character.', who: 'Amazon reviewer' },
-  ],
+  /** Amazon reviews (verified purchases, quoted short with the reviewer's display name; 2026-10-20). */
+  reviews: {
+    rating: 4.7,
+    count: 20,
+    url: 'https://www.amazon.com/product-reviews/B0BV41JY8N',
+    quotes: [
+      { text: 'If you love fishing, you’ll be hooked… if you don’t, you’ll still love it!', who: 'Jay Motley' },
+      { text: 'My 14-year-old really doesn’t like to read at all. It was the first time my son ever said he connected to the main character.', who: 'a parent' },
+      { text: 'Bought it for my 12-year-old son who loves fishing. He said it was the best book about fishing he’d ever read.', who: 'Inna' },
+      { text: 'I couldn’t put this book down! Danger, suspense, and countless feel-good moments.', who: 'Rachel' },
+      { text: 'Read to children by a grandparent, and made for many enjoyable discussions about family, friendships, and making memories.', who: 'DEL' },
+      { text: 'Great book and story from locals.', who: 'BeachMan' },
+    ],
+  },
   joelbooks: {
     text: "One of Joelbooks' Top 8 Short Adventure Books for Teens",
     url: 'https://joelbooks.com/top-short-adventure-books-for-teens/',

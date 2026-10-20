@@ -1,0 +1,125 @@
+---
+// What readers say: the Amazon rating and a few short verified-purchase quotes from site.config.
+import site from '../../site.config.mjs';
+
+interface Props {
+  /** how many quotes to show */
+  limit?: number;
+}
+const { limit = 4 } = Astro.props;
+const r = site.reviews;
+const quotes = r?.quotes?.slice(0, limit) ?? [];
+const full = Math.floor(r?.rating ?? 0);
+---
+
+{
+  r && (
+    <section class="reviews" aria-labelledby="reviews-h">
+      <div class="wrap-wide">
+        <header class="reviews-head" data-reveal>
+          <p class="stars" aria-hidden="true">
+            {Array.from({ length: 5 }, (_, i) => (
+              <span class:list={['star', { on: i < full, half: i === full && r.rating - full >= 0.5 }]}>★</span>
+            ))}
+          </p>
+          <h2 id="reviews-h">
+            <span class="hand rating">{r.rating} out of 5</span> on Amazon, from {r.count} readers
+          </h2>
+          <a class="small" href={r.url} rel="noopener">Read the reviews →</a>
+        </header>
+        <ul class="quotes" data-reveal-stagger>
+          {quotes.map((q) => (
+            <li class="quote">
+              <blockquote>
+                <p>“{q.text}”</p>
+                <footer class="mono">— {q.who}, Amazon review</footer>
+              </blockquote>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .reviews {
+    padding-block: 1.5rem 0.5rem;
+  }
+  .reviews-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 1rem;
+    margin-bottom: 0.9rem;
+  }
+  .reviews-head h2 {
+    font-size: 1.1rem;
+    margin: 0;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .rating {
+    font-size: 1.5rem;
+    color: var(--sunrise-ink);
+    margin-right: 0.15rem;
+  }
+  .stars {
+    margin: 0;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+    color: var(--oyster);
+    line-height: 1;
+  }
+  .star.on,
+  .star.half {
+    color: var(--sunrise);
+  }
+  .star.half {
+    background: linear-gradient(90deg, var(--sunrise) 50%, var(--oyster) 50%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .quotes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) {
+    .quotes {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 1000px) {
+    .quotes {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .quote blockquote {
+    margin: 0;
+    height: 100%;
+    padding: 0.9rem 1rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-left: 4px solid var(--sunrise);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .quote p {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+  .quote footer {
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+    margin-top: auto;
+  }
+</style>
