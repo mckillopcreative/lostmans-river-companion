@@ -21,6 +21,7 @@ if (/example/.test(domain)) {
 const targets = [
   { file: 'home-back-cover', url: `${domain}/`, label: 'Back cover' },
   { file: 'home-copyright-page', url: `${domain}/`, label: 'Copyright page' },
+  { file: 'home-inside-cover', url: `${domain}/`, label: 'Inside front cover' },
   ...Array.from({ length: 23 }, (_, i) => ({ file: `ch-${String(i + 1).padStart(2, '0')}`, url: `${domain}/ch/${i + 1}/`, label: `Chapter ${i + 1}` })),
 ];
 
