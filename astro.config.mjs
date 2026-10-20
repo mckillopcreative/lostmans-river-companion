@@ -34,5 +34,15 @@ export default defineConfig({
       subsets: ['latin'],
       fallbacks: ['cursive'],
     },
+    {
+      // display face for the product banner: hand-sketched capitals, like pencil lettering in a field journal
+      provider: fontProviders.google(),
+      name: 'Cabin Sketch',
+      cssVariable: '--font-display',
+      weights: ['700'],
+      styles: ['normal'],
+      subsets: ['latin'],
+      fallbacks: ['Georgia', 'serif'],
+    },
   ],
 });
