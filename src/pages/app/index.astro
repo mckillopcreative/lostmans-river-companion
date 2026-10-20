@@ -6,6 +6,7 @@ import { Image } from 'astro:assets';
 import Base from '@layouts/Base.astro';
 import AuthorsCard from '@components/AuthorsCard.astro';
 import ChapterAudio from '@components/ChapterAudio.astro';
+import BuyButton from '@components/BuyButton.astro';
 import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 import { chapters, fish, places, todo } from '@lib/data';
@@ -65,6 +66,7 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
           <span class="pill" id="p-badges">0 badges</span>
           <a class="pill" id="p-next" href={url('/missions/m01/')}>Start: Mission 1</a>
         </div>
+        <BuyButton compact />
       </div>
       <ChapterAudio n={1} title="Start listening: Chapter 1" compact />
     </div>

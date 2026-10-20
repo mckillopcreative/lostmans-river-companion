@@ -8,6 +8,7 @@ import SectionEmblem from '@components/SectionEmblem.astro';
 import Divider from '@components/Divider.astro';
 import SignupForm from '@components/SignupForm.astro';
 import ChapterAudio from '@components/ChapterAudio.astro';
+import BuyButton from '@components/BuyButton.astro';
 import ChapterPill from '@components/ChapterPill.astro';
 import {
   chapters,
@@ -81,7 +82,8 @@ const sections = [
           <a class="btn" href="#chapters">Browse the journal ↓</a>
         </p>
         <ChapterAudio n={1} title="Hear Chapter 1 read aloud" compact />
-        <p class="small"><a href={url('/app/')}>Open the Experience (preview) →</a></p>
+        <BuyButton />
+        <p class="small"><a href={url('/app/')}>See what’s in the Experience →</a></p>
         <p class="small muted scan-note">
           Reading the paperback? The code at the top of each chapter opens that chapter’s page here. No spoilers past where you are.
         </p>
