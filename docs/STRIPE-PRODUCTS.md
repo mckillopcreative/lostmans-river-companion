@@ -58,7 +58,7 @@ The paperback is an add-on line on the same checkout, not a second product. It i
 
 Stripe sends the receipt; add a custom receipt message:
 
-> Welcome aboard. Open the Experience at https://lostmansriver.com/app/ and bookmark it on the reader’s phone. Printables are at https://lostmansriver.com/app/#print. Questions: hello@lostmansriver.com.
+> Welcome aboard. Open the Experience at https://lostmansriver.com/app/ and bookmark it on the reader’s phone. Printables are at https://lostmansriver.com/app/#print. Questions: help@lostmansriver.com.
 
 When the Cloudflare gate ships, the Stripe webhook (`checkout.session.completed`) writes the purchase key to KV and the receipt link carries it; nothing in the product copy changes.
 
