@@ -114,7 +114,7 @@ async function tts(apiKey, text, label) {
             });
       if (res.status === 401 || res.status === 402 || res.status === 429) {
         // quota or auth: retrying will not help, and on ElevenLabs a spent allowance refuses
-        throw new Error(`${label}: ${ENGINE} refused with status ${res.status} (${(await res.text()).slice(0, 160)})`);
+        throw Object.assign(new Error(`${label}: ${ENGINE} refused with status ${res.status} (${(await res.text()).slice(0, 160)})`), { quota: true });
       }
       if (res.ok) {
         const buf = Buffer.from(await res.arrayBuffer());
@@ -122,6 +122,7 @@ async function tts(apiKey, text, label) {
         last = `short body ${buf.length}B`;
       } else last = `status ${res.status}`;
     } catch (e) {
+      if (e.quota) throw e; // the quota/auth guard above must escape the retry loop
       last = e.name === 'TimeoutError' ? 'timeout' : e.message;
     }
     console.warn(`  ${label}: retry ${attempt} (${last})`);
