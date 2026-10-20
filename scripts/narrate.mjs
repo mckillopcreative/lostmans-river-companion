@@ -33,7 +33,7 @@ const EL_VOICES = {
   A: { name: 'George', voice_id: 'JBFqnCBsd6RMkjVDRZzb', model_id: 'eleven_v4', voice_settings: { stability: 0.35, similarity_boost: 0.75, style: 0.0, use_speaker_boost: true } },
   B: { name: 'Brian', voice_id: 'nPczCjzI2devNBz1zQrb', model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.3, similarity_boost: 0.75, style: 0.45, use_speaker_boost: true } },
 };
-const EL_VOICE = (process.env.EL_VOICE || 'A').toUpperCase();
+const EL_VOICE = (process.env.EL_VOICE || 'B').toUpperCase(); // B Brian is the author's pick (2026-10-20: "5-brian-multi-low")
 const EL = EL_VOICES[EL_VOICE] ?? EL_VOICES.A;
 const EL_MONTHLY = 131000;
 // Short requests: the model drops the tail of long inputs (Socrates, Oct 1) and a 1,800-char
