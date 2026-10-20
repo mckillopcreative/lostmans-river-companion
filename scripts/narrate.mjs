@@ -28,8 +28,8 @@ const STYLE_V = 2; // bump when VOICE or INSTRUCTIONS change so stale files are 
 // back "too flat": ElevenLabs has no instructions field; low stability = more expression.
 // Budget: the Creator plan is 131,000 characters a month with overage disabled, shared with
 // the Bourbon Brothers book, so run --dry first and sequence with John before a full run.
-const ENGINE = process.env.TTS_ENGINE === 'elevenlabs' ? 'elevenlabs' : 'openai';
-const EL_VOICES = {
+export const ENGINE = process.env.TTS_ENGINE === 'elevenlabs' ? 'elevenlabs' : 'openai';
+export const EL_VOICES = {
   A: { name: 'George', voice_id: 'JBFqnCBsd6RMkjVDRZzb', model_id: 'eleven_v4', voice_settings: { stability: 0.35, similarity_boost: 0.75, style: 0.0, use_speaker_boost: true } },
   B: { name: 'Brian', voice_id: 'nPczCjzI2devNBz1zQrb', model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.3, similarity_boost: 0.75, style: 0.45, use_speaker_boost: true } },
 };
@@ -43,7 +43,7 @@ const PARALLEL = 3;
 const TIMEOUT_MS = 180000;
 const DRY = process.argv.includes('--dry');
 
-function key() {
+export function key() {
   const name = ENGINE === 'elevenlabs' ? 'ELEVENLABS_API_KEY' : 'OPENAI_API_KEY';
   if (process.env[name]) return process.env[name];
   const f = process.env.OPENAI_KEY_FILE;
@@ -55,7 +55,7 @@ function key() {
   process.exit(1);
 }
 
-function chapters() {
+export function chapters() {
   const t = readFileSync(resolve(root, 'source/manuscript.txt'), 'utf8');
   // "Chapter 7 –A Tarpon" has no space after its dash in the manuscript, hence \s*.
   const parts = t.split(/\r?\n(?=Chapter \d+ [–-]\s*)/).slice(1);
@@ -73,7 +73,7 @@ function chapters() {
 }
 
 // Paragraph-first packing; a paragraph longer than SEG_MAX is split at sentence ends.
-function segments(ch) {
+export function segments(ch) {
   const open = `Chapter ${ch.n}. ${ch.title}.`;
   const paras = [open, ...ch.body.split(/\n\s*\n/).map((p) => p.replace(/\s+/g, ' ').trim()).filter(Boolean)];
   const out = [];
@@ -94,16 +94,16 @@ function segments(ch) {
   return out.filter((t) => /[\p{L}\p{N}]/u.test(t));
 }
 
-async function tts(apiKey, text, label) {
+export async function tts(apiKey, text, label, el = EL) {
   let last = 'unknown';
   for (let attempt = 1; attempt <= 4; attempt++) {
     try {
       const res =
         ENGINE === 'elevenlabs'
-          ? await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${EL.voice_id}?output_format=mp3_44100_128`, {
+          ? await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${el.voice_id}?output_format=mp3_44100_128`, {
               method: 'POST',
               headers: { 'xi-api-key': apiKey, 'content-type': 'application/json' },
-              body: JSON.stringify({ text, model_id: EL.model_id, voice_settings: EL.voice_settings }),
+              body: JSON.stringify({ text, model_id: el.model_id, voice_settings: el.voice_settings }),
               signal: AbortSignal.timeout(TIMEOUT_MS),
             })
           : await fetch('https://api.openai.com/v1/audio/speech', {
@@ -212,22 +212,25 @@ async function narrate(ch, apiKey) {
   }
 }
 
-const arg = process.argv.find((a, i) => i >= 2 && !a.startsWith('--'));
-if (!arg) {
+const isMain = process.argv[1] && /narrate\.mjs$/.test(process.argv[1]);
+const arg = isMain ? process.argv.find((a, i) => i >= 2 && !a.startsWith('--')) : null;
+if (isMain && !arg) {
   console.log('usage: node scripts/narrate.mjs <chapter number | all> [--dry]');
   process.exit(0);
 }
-const all = chapters();
+const all = isMain ? chapters() : [];
 const todo = arg === 'all' ? all : all.filter((c) => c.n === Number(arg));
-if (!todo.length) {
+if (isMain && !todo.length) {
   console.error('no such chapter');
   process.exit(1);
 }
 const chars = todo.reduce((a, c) => a + c.body.length, 0);
-if (ENGINE === 'elevenlabs') {
+if (isMain && ENGINE === 'elevenlabs') {
   const segChars = todo.reduce((a, c) => a + segments(c).reduce((x, t) => x + t.length, 0), 0);
   console.log(`${todo.length} chapter(s), ${segChars} characters to send, ElevenLabs voice ${EL_VOICE} (${EL.name}, ${EL.model_id}): ${((segChars / EL_MONTHLY) * 100).toFixed(0)}% of the ${EL_MONTHLY.toLocaleString()}-character monthly allowance, before any re-rolls`);
-} else console.log(`${todo.length} chapter(s), ${chars} characters, voice ${VOICE}, est. cost ${((chars / 1e6) * 15).toFixed(2)}`);
-const apiKey = DRY ? '' : key();
-for (const ch of todo) await narrate(ch, apiKey);
-console.log('done');
+} else if (isMain) console.log(`${todo.length} chapter(s), ${chars} characters, voice ${VOICE}, est. cost ${((chars / 1e6) * 15).toFixed(2)}`);
+if (isMain) {
+  const apiKey = DRY ? '' : key();
+  for (const ch of todo) await narrate(ch, apiKey);
+  console.log('done');
+}

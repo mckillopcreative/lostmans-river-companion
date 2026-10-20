@@ -1,5 +1,6 @@
 ---
-// The mother-and-son card: the photo in a ring, the headline, the bio from site.config.
+// The mother-and-son card: the whole photo (a portrait, shown uncropped with soft corners)
+// beside the headline and bio from site.config. Stacks on a phone, two columns from 640px.
 import { Image } from 'astro:assets';
 import { photoImages } from '@lib/images';
 import site from '../../site.config.mjs';
@@ -11,16 +12,18 @@ const { compact = false } = Astro.props;
 const photo = photoImages.get('authors.jpg') ?? photoImages.get('authors.png') ?? null;
 ---
 
-<section class:list={['authors-card', { compact }]} aria-labelledby="authors-h">
+<section class:list={['authors-card', { compact, 'has-photo': !!photo }]} aria-labelledby="authors-h">
   {
     photo && (
-      <div class="ring">
-        <Image src={photo} alt="John McKillop and his mother Linda, the authors" width={360} height={360} loading="lazy" />
+      <div class="portrait">
+        <Image src={photo} alt="John McKillop and his mother Linda, the authors" width={photo.width} height={photo.height} loading="lazy" />
       </div>
     )
   }
-  <p id="authors-h" class="headline">{site.authorsHeadline}</p>
-  <p class="bio" set:html={site.authorsBio} />
+  <div class="text">
+    <p id="authors-h" class="headline">{site.authorsHeadline}</p>
+    <p class="bio" set:html={site.authorsBio} />
+  </div>
 </section>
 
 <style>
@@ -28,36 +31,53 @@ const photo = photoImages.get('authors.jpg') ?? photoImages.get('authors.png') ?
     background: var(--paper-2);
     border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
     border-radius: 14px;
-    padding: 1.75rem 1.5rem;
-    text-align: center;
-    max-width: 640px;
+    padding: 1.5rem;
+    max-width: 760px;
     margin-inline: auto;
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+    text-align: center;
   }
-  .ring {
-    width: 180px;
-    height: 180px;
-    margin: 0 auto 1rem;
-    border-radius: 50%;
+  @media (min-width: 640px) {
+    .authors-card.has-photo {
+      grid-template-columns: 200px 1fr;
+      align-items: center;
+      gap: 1.75rem;
+      text-align: left;
+      justify-items: stretch;
+      padding: 1.75rem 2rem;
+    }
+    .authors-card.has-photo .portrait {
+      max-width: none;
+    }
+  }
+  .portrait {
+    width: 200px;
+    max-width: 70%;
+    border-radius: 12px;
     overflow: hidden;
     border: 3px solid var(--sunrise);
-    box-shadow: 0 6px 18px -8px rgb(31 42 46 / 0.4);
+    box-shadow: 0 8px 20px -10px rgb(31 42 46 / 0.45);
+    background: var(--paper);
   }
-  .ring img {
+  .portrait img {
+    display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 35%;
+    height: auto;
   }
   .headline {
     font-weight: 700;
     font-size: 1.25rem;
+    line-height: 1.25;
     color: var(--mangrove);
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.6rem;
     text-wrap: balance;
   }
   .bio {
     margin: 0;
     font-size: 1rem;
+    line-height: 1.55;
     color: var(--ink);
     text-wrap: pretty;
   }
@@ -68,9 +88,14 @@ const photo = photoImages.get('authors.jpg') ?? photoImages.get('authors.png') ?
   .compact {
     padding: 1.25rem 1rem;
   }
-  .compact .ring {
-    width: 120px;
-    height: 120px;
+  @media (min-width: 640px) {
+    .compact.has-photo {
+      grid-template-columns: 140px 1fr;
+      padding: 1.25rem 1.5rem;
+    }
+  }
+  .compact .portrait {
+    width: 140px;
   }
   .compact .headline {
     font-size: 1.05rem;
