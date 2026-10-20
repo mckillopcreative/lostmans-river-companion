@@ -7,6 +7,7 @@ import Base from '@layouts/Base.astro';
 import AuthorsCard from '@components/AuthorsCard.astro';
 import ChapterAudio from '@components/ChapterAudio.astro';
 import BuyButton from '@components/BuyButton.astro';
+import ExperienceBanner from '@components/ExperienceBanner.astro';
 import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 import { chapters, fish, places, todo } from '@lib/data';
@@ -41,20 +42,9 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
 
 <Base title="Lostman’s River: Fishing Guide Experience" description="Your summer as an assistant fishing guide: read, listen, learn the water, earn the license.">
   <section class="app-hero">
-    {
-      hero && (
-        <div class="wrap-wide">
-          <div class="app-banner">
-            <Image src={hero} alt="A houseboat moored in the mangroves at dusk, a skiff tied alongside" width={1600} sizes="(min-width: 1200px) 1140px, 96vw" loading="eager" />
-            <h1 class="app-banner-title">Lostman’s River: Fishing Guide Experience</h1>
-            <div class="app-banner-text">
-              <p class="eyebrow">Welcome aboard</p>
-              <p class="app-banner-line">You’re the assistant fishing guide this summer. Lots to learn.</p>
-            </div>
-          </div>
-        </div>
-      )
-    }
+    <div class="wrap-wide">
+      <ExperienceBanner as="h1" class="app-hero-banner" />
+    </div>
     <div class="wrap-wide app-hero-grid">
       <div>
         {!hero && <p class="eyebrow">Welcome aboard</p>}
@@ -125,67 +115,18 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
   .app-hero {
     padding-block: 2rem 1.5rem;
   }
-  /* the sunrise banner: the headline sits in the painting's calm bottom third on a paper scrim */
-  .app-banner {
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    aspect-ratio: 1 / 1;
-    box-shadow: var(--shadow);
+  .app-hero :global(.app-hero-banner) {
     margin-bottom: 1.25rem;
   }
-  @media (min-width: 640px) {
-    .app-banner {
-      aspect-ratio: 2 / 1;
-    }
-  }
-  @media (min-width: 1000px) {
-    .app-banner {
-      aspect-ratio: 5 / 2;
-    }
-  }
-  .app-banner img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 30%;
-  }
-  /* the product title runs along the top of the painting on its own paper scrim */
-  .app-banner-title {
-    position: absolute;
-    inset: 0 0 auto 0;
-    margin: 0;
-    padding: 0.9rem 1.25rem 2.6rem;
-    text-align: center;
-    font-size: clamp(1.15rem, 3.2vw, 2.1rem);
-    line-height: 1.15;
-    color: var(--mangrove);
-    text-wrap: balance;
-    background: linear-gradient(180deg, color-mix(in srgb, var(--paper) 92%, transparent) 45%, transparent);
-  }
-  .app-banner-text {
-    position: absolute;
-    inset: auto 0 0 0;
-    padding: 5rem 1.25rem 1rem;
-    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--paper) 92%, transparent) 50%);
-  }
-  .app-banner-line {
-    margin: 0;
-    max-width: 24ch;
-    font-family: var(--font-serif);
+  /* fallback when the painting is missing: the welcome line styled like the banner's */
+  .app-hero-grid .app-banner-line {
+    margin: 0 0 0.4rem;
     font-weight: 700;
     font-size: clamp(1.45rem, 4vw, 2.6rem);
     line-height: 1.1;
     color: var(--mangrove);
-    text-wrap: balance;
   }
-  .app-hero-grid .app-banner-line {
-    margin-bottom: 0.4rem;
-  }
-  .app-banner-text .eyebrow {
-    margin-bottom: 0.1rem;
-  }
-  .app-hero:has(.app-banner) .app-hero-grid {
+  .app-hero:has(.app-hero-banner) .app-hero-grid {
     align-items: center;
   }
   .app-hero-grid {

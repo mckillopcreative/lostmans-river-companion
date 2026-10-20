@@ -1,0 +1,90 @@
+---
+// The product banner: the houseboat-at-dusk painting with the product title along the top and
+// the welcome line bottom-left, each on its own paper scrim. Used on the Experience home (as the
+// page's h1) and on the landing page above the journal (as plain text, since that page has its
+// own h1). Renders nothing if the painting is missing.
+import { Image } from 'astro:assets';
+import { artImage } from '@lib/images';
+
+interface Props {
+  /** element for the title: 'h1' on the app home, 'p' elsewhere */
+  as?: 'h1' | 'p';
+  class?: string;
+}
+const { as = 'h1', class: cls } = Astro.props;
+const hero = artImage('tiles', 'app-hero');
+const Title = as;
+---
+
+{
+  hero && (
+    <div class:list={['app-banner', cls]}>
+      <Image src={hero} alt="A houseboat moored in the mangroves at dusk, a skiff tied alongside" width={1600} sizes="(min-width: 1200px) 1140px, 96vw" loading="eager" />
+      <Title class="app-banner-title">Lostman’s River: Fishing Guide Experience</Title>
+      <div class="app-banner-text">
+        <p class="eyebrow">Welcome aboard</p>
+        <p class="app-banner-line">You’re the assistant fishing guide this summer. Lots to learn.</p>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .app-banner {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    box-shadow: var(--shadow);
+  }
+  @media (min-width: 640px) {
+    .app-banner {
+      aspect-ratio: 2 / 1;
+    }
+  }
+  @media (min-width: 1000px) {
+    .app-banner {
+      aspect-ratio: 5 / 2;
+    }
+  }
+  .app-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+  /* the product title runs along the top of the painting on its own paper scrim */
+  .app-banner-title {
+    position: absolute;
+    inset: 0 0 auto 0;
+    margin: 0;
+    padding: 0.9rem 1.25rem 2.6rem;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: clamp(1.15rem, 3.2vw, 2.1rem);
+    line-height: 1.15;
+    color: var(--mangrove);
+    text-wrap: balance;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--paper) 92%, transparent) 45%, transparent);
+  }
+  .app-banner-text {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 5rem 1.25rem 1rem;
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--paper) 92%, transparent) 50%);
+  }
+  .app-banner-text .eyebrow {
+    margin-bottom: 0.1rem;
+  }
+  .app-banner-line {
+    margin: 0;
+    max-width: 24ch;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: clamp(1.45rem, 4vw, 2.6rem);
+    line-height: 1.1;
+    color: var(--mangrove);
+    text-wrap: balance;
+  }
+</style>

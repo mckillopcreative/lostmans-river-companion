@@ -9,6 +9,7 @@ import Divider from '@components/Divider.astro';
 import SignupForm from '@components/SignupForm.astro';
 import ChapterAudio from '@components/ChapterAudio.astro';
 import BuyButton from '@components/BuyButton.astro';
+import ExperienceBanner from '@components/ExperienceBanner.astro';
 import ChapterPill from '@components/ChapterPill.astro';
 import {
   chapters,
@@ -68,6 +69,13 @@ const sections = [
 ---
 
 <Base title={site.title} description="Everything Matt filled the blank pages of his dad’s Guidebook with: the chapters, the chart, the fish, the crew, the tackle, the places.">
+  <!-- ===== The product banner, then the journal hero beneath it ===== -->
+  <section class="j-banner">
+    <div class="wrap-wide">
+      <ExperienceBanner as="p" />
+    </div>
+  </section>
+
   <!-- ===== Hero: the journal itself ===== -->
   <section class="j-hero">
     <div class="wrap-wide j-hero-grid">
@@ -404,7 +412,10 @@ const sections = [
 </Base>
 
 <style>
-  /* ---- hero ---- */
+  /* ---- banner + hero ---- */
+  .j-banner {
+    padding-block: 1.5rem 0;
+  }
   .j-hero {
     padding-block: 2rem 1.5rem;
   }
