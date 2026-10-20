@@ -1,4 +1,4 @@
-# Stripe: one product
+# Stripe: one product — Lostman’s River: Fishing Guide Experience
 
 *Revised 2026-10-14. The author's call: launch a single experience and see whether it sells before adding anything else. The earlier four-product plan is kept at the bottom for later.*
 
@@ -12,11 +12,11 @@
 - **Success URL:** `https://lostmansriver.com/app/?welcome=1` · **Cancel URL:** `https://lostmansriver.com/`
 - **Refunds:** 30 days, no questions, stated on the page. Refund rate is the metric that tells you whether the product is honest.
 
-## The product — The Lostman’s River Experience
+## The product — Lostman’s River: Fishing Guide Experience
 
 | Field | Value |
 |---|---|
-| Name | **The Lostman’s River Experience** |
+| Name | **Lostman’s River: Fishing Guide Experience** |
 | Price | $24.99 one-time (launch: $19.99 with coupon `SUMMER`) |
 | Tax category | Digital goods (e-book / audio) |
 | Image | the titled journal, `assets/art/emblems/journal-titled.png` |

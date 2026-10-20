@@ -38,16 +38,17 @@ const hero = artImage('tiles', 'app-hero');
 const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], t.art[1]) : null) ?? (t.emblem ? artImage('emblems', `emblem-${t.emblem}`) : null);
 ---
 
-<Base title="Lostman’s River Experience" description="Your summer as an assistant fishing guide: read, listen, learn the water, earn the license.">
+<Base title="Lostman’s River: Fishing Guide Experience" description="Your summer as an assistant fishing guide: read, listen, learn the water, earn the license.">
   <section class="app-hero">
     {
       hero && (
         <div class="wrap-wide">
           <div class="app-banner">
-            <Image src={hero} alt="Heading out of Chokoloskee Bay at sunrise, seen from the console of the Mako" width={1600} sizes="(min-width: 1200px) 1140px, 96vw" loading="eager" />
+            <Image src={hero} alt="A houseboat moored in the mangroves at dusk, a skiff tied alongside" width={1600} sizes="(min-width: 1200px) 1140px, 96vw" loading="eager" />
+            <h1 class="app-banner-title">Lostman’s River: Fishing Guide Experience</h1>
             <div class="app-banner-text">
               <p class="eyebrow">Welcome aboard</p>
-              <h1>You’re the assistant fishing guide this summer. Lots to learn.</h1>
+              <p class="app-banner-line">You’re the assistant fishing guide this summer. Lots to learn.</p>
             </div>
           </div>
         </div>
@@ -56,7 +57,8 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
     <div class="wrap-wide app-hero-grid">
       <div>
         {!hero && <p class="eyebrow">Welcome aboard</p>}
-        {!hero && <h1>You’re the assistant fishing guide this summer. Lots to learn.</h1>}
+        {!hero && <h1>Lostman’s River: Fishing Guide Experience</h1>}
+        {!hero && <p class="app-banner-line">You’re the assistant fishing guide this summer. Lots to learn.</p>}
         <p class="lede">Same job Matt had. Read the book, listen along, learn the water, and earn your Lostman’s River Fishing Guide license.</p>
         <div class="progress" role="group" aria-label="Your progress">
           <span class="pill is-current" id="p-missions">0 of 23 missions</span>
@@ -126,7 +128,7 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1 / 1;
     box-shadow: var(--shadow);
     margin-bottom: 1.25rem;
   }
@@ -146,15 +148,37 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
     object-fit: cover;
     object-position: center 30%;
   }
+  /* the product title runs along the top of the painting on its own paper scrim */
+  .app-banner-title {
+    position: absolute;
+    inset: 0 0 auto 0;
+    margin: 0;
+    padding: 0.9rem 1.25rem 2.6rem;
+    text-align: center;
+    font-size: clamp(1.15rem, 3.2vw, 2.1rem);
+    line-height: 1.15;
+    color: var(--mangrove);
+    text-wrap: balance;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--paper) 92%, transparent) 45%, transparent);
+  }
   .app-banner-text {
     position: absolute;
     inset: auto 0 0 0;
     padding: 5rem 1.25rem 1rem;
     background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--paper) 92%, transparent) 50%);
   }
-  .app-banner-text h1 {
+  .app-banner-line {
     margin: 0;
     max-width: 24ch;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: clamp(1.45rem, 4vw, 2.6rem);
+    line-height: 1.1;
+    color: var(--mangrove);
+    text-wrap: balance;
+  }
+  .app-hero-grid .app-banner-line {
+    margin-bottom: 0.4rem;
   }
   .app-banner-text .eyebrow {
     margin-bottom: 0.1rem;
