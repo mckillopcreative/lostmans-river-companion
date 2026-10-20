@@ -32,10 +32,10 @@ const minutes = present ? Math.max(1, Math.round(statSync(file).size / 16000 / 6
           <h2 id={`listen-${id}`} class="listen-title">
             {title ?? `Chapter ${n}, read aloud`}
           </h2>
-          <p class="small muted listen-meta">About {minutes} minutes. Play it while you look around the chart and the fish.</p>
+          <p class="small muted listen-meta">About {minutes} minutes. Play it while you look around the chart and the fish. Narrated by an AI voice.</p>
         </div>
       </div>
-      <audio class="listen-audio" controls preload="none" src={url(`/audio/${id}.mp3`)} data-rate="1.05">
+      <audio class="listen-audio" controls preload="none" src={url(`/audio/${id}.mp3`)} data-rate="1.1">
         Your browser can’t play this audio. <a href={url(`/audio/${id}.mp3`)}>Download the MP3.</a>
       </audio>
     </section>
@@ -43,7 +43,7 @@ const minutes = present ? Math.max(1, Math.round(statSync(file).size / 16000 / 6
 }
 
 <script>
-  // The raw render sounds a touch slow; 1.05× matches a natural read (same finding as Bedside Stories).
+  // The raw render sounds a touch slow; 1.1× is the author's pick for the Brian take (2026-10-20).
   document.querySelectorAll<HTMLAudioElement>('audio.listen-audio').forEach((a) => {
     const rate = Number(a.dataset.rate || '1');
     const apply = () => {
