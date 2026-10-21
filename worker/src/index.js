@@ -59,8 +59,23 @@ async function issueKey(env, { email, session = null, comp = false, note = '' })
 const getKey = async (env, key) => (KEY_RE.test(key) ? JSON.parse((await env.LR.get(`k:${key}`)) || 'null') : null);
 
 async function sendWelcome(env, email, key, opts) {
-  if (!env.EMAIL) return { sent: false, why: 'no EMAIL binding (needs Workers Paid + Email Sending)' };
   const m = welcomeEmail(key, opts);
+  // Resend (the author's existing account; free tier 3,000/month) when its key is set
+  if (env.RESEND_API_KEY) {
+    try {
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ from: `${FROM.name} <${FROM.email}>`, to: [email], reply_to: FROM.email, subject: m.subject, html: m.html, text: m.text }),
+      });
+      const j = await r.json().catch(() => ({}));
+      return r.ok ? { sent: true, id: j.id, via: 'resend' } : { sent: false, why: `resend ${r.status}: ${String(j.message || '').slice(0, 120)}` };
+    } catch (e) {
+      return { sent: false, why: `resend: ${String(e.message || e).slice(0, 120)}` };
+    }
+  }
+  // Cloudflare Email Sending (needs Workers Paid) as the fallback
+  if (!env.EMAIL) return { sent: false, why: 'no email provider: set RESEND_API_KEY' };
   try {
     const r = await env.EMAIL.send({ from: FROM, to: email, replyTo: FROM.email, subject: m.subject, html: m.html, text: m.text });
     return { sent: true, id: r?.messageId };

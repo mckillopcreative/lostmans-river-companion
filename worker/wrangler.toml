@@ -5,6 +5,7 @@
 #   STRIPE_SECRET_KEY      a restricted key with Checkout Sessions: Read (optional, makes the
 #                          welcome page instant even if the webhook is a few seconds late)
 #   ADMIN_KEY              for POST /admin/issue (comps, reviewers, tests)
+#   RESEND_API_KEY         re_… sending key from Resend (domain lostmansriver.com verified there)
 name = "lostmans-river-api"
 main = "src/index.js"
 compatibility_date = "2026-10-01"
@@ -26,7 +27,8 @@ id = "ade6125433eb40cb8f3d6fb6950eb631"
 # binding = "AUDIO"
 # bucket_name = "lostmans-audio"
 
-# The welcome email. Needs Workers Paid and the domain onboarded in Email Sending, then uncomment:
+# The welcome email goes through Resend (RESEND_API_KEY). Cloudflare Email Sending is an
+# alternative that needs Workers Paid; to use it instead, onboard the domain and uncomment:
 # [[send_email]]
 # name = "EMAIL"
 

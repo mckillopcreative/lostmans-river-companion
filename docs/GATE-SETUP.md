@@ -13,11 +13,11 @@
 | Privacy and Terms pages | live, footer-linked; have a children's-privacy attorney review before ads |
 | Locks on missions 2–23 and chapter audio 2–23 | **built, switched off** (`site.config.mjs` → `gate.live: false`) |
 | Chapter audio 2–23 | rendered, on this computer and backed up; waiting for R2 |
-| Welcome email | written and previewed; waiting for Workers Paid + Email Sending |
+| Welcome email | written and previewed; sends through Resend once its key is set (no Workers Paid needed) |
 
 ## The three account steps (author)
 
-1. **Workers Paid** ($5/month): Cloudflare → Workers & Pages → Plans → Paid. Needed to email buyers (Email Sending only reaches arbitrary inboxes on Paid). It also lifts Worker limits.
+1. **Resend** (your existing account, free tier 3,000 emails/month): Domains → Add domain → `lostmansriver.com`. Resend shows DKIM, SPF and MX records for a `send` subdomain; use its Cloudflare auto-setup, or tell me and I add them in Cloudflare DNS (they don't touch the website or the help@ forwarding). Then API Keys → Create, permission "Sending access", domain `lostmansriver.com`. Put it on the Worker yourself: `npx wrangler secret put RESEND_API_KEY` from the `worker` folder.
 2. **R2**: Cloudflare → R2 Object Storage → enable (accept terms; the first 10 GB are free, the book is 218 MB).
 3. **Stripe** (the Stripe Claude or the dashboard):
    - Developers → Webhooks → Add endpoint `https://api.lostmansriver.com/stripe/webhook`, events `checkout.session.completed` and `checkout.session.async_payment_succeeded`. Copy the signing secret (`whsec_…`).
@@ -39,7 +39,7 @@ npx wrangler secret put STRIPE_SECRET_KEY
 
 ## What I do after those (Claude)
 
-1. Onboard `lostmansriver.com` in Email Sending (adds DKIM/SPF records), uncomment `[[send_email]]` in `worker/wrangler.toml`, deploy, send a test welcome email to you.
+1. Send you a test welcome email through Resend and check it lands in the inbox, not spam.
 2. `npx wrangler r2 bucket create lostmans-audio`, upload chapters 2–23, uncomment `[[r2_buckets]]`, deploy, test streaming and seeking.
 3. Set `gate.live: true`, build, deploy; run a real purchase with a 100%-off CREW code end to end on a phone and a tablet.
 
