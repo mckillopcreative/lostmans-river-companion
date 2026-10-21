@@ -7,8 +7,10 @@ interface Props {
   compact?: boolean;
   /** what the button says before the price */
   label?: string;
+  /** the refund / paperback line under the button */
+  note?: boolean;
 }
-const { compact = false, label = 'Get the Full Experience' } = Astro.props;
+const { compact = false, label = 'Get the Full Experience', note = true } = Astro.props;
 const c = site.checkout;
 ---
 
@@ -18,9 +20,9 @@ const c = site.checkout;
       <a class="btn btn-primary buy-btn" href={c.url} rel="noopener" data-track="buy_click" data-track-page={Astro.url.pathname}>
         {label} <span class="buy-price mono">{c.price}</span>
       </a>
-      <p class="small muted buy-note">
+      {note && <p class="small muted buy-note">
         One-time purchase, 30-day refund. Want the paperback? <a href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page={Astro.url.pathname}>It’s on Amazon</a>{site.reviews && <>, rated <strong>{site.reviews.rating}</strong> by {site.reviews.count} readers</>}.
-      </p>
+      </p>}
     </div>
   )
 }

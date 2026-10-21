@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { url } from '@lib/url';
 import Base from '@layouts/Base.astro';
 import RigDiagram from '@components/RigDiagram.astro';
 import ChapterPill from '@components/ChapterPill.astro';
@@ -78,17 +79,19 @@ const grouped = order.map((g) => ({ key: g, label: gearGroups[g], items: gear.fi
         <ol class="knots">
           {
             knots.map((k) => {
-              const img = artImage('tackle', `knot-${k.id}`);
+              const wide = k.id === 'albright';
               return (
                 <li id={`knot-${k.id}`} class="knot">
                   <h3>{k.name}</h3>
                   <p class="small muted">{k.use}</p>
-                  {img && (
-                    <figure class="knot-art art">
-                      <Image src={img} alt={`${k.name}, drawn in four stages`} width={900} sizes="(min-width: 720px) 680px, 94vw" loading="lazy" />
-                      <figcaption class="mono">Draft diagram, four stages left to right — check against the demonstration before relying on it.</figcaption>
-                    </figure>
-                  )}
+                  <figure class:list={['knot-art', 'art', { wide }]}>
+                    <div class="knot-row">
+                      {k.steps.map((_, i) => (
+                        <img src={url(`/knots/${k.id}-${i + 1}.svg`)} alt={`${k.name}, step ${i + 1}`} width={wide ? 170 : 80} height={wide ? 110 : 132} loading="lazy" decoding="async" />
+                      ))}
+                    </div>
+                    <figcaption class="mono">Four stages, left to right. <a href={url(`/knots/#${k.id}`)}>Step through it large →</a></figcaption>
+                  </figure>
                   <ol class="steps">
                     {k.steps.map((s) => (
                       <li>{s}</li>
@@ -224,11 +227,21 @@ const grouped = order.map((g) => ({ key: g, label: gearGroups[g], items: gear.fi
     border-radius: var(--radius);
     padding: 0.75rem;
   }
-  .knot-art img {
-    width: 100%;
-    height: auto;
-    max-height: 220px;
+  .knot-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    gap: 0.5rem;
+  }
+  .knot-row img {
+    height: 150px;
+    width: auto;
+    max-width: 24%;
     object-fit: contain;
+  }
+  .wide .knot-row img {
+    height: auto;
+    width: 24%;
   }
   .knot-art figcaption {
     font-size: 0.72rem;

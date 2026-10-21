@@ -3,6 +3,8 @@
 // the rest of the chapter behind a "Keep reading" fold (a <details>, so it works without JS).
 // Only chapter 1 has a sample (data/sample-ch01.json, from scripts/extract-sample.mjs).
 import sample from '../../data/sample-ch01.json';
+import site from '../../site.config.mjs';
+import BuyButton from './BuyButton.astro';
 
 interface Props {
   n: number;
@@ -31,7 +33,16 @@ const rest = s?.paragraphs.slice(open) ?? [];
               <span class="read-more-close">Fold it back up ↑</span>
             </summary>
             {rest.map((p) => <p>{p}</p>)}
-            <p class="read-end hand">End of Chapter {s.n}. Chapter {s.n + 1} is part of the full Experience.</p>
+            <p class="read-end hand">End of Chapter {s.n}.</p>
+            <div class="read-next">
+              <p class="read-next-h">Want to know what happens next?</p>
+              <p class="read-next-opts">
+                <a class="btn" href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page="read-end">Read the whole book: paperback or Kindle on Amazon →</a>
+              </p>
+              <p class="small muted">Or hear it all, with the missions and the license:</p>
+              <BuyButton compact note={false} />
+              <p class="small muted">One-time purchase, 30-day refund.</p>
+            </div>
           </details>
         )}
       </div>
@@ -147,6 +158,28 @@ const rest = s?.paragraphs.slice(open) ?? [];
   }
   .read-more[open] > p {
     order: 1;
+  }
+  .read-next {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-top: 1px dashed var(--oyster);
+    text-align: center;
+  }
+  .read-next p {
+    text-indent: 0 !important;
+  }
+  .read-next-h {
+    font-weight: 700;
+    color: var(--mangrove);
+    font-size: 1.15rem;
+    margin: 0 0 0.6rem !important;
+  }
+  .read-next-opts .btn {
+    white-space: normal;
+  }
+  .read-next :global(.buy) {
+    display: grid;
+    justify-items: center;
   }
   .read-end {
     text-indent: 0 !important;

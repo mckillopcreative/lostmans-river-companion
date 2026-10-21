@@ -6,6 +6,7 @@ import SectionEmblem from '@components/SectionEmblem.astro';
 import { knots } from '@lib/data';
 import { artImage } from '@lib/images';
 import { url } from '@lib/url';
+import { existsSync } from 'node:fs';
 ---
 
 <Base title="Knots" description="Five knots every assistant guide ties: step through each one, then prove it in the stage shuffle.">
@@ -22,9 +23,10 @@ import { url } from '@lib/url';
     {
       knots.map((k) => {
         const img = artImage('tackle', `knot-${k.id}`);
-        // one drawing per step, cut from the strip by scripts/split-knots.mjs
-        const stages = k.steps.map((_, i) => artImage('knot-stages', `${k.id}-${i + 1}`));
-        const hasStages = stages.every(Boolean);
+        // one vector drawing per step, a single continuous line each (scripts/draw-knots.mjs)
+        const stages = k.steps.map((_, i) => `/knots/${k.id}-${i + 1}.svg`);
+        const hasStages = stages.every((p) => existsSync(`public${p}`));
+        const wide = k.id === 'albright';
         return (
           <section class="knot" id={k.id} data-knot={k.id}>
             <h2>{k.name}</h2>
@@ -34,7 +36,7 @@ import { url } from '@lib/url';
                 <div class="stage-frame art">
                   {stages.map((st, i) => (
                     <figure class="stage" data-i={i} hidden={i !== 0}>
-                      <Image src={st!} alt={`${k.name}, step ${i + 1}: ${k.steps[i]}`} loading="lazy" />
+                      <img src={url(st)} alt={`${k.name}, step ${i + 1}: ${k.steps[i]}`} width={wide ? 680 : 400} height={wide ? 440 : 660} loading="lazy" decoding="async" />
                     </figure>
                   ))}
                 </div>
@@ -45,7 +47,7 @@ import { url } from '@lib/url';
                 <div class="film" role="group" aria-label={`${k.name} stages`}>
                   {stages.map((st, i) => (
                     <button type="button" class:list={['film-btn', { current: i === 0 }]} data-i={i} aria-label={`Show step ${i + 1}`}>
-                      <Image src={st!} alt="" height={120} loading="lazy" />
+                      <img src={url(st)} alt="" width={wide ? 110 : 44} height={72} loading="lazy" decoding="async" />
                       <span class="mono">{i + 1}</span>
                     </button>
                   ))}
