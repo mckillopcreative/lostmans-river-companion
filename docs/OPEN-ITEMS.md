@@ -13,7 +13,7 @@ See SPEC.md §8. Placeholders used during the build are listed here with where t
 ## Content placeholders on the live site
 - [ ] **Dedication photo caption** — `src/pages/about.astro`, marked `[Caption to come from the author.]`. Who are the three anglers?
 - [ ] **Email sign-up** — `site.config.mjs` → `email.provider` and `email.action`. Forms show "Sign-up opens soon." until set. Buttondown is simplest (free tier, no cookies): the action URL is `https://buttondown.com/api/emails/embed-subscribe/<username>`.
-- [ ] **Analytics** — wired 2026-10-21 (events, funnels, search tags, sitemap, ad pixel slot); needs the Umami website id in `site.config.mjs` → `analytics`. See `docs/ANALYTICS.md`.
+- [x] **Analytics** — live 2026-10-21: Cloudflare Web Analytics for page views, own Worker + Analytics Engine for events (docs/ANALYTICS.md). Read with `node scripts/metrics.mjs`.
 - [x] **Review quotes** — `site.config.mjs` → `reviews` (rating, count, six short Amazon quotes with reviewer display names), shown on the landing page and under the Buy button since 2026-10-20.
 - [ ] **Joelbooks mention** — kept on Home and About; remove from `site.config.mjs` if unwanted.
 

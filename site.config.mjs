@@ -42,12 +42,10 @@ export default {
     listName: 'Next Summer',
   },
 
-  /** Cookieless analytics, on every page. Set provider and id to switch it on (docs/ANALYTICS.md).
-   *  umami: id = the website id from cloud.umami.is · plausible: id = 'lostmansriver.com' ·
-   *  goatcounter: id = the code (xxx in xxx.goatcounter.com). */
+  /** Analytics (docs/ANALYTICS.md). In-app events go to our own Worker (src/lib/events.mjs,
+   *  worker/). Page views: Cloudflare Web Analytics, cookieless; paste its JS-beacon token here. */
   analytics: {
-    provider: null, // 'umami' | 'plausible' | 'goatcounter' | null
-    id: '',
+    cfBeaconToken: 'f5ffd0630acc4263b113274e71762aa4', // public by design; Cloudflare → Analytics & Logs → Web Analytics → lostmansriver.com → token
   },
 
   /** Ad pixels. Loaded ONLY on pages that opt in with <Base ads> (the parent-facing landing

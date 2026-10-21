@@ -86,23 +86,8 @@ const isActive = (href: string) => here.startsWith(url(href));
       } catch {}
     </script>
     {
-      site.analytics.provider === 'umami' && site.analytics.id && (
-        <script is:inline defer data-website-id={site.analytics.id} data-do-not-track="true" src="https://cloud.umami.is/script.js" />
-      )
-    }
-    {
-      site.analytics.provider === 'plausible' && site.analytics.id && (
-        <script is:inline defer data-domain={site.analytics.id} src="https://plausible.io/js/script.js" />
-      )
-    }
-    {
-      site.analytics.provider === 'goatcounter' && site.analytics.id && (
-        <script
-          is:inline
-          data-goatcounter={`https://${site.analytics.id}.goatcounter.com/count`}
-          async
-          src="https://gc.zgo.at/count.js"
-        />
+      site.analytics.cfBeaconToken && (
+        <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: site.analytics.cfBeaconToken })} />
       )
     }
     {ads && <AdPixels />}

@@ -7,12 +7,13 @@
   "scripts": {
     "dev": "npm run trim && astro dev",
     "trim": "node scripts/trim-sketches.mjs",
-    "validate": "node scripts/validate.mjs",
+    "validate": "node scripts/validate.mjs && node scripts/check-events.mjs",
     "build": "npm run validate && npm run trim && astro build && node scripts/sitemap.mjs",
     "preview": "astro preview",
     "qr": "node scripts/make-qr.mjs",
     "linkcheck": "node scripts/linkcheck.mjs",
-    "brief": "node scripts/visual-brief.mjs"
+    "brief": "node scripts/visual-brief.mjs",
+    "deploy:api": "cd worker && npx wrangler deploy"
   },
   "dependencies": {
     "astro": "^7.3.5",

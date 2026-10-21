@@ -1,0 +1,16 @@
+# api.lostmansriver.com: analytics counter now; purchase gate, progress sync and restore later.
+# Deploy from this folder:  npx wrangler deploy
+name = "lostmans-river-api"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+account_id = "91cf99ba149df24d16edfbc523306bc8"
+
+routes = [{ pattern = "api.lostmansriver.com", custom_domain = true }]
+
+# Workers Analytics Engine: one row per event, queried with SQL (scripts/metrics.mjs)
+[[analytics_engine_datasets]]
+binding = "EVENTS"
+dataset = "lostmans_events"
+
+[observability]
+enabled = false
