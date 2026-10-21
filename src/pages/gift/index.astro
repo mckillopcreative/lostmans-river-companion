@@ -1,0 +1,209 @@
+---
+// /gift/#<key>: a printable gift card for a grandparent, aunt or friend to hand over. The QR
+// code on it opens the Experience on the reader's own device. The key stays after '#', and the
+// page is not indexed.
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+const lettering = artImage('emblems', 'title-summer');
+const hero = artImage('tiles', 'app-hero');
+---
+
+<Base title="Gift card" description="A printable gift card for the Summer Fishing Guide Experience." noindex>
+  <div class="wrap section no-print gift-tools">
+    <p class="eyebrow">Giving it as a gift</p>
+    <h1>Print a gift card</h1>
+    <p class="lede">Fill in the names, then print it or save it as a PDF. The code on the card opens the summer on the reader’s own tablet or phone.</p>
+    <form class="gift-form" id="gift-form">
+      <label>To <input id="g-to" maxlength="40" placeholder="Grace" /></label>
+      <label>From <input id="g-from" maxlength="60" placeholder="Grandma and Grandpa" /></label>
+      <label class="wide">A note (optional) <input id="g-note" maxlength="120" placeholder="For your summer of fishing. Love you!" /></label>
+      <button type="button" class="btn btn-primary" id="g-print">Print the card</button>
+    </form>
+    <p class="hand gift-msg" id="g-msg" aria-live="polite"></p>
+  </div>
+
+  <section class="gift-card" id="card" aria-label="Gift card" hidden>
+    {hero && <Image class="gc-bg" src={hero} alt="" width={1400} loading="eager" />}
+    <div class="gc-inner">
+      {lettering ? <Image class="gc-title" src={lettering} alt="Summer Fishing Guide Experience" width={900} loading="eager" /> : <h2>Summer Fishing Guide Experience</h2>}
+      <p class="gc-to hand">To <span id="c-to">________________</span></p>
+      <p class="gc-line">A summer as an assistant fishing guide in the Florida Everglades: the novel <em>Escape to Lostman’s River</em> read aloud, 23 missions, real fishing skills, and a license to earn.</p>
+      <p class="gc-note hand" id="c-note" hidden></p>
+      <div class="gc-row">
+        <img class="gc-qr" id="c-qr" alt="QR code that opens the Experience" width="190" height="190" />
+        <ol class="gc-steps">
+          <li>Open the camera on your tablet or phone.</li>
+          <li>Point it at this code and tap the link.</li>
+          <li>Mission 1 is waiting. Your device will remember you.</li>
+        </ol>
+      </div>
+      <p class="gc-from hand">From <span id="c-from">________________</span></p>
+      <p class="gc-foot mono">lostmansriver.com · from the novel by Linda and John McKillop</p>
+    </div>
+  </section>
+
+  <script>
+    import { API, isKey, checkKey } from '../../scripts/access';
+    const key = decodeURIComponent(location.hash.slice(1)).trim();
+    const $ = (id: string) => document.getElementById(id)!;
+    (async () => {
+      if (!isKey(key) || !(await checkKey(key))) {
+        $('g-msg').innerHTML = 'This page needs the gift link from your welcome email. <a href="/restore/">Have it sent again</a>.';
+        ($('g-print') as HTMLButtonElement).disabled = true;
+        return;
+      }
+      ($('c-qr') as HTMLImageElement).src = `${API}/qr/${key}.png`;
+      $('card').hidden = false;
+      const sync = () => {
+        const to = ($('g-to') as HTMLInputElement).value.trim();
+        const from = ($('g-from') as HTMLInputElement).value.trim();
+        const note = ($('g-note') as HTMLInputElement).value.trim();
+        $('c-to').textContent = to || '________________';
+        $('c-from').textContent = from || '________________';
+        $('c-note').textContent = note ? `“${note}”` : '';
+        $('c-note').hidden = !note;
+      };
+      $('gift-form').addEventListener('input', sync);
+      $('g-print').addEventListener('click', () => window.print());
+    })();
+  </script>
+</Base>
+
+<style>
+  .gift-form {
+    display: grid;
+    gap: 0.6rem;
+    grid-template-columns: 1fr 1fr;
+    margin: 1rem 0;
+  }
+  .gift-form label {
+    display: grid;
+    gap: 0.25rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .gift-form .wide {
+    grid-column: 1 / -1;
+  }
+  .gift-form input {
+    min-height: 44px;
+    padding: 0.45rem 0.7rem;
+    border: 1.5px solid var(--oyster);
+    border-radius: var(--radius);
+    background: var(--paper-2);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 400;
+  }
+  .gift-form .btn {
+    justify-self: start;
+  }
+  .gift-msg {
+    color: var(--sunrise-ink);
+    font-size: 1.2rem;
+  }
+  .gift-card {
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto 3rem;
+    aspect-ratio: 7 / 5;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--oyster);
+    container-type: inline-size;
+    background: #fff;
+  }
+  .gc-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.28;
+  }
+  .gc-inner {
+    position: relative;
+    height: 100%;
+    padding: 4cqw 5cqw 3cqw;
+    display: grid;
+    align-content: start;
+    gap: 1.2cqw;
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0.9));
+  }
+  .gc-title {
+    width: 86%;
+    height: auto;
+    margin: 0 auto 0.6cqw;
+    display: block;
+  }
+  .gc-to,
+  .gc-from {
+    margin: 0;
+    font-size: 3.4cqw;
+    color: var(--sunrise-ink);
+  }
+  .gc-to span,
+  .gc-from span {
+    color: var(--ink);
+  }
+  .gc-from {
+    text-align: right;
+  }
+  .gc-line {
+    margin: 0;
+    font-size: 2.2cqw;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+  .gc-note {
+    margin: 0;
+    font-size: 2.8cqw;
+    color: var(--mangrove);
+  }
+  .gc-row {
+    display: grid;
+    grid-template-columns: 26cqw 1fr;
+    gap: 3cqw;
+    align-items: center;
+  }
+  .gc-qr {
+    width: 26cqw;
+    height: 26cqw;
+    background: #fff;
+    border-radius: 1.2cqw;
+    padding: 0.6cqw;
+  }
+  .gc-steps {
+    margin: 0;
+    padding-left: 3cqw;
+    font-size: 2.2cqw;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .gc-foot {
+    margin: 0;
+    font-size: 1.4cqw;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+  @media print {
+    :global(header.site-header),
+    :global(footer.site-footer),
+    .no-print {
+      display: none !important;
+    }
+    .gift-card {
+      margin: 0 auto;
+      max-width: none;
+      width: 100%;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    @page {
+      size: letter landscape;
+      margin: 0.5in;
+    }
+  }
+</style>

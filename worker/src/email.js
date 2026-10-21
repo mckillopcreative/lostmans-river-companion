@@ -10,10 +10,13 @@ export function startLink(key) {
 
 export function welcomeEmail(key, { resend = false } = {}) {
   const link = startLink(key);
+  const giftLink = `${SITE}/gift/#${key}`;
   const qr = `${API}/qr/${key}.png`;
   const subject = resend ? 'Your Lostman’s River link, again' : 'Your reader’s summer at Lostman’s River starts here';
   const text = [
     resend ? 'Here is your link again.' : 'Welcome aboard.',
+    '',
+    'Giving it as a gift? Forward this email to the reader’s family, or print a gift card with the code on it: ' + giftLink,
     '',
     'Get your reader started in under a minute, on their own device:',
     '1. On their tablet or phone, open the camera and point it at the code in this email.',
@@ -41,6 +44,7 @@ export function welcomeEmail(key, { resend = false } = {}) {
 <tr><td style="padding:28px 28px 8px;font-family:Georgia,'Times New Roman',serif;">
   <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">${resend ? 'Here it is again' : 'Welcome aboard'}</p>
   <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Summer Fishing Guide Experience</h1>
+  ${p(`<strong>Giving it as a gift?</strong> Forward this email to the reader’s family, or <a href="${esc(giftLink)}" style="color:#2a7f8e;">print a gift card</a> with the code on it.`, 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
   ${p('<strong>Get your reader started in under a minute, on their own device:</strong>')}
   ${p('<strong>1.</strong> On their tablet or phone, open the camera and point it at this code.')}
 </td></tr>

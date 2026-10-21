@@ -76,3 +76,8 @@ Kept from the first draft so nothing is lost. None of these should exist in Stri
 - **Signed paperback bundle** ($39.99, shipping included): add if buyers ask. Fulfilment math (2026-10-20): author copy ~$4, Media Mail via Pirate Ship ~$4.50, mailer ~$0.75, leaving ~$5 of the $15; order 20 author copies, sign in one sitting. Payment Links cannot collect shipping conditionally, so it would be its own link.
 - **Classroom edition** ($99, 30 readers): adds the discussion guide, printables and a reading schedule; collect the school name at checkout. Worth building only after a teacher asks.
 - **Audiobook only** ($9.99): `grants=listen`. Skip; the narration is the reason to buy the whole thing.
+
+## Marketing lines saved for later
+
+- **"An authentic coming-of-age Everglades fishing experience for your son or daughter."** (author, 2026-10-21). Gift version for grandparents, aunts and uncles: "An authentic coming-of-age Everglades fishing experience for the young angler in your life."
+- **Gifting is a selling point, not an exception.** The buyer gets the link and a printable gift card (lostmansriver.com/gift/), the reader's family gets the summer. Grandparent ads: "Give a summer, not a screen." "A gift card they can hold, a summer they can hear."

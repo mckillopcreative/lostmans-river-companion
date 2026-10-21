@@ -21,8 +21,9 @@
         <a class="btn btn-sm" id="ho-sms" href="#">Text it</a>
         <a class="btn btn-sm" id="ho-mail" href="#">Email it</a>
         <a class="btn btn-sm btn-primary" id="ho-here" href="#">Start on this device</a>
+        <a class="btn btn-sm" id="ho-gift" href="#">Print a gift card</a>
       </p>
-      <p class="small muted" id="ho-note" hidden>We’ve also emailed you the code and link from help@lostmansriver.com. Keep it to your family: anyone with the link can open your summer.</p>
+      <p class="small muted" id="ho-note" hidden>We’ve also emailed you the code and link from help@lostmansriver.com. Giving it as a gift? Print the gift card or forward the email to the reader’s family. Keep the link to that family: anyone with it can open the summer.</p>
     </div>
     <figure class="ho-qr" id="ho-qr" hidden>
       <img id="ho-qr-img" alt="QR code that opens the Experience on your reader’s device" width="240" height="240" />
@@ -62,6 +63,7 @@
       ($('ho-sms') as HTMLAnchorElement).href = `sms:?&body=${encodeURIComponent(msg)}`;
       ($('ho-mail') as HTMLAnchorElement).href = `mailto:?subject=${encodeURIComponent('Your Lostman’s River summer')}&body=${encodeURIComponent(msg)}`;
       ($('ho-here') as HTMLAnchorElement).href = `/start/#${key}`;
+      ($('ho-gift') as HTMLAnchorElement).href = `/gift/#${key}`;
       $('ho-copy').addEventListener('click', async () => {
         try {
           await navigator.clipboard.writeText(link);
