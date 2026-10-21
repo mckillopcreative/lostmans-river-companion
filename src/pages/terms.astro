@@ -1,0 +1,52 @@
+---
+// Terms of purchase and use. The Stripe Payment Link's terms checkbox points here
+// (docs/LAUNCH-FLOW.md §6). Have it reviewed by an attorney before ads run.
+import Base from '@layouts/Base.astro';
+import { url } from '@lib/url';
+import site from '../../site.config.mjs';
+const updated = 'October 21, 2026';
+---
+
+<Base title="Terms" description="The terms for buying and using the Summer Fishing Guide Experience.">
+  <article class="wrap section legal">
+    <p class="eyebrow">Last updated {updated}</p>
+    <h1>Terms</h1>
+    <p class="lede">The plain version: you buy it once, it’s for your family, there’s a 30-day refund, and fishing is real so a grown-up should be along when it moves from the page to the water.</p>
+
+    <h2>Who can buy</h2>
+    <p>By buying the {site.checkout.name} you confirm that you are 18 or older and that you are the parent or legal guardian of the reader who will use it, or that you are buying it for a reader with their parent or guardian’s permission.</p>
+
+    <h2>What you get</h2>
+    <p>A one-time purchase of {site.checkout.price}. It gives your household a personal link that unlocks the Experience on as many of your family’s devices as you like: the narrated chapters, the missions, the badges and the printable license, together with the free companion site. There is no subscription and nothing renews.</p>
+
+    <h2>Keep the link to your family</h2>
+    <p>The link is the purchase, so anyone who has it can open your summer. Please don’t post or share it outside your household. If a link is shared widely we may replace it; we’ll send the new one to the email used at checkout.</p>
+
+    <h2>Refunds</h2>
+    <p>If it isn’t right for your family, email <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a> within 30 days of buying and we’ll refund you in full. No questions asked. The link stops working after a refund.</p>
+
+    <h2>Fishing is real</h2>
+    <p>The Experience teaches real knots, tides, boats and fish, but it is a story and a learning companion, not instruction to fish unsupervised. Water, boats, hooks and wildlife can hurt people. A capable adult should supervise any fishing, boating or time near the water. Fishing rules change; check the current regulations with the Florida Fish and Wildlife Conservation Commission (or your own state) before you go. We aren’t responsible for injuries or losses from activities inspired by the Experience.</p>
+
+    <h2>The work is ours</h2>
+    <p>The novel, narration, illustrations, missions and site are © Linda and John McKillop and McKillop Creative, LLC. Your purchase is for personal and family use; please don’t copy, resell or republish them. Some narration and illustration was made with AI tools from our own writing and directions, as noted on the site.</p>
+
+    <h2>Changes and availability</h2>
+    <p>We’ll keep improving the Experience and may change features. If we ever stop offering it, buyers will be told by email and given a way to keep the narration they paid for.</p>
+
+    <h2>Contact</h2>
+    <p>McKillop Creative, LLC · <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>. These terms are governed by the laws of the state where McKillop Creative, LLC is organized.</p>
+
+    <p class="small"><a href={url('/privacy/')}>Privacy</a> · <a href={url('/')}>Home</a></p>
+  </article>
+</Base>
+
+<style>
+  .legal {
+    max-width: 720px;
+  }
+  .legal h2 {
+    font-size: 1.2rem;
+    margin: 1.6rem 0 0.4rem;
+  }
+</style>

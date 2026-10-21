@@ -27,6 +27,11 @@ export default {
   /** The paid product: Stripe Payment Link (created 2026-10-20). Price shown on the button; change both here. */
   checkout: { url: 'https://buy.stripe.com/28EaEZ73B49jegveo093y00', price: '$24.99', name: 'Lostman’s River: Fishing Guide Experience' },
 
+  /** The purchase gate (docs/LAUNCH-FLOW.md). While false, missions 2–23 stay open and chapters
+   *  2–23 show no player, so nobody can buy into locked content. Set true once the Stripe webhook,
+   *  R2 audio and the welcome email are all connected (docs/GATE-SETUP.md). */
+  gate: { live: false },
+
   /** Amazon listing. Replace with the Associates link (…?tag=xxx-20) once the account exists. */
   buyUrl: 'https://www.amazon.com/dp/B0BVJ4XR65',
   isbn: { paperback: '9798374178890', hardcover: '9798375928548', kindle: 'B0BVJ4XR65' },

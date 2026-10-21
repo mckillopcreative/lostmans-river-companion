@@ -1,0 +1,16 @@
+{
+  "name": "lostmans-river-api",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "qrcode-generator": "^1.4.4"
+  },
+  "private": true
+}

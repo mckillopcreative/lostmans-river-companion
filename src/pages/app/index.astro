@@ -8,6 +8,7 @@ import AuthorsCard from '@components/AuthorsCard.astro';
 import ChapterAudio from '@components/ChapterAudio.astro';
 import BuyButton from '@components/BuyButton.astro';
 import ExperienceBanner from '@components/ExperienceBanner.astro';
+import HandOff from '@components/HandOff.astro';
 import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 import { chapters, fish, places, todo } from '@lib/data';
@@ -41,6 +42,8 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
 ---
 
 <Base title="Lostman’s River: Fishing Guide Experience" description="Your summer as an assistant fishing guide: read, listen, learn the water, earn the license.">
+  <HandOff />
+
   <section class="app-hero">
     <div class="wrap-wide">
       <ExperienceBanner as="h1" class="app-hero-banner" />

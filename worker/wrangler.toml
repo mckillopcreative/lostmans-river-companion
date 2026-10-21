@@ -1,5 +1,10 @@
-# api.lostmansriver.com: analytics counter now; purchase gate, progress sync and restore later.
+# api.lostmansriver.com: analytics, purchase keys, progress sync, restore, protected audio.
 # Deploy from this folder:  npx wrangler deploy
+# Secrets (set with `npx wrangler secret put NAME`, never in this file):
+#   STRIPE_WEBHOOK_SECRET  whsec_… from the Stripe webhook endpoint
+#   STRIPE_SECRET_KEY      a restricted key with Checkout Sessions: Read (optional, makes the
+#                          welcome page instant even if the webhook is a few seconds late)
+#   ADMIN_KEY              for POST /admin/issue (comps, reviewers, tests)
 name = "lostmans-river-api"
 main = "src/index.js"
 compatibility_date = "2026-10-01"
@@ -7,10 +12,23 @@ account_id = "91cf99ba149df24d16edfbc523306bc8"
 
 routes = [{ pattern = "api.lostmansriver.com", custom_domain = true }]
 
-# Workers Analytics Engine: one row per event, queried with SQL (scripts/metrics.mjs)
 [[analytics_engine_datasets]]
 binding = "EVENTS"
 dataset = "lostmans_events"
+
+[[kv_namespaces]]
+binding = "LR"
+id = "ade6125433eb40cb8f3d6fb6950eb631"
+
+# Chapters 2–23. Needs R2 enabled on the account (dashboard → R2), then:
+#   npx wrangler r2 bucket create lostmans-audio   and uncomment:
+# [[r2_buckets]]
+# binding = "AUDIO"
+# bucket_name = "lostmans-audio"
+
+# The welcome email. Needs Workers Paid and the domain onboarded in Email Sending, then uncomment:
+# [[send_email]]
+# name = "EMAIL"
 
 [observability]
 enabled = false

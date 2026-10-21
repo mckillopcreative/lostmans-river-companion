@@ -6,6 +6,7 @@ import ChapterPill from '@components/ChapterPill.astro';
 import { missions, chapterByN, fishById, placeById, type Mission } from '@lib/data';
 import { artImage } from '@lib/images';
 import { url } from '@lib/url';
+import site from '../../../site.config.mjs';
 
 export function getStaticPaths() {
   return missions.map((m) => ({ params: { id: m.id }, props: { m } }));
@@ -42,7 +43,21 @@ const payload = { id: m.id, type: m.type, answer: m.answer ?? null, accept: m.ac
 
       <p class="prompt">{m.prompt}</p>
 
-      <div class="play" id="play" data-mission={JSON.stringify(payload)}>
+      {
+        site.gate?.live && m.chapter > 1 && (
+          <div class="mission-lock" id="mission-lock">
+            <p class="hand mission-lock-h">Mission {m.chapter} is part of the Full Experience</p>
+            <p class="small">Mission 1 is free. The other 22, the three badges and the Assistant Guide license come with the Experience, along with every chapter read aloud.</p>
+            <p class="cluster">
+              <a class="btn btn-primary" href={site.checkout.url} rel="noopener" data-track="buy_click" data-track-page={`mission-${m.chapter}`}>
+                Get the Full Experience {site.checkout.price}
+              </a>
+              <a class="small" href={url('/restore/')}>Already bought it?</a>
+            </p>
+          </div>
+        )
+      }
+      <div class="play" id="play" data-mission={JSON.stringify(payload)} data-locked={site.gate?.live && m.chapter > 1 ? '1' : undefined}>
         {
           (m.type === 'choice' || m.type === 'decide') && (
             <ul class="choices">
@@ -123,6 +138,13 @@ const payload = { id: m.id, type: m.type, answer: m.answer ?? null, accept: m.ac
       </div>
     </div>
   </article>
+
+  <script>
+    import { getKey } from '../../scripts/access';
+    // missions 2–23 open on a device holding a purchase key; the page still renders for search and preview
+    if (getKey()) document.getElementById('mission-lock')?.remove();
+    else document.querySelector<HTMLElement>('#play[data-locked]')?.setAttribute('inert', '');
+  </script>
 
   <script>
     import { completeMission, setName } from '../../scripts/progress';
@@ -251,6 +273,23 @@ const payload = { id: m.id, type: m.type, answer: m.answer ?? null, accept: m.ac
 </Base>
 
 <style>
+  .mission-lock {
+    margin: 1rem 0;
+    padding: 1rem 1.1rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-left: 4px solid var(--sunrise);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .mission-lock-h {
+    font-size: 1.35rem;
+    color: var(--sunrise-ink);
+    margin: 0 0 0.3rem;
+  }
+  #play[inert] {
+    opacity: 0.45;
+    filter: grayscale(0.4);
+  }
   .crumbs {
     margin-bottom: 0.5rem;
   }

@@ -1,0 +1,72 @@
+---
+// /restore/: lost the welcome email? Enter the purchase email and the Worker re-sends the link.
+// The answer is the same whether or not the email bought anything, so it reveals nothing.
+import Base from '@layouts/Base.astro';
+import { url } from '@lib/url';
+import site from '../../../site.config.mjs';
+---
+
+<Base title="Restore your summer" description="Lost the welcome email? We’ll send your link again." noindex>
+  <section class="wrap section restore">
+    <p class="eyebrow">Lost the email?</p>
+    <h1>Restore your summer</h1>
+    <p class="lede">Enter the email address used to buy the Experience and we’ll send the link again. Open it on any device and the summer picks up where it left off.</p>
+    <form id="restore" class="restore-form">
+      <label for="r-email">Email used at checkout</label>
+      <input id="r-email" type="email" required autocomplete="email" inputmode="email" maxlength="200" />
+      <button class="btn btn-primary" type="submit">Send my link</button>
+    </form>
+    <p class="hand restore-msg" id="r-msg" aria-live="polite"></p>
+    <p class="small muted">Still stuck? Email <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a> and a person will sort it out. Haven’t bought it yet? <a href={site.checkout.url} rel="noopener">Get the Full Experience</a>.</p>
+    <p class="small"><a href={url('/')}>← Back to Lostman’s River</a></p>
+  </section>
+
+  <script>
+    import { API } from '../../scripts/access';
+    const form = document.getElementById('restore') as HTMLFormElement;
+    const msg = document.getElementById('r-msg')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button')!;
+      btn.disabled = true;
+      msg.textContent = 'Sending…';
+      const email = (document.getElementById('r-email') as HTMLInputElement).value.trim();
+      try {
+        const r = await fetch(`${API}/restore`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email }) });
+        const j = await r.json();
+        msg.textContent = j.message || 'If that email bought the Experience, the link is on its way.';
+      } catch {
+        msg.textContent = 'Couldn’t reach us just now. Try again in a minute.';
+      }
+      btn.disabled = false;
+    });
+  </script>
+</Base>
+
+<style>
+  .restore {
+    max-width: 620px;
+  }
+  .restore-form {
+    display: grid;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+  .restore-form input {
+    min-height: 46px;
+    padding: 0.5rem 0.75rem;
+    border: 1.5px solid var(--oyster);
+    border-radius: var(--radius);
+    background: var(--paper-2);
+    color: var(--ink);
+    font: inherit;
+  }
+  .restore-form .btn {
+    justify-self: start;
+  }
+  .restore-msg {
+    font-size: 1.3rem;
+    color: var(--sunrise-ink);
+    min-height: 1.5em;
+  }
+</style>

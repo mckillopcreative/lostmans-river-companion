@@ -79,6 +79,10 @@ const isActive = (href: string) => here.startsWith(url(href));
     <Font cssVariable="--font-display" />
     <script is:inline>
       document.documentElement.classList.add('js');
+      // a purchase key on this device: hide the Buy prompts (src/scripts/access.ts)
+      try {
+        if (/^[A-HJ-NP-Za-km-z2-9]{24}$/.test(localStorage.getItem('lr-key') || '')) document.documentElement.classList.add('has-key');
+      } catch {}
       // Apply a saved theme before first paint to avoid a flash.
       try {
         const t = localStorage.getItem('theme');
@@ -163,6 +167,8 @@ const isActive = (href: string) => here.startsWith(url(href));
             <li><a href={site.npsUrl} rel="noopener">Everglades National Park</a></li>
             <li><a href={url('/credits/')}>Credits &amp; sources</a></li>
             <li><a href={url('/sketchbook/')}>The sketchbook</a></li>
+            <li><a href={url('/restore/')}>Restore my summer</a></li>
+            <li><a href={url('/privacy/')}>Privacy</a> · <a href={url('/terms/')}>Terms</a> · <a href="mailto:help@lostmansriver.com">Help</a></li>
           </ul>
         </div>
       </div>

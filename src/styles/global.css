@@ -527,3 +527,11 @@ a.pill:hover {
     scroll-behavior: auto !important;
   }
 }
+
+/* buyers: no Buy prompts once this device holds a purchase key */
+.has-key .buy,
+.has-key .listen-lock,
+.has-key .mission-lock,
+.has-key .read-next .buy {
+  display: none !important;
+}

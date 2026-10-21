@@ -1,0 +1,62 @@
+---
+// Privacy policy (docs/LAUNCH-FLOW.md §3 and §6). Plain language, and short because we collect
+// so little. Have it reviewed by an attorney who does children's privacy before ads run.
+import Base from '@layouts/Base.astro';
+import { url } from '@lib/url';
+const updated = 'October 21, 2026';
+---
+
+<Base title="Privacy" description="What Lostman’s River collects, and what it never does.">
+  <article class="wrap section legal">
+    <p class="eyebrow">Last updated {updated}</p>
+    <h1>Privacy</h1>
+    <p class="lede">Short version: we keep the email address of the grown-up who buys the Experience, and an anonymous record of which missions are done. We never ask a child for anything, and there are no ads or trackers in the Experience.</p>
+
+    <h2>Who we are</h2>
+    <p>Lostman’s River (lostmansriver.com) is published by McKillop Creative, LLC, home of the novel <em>Escape to Lostman’s River</em> by Linda and John McKillop. Questions: <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>.</p>
+
+    <h2>What we collect, and why</h2>
+    <ul>
+      <li><strong>When you buy the Experience:</strong> your email address, from checkout, so we can send your reader’s link and send it again if you lose it. Payment is handled by Stripe; we never see or store card details.</li>
+      <li><strong>Your purchase link:</strong> a random code that unlocks the Experience. It is not tied to your child’s name or anything about them.</li>
+      <li><strong>Progress:</strong> which missions are done, which badges are earned, and the date the summer started, saved under that random code so the summer picks up on any device.</li>
+      <li><strong>Counts of what happens on the site:</strong> for example, how many people played Chapter 1 or finished Mission 6. These are tallies with no identifier attached: no name, email, IP address or device ID is stored with them. Page views are counted by Cloudflare Web Analytics, which does not use cookies.</li>
+    </ul>
+
+    <h2>What we never collect</h2>
+    <ul>
+      <li>Nothing from children. The Experience never asks a reader for their name, email, age, photo, location or anything they type. The name written on the printable license stays on that device and is never sent to us.</li>
+      <li>No cookies for tracking, no advertising trackers, and no third-party ad pixels on any page a reader uses: the app, chapters, missions, games and license.</li>
+    </ul>
+
+    <h2>Advertising</h2>
+    <p>If you reach our landing page from an online ad, that one page may tell the ad platform (Meta or Google) that the visit happened and whether a purchase began, so we can see which ads work. This happens only on the landing page and only for visits that came from an ad click. It never happens on any page a reader uses.</p>
+
+    <h2>Who we share it with</h2>
+    <p>Only the services that run the site: Stripe (payment), Cloudflare (hosting, email delivery, storage and the anonymous counts) and GitHub (hosting the public pages). We do not sell or rent any information, and we do not share it for anyone else’s marketing.</p>
+
+    <h2>How long we keep it</h2>
+    <p>Your email and the progress record are kept while the Experience is yours to use, so the link keeps working. Email us and we will delete both; the link then stops working.</p>
+
+    <h2>Children</h2>
+    <p>The Experience is made for readers about 10 to 15, bought by a parent or guardian. Because we do not collect personal information from children, a child’s use involves no personal data beyond the anonymous progress record described above. If you believe a child has sent us personal information, email us and we will delete it.</p>
+
+    <h2>Your choices</h2>
+    <p>You can ask to see, correct or delete what we hold about you at any time: <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>. If we change this policy we will update the date at the top, and tell buyers by email if the change matters.</p>
+
+    <p class="small"><a href={url('/terms/')}>Terms</a> · <a href={url('/')}>Home</a></p>
+  </article>
+</Base>
+
+<style>
+  .legal {
+    max-width: 720px;
+  }
+  .legal h2 {
+    font-size: 1.2rem;
+    margin: 1.6rem 0 0.4rem;
+  }
+  .legal li + li {
+    margin-top: 0.4rem;
+  }
+</style>

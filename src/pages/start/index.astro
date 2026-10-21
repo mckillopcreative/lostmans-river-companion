@@ -1,0 +1,84 @@
+---
+// /start/#<key>: where the welcome email's QR code and link land, on the reader's own device.
+// Checks the key with the Worker, keeps it on this device, pulls any saved progress, and sends
+// the reader on. The key travels after '#', so it never reaches a server log or a referrer.
+import Base from '@layouts/Base.astro';
+import ExperienceBanner from '@components/ExperienceBanner.astro';
+import { url } from '@lib/url';
+---
+
+<Base title="Welcome aboard" description="Starting the Summer Fishing Guide Experience on this device." noindex>
+  <section class="wrap-wide start">
+    <ExperienceBanner as="p" />
+    <div class="start-card" id="start" aria-live="polite">
+      <p class="hand start-eyebrow">One moment…</p>
+      <h1 id="start-h">Getting your summer ready</h1>
+      <p class="lede" id="start-msg">Checking your link.</p>
+      <p class="cluster" id="start-go" hidden>
+        <a class="btn btn-primary" id="go-next" href={url('/missions/m01/')}>Start Mission 1</a>
+        <a class="btn" href={url('/app/')}>Open the Experience</a>
+      </p>
+      <p class="small muted" id="start-help" hidden>
+        Link not working? <a href={url('/restore/')}>Get a new one sent</a> to the email used to buy it.
+      </p>
+    </div>
+  </section>
+
+  <script>
+    import { isKey, checkKey, setKey } from '../../scripts/access';
+    import { pull, countDone } from '../../scripts/progress';
+    const $ = (id: string) => document.getElementById(id)!;
+    const key = decodeURIComponent(location.hash.slice(1)).trim();
+    // drop the key from the address bar so a screenshot or a shared tab doesn't carry it
+    if (location.hash) history.replaceState(null, '', location.pathname);
+    (async () => {
+      if (!isKey(key) || !(await checkKey(key))) {
+        $('start-h').textContent = 'That link didn’t work';
+        $('start-msg').textContent = 'It may have been cut short when it was copied. Scan the code in the email again, or have a new link sent.';
+        $('start-help').hidden = false;
+        return;
+      }
+      setKey(key);
+      const p = await pull();
+      const done = countDone(p);
+      document.querySelector('.start-eyebrow')!.textContent = 'Welcome aboard';
+      if (done) {
+        const next = Array.from({ length: 23 }, (_, i) => i + 1).find((i) => !p.missions['m' + String(i).padStart(2, '0')]);
+        $('start-h').textContent = 'Picking up where you left off';
+        $('start-msg').textContent = `${done} of 23 missions done${p.badges.length ? ` and ${p.badges.length} badge${p.badges.length === 1 ? '' : 's'} earned` : ''}. This device is ready.`;
+        const a = $('go-next') as HTMLAnchorElement;
+        if (next) ((a.textContent = `Next: Mission ${next}`), (a.href = a.href.replace('m01', 'm' + String(next).padStart(2, '0'))));
+        else ((a.textContent = 'Print your license'), (a.href = a.href.replace('missions/m01/', 'license/')));
+      } else {
+        $('start-h').textContent = 'You’re the assistant fishing guide this summer';
+        $('start-msg').textContent = 'This device is ready, and it will remember you. Every chapter is unlocked to read and hear, and Uncle Dan has 23 missions waiting.';
+      }
+      $('start-go').hidden = false;
+    })();
+  </script>
+</Base>
+
+<style>
+  .start {
+    padding-block: 1.5rem 3rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .start-card {
+    max-width: 640px;
+    margin-inline: auto;
+    text-align: center;
+  }
+  .start-eyebrow {
+    font-size: 1.4rem;
+    color: var(--sunrise-ink);
+    margin: 0;
+  }
+  .start-card h1 {
+    margin: 0.2rem 0 0.5rem;
+    font-size: clamp(1.6rem, 4vw, 2.3rem);
+  }
+  .start-card .cluster {
+    justify-content: center;
+  }
+</style>

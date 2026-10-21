@@ -1,0 +1,127 @@
+---
+// Shown on /app/ right after checkout (?welcome=1&session_id=cs_…). Fetches the purchase key
+// from the Worker (which also emails it), keeps it on this device, and shows the parent how to
+// hand the summer to the reader's own device: a QR code to scan off this screen, plus copy,
+// text and email buttons. Hidden for everyone else.
+---
+
+<section class="handoff wrap-wide" id="handoff" hidden aria-labelledby="ho-h">
+  <div class="ho-card">
+    <div class="ho-text">
+      <p class="hand ho-eyebrow" id="ho-eyebrow">Thank you, and welcome aboard</p>
+      <h2 id="ho-h">Hand it to your reader</h2>
+      <p id="ho-status">Setting up your summer…</p>
+      <ol class="ho-steps" id="ho-steps" hidden>
+        <li>On <strong>their</strong> tablet or phone, open the camera and point it at this code.</li>
+        <li>Tap the link that pops up. Mission 1 is waiting.</li>
+        <li>Their device remembers them from then on. The same code works on any other device, and the summer picks up where it left off.</li>
+      </ol>
+      <p class="cluster ho-actions" id="ho-actions" hidden>
+        <button type="button" class="btn btn-sm" id="ho-copy">Copy the link</button>
+        <a class="btn btn-sm" id="ho-sms" href="#">Text it</a>
+        <a class="btn btn-sm" id="ho-mail" href="#">Email it</a>
+        <a class="btn btn-sm btn-primary" id="ho-here" href="#">Start on this device</a>
+      </p>
+      <p class="small muted" id="ho-note" hidden>We’ve also emailed you the code and link from help@lostmansriver.com. Keep it to your family: anyone with the link can open your summer.</p>
+    </div>
+    <figure class="ho-qr" id="ho-qr" hidden>
+      <img id="ho-qr-img" alt="QR code that opens the Experience on your reader’s device" width="240" height="240" />
+      <figcaption class="small muted">Scan with the reader’s device</figcaption>
+    </figure>
+  </div>
+</section>
+
+<script>
+  import { API, setKey, startLink, isKey } from '../scripts/access';
+  const q = new URLSearchParams(location.search);
+  const session = q.get('session_id') || '';
+  const box = document.getElementById('handoff')!;
+  const $ = (id: string) => document.getElementById(id)!;
+  if (q.get('welcome') === '1' && /^cs_[A-Za-z0-9_]{10,200}$/.test(session)) {
+    box.hidden = false;
+    (async () => {
+      let key = '';
+      // the webhook can trail the buyer by a few seconds; ask for up to ~30 s
+      for (let i = 0; i < 15 && !key; i++) {
+        try {
+          const r = await fetch(`${API}/session/${session}`);
+          if (r.ok) key = (await r.json()).key || '';
+        } catch {}
+        if (!key) await new Promise((res) => setTimeout(res, 2000));
+      }
+      if (!isKey(key)) {
+        $('ho-status').innerHTML = 'Your payment went through. Your link is on its way by email from help@lostmansriver.com; it can take a minute. Nothing in the inbox after ten minutes? <a href="/restore/">Have it sent again</a>.';
+        return;
+      }
+      setKey(key); // this device too, so the parent can look around
+      const link = startLink(key);
+      ($('ho-qr-img') as HTMLImageElement).src = `${API}/qr/${key}.png`;
+      $('ho-status').textContent = 'It takes about a minute, on their own device:';
+      for (const id of ['ho-steps', 'ho-actions', 'ho-note', 'ho-qr']) $(id).hidden = false;
+      const msg = `Your summer as an assistant fishing guide starts here: ${link}`;
+      ($('ho-sms') as HTMLAnchorElement).href = `sms:?&body=${encodeURIComponent(msg)}`;
+      ($('ho-mail') as HTMLAnchorElement).href = `mailto:?subject=${encodeURIComponent('Your Lostman’s River summer')}&body=${encodeURIComponent(msg)}`;
+      ($('ho-here') as HTMLAnchorElement).href = `/start/#${key}`;
+      $('ho-copy').addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(link);
+          $('ho-copy').textContent = 'Copied';
+        } catch {
+          prompt('Copy this link:', link);
+        }
+      });
+      // take the session id out of the address bar
+      history.replaceState(null, '', location.pathname + '?welcome=1');
+    })();
+  }
+</script>
+
+<style>
+  .handoff {
+    margin-top: 1.5rem;
+  }
+  .ho-card {
+    display: grid;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--paper-2);
+    border: 2px solid var(--sunrise);
+    border-radius: 14px;
+  }
+  @media (min-width: 760px) {
+    .ho-card {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 1.5rem 1.75rem;
+    }
+  }
+  .ho-eyebrow {
+    margin: 0;
+    font-size: 1.35rem;
+    color: var(--sunrise-ink);
+  }
+  .ho-card h2 {
+    margin: 0.1rem 0 0.5rem;
+  }
+  .ho-steps {
+    margin: 0.5rem 0 0.75rem;
+    padding-left: 1.3rem;
+    line-height: 1.5;
+  }
+  .ho-steps li + li {
+    margin-top: 0.3rem;
+  }
+  .ho-qr {
+    margin: 0;
+    justify-self: center;
+    text-align: center;
+  }
+  .ho-qr img {
+    display: block;
+    width: 220px;
+    height: 220px;
+    border-radius: 10px;
+    background: #fff;
+    padding: 6px;
+  }
+</style>

@@ -4,6 +4,8 @@
 import { existsSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { url } from '@lib/url';
+import audioData from '../../data/audio.json';
+import site from '../../site.config.mjs';
 
 interface Props {
   n: number;
@@ -15,13 +17,15 @@ const { n, title, compact = false } = Astro.props;
 const id = `ch-${String(n).padStart(2, '0')}`;
 const file = resolve(process.cwd(), 'public', 'audio', `${id}.mp3`);
 const present = existsSync(file);
+// chapters 2–23 are the paid narration, streamed from the Worker (docs/LAUNCH-FLOW.md)
+const gated = !!site.gate?.live && !present && n >= 2 && !!(audioData.minutes as Record<string, number>)[n];
 // the provider returns ~128 kbps MP3 → bytes / 16,000 ≈ seconds
-const minutes = present ? Math.max(1, Math.round(statSync(file).size / 16000 / 60)) : 0;
+const minutes = present ? Math.max(1, Math.round(statSync(file).size / 16000 / 60)) : ((audioData.minutes as Record<string, number>)[n] ?? 0);
 ---
 
 {
-  present && (
-    <section class:list={['listen', { compact }]} aria-labelledby={`listen-${id}`}>
+  (present || gated) && (
+    <section class:list={['listen', { compact, gated }]} aria-labelledby={`listen-${id}`} data-gated={gated ? n : undefined}>
       <div class="listen-head">
         <svg class="listen-icon" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
@@ -35,15 +39,44 @@ const minutes = present ? Math.max(1, Math.round(statSync(file).size / 16000 / 6
           <p class="small muted listen-meta">About {minutes} minutes. Play it while you look around the chart and the fish. Narrated by an AI voice.</p>
         </div>
       </div>
-      <audio class="listen-audio" controls preload="none" src={url(`/audio/${id}.mp3`)} data-rate="1.1" data-ch={n}>
-        Your browser can’t play this audio. <a href={url(`/audio/${id}.mp3`)}>Download the MP3.</a>
-      </audio>
+      {present && (
+        <audio class="listen-audio" controls preload="none" src={url(`/audio/${id}.mp3`)} data-rate="1.1" data-ch={n}>
+          Your browser can’t play this audio. <a href={url(`/audio/${id}.mp3`)}>Download the MP3.</a>
+        </audio>
+      )}
+      {gated && (
+        <>
+          <audio class="listen-audio" controls preload="none" data-rate="1.1" data-ch={n} hidden />
+          <div class="listen-lock">
+            <p class="small">
+              <strong>Chapter {n} is part of the Full Experience.</strong> Every chapter read aloud, plus the missions and the license.
+            </p>
+            <p class="cluster">
+              <a class="btn btn-primary btn-sm" href={site.checkout.url} rel="noopener" data-track="buy_click" data-track-page={`ch-${n}-audio`}>
+                Get the Full Experience {site.checkout.price}
+              </a>
+              <a class="small" href={url('/restore/')}>Already bought it?</a>
+            </p>
+          </div>
+        </>
+      )}
     </section>
   )
 }
 
 <script>
   import { track } from '../scripts/track';
+  import { audioUrl } from '../scripts/access';
+  // unlock the paid chapters on a device that holds a purchase key
+  document.querySelectorAll<HTMLElement>('.listen[data-gated]').forEach((sec) => {
+    const src = audioUrl(Number(sec.dataset.gated));
+    if (!src) return;
+    const a = sec.querySelector<HTMLAudioElement>('audio')!;
+    a.src = src;
+    a.hidden = false;
+    sec.querySelector<HTMLElement>('.listen-lock')!.hidden = true;
+    sec.classList.remove('gated');
+  });
   // The raw render sounds a touch slow; 1.1× is the author's pick for the Brian take (2026-10-20).
   document.querySelectorAll<HTMLAudioElement>('audio.listen-audio').forEach((a) => {
     const rate = Number(a.dataset.rate || '1');
@@ -67,7 +100,8 @@ const minutes = present ? Math.max(1, Math.round(statSync(file).size / 16000 / 6
     });
     a.addEventListener('ended', () => track('audio_progress', { ch, pct: 100 }));
     // remember where you were, per chapter, on this device
-    const key = `audio-pos:${a.getAttribute('src')}`;
+    // keyed by chapter, not URL, so the spot survives a new device link
+    const key = `audio-pos:ch-${String(ch).padStart(2, '0')}`;
     try {
       const saved = Number(localStorage.getItem(key) || '0');
       if (saved > 10) a.addEventListener('loadedmetadata', () => (a.currentTime = Math.min(saved, a.duration - 5)), { once: true });
@@ -80,6 +114,15 @@ const minutes = present ? Math.max(1, Math.round(statSync(file).size / 16000 / 6
 </script>
 
 <style>
+  .listen-lock {
+    margin-top: 0.5rem;
+  }
+  .listen-lock .small {
+    margin: 0 0 0.5rem;
+  }
+  .listen-lock .cluster {
+    align-items: center;
+  }
   .listen {
     background: var(--paper-2);
     border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
