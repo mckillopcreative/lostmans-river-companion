@@ -11,6 +11,7 @@ import ChapterAudio from '@components/ChapterAudio.astro';
 import BuyButton from '@components/BuyButton.astro';
 import ExperienceBanner from '@components/ExperienceBanner.astro';
 import ReviewsStrip from '@components/ReviewsStrip.astro';
+import HowItWorks from '@components/HowItWorks.astro';
 import ChapterPill from '@components/ChapterPill.astro';
 import {
   chapters,
@@ -141,6 +142,9 @@ const ld = [
 
   <!-- ===== What readers say ===== -->
   <ReviewsStrip />
+
+  <!-- ===== How a purchase reaches the reader's own device ===== -->
+  <HowItWorks />
 
   <!-- ===== Sticky section links ===== -->
   <nav class="j-nav" aria-label="Sections of the journal" id="j-nav">

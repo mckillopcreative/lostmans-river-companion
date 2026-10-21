@@ -1,0 +1,93 @@
+---
+// Two devices, three steps: how a parent's purchase reaches the reader's own phone or tablet.
+// Mirrors the welcome email (docs/LAUNCH-FLOW.md §5).
+const steps = [
+  {
+    t: 'You buy it',
+    d: 'On your phone or computer. One price, no account to set up, no app to install.',
+    icon: 'M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm4 15h4',
+  },
+  {
+    t: 'Your reader scans the code',
+    d: 'Your welcome email has a QR code. Point their own tablet or phone at your screen, and they’re aboard. No email address needed for them.',
+    icon: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2',
+  },
+  {
+    t: 'The summer picks up where they left off',
+    d: 'Their missions and badges save as they go. New tablet, or reading on another device? Open the same link and they’re back at the same spot.',
+    icon: 'M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4',
+  },
+];
+---
+
+<section class="how" aria-labelledby="how-h">
+  <div class="wrap-wide">
+    <p class="eyebrow">How it works</p>
+    <h2 id="how-h">Your phone buys it. Their device plays it.</h2>
+    <ol class="how-steps" data-reveal-stagger>
+      {
+        steps.map((s, i) => (
+          <li>
+            <span class="how-n mono">{i + 1}</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="how-icon">
+              <path d={s.icon} fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <h3>{s.t}</h3>
+            <p>{s.d}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .how {
+    padding-block: 1.75rem 0.5rem;
+  }
+  .how h2 {
+    margin: 0.1rem 0 1rem;
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+  }
+  .how-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  @media (min-width: 760px) {
+    .how-steps {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .how-steps li {
+    position: relative;
+    padding: 1rem 1.1rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-radius: var(--radius);
+  }
+  .how-n {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.9rem;
+    font-size: 0.75rem;
+    color: var(--sunrise-ink);
+  }
+  .how-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--gulf);
+  }
+  .how-steps h3 {
+    margin: 0.4rem 0 0.3rem;
+    font-size: 1.05rem;
+  }
+  .how-steps p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+</style>

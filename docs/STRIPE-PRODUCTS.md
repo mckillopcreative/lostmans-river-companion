@@ -56,7 +56,7 @@
 
 Stripe sends the receipt; add a custom receipt message:
 
-> Welcome aboard. Open the Experience at https://lostmansriver.com/app/ and bookmark it on the reader’s phone. Printables are at https://lostmansriver.com/app/#print. Questions: help@lostmansriver.com.
+> Welcome aboard. Your welcome email (arriving in a minute from help@lostmansriver.com) has a QR code: point your reader's own tablet or phone at it and they're in. Same code works again on any device, and the summer picks up where they left off. Questions: help@lostmansriver.com.
 
 When the Cloudflare gate ships, the Stripe webhook (`checkout.session.completed`) writes the purchase key to KV and the receipt link carries it; nothing in the product copy changes.
 

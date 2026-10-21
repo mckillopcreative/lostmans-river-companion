@@ -11,7 +11,7 @@ No passwords, no child profiles, no verification codes, nothing the child types 
 ## 2. What the parent and child experience
 
 1. **Parent buys** on lostmansriver.com (Stripe Payment Link). Stripe already has the parent's email from checkout.
-2. **Parent lands on the welcome page** (`/app/?welcome=1`) and sees, straight away:
+2. **Parent lands on the welcome page** (`/app/?welcome=1`), usually on their own phone, while the child will play on a separate tablet or phone. The page shows, straight away:
    - **"Hand it to your reader"**: a large QR code of their personal link to scan with the child's phone or tablet, a **Copy link** button, and **Text it / Email it** buttons that open the parent's own messages app with the link filled in.
    - "Or start here on this device."
 3. **Within a minute the same link arrives by email** (§5), so the parent has it even if they closed the page.
@@ -53,26 +53,42 @@ Estimate: two to three working sessions, then a full test purchase with a 100%-o
 
 ## 5. The welcome email (draft)
 
-**Subject:** Your summer at Lostman's River starts here
+Written for the most common case: **the parent reads it on their own phone or computer, and the child plays on a different device.** The QR code is in the email itself, so the child's tablet scans it straight off the parent's screen. Nothing is installed and the child never needs an email address.
+
+The email carries the personal link three ways, because families differ: a QR code (the fast path), a button (for opening it on the same device), and the plain link printed out (to copy into anything). The QR code is generated per purchase by the Worker as an inline image.
+
+**Subject:** Your reader's summer at Lostman's River starts here
 
 > Welcome aboard.
 >
-> **Your link:** [Start the Summer Fishing Guide Experience] ← the button carries your personal link
+> **Get your reader started in under a minute, on their own device:**
 >
-> **Getting your reader started takes about a minute:**
-> 1. Send this link to the device they'll use: forward this email, text the link, or open it on your phone and let them scan the code on the welcome page.
-> 2. They tap it, and they're in. Mission 1 is waiting.
-> 3. That device remembers them. They won't need the link again unless they switch devices.
+> **1. On their tablet or phone, open the camera and point it at this code.**
 >
-> **New phone or cleared browser?** Open the same link and the summer picks up exactly where they left off. Lost this email? Go to lostmansriver.com/restore and enter this email address; we'll send the link again.
+> [ QR CODE: their personal link ]
 >
-> **What we keep:** your email, so we can send the link. Your reader's progress (missions and badges) is saved under the link, not under their name. We never ask your child for their name, email or anything else, and there are no ads or trackers in the Experience.
+> **2. Tap the link that pops up.** They land on the Summer Fishing Guide Experience, and Mission 1 is waiting.
 >
-> **Keep this link to your family.** Anyone with it can open your summer.
+> **3. That's it.** Their device remembers them. Next time, they just open lostmansriver.com/app.
+>
+> No camera handy? Forward this email to a device they use, or text them this link:
+> lostmansriver.com/start/#AbC123…
+>
+> [ Open the Experience on this device ] ← button, for a reader using the same device as you
+>
+> **Switching devices, or the browser was cleared?** Scan the same code or open the same link on the new device and the summer picks up exactly where they left off: missions, badges, everything. The link works on as many of your family's devices as you like.
+>
+> **Lost this email?** Go to lostmansriver.com/restore and enter this email address. We'll send the code again.
+>
+> **What we keep:** your email, so we can send the link. Your reader's missions and badges are saved under the link, not under their name. We never ask your child for their name, email or anything else, and there are no ads or trackers in the Experience.
+>
+> **Keep this code to your family.** Anyone with it can open your summer.
 >
 > Questions? Just reply; it comes to us. 30-day refund, no questions asked.
 >
 > Linda and John McKillop
+
+The same three steps appear on the welcome page the parent lands on after checkout (`/app/?welcome=1`), with the QR code on screen, so the hand-off can happen before the email even arrives. The landing page's "How it works" strip (`src/components/HowItWorks.astro`) tells the same story before purchase.
 
 ## 6. The guardian question
 
