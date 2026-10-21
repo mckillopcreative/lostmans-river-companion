@@ -21,11 +21,11 @@ dataset = "lostmans_events"
 binding = "LR"
 id = "ade6125433eb40cb8f3d6fb6950eb631"
 
-# Chapters 2–23. Needs R2 enabled on the account (dashboard → R2), then:
-#   npx wrangler r2 bucket create lostmans-audio   and uncomment:
-# [[r2_buckets]]
-# binding = "AUDIO"
-# bucket_name = "lostmans-audio"
+# Chapters 2–23 (R2 enabled and uploaded 2026-10-21). Re-upload one with:
+#   npx wrangler r2 object put lostmans-audio/ch-NN.mp3 --file <mp3> --content-type audio/mpeg --remote
+[[r2_buckets]]
+binding = "AUDIO"
+bucket_name = "lostmans-audio"
 
 # The welcome email: Cloudflare Email Sending (Workers Paid; lostmansriver.com onboarded
 # 2026-10-21). Setting RESEND_API_KEY would send through Resend instead.

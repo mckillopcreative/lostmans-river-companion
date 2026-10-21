@@ -12,13 +12,13 @@
 | Hand-off on `/app/?welcome=1&session_id=…` | live: QR to scan off the parent's screen, copy/text/email, start here |
 | Privacy and Terms pages | live, footer-linked; have a children's-privacy attorney review before ads |
 | Locks on missions 2–23 and chapter audio 2–23 | **built, switched off** (`site.config.mjs` → `gate.live: false`) |
-| Chapter audio 2–23 | rendered, on this computer and backed up; waiting for R2 |
+| Chapter audio 2–23 | **live** in R2 bucket `lostmans-audio` (enabled 2026-10-21, $0/month plan), streamed only to key holders, seeking tested |
 | Welcome email | **live**: Cloudflare Email Sending on Workers Paid, domain onboarded 2026-10-21 (DKIM, SPF and bounce MX on cf-bounce, DMARC p=reject); test sent to the author |
 
 ## The three account steps (author)
 
 1. ~~Email~~ done: Workers Paid + Cloudflare Email Sending (Resend free plan was full).
-2. **R2**: Cloudflare → R2 Object Storage → enable (accept terms; the first 10 GB are free, the book is 218 MB).
+2. ~~R2~~ done 2026-10-21.
 3. **Stripe** (the Stripe Claude or the dashboard):
    - Developers → Webhooks → Add endpoint `https://api.lostmansriver.com/stripe/webhook`, events `checkout.session.completed` and `checkout.session.async_payment_succeeded`. Copy the signing secret (`whsec_…`).
    - Developers → API keys → Create restricted key: Checkout Sessions = Read, everything else None. Copy it (`rk_live_…`).
@@ -40,7 +40,7 @@ npx wrangler secret put STRIPE_SECRET_KEY
 ## What I do after those (Claude)
 
 1. ~~Test welcome email~~ sent to the author 2026-10-21.
-2. `npx wrangler r2 bucket create lostmans-audio`, upload chapters 2–23, uncomment `[[r2_buckets]]`, deploy, test streaming and seeking.
+2. ~~Upload chapters 2–23 to R2~~ done 2026-10-21; streaming and seeking tested.
 3. Set `gate.live: true`, build, deploy; run a real purchase with a 100%-off CREW code end to end on a phone and a tablet.
 
 ## Giving copies away (family, reviewers, teachers)
