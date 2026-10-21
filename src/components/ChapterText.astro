@@ -1,0 +1,137 @@
+---
+// The free reading sample: the welcome line, the chapter heading, the opening paragraphs, and
+// the rest of the chapter behind a "Keep reading" fold (a <details>, so it works without JS).
+// Only chapter 1 has a sample (data/sample-ch01.json, from scripts/extract-sample.mjs).
+import sample from '../../data/sample-ch01.json';
+
+interface Props {
+  n: number;
+  /** paragraphs shown before the fold */
+  open?: number;
+}
+const { n, open = 3 } = Astro.props;
+const s = sample.n === n ? sample : null;
+const head = s?.paragraphs.slice(0, open) ?? [];
+const rest = s?.paragraphs.slice(open) ?? [];
+---
+
+{
+  s && (
+    <section class="read" id={`read-ch-${String(n).padStart(2, '0')}`} aria-labelledby="read-h">
+      <p class="read-welcome hand">{s.welcome}</p>
+      <h2 id="read-h" class="read-title">
+        Chapter {s.n} <span class="read-dash">–</span> <em>{s.title}</em>
+      </h2>
+      <div class="read-body">
+        {head.map((p) => <p>{p}</p>)}
+        {rest.length > 0 && (
+          <details class="read-more">
+            <summary>
+              <span class="read-more-open">Keep reading ↓</span>
+              <span class="read-more-close">Fold it back up ↑</span>
+            </summary>
+            {rest.map((p) => <p>{p}</p>)}
+            <p class="read-end hand">End of Chapter {s.n}. Chapter {s.n + 1} is part of the full Experience.</p>
+          </details>
+        )}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .read {
+    margin: 1.75rem 0 2rem;
+    padding: 1.5rem 1.25rem 1.25rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 55%, transparent);
+    border-radius: var(--radius);
+  }
+  @media (min-width: 640px) {
+    .read {
+      padding: 2rem 2.25rem 1.5rem;
+    }
+  }
+  .read-welcome {
+    margin: 0 0 1rem;
+    font-size: 1.35rem;
+    line-height: 1.25;
+    color: var(--sunrise-ink);
+    text-align: center;
+    text-wrap: balance;
+  }
+  .read-title {
+    margin: 0 0 1.25rem;
+    text-align: center;
+    font-weight: 400;
+    font-size: 1.35rem;
+  }
+  .read-title em {
+    font-style: italic;
+  }
+  .read-dash {
+    color: var(--ink-soft);
+  }
+  /* set like the paperback: indented paragraphs, no gaps, a comfortable measure */
+  .read-body {
+    max-width: 62ch;
+    margin-inline: auto;
+    font-size: 1.08rem;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .read-body p {
+    margin: 0;
+    text-indent: 1.5em;
+    hyphens: auto;
+  }
+  .read-body > p:first-child {
+    text-indent: 0;
+  }
+  .read-body > p:first-child::first-letter {
+    float: left;
+    font-size: 3.3em;
+    line-height: 0.85;
+    padding: 0.06em 0.08em 0 0;
+    color: var(--mangrove);
+    font-weight: 700;
+  }
+  .read-more summary {
+    list-style: none;
+    cursor: pointer;
+    margin: 1rem 0 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    color: var(--mangrove);
+  }
+  .read-more summary::-webkit-details-marker {
+    display: none;
+  }
+  .read-more summary > span {
+    display: inline-block;
+    padding: 0.45rem 1.1rem;
+    border: 1.5px solid var(--mangrove);
+    border-radius: 999px;
+  }
+  .read-more:not([open]) summary > .read-more-close,
+  .read-more[open] summary > .read-more-open {
+    display: none;
+  }
+  .read-more[open] summary {
+    order: 2;
+  }
+  .read-more[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  .read-more[open] > p {
+    order: 1;
+  }
+  .read-end {
+    text-indent: 0 !important;
+    text-align: center;
+    margin-top: 1.25rem !important;
+    font-size: 1.2rem;
+    color: var(--sunrise-ink);
+  }
+</style>

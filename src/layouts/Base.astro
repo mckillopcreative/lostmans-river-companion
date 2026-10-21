@@ -48,8 +48,9 @@ const isActive = (href: string) => here.startsWith(url(href));
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="icon" href={url('/favicon.ico')} sizes="48x48" />
+    <link rel="icon" href={url('/favicon-32.png')} type="image/png" sizes="32x32" />
     <link rel="icon" href={url('/favicon-64.png')} type="image/png" sizes="64x64" />
-    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
     <meta name="theme-color" content="#f6f1e7" />
     <meta property="og:title" content={fullTitle} />

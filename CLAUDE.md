@@ -8,7 +8,7 @@ A static Astro site that is the interactive companion to the novel *Escape to Lo
 ## Ground rules
 - Content comes from `/data`. Do not hand-write entity content into components. If something is missing, add it to the JSON and cite the chapter in `/source/manuscript.txt`.
 - Chapter routes `/ch/1/` … `/ch/23/` are a print contract. Never rename them.
-- Never reproduce chapter text on the site; summaries and the short lines in `data/quotes.json` only.
+- Never reproduce chapter text on the site; summaries and the short lines in `data/quotes.json` only. **Exception (author's decision, 2026-10-21):** chapter 1 is a free reading sample, `data/sample-ch01.json` from `scripts/extract-sample.mjs`. KDP Select allows up to 10% while the ebook is enrolled (term ends 2026-11-25); no other chapter text before then.
 - Do not state fish regulations as current facts; link to FWC.
 - Phone-first. Test every page at 375px width before desktop.
 - Images: originals in `/assets` are never modified in place; derive web sizes at build.

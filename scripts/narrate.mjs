@@ -36,6 +36,10 @@ export const EL_VOICES = {
 const EL_VOICE = (process.env.EL_VOICE || 'B').toUpperCase(); // B Brian is the author's pick (2026-10-20: "5-brian-multi-low")
 const EL = EL_VOICES[EL_VOICE] ?? EL_VOICES.A;
 const EL_MONTHLY = 131000;
+// Spoken before a chapter's first segment, rendered as seg-00 so existing segments are reused.
+export const INTROS = {
+  1: 'Welcome to the Lostman’s River Summer Fishing Guide Experience. Let’s begin the book, Escape to Lostman’s River.',
+};
 // Short requests: the model drops the tail of long inputs (Socrates, Oct 1) and a 1,800-char
 // request took over two minutes on Oct 13. ~1,100 chars ≈ 75 s of audio per request.
 const SEG_MAX = 1100;
@@ -150,7 +154,8 @@ async function narrate(ch, apiKey) {
   const stamp = join(dir, 'style.txt');
   const sig = ENGINE === 'elevenlabs' ? `el:${EL.voice_id}:${EL.model_id}:${JSON.stringify(EL.voice_settings)}:${SEG_MAX}` : `${MODEL}:${VOICE}:${STYLE_V}:${SEG_MAX}`;
   const fresh = existsSync(stamp) && readFileSync(stamp, 'utf8') === sig;
-  const jobs = segs.map((text, i) => ({ i, text, file: join(dir, `seg-${String(i + 1).padStart(2, '0')}.mp3`) })).filter((j) => !(fresh && existsSync(j.file)));
+  const intro = INTROS[ch.n];
+  const jobs = [...(intro ? [{ i: -1, text: intro, file: join(dir, 'seg-00.mp3') }] : []), ...segs.map((text, i) => ({ i, text, file: join(dir, `seg-${String(i + 1).padStart(2, '0')}.mp3`) }))].filter((j) => !(fresh && existsSync(j.file)));
   let next = 0;
   const worker = async () => {
     while (next < jobs.length) {
@@ -174,7 +179,7 @@ async function narrate(ch, apiKey) {
     const file = join(dir, r.file);
     let best = { ratio: r.ratio, buf: null };
     for (let take = 1; take <= 3; take++) {
-      const buf = await tts(apiKey, segs[idx], `${r.file} re-roll ${take}`);
+      const buf = await tts(apiKey, idx < 0 ? intro : segs[idx], `${r.file} re-roll ${take}`);
       const tmp = join(dir, `${r.file}.take`);
       writeFileSync(tmp, buf);
       const p = await segmentPitch(tmp, decoder);

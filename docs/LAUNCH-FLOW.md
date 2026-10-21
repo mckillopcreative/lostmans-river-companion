@@ -46,7 +46,7 @@ All on Cloudflare, free tier, at `api.lostmansriver.com` (a Worker on a subdomai
 4. **Restore** `POST /restore {email}` → re-sends the link; rate-limited.
 5. **Gate** on the paid parts: chapter narration 2–23 from R2 and, when allowed, the online reader text (§7). The tile grid, field guide, games and chapter 1 stay free; they are the advert.
 6. **Welcome page** "Hand it to your reader" block with QR, copy, text and email buttons.
-7. **Email sending**: Resend (free tier) or Cloudflare Email Sending, from `help@lostmansriver.com`, replies forwarded to Gmail (forwarding is already set up).
+7. **Email sending**: Cloudflare Email Sending (author's choice, 2026-10-21), from `help@lostmansriver.com`, replies forwarded to Gmail (forwarding is already set up).
 8. **Legal pages**: `/privacy/` and `/terms/`, linked from checkout and the footer (§6).
 
 Estimate: two to three working sessions, then a full test purchase with a 100%-off code.
@@ -88,14 +88,13 @@ Estimate: two to three working sessions, then a full test purchase with a 100%-o
 
 ## 7. Dependencies that set the launch date
 
-- **KDP Select:** the ebook is enrolled, so the online reader (full chapter text) cannot launch until the current 90-day term ends. Read the end date on KDP and turn off auto-renew. Until then the Experience is narration + missions + field guide + games + license, and the product copy must say "listen" rather than "read online".
+- **KDP Select:** the ebook is enrolled until **2026-11-25**, auto-renew already off. The full online reader launches 2026-11-26; until then chapter 1 is the free text sample (about 6% of the book, under Select's 10% limit). Until then the Experience is narration + missions + field guide + games + license, and the product copy must say "listen" rather than "read online".
 - **Narration chapters 2–23** on ElevenLabs (Brian): ~220,000 characters, shared with the Bourbon Brothers book on one 131,000-a-month allowance. One Pro month covers it.
 - **Stripe:** consent collection on, terms and privacy URLs set, webhook endpoint added once the Worker exists, coupons SUMMER and CREW.
 
 ## 8. What the author needs to provide
 
 1. Cloudflare: log in in the browser pane again when the Worker is built (Workers, KV, R2), or an API token with those rights.
-2. An email sender account (Resend), or say to use Cloudflare Email Sending.
 3. The Stripe webhook signing secret, put in a `.dev.vars` file, never in chat.
 4. A decision on narration timing (Pro month or two Creator months).
 5. The KDP Select end date.
