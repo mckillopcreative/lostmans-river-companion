@@ -62,13 +62,17 @@ const Title = as;
     text-align: center;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(1.5rem, 4.2vw, 2.9rem);
+    font-size: clamp(1.6rem, 4.4vw, 2.9rem);
     letter-spacing: 0.01em;
     line-height: 1.1;
-    color: var(--mangrove);
-    text-shadow: 0 1px 0 color-mix(in srgb, var(--paper) 80%, transparent);
+    /* the sketch face is hatched inside each letter, so it reads light: ink colour, a hairline
+       stroke to fill the hatching, and a heavier paper scrim behind it */
+    color: var(--ink);
+    -webkit-text-stroke: 0.45px var(--ink);
+    paint-order: stroke fill;
+    text-shadow: 0 1px 0 color-mix(in srgb, var(--paper) 90%, transparent), 0 0 12px color-mix(in srgb, var(--paper) 80%, transparent);
     text-wrap: balance;
-    background: linear-gradient(180deg, color-mix(in srgb, var(--paper) 92%, transparent) 45%, transparent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--paper) 97%, transparent) 40%, color-mix(in srgb, var(--paper) 70%, transparent) 70%, transparent);
   }
   .app-banner-text {
     position: absolute;
