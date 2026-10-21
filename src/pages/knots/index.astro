@@ -22,11 +22,37 @@ import { url } from '@lib/url';
     {
       knots.map((k) => {
         const img = artImage('tackle', `knot-${k.id}`);
+        // one drawing per step, cut from the strip by scripts/split-knots.mjs
+        const stages = k.steps.map((_, i) => artImage('knot-stages', `${k.id}-${i + 1}`));
+        const hasStages = stages.every(Boolean);
         return (
           <section class="knot" id={k.id} data-knot={k.id}>
             <h2>{k.name}</h2>
             <p class="muted">{k.use}</p>
-            {img && (
+            {hasStages && (
+              <div class="stage-view">
+                <div class="stage-frame art">
+                  {stages.map((st, i) => (
+                    <figure class="stage" data-i={i} hidden={i !== 0}>
+                      <Image src={st!} alt={`${k.name}, step ${i + 1}: ${k.steps[i]}`} loading="lazy" />
+                    </figure>
+                  ))}
+                </div>
+                <p class="stage-cap" aria-live="polite">
+                  <span class="stage-n mono">Step 1 of {k.steps.length}</span>
+                  <span class="stage-text">{k.steps[0]}</span>
+                </p>
+                <div class="film" role="group" aria-label={`${k.name} stages`}>
+                  {stages.map((st, i) => (
+                    <button type="button" class:list={['film-btn', { current: i === 0 }]} data-i={i} aria-label={`Show step ${i + 1}`}>
+                      <Image src={st!} alt="" height={120} loading="lazy" />
+                      <span class="mono">{i + 1}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {img && !hasStages && (
               <figure class="knot-art art">
                 <Image src={img} alt={`${k.name}, four stages`} width={900} sizes="(min-width: 720px) 680px, 94vw" loading="lazy" />
               </figure>
@@ -68,7 +94,18 @@ import { url } from '@lib/url';
     document.querySelectorAll<HTMLElement>('.knot').forEach((sec) => {
       const steps = Array.from(sec.querySelectorAll<HTMLElement>('.step'));
       let cur = 0;
-      const show = () => steps.forEach((s, i) => s.classList.toggle('current', i === cur));
+      const figs = Array.from(sec.querySelectorAll<HTMLElement>('.stage'));
+      const film = Array.from(sec.querySelectorAll<HTMLButtonElement>('.film-btn'));
+      const capN = sec.querySelector('.stage-n');
+      const capT = sec.querySelector('.stage-text');
+      const show = () => {
+        steps.forEach((s, i) => s.classList.toggle('current', i === cur));
+        figs.forEach((f, i) => (f.hidden = i !== cur));
+        film.forEach((b, i) => b.classList.toggle('current', i === cur));
+        if (capN) capN.textContent = `Step ${cur + 1} of ${steps.length}`;
+        if (capT) capT.textContent = steps[cur]?.querySelector('span:last-child')?.textContent ?? '';
+      };
+      film.forEach((b, i) => b.addEventListener('click', () => ((cur = i), show())));
       sec.querySelector('.next')!.addEventListener('click', () => {
         cur = Math.min(steps.length - 1, cur + 1);
         show();
@@ -145,6 +182,79 @@ import { url } from '@lib/url';
   }
   .knot h2 {
     margin-bottom: 0.2rem;
+  }
+  /* the current stage, large enough to copy with a piece of line in your hands */
+  .stage-view {
+    margin: 0.75rem 0 1rem;
+  }
+  .stage-frame {
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 1rem;
+    display: grid;
+    place-items: center;
+    min-height: min(56vh, 440px);
+  }
+  .stage {
+    margin: 0;
+  }
+  .stage[hidden] {
+    display: none;
+  }
+  .stage :global(img) {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: min(52vh, 420px);
+    min-height: 220px;
+    object-fit: contain;
+  }
+  .stage-cap {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+    margin: 0.6rem 0 0.5rem;
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+  .stage-n {
+    flex: none;
+    font-size: 0.75rem;
+    color: var(--sunrise-ink);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .film {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+  .film-btn {
+    flex: 1 0 64px;
+    display: grid;
+    justify-items: center;
+    gap: 0.2rem;
+    padding: 0.4rem;
+    background: var(--paper-2);
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+  .film-btn :global(img) {
+    height: 72px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  .film-btn span {
+    font-size: 0.7rem;
+  }
+  .film-btn.current {
+    border-color: var(--sunrise);
+    color: var(--sunrise-ink);
   }
   .knot-art {
     margin: 0.75rem 0;
