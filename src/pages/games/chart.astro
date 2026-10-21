@@ -84,6 +84,7 @@ for (const p of places) {
     function next() {
       layer.clearLayers();
       if (round >= 10) {
+        (window as unknown as { lrTrack?: (n: string, p: Record<string, number>) => void }).lrTrack?.('chart_finish', { score });
         $('verdict').textContent = `${score} of 10. ${score >= 8 ? 'You could run the Mako.' : score >= 5 ? 'Getting the lay of the islands.' : 'Open the chart and look again.'}`;
         $('next').hidden = true;
         $('again').hidden = false;

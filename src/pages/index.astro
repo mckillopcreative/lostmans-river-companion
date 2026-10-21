@@ -67,9 +67,45 @@ const sections = [
   { id: 'sketchbook', label: 'Sketchbook' },
   { id: 'book', label: 'The Book' },
 ];
+// structured data for search: the book (all three editions) and the Experience as a product.
+// No aggregateRating: Google does not allow ratings gathered from another site (Amazon).
+const home = new URL('/', Astro.site).toString();
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Book',
+    name: site.title,
+    author: [{ '@type': 'Person', name: 'Linda McKillop' }, { '@type': 'Person', name: 'John McKillop' }],
+    illustrator: { '@type': 'Person', name: 'Linda McKillop' },
+    genre: ['Middle grade fiction', 'Adventure', 'Fishing'],
+    typicalAgeRange: '10-15',
+    inLanguage: 'en',
+    url: home,
+    image: new URL('/social-share.jpg', Astro.site).toString(),
+    workExample: [
+      { '@type': 'Book', bookFormat: 'https://schema.org/Paperback', isbn: site.isbn.paperback, url: site.buyUrl },
+      { '@type': 'Book', bookFormat: 'https://schema.org/Hardcover', isbn: site.isbn.hardcover },
+      { '@type': 'Book', bookFormat: 'https://schema.org/EBook' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: site.checkout.name,
+    description: 'The novel read aloud, 23 missions, real saltwater fishing skills, chart and knot puzzles, and a printable Assistant Guide license. Ages 10 to 15.',
+    brand: { '@type': 'Brand', name: 'Lostman’s River' },
+    image: new URL('/social-share.jpg', Astro.site).toString(),
+    offers: { '@type': 'Offer', price: site.checkout.price.replace(/[^0-9.]/g, ''), priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: site.checkout.url },
+  },
+];
 ---
 
-<Base title={site.title} description="Everything Matt filled the blank pages of his dad’s Guidebook with: the chapters, the chart, the fish, the crew, the tackle, the places.">
+<Base
+  title={site.title}
+  description="A summer in the Florida Everglades for readers 10 to 15: the novel Escape to Lostman’s River read aloud, real saltwater fishing skills, the chart, the fish and 23 missions. Chapter 1 free."
+  ads
+  jsonLd={ld}
+>
   <!-- ===== The product banner, then the journal hero beneath it ===== -->
   <section class="j-banner">
     <div class="wrap-wide">

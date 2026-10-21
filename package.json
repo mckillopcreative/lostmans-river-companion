@@ -8,7 +8,7 @@
     "dev": "npm run trim && astro dev",
     "trim": "node scripts/trim-sketches.mjs",
     "validate": "node scripts/validate.mjs",
-    "build": "npm run validate && npm run trim && astro build",
+    "build": "npm run validate && npm run trim && astro build && node scripts/sitemap.mjs",
     "preview": "astro preview",
     "qr": "node scripts/make-qr.mjs",
     "linkcheck": "node scripts/linkcheck.mjs",

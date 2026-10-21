@@ -13,6 +13,8 @@ interface Props {
 }
 const { as = 'h1', class: cls } = Astro.props;
 const hero = artImage('tiles', 'app-hero');
+// GPT's lettered title (2026-10-21); the text title stays as the fallback and as the accessible name
+const lettering = artImage('emblems', 'title-summer');
 const Title = as;
 ---
 
@@ -20,7 +22,9 @@ const Title = as;
   hero && (
     <div class:list={['app-banner', cls]}>
       <Image src={hero} alt="A houseboat moored in the mangroves at dusk, a skiff tied alongside" width={1600} sizes="(min-width: 1200px) 1140px, 96vw" loading="eager" />
-      <Title class="app-banner-title">Summer Fishing Guide Experience</Title>
+      <Title class:list={['app-banner-title', { lettered: !!lettering }]}>
+        {lettering ? <Image src={lettering} alt="Summer Fishing Guide Experience" width={1200} sizes="(min-width: 1200px) 900px, 88vw" loading="eager" class="title-art" /> : 'Summer Fishing Guide Experience'}
+      </Title>
       <div class="app-banner-text">
         <p class="eyebrow">Welcome aboard</p>
         <p class="app-banner-line">You’re the assistant fishing guide this summer. Lots to learn.</p>
@@ -73,6 +77,19 @@ const Title = as;
     text-shadow: 0 1px 0 color-mix(in srgb, var(--paper) 90%, transparent), 0 0 12px color-mix(in srgb, var(--paper) 80%, transparent);
     text-wrap: balance;
     background: linear-gradient(180deg, color-mix(in srgb, var(--paper) 97%, transparent) 40%, color-mix(in srgb, var(--paper) 70%, transparent) 70%, transparent);
+  }
+  /* the lettered title: one wide line across the top, on a lighter scrim than the text version */
+  .app-banner-title.lettered {
+    padding: 0.8rem 6% 2.2rem;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--paper) 85%, transparent) 35%, transparent);
+  }
+  .title-art {
+    display: block;
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    margin-inline: auto;
+    filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--paper) 90%, transparent));
   }
   .app-banner-text {
     position: absolute;

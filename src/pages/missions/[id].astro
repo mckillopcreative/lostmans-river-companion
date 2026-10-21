@@ -126,6 +126,7 @@ const payload = { id: m.id, type: m.type, answer: m.answer ?? null, accept: m.ac
 
   <script>
     import { completeMission, setName } from '../../scripts/progress';
+    import { track } from '../../scripts/track';
     const play = document.getElementById('play')!;
     const data = JSON.parse(play.dataset.mission!) as { id: string; type: string; answer: number | null; accept: string[] | null; order: string[] | null; badge: string | null; next: string };
     const result = document.getElementById('result')!;
@@ -137,6 +138,8 @@ const payload = { id: m.id, type: m.type, answer: m.answer ?? null, accept: m.ac
       result.hidden = false;
       if (ok) {
         completeMission(data.id, data.badge);
+        track('mission_complete', { id: data.id });
+        if (data.badge) track('badge_earned', { badge: data.badge });
         const b = document.getElementById('badge-earned');
         if (b) b.hidden = false;
         play.classList.add('is-done');

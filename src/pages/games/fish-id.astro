@@ -118,6 +118,7 @@ const levels = { easy: core, medium: mid, hard: plates.map((p) => p.id) };
       $('next').hidden = false;
     }
     function end() {
+      (window as unknown as { lrTrack?: (n: string, p: Record<string, string | number>) => void }).lrTrack?.('fishid_finish', { score, level: String(level) });
       $('verdict').textContent = `${score} of 10. ${score >= 9 ? 'Guide material.' : score >= 6 ? 'Dan would nod.' : 'Back to the field guide, then try again.'}`;
       try {
         const best = Number(localStorage.getItem(bestKey()) || '0');

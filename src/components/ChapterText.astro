@@ -39,6 +39,27 @@ const rest = s?.paragraphs.slice(open) ?? [];
   )
 }
 
+<script>
+  import { track } from '../scripts/track';
+  document.querySelectorAll<HTMLElement>('.read').forEach((sec) => {
+    const ch = Number(sec.id.replace(/\D/g, '')) || 0;
+    const more = sec.querySelector<HTMLDetailsElement>('.read-more');
+    more?.addEventListener('toggle', () => {
+      if (more.open) track('read_more', { ch });
+    });
+    const end = sec.querySelector('.read-end');
+    if (end && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver((es) => {
+        if (es.some((e) => e.isIntersecting)) {
+          track('read_end', { ch });
+          io.disconnect();
+        }
+      });
+      io.observe(end);
+    }
+  });
+</script>
+
 <style>
   .read {
     margin: 1.75rem 0 2rem;

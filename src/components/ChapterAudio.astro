@@ -35,7 +35,7 @@ const minutes = present ? Math.max(1, Math.round(statSync(file).size / 16000 / 6
           <p class="small muted listen-meta">About {minutes} minutes. Play it while you look around the chart and the fish. Narrated by an AI voice.</p>
         </div>
       </div>
-      <audio class="listen-audio" controls preload="none" src={url(`/audio/${id}.mp3`)} data-rate="1.1">
+      <audio class="listen-audio" controls preload="none" src={url(`/audio/${id}.mp3`)} data-rate="1.1" data-ch={n}>
         Your browser can’t play this audio. <a href={url(`/audio/${id}.mp3`)}>Download the MP3.</a>
       </audio>
     </section>
@@ -43,6 +43,7 @@ const minutes = present ? Math.max(1, Math.round(statSync(file).size / 16000 / 6
 }
 
 <script>
+  import { track } from '../scripts/track';
   // The raw render sounds a touch slow; 1.1× is the author's pick for the Brian take (2026-10-20).
   document.querySelectorAll<HTMLAudioElement>('audio.listen-audio').forEach((a) => {
     const rate = Number(a.dataset.rate || '1');
@@ -51,6 +52,20 @@ const minutes = present ? Math.max(1, Math.round(statSync(file).size / 16000 / 6
     };
     a.addEventListener('play', apply);
     a.addEventListener('loadedmetadata', apply);
+    // listening funnel: first play, then 25/50/75/100% once each per visit
+    const ch = Number(a.dataset.ch || 0);
+    let played = false;
+    const marks = new Set<number>();
+    a.addEventListener('play', () => {
+      if (!played) track('audio_play', { ch });
+      played = true;
+    });
+    a.addEventListener('timeupdate', () => {
+      if (!a.duration) return;
+      const pct = (a.currentTime / a.duration) * 100;
+      for (const m of [25, 50, 75]) if (pct >= m && !marks.has(m)) (marks.add(m), track('audio_progress', { ch, pct: m }));
+    });
+    a.addEventListener('ended', () => track('audio_progress', { ch, pct: 100 }));
     // remember where you were, per chapter, on this device
     const key = `audio-pos:${a.getAttribute('src')}`;
     try {

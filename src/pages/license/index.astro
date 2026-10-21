@@ -15,7 +15,7 @@ const map = sketchImage('lostmans-river-hand-map.png');
 const blank = artImage('tiles', 'license-blank');
 ---
 
-<Base title="Assistant Guide license" description="Print your Assistant Guide license.">
+<Base title="Assistant Guide license" description="Print your Assistant Guide license." noindex>
   <div class="wrap section no-print">
     <p class="small"><a href={url('/missions/')}>← Your summer</a></p>
     <h1>Your license</h1>
@@ -67,6 +67,7 @@ const blank = artImage('tiles', 'license-blank');
 
   <script>
     import { load, setName, countDone } from '../../scripts/progress';
+    import { track } from '../../scripts/track';
     const p = load();
     const out = document.getElementById('lic-name-out')!;
     const input = document.getElementById('lic-name') as HTMLInputElement;
@@ -84,7 +85,10 @@ const blank = artImage('tiles', 'license-blank');
       setName(input.value);
       render();
     });
-    document.getElementById('print')!.addEventListener('click', () => window.print());
+    document.getElementById('print')!.addEventListener('click', () => {
+      track('license_print', { missions: countDone(load()) });
+      window.print();
+    });
   </script>
 </Base>
 

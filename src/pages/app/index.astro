@@ -71,7 +71,7 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
           const plate = !artImage('tiles', t.id) && !!(t.art && artImage(t.art[0], t.art[1]));
           return (
             <li class:list={['tile', t.size, { soon: t.soon }]}>
-              <a href={url(t.href)} aria-label={`${t.label}${t.sub ? ', ' + t.sub : ''}${t.soon ? ' (coming soon)' : ''}`}>
+              <a href={url(t.href)} data-track="tile_click" data-track-tile={t.id} aria-label={`${t.label}${t.sub ? ', ' + t.sub : ''}${t.soon ? ' (coming soon)' : ''}`}>
                 <span class:list={['tile-art', 'art', { placeholder: !own, plate }]}>
                   {img && <Image src={img} alt="" width={own ? 800 : 400} sizes={t.size === 'big' ? '(min-width: 900px) 520px, 94vw' : '(min-width: 900px) 260px, 45vw'} loading="lazy" />}
                 </span>
@@ -90,6 +90,8 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
 
   <script>
     import { load, countDone } from '../../scripts/progress';
+    import { track } from '../../scripts/track';
+    if (new URLSearchParams(location.search).get('welcome') === '1') track('checkout_return');
     const p = load();
     const done = countDone(p);
     document.getElementById('p-missions')!.textContent = `${done} of 23 missions`;

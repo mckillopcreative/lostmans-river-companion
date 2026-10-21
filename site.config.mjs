@@ -42,11 +42,26 @@ export default {
     listName: 'Next Summer',
   },
 
-  /** Cookieless analytics. Set provider to 'plausible' or 'goatcounter' and the site id/code. */
+  /** Cookieless analytics, on every page. Set provider and id to switch it on (docs/ANALYTICS.md).
+   *  umami: id = the website id from cloud.umami.is · plausible: id = 'lostmansriver.com' ·
+   *  goatcounter: id = the code (xxx in xxx.goatcounter.com). */
   analytics: {
-    provider: null, // 'plausible' | 'goatcounter' | null
+    provider: null, // 'umami' | 'plausible' | 'goatcounter' | null
     id: '',
   },
+
+  /** Ad pixels. Loaded ONLY on pages that opt in with <Base ads> (the parent-facing landing
+   *  page), and only for visits that arrived from an ad click (fbclid / gclid / utm_medium
+   *  paid). Never on the app, chapters, missions or games: children use those (COPPA). */
+  ads: {
+    metaPixelId: '', // Meta Events Manager → Data sources → Pixel id
+    googleTagId: '', // Google Ads: 'AW-…' (or GA4 'G-…')
+    googleBuyLabel: '', // the conversion label for the Buy click, from Google Ads
+  },
+
+  /** Search Console: paste the content="" value of Google's HTML-tag verification here, or
+   *  verify with a DNS TXT record in Cloudflare instead and leave this blank. */
+  googleSiteVerification: '',
 
   /** Amazon reviews (verified purchases, quoted short with the reviewer's display name; 2026-10-20). */
   reviews: {

@@ -1,0 +1,60 @@
+---
+// Meta Pixel and Google Ads tag, for the parent-facing landing page only. Nothing loads unless
+// (a) an id is set in site.config.mjs → ads, (b) the page opted in with <Base ads>, and (c) this
+// visit arrived from an ad click. Book QR codes and organic visits never carry an ad click id,
+// so children scanning the paperback never load a pixel. The purchase itself should be reported
+// server-side (Meta Conversions API / Google offline conversion) from the Stripe webhook, so no
+// pixel ever runs on /app/.
+import site from '../../site.config.mjs';
+const { metaPixelId, googleTagId, googleBuyLabel } = site.ads ?? {};
+const cfg = JSON.stringify({ meta: metaPixelId || '', google: googleTagId || '', buyLabel: googleBuyLabel || '' });
+---
+
+{
+  (metaPixelId || googleTagId) && (
+    <script is:inline define:vars={{ cfg }}>
+      (function () {
+        var c = JSON.parse(cfg);
+        var q = new URLSearchParams(location.search);
+        var paid = q.has('fbclid') || q.has('gclid') || q.has('wbraid') || q.has('gbraid') || /^(cpc|ppc|paid|paid_social|paidsocial|ads?)$/i.test(q.get('utm_medium') || '');
+        try {
+          if (paid) sessionStorage.setItem('lr-ad', '1');
+          paid = paid || sessionStorage.getItem('lr-ad') === '1';
+        } catch (e) {}
+        if (!paid) return;
+        if (c.meta) {
+          !(function (f, b, e, v, n, t, s) {
+            if (f.fbq) return;
+            n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+            if (!f._fbq) f._fbq = n;
+            n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+            t = b.createElement(e); t.async = !0; t.src = v;
+            s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+          })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+          window.fbq('init', c.meta);
+          window.fbq('track', 'PageView');
+        }
+        if (c.google) {
+          var g = document.createElement('script');
+          g.async = true;
+          g.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(c.google);
+          document.head.appendChild(g);
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () { window.dataLayer.push(arguments); };
+          window.gtag('js', new Date());
+          window.gtag('config', c.google);
+        }
+        // track() in src/scripts/track.ts calls this for the events an ad platform cares about
+        window.lrAds = function (name, props) {
+          if (name === 'audio_play' && props && props.ch === 1) {
+            if (window.fbq) window.fbq('track', 'ViewContent', { content_name: 'Chapter 1 narration' });
+          }
+          if (name === 'buy_click') {
+            if (window.fbq) window.fbq('track', 'InitiateCheckout', { value: 24.99, currency: 'USD' });
+            if (window.gtag && c.buyLabel) window.gtag('event', 'conversion', { send_to: c.google + '/' + c.buyLabel, value: 24.99, currency: 'USD' });
+          }
+        };
+      })();
+    </script>
+  )
+}

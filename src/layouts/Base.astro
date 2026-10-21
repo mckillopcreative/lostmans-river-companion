@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import CompassRose from '@components/CompassRose.astro';
 import Divider from '@components/Divider.astro';
 import { artImage } from '@lib/images';
+import AdPixels from '@components/AdPixels.astro';
 const siteMark = artImage('emblems', 'site-mark');
 
 interface Props {
@@ -18,8 +19,15 @@ interface Props {
   image?: string;
   /** Full-bleed pages (the map) suppress main padding. */
   bleed?: boolean;
+  /** Parent-facing ad landing page: allows the ad pixel (see AdPixels.astro). Never on child pages. */
+  ads?: boolean;
+  /** Keep this page out of search results (404, license, welcome). */
+  noindex?: boolean;
+  /** Structured data for search engines (schema.org objects). */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
-const { title, description = site.tagline, chapter, image, bleed = false } = Astro.props;
+const { title, description = site.tagline, chapter, image, bleed = false, ads = false, noindex = false, jsonLd } = Astro.props;
+const ld = jsonLd ? JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd]).replace(/</g, '\\u003c') : null;
 const fullTitle = title === site.title ? title : `${title} · ${site.shortTitle}`;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 // Every page gets a share card; pages with a sketch pass their own.
@@ -59,7 +67,13 @@ const isActive = (href: string) => here.startsWith(url(href));
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={site.title} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {site.googleSiteVerification && <meta name="google-site-verification" content={site.googleSiteVerification} />}
+    {ld && <script type="application/ld+json" set:html={ld} />}
     <Font cssVariable="--font-serif" preload />
     <Font cssVariable="--font-hand" />
     <Font cssVariable="--font-display" />
@@ -71,6 +85,11 @@ const isActive = (href: string) => here.startsWith(url(href));
         if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
       } catch {}
     </script>
+    {
+      site.analytics.provider === 'umami' && site.analytics.id && (
+        <script is:inline defer data-website-id={site.analytics.id} data-do-not-track="true" src="https://cloud.umami.is/script.js" />
+      )
+    }
     {
       site.analytics.provider === 'plausible' && site.analytics.id && (
         <script is:inline defer data-domain={site.analytics.id} src="https://plausible.io/js/script.js" />
@@ -86,6 +105,7 @@ const isActive = (href: string) => here.startsWith(url(href));
         />
       )
     }
+    {ads && <AdPixels />}
     <slot name="head" />
   </head>
   <body>
@@ -163,6 +183,10 @@ const isActive = (href: string) => here.startsWith(url(href));
       </div>
     </footer>
 
+    <script>
+      import { bindClicks } from '../scripts/track';
+      bindClicks();
+    </script>
     <script>
       // Scroll reveal: fade elements up as they enter the viewport, staggered inside grids.
       const staggers = document.querySelectorAll<HTMLElement>('[data-reveal-stagger]');
