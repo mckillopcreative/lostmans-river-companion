@@ -34,6 +34,7 @@ export default {
 
   /** Amazon listing. Replace with the Associates link (…?tag=xxx-20) once the account exists. */
   buyUrl: 'https://www.amazon.com/dp/B0BV41JY8N', // the paperback (QR-code edition); Kindle is B0BVJ4XR65
+  // hardcover 9798375928548 (ASIN B0BVDYCW8G) unpublished on KDP 2026-10-28; republish from the KDP bookshelf
   isbn: { paperback: '9798374178890', hardcover: '9798375928548', kindle: 'B0BVJ4XR65' },
 
   /** FWC recreational saltwater regulations. */
