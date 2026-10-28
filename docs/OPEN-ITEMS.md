@@ -32,7 +32,7 @@ See SPEC.md §8. Placeholders used during the build are listed here with where t
 - [ ] Characters with no sketch show a plain line-drawing placeholder and the note "No sketch yet." Fine to leave, or commission Linda for Dan, Snapper and Rose.
 
 ## Visuals (added 2026-10-03)
-- [ ] **Hi-res cover file.** `assets/cover/cover-thumbnail.png` is 129 × 199 px; drop the KDP cover JPG/PDF export in `assets/cover/` (any name without "thumb") and the site uses it.
+- [x] **Hi-res cover file**: the new cover (GPT front, Book + Summer Fishing Guide Experience, approved 2026-10-28) is `assets/cover/cover-front.jpg` (1600×2560). Print and Kindle files are in `../covers/final-2026-10/`; the old covers Amazon showed are in `../assets/cover-from-amazon/`.
 - [ ] **Author photo** → `assets/photos/authors.jpg` (Linda and John). The About page shows a dashed slot until it exists.
 - [ ] **Author bio** → `authorsBio` in `site.config.mjs` (paste the back-of-book bio).
 - [x] **Generated art installed** (183 files, 2026-10-11) as WebP web masters. Re-import from the pack with `node scripts/import-art.mjs <pack>/assets/art` if GPT delivers corrections.

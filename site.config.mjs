@@ -33,7 +33,7 @@ export default {
   gate: { live: false },
 
   /** Amazon listing. Replace with the Associates link (…?tag=xxx-20) once the account exists. */
-  buyUrl: 'https://www.amazon.com/dp/B0BVJ4XR65',
+  buyUrl: 'https://www.amazon.com/dp/B0BV41JY8N', // the paperback (QR-code edition); Kindle is B0BVJ4XR65
   isbn: { paperback: '9798374178890', hardcover: '9798375928548', kindle: 'B0BVJ4XR65' },
 
   /** FWC recreational saltwater regulations. */
