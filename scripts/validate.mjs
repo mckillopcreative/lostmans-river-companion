@@ -76,6 +76,11 @@ missions.forEach((m, i) => {
   if (m.type === 'fish') for (const o of m.options) if (!ids.fish.has(o)) errors.push(`missions/${m.id}: unknown fish ${o}`);
   if (m.type === 'place') for (const o of m.options) if (!ids.places.has(o)) errors.push(`missions/${m.id}: unknown place ${o}`);
   if (['choice', 'fish', 'place'].includes(m.type) && !(m.answer >= 0 && m.answer < m.options.length)) errors.push(`missions/${m.id}: bad answer index`);
+  // every mission has a field task (the Field Journal prints one page per mission)
+  const f = m.field;
+  if (!f) errors.push(`missions/${m.id}: no field task`);
+  else for (const k of ['title', 'do', 'need', 'log']) if (!f[k]) errors.push(`missions/${m.id}.field: missing ${k}`);
+  if (f && typeof f.adult !== 'boolean') errors.push(`missions/${m.id}.field: adult must be true or false`);
 });
 
 // 5. places have numeric coordinates

@@ -18,6 +18,8 @@ export const EVENTS = {
   mission_complete: { label: 'id' },
   badge_earned: { label: 'badge' },
   license_print: { value: 'missions' },
+  field_signoff: { label: 'id' },
+  journal_print: { value: 'signed' },
   fishid_finish: { label: 'level', value: 'score' },
   chart_finish: { value: 'score' },
 };

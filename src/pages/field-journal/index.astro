@@ -1,0 +1,563 @@
+---
+// The Field Journal: a printable workbook, one page per field mission plus a cover, a page for the
+// grown-up, the reader's own list, the case file, a fish log, a knot log and the Guidebook page.
+// Filled in by hand with a pencil; nothing here is saved or sent. Part of the Full Experience.
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import { missions, chapterByN, todo, knots } from '@lib/data';
+import { artImage, sketchImage } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../../site.config.mjs';
+
+const mark = artImage('emblems', 'site-mark');
+const map = sketchImage('lostmans-river-hand-map.png');
+const mattsList = todo.filter((t) => t.chapter_added <= 2).slice(0, 6);
+const clues = missions.filter((m) => m.clue);
+const locked = !!site.gate?.live;
+---
+
+<Base title="Field Journal" description="The Assistant Fishing Guide Field Journal: print it, fill it in by hand, get each field mission signed off." noindex>
+  <div class="wrap section no-print">
+    <p class="small"><a href={url('/missions/')}>← Your summer</a></p>
+    <h1>Field Journal</h1>
+    <p class="lede">
+      Print it, punch it, clip it to a board. Every field mission gets a page to write and draw on, and a line for your grown-up to sign. Pencil works best; it doesn’t run when it gets wet.
+    </p>
+    <p class="cluster">
+      <button class="btn btn-primary" type="button" id="print">Print the journal</button>
+      <span class="small muted">{missions.length + 7} pages, letter size. Black and white is fine.</span>
+    </p>
+    {
+      locked && (
+        <div class="journal-lock" id="journal-lock">
+          <p class="hand journal-lock-h">The Field Journal comes with the Full Experience</p>
+          <p class="small">The first pages are here to look at. The whole journal prints once the Experience is on this device.</p>
+          <p class="cluster">
+            <a class="btn btn-primary" href={site.checkout.url} rel="noopener" data-track="buy_click" data-track-page="journal">
+              Get the Full Experience {site.checkout.price}
+            </a>
+            <a class="small" href={url('/restore/')}>Already bought it?</a>
+          </p>
+        </div>
+      )
+    }
+  </div>
+
+  <div class:list={['journal', { 'is-locked': locked }]} id="journal">
+    <!-- cover -->
+    <section class="jp jp-cover">
+      {mark && <Image class="jc-mark" src={mark} alt="" width={240} height={240} loading="eager" />}
+      <p class="jc-eyebrow hand">Chokoloskee Island · Ten Thousand Islands</p>
+      <h2 class="jc-title">Field Journal</h2>
+      <p class="jc-sub">of an Assistant Fishing Guide</p>
+      <div class="jc-lines">
+        <p class="fill"><span>Name</span></p>
+        <p class="fill"><span>Started</span></p>
+        <p class="fill"><span>My captain (the grown-up who signs)</span></p>
+      </div>
+      {map && <Image class="jc-map" src={map} alt="Lostman’s River, drawn by Linda McKillop" width={900} loading="eager" />}
+      <p class="jp-foot mono">From the novel <em>Escape to Lostman’s River</em> by {site.authors}. Map drawn by {site.artist}.</p>
+    </section>
+
+    <!-- how it works -->
+    <section class="jp">
+      <h2 class="jp-h">How this journal works</h2>
+      <div class="two">
+        <div>
+          <h3>For you</h3>
+          <ol>
+            <li>Read (or listen to) a chapter.</li>
+            <li>Answer Dan’s question in the app.</li>
+            <li>Then turn to that chapter’s page here and do the field mission for real.</li>
+            <li>Write and draw what happened. Messy is fine; real field notes get wet.</li>
+            <li>Get your captain to sign the line at the bottom. Then tap “Captain’s sign-off” in the app so it counts on your license.</li>
+          </ol>
+        </div>
+        <div>
+          <h3>For the grown-up (the captain)</h3>
+          <ul>
+            <li>Sign a page only when you saw the field mission done.</li>
+            <li>Missions marked <strong>“grown-up with you”</strong> happen near water, hooks or wildlife. Be there.</li>
+            <li>Nowhere near water? Most pages have an at-home version.</li>
+            <li>One chapter a day finishes the book in about three weeks; two a week fills a summer.</li>
+            <li>Ask about the chapter. The best question is “what would you have done?”</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Rules on the water</h3>
+      <ul class="rules">
+        <li>Life jacket on in any small boat.</li>
+        <li>Never fish or swim alone.</li>
+        <li>Give wildlife room: snakes, alligators, sharks, stingrays.</li>
+        <li>When thunder roars, go indoors.</li>
+        <li>Fishing rules change; your captain checks them before you go.</li>
+      </ul>
+    </section>
+
+    <!-- my list -->
+    <section class="jp">
+      <h2 class="jp-h">My list</h2>
+      <p>Matt keeps a list of what he wants out of the summer, and checks things off as they happen. A few of his:</p>
+      <ul class="matt-list hand">{mattsList.map((t) => <li>{t.item}</li>)}</ul>
+      <p>Now yours. Check them off as the summer goes.</p>
+      <ol class="my-list">{Array.from({ length: 12 }, () => <li><span class="box" /></li>)}</ol>
+    </section>
+
+    <!-- case file -->
+    <section class="jp">
+      <h2 class="jp-h">Case file: what’s going on at Lostman’s River?</h2>
+      <p>Something is happening at night out there. Log each clue when you reach it. Don’t look ahead.</p>
+      {
+        clues.map((m, i) => (
+          <div class="clue">
+            <p class="clue-h mono">
+              Clue {i + 1} · Chapter {m.chapter} · {m.title}
+            </p>
+            <div class="ruled r3" />
+          </div>
+        ))
+      }
+      <div class="clue">
+        <p class="clue-h mono">Chapter 20 · My guess before I read it</p>
+        <div class="ruled r3" />
+      </div>
+    </section>
+
+    <!-- one page per field mission -->
+    {
+      missions.map((m) => {
+        const spot = artImage('chapters', `ch-${String(m.chapter).padStart(2, '0')}`);
+        return (
+          <section class="jp jp-mission">
+            <header class="jm-head">
+              <div>
+                <p class="mono jm-ch">
+                  Chapter {m.chapter} · {chapterByN.get(m.chapter)?.title}
+                </p>
+                <h2 class="jm-title">{m.field.title}</h2>
+              </div>
+              {spot && <Image class="jm-spot" src={spot} alt="" width={200} height={200} loading="lazy" />}
+            </header>
+            <p class="jm-do">{m.field.do}</p>
+            <p class="jm-need small">
+              <strong>You need:</strong> {m.field.need}
+              {m.field.adult && <strong class="jm-adult"> · a grown-up with you</strong>}
+            </p>
+            {m.field.home && (
+              <p class="jm-need small">
+                <strong>Nowhere near water?</strong> {m.field.home}
+              </p>
+            )}
+            <div class="jm-meta">
+              <p class="fill">
+                <span>Date</span>
+              </p>
+              <p class="fill">
+                <span>Weather</span>
+              </p>
+              <p class="fill">
+                <span>Where</span>
+              </p>
+            </div>
+            <p class="jm-log">
+              <strong>Log it:</strong> {m.field.log}
+            </p>
+            <div class="ruled r7" />
+            <div class="sketch">
+              <span class="mono">Sketch</span>
+            </div>
+            <div class="signline">
+              <p class="fill">
+                <span>Captain’s signature</span>
+              </p>
+              <p class="fill short">
+                <span>Date</span>
+              </p>
+            </div>
+          </section>
+        );
+      })
+    }
+
+    <!-- fish log -->
+    <section class="jp">
+      <h2 class="jp-h">Fish log</h2>
+      <p>Every fish you catch, or see caught, all summer. Measure from the nose to the tip of the tail.</p>
+      <table class="log">
+        <thead>
+          <tr><th>Date</th><th>Fish</th><th>Where</th><th>Length</th><th>Kept or released</th></tr>
+        </thead>
+        <tbody>{Array.from({ length: 16 }, () => <tr><td /><td /><td /><td /><td /></tr>)}</tbody>
+      </table>
+    </section>
+
+    <!-- knot log -->
+    <section class="jp">
+      <h2 class="jp-h">Knot log</h2>
+      <p>Tie each one on real line until you can do it without looking. Then tie it in front of your captain.</p>
+      <table class="log knots">
+        <thead>
+          <tr><th>Knot</th><th>What it’s for</th><th>Tied it on</th><th>Captain’s initials</th></tr>
+        </thead>
+        <tbody>
+          {
+            knots.map((k) => (
+              <tr>
+                <td><strong>{k.name}</strong></td>
+                <td class="small">{k.use}</td>
+                <td />
+                <td />
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <!-- the guidebook -->
+    <section class="jp">
+      <h2 class="jp-h">The Guidebook</h2>
+      <p>At the end of the summer, Matt finds his dad’s name in the Guidebook, writes his own under it, and leaves room for whoever comes next. Your turn.</p>
+      <div class="guidebook">
+        <p class="fill"><span>Matt’s dad</span></p>
+        <p class="fill"><span>Matt</span></p>
+        <p class="fill"><span>Me</span></p>
+        <p class="fill"><span>Whoever comes next</span></p>
+      </div>
+      <p class="small">Then sign Mission 23 in the app and print your license.</p>
+    </section>
+  </div>
+
+  <script>
+    import { getKey } from '../../scripts/access';
+    import { load, countField } from '../../scripts/progress';
+    import { track } from '../../scripts/track';
+    const journal = document.getElementById('journal')!;
+    if (getKey()) {
+      document.getElementById('journal-lock')?.remove();
+      journal.classList.remove('is-locked');
+    }
+    document.getElementById('print')!.addEventListener('click', () => {
+      if (journal.classList.contains('is-locked')) {
+        document.getElementById('journal-lock')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      track('journal_print', { signed: countField(load()) });
+      window.print();
+    });
+  </script>
+</Base>
+
+<style>
+  .journal-lock {
+    margin: 1rem 0 0;
+    padding: 1rem 1.1rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-left: 4px solid var(--sunrise);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .journal-lock-h {
+    font-size: 1.35rem;
+    color: var(--sunrise-ink);
+    margin: 0 0 0.3rem;
+  }
+  /* the pages: paper cards on screen, one sheet each in print */
+  .journal {
+    --jink: #1f2a2e;
+    --jsoft: #5b676b;
+    --jline: #c9c2b4;
+    --jgreen: #2f5d50;
+    --jorange: #a04d12;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    justify-items: center;
+    padding: 0 var(--gutter) 3rem;
+  }
+  .journal.is-locked .jp:nth-child(n + 4) {
+    display: none;
+  }
+  .jp {
+    width: 100%;
+    max-width: 8.5in;
+    background: #fffdf8;
+    color: var(--jink);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.15);
+    padding: 0.6in 0.65in;
+    font-size: 11.5pt;
+    line-height: 1.4;
+    position: relative;
+  }
+  .jp :global(a) {
+    color: inherit;
+  }
+  .jp h3 {
+    font-size: 1.05rem;
+    color: var(--jgreen);
+    margin: 0.8rem 0 0.3rem;
+  }
+  .jp-h {
+    color: var(--jgreen);
+    font-size: 1.6rem;
+    margin: 0 0 0.6rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 2px solid var(--jgreen);
+  }
+  .jp-foot {
+    font-size: 0.7rem;
+    color: var(--jsoft);
+    text-align: center;
+    margin: 1rem 0 0;
+  }
+  .fill {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    margin: 0;
+    min-height: 2.1rem;
+    border-bottom: 1px solid var(--jink);
+  }
+  .fill span {
+    font-size: 0.72rem;
+    font-family: var(--font-mono, monospace);
+    color: var(--jsoft);
+    white-space: nowrap;
+    padding-bottom: 0.15rem;
+  }
+  .ruled {
+    background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(0.34in - 1px), var(--jline) calc(0.34in - 1px), var(--jline) 0.34in);
+  }
+  .r3 {
+    height: calc(0.34in * 3);
+  }
+  .r7 {
+    height: calc(0.34in * 7);
+  }
+  .two {
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 640px) {
+    .two {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .two ol,
+  .two ul,
+  .rules {
+    padding-left: 1.2rem;
+    margin: 0;
+  }
+  .two li,
+  .rules li {
+    margin-bottom: 0.3rem;
+  }
+
+  /* cover */
+  .jp-cover {
+    text-align: center;
+  }
+  .jc-mark {
+    width: 1.1in;
+    height: 1.1in;
+    margin: 0 auto;
+  }
+  .jc-eyebrow {
+    color: var(--jorange);
+    font-size: 1.3rem;
+    margin: 0.3rem 0 0;
+  }
+  .jc-title {
+    font-size: 3.2rem;
+    line-height: 1;
+    color: var(--jgreen);
+    margin: 0.2rem 0 0;
+  }
+  .jc-sub {
+    font-size: 1.3rem;
+    margin: 0.2rem 0 1rem;
+    color: var(--jsoft);
+  }
+  .jc-lines {
+    display: grid;
+    gap: 0.4rem;
+    max-width: 5in;
+    margin: 0 auto 1rem;
+    text-align: left;
+  }
+  .jc-map {
+    width: auto;
+    max-width: 100%;
+    max-height: 4.6in;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+  }
+
+  /* my list, case file */
+  .matt-list {
+    font-size: 1.25rem;
+    columns: 2;
+    margin: 0.3rem 0 0.8rem;
+  }
+  .my-list {
+    margin: 0.5rem 0 0;
+    padding-left: 1.6rem;
+  }
+  .my-list li {
+    height: 0.42in;
+    border-bottom: 1px solid var(--jline);
+    position: relative;
+  }
+  .my-list .box {
+    position: absolute;
+    right: 0;
+    bottom: 0.08in;
+    width: 0.2in;
+    height: 0.2in;
+    border: 1.5px solid var(--jink);
+  }
+  .clue {
+    margin: 0.7rem 0 0;
+  }
+  .clue-h {
+    font-size: 0.78rem;
+    color: var(--jorange);
+    margin: 0 0 0.1rem;
+  }
+
+  /* mission pages */
+  .jm-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    border-bottom: 2px solid var(--jgreen);
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.6rem;
+  }
+  .jm-ch {
+    font-size: 0.75rem;
+    color: var(--jorange);
+    margin: 0;
+  }
+  .jm-title {
+    font-size: 1.55rem;
+    color: var(--jgreen);
+    margin: 0;
+    line-height: 1.15;
+  }
+  .jm-spot {
+    width: 0.85in;
+    height: 0.85in;
+    object-fit: contain;
+    flex: none;
+  }
+  .jm-do {
+    margin: 0 0 0.4rem;
+  }
+  .jm-need {
+    margin: 0 0 0.25rem;
+    color: var(--jsoft);
+  }
+  .jm-adult {
+    color: var(--jgreen);
+  }
+  .jm-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr;
+    gap: 0.8rem;
+    margin: 0.4rem 0 0.6rem;
+  }
+  .jm-log {
+    margin: 0 0 0.1rem;
+  }
+  .sketch {
+    height: 2.6in;
+    border: 1.5px dashed var(--jline);
+    border-radius: 6px;
+    margin-top: 0.3rem;
+    position: relative;
+  }
+  .sketch span {
+    position: absolute;
+    left: 0.5rem;
+    top: 0.3rem;
+    font-size: 0.7rem;
+    color: var(--jsoft);
+  }
+  .signline {
+    display: grid;
+    grid-template-columns: 2.4fr 1fr;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  /* logs */
+  .log {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+  }
+  .log th {
+    text-align: left;
+    font-size: 0.75rem;
+    font-family: var(--font-mono, monospace);
+    color: var(--jsoft);
+    border-bottom: 1.5px solid var(--jink);
+    padding: 0.2rem 0.3rem;
+  }
+  .log td {
+    border-bottom: 1px solid var(--jline);
+    height: 0.42in;
+    padding: 0.2rem 0.3rem;
+    vertical-align: middle;
+  }
+  .knots td {
+    height: 0.8in;
+  }
+  .guidebook {
+    display: grid;
+    gap: 1.2rem;
+    margin: 1.2rem 0;
+  }
+
+  @media print {
+    :global(header.site-header),
+    :global(footer.site-footer),
+    :global(.skip-link),
+    .no-print {
+      display: none !important;
+    }
+    :global(body),
+    :global(main) {
+      background: #fff !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .journal {
+      display: block;
+      padding: 0;
+    }
+    .jp {
+      max-width: none;
+      box-shadow: none;
+      padding: 0;
+      height: 10in;
+      overflow: hidden;
+      break-after: page;
+      background: #fff;
+    }
+    .jp:last-child {
+      break-after: auto;
+    }
+    .two {
+      grid-template-columns: 1fr 1fr;
+    }
+    @page {
+      size: letter portrait;
+      margin: 0.5in;
+    }
+  }
+</style>

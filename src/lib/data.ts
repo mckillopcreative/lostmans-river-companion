@@ -159,6 +159,20 @@ export interface Mission {
   explain: string;
   badge?: string;
   clue?: boolean;
+  /** The "do it for real" task: done off the screen, signed off by a grown-up, logged in the Field Journal. */
+  field: FieldTask;
+}
+export interface FieldTask {
+  title: string;
+  do: string;
+  need: string;
+  /** A version for readers nowhere near water. */
+  home?: string;
+  /** What to write or draw in the Field Journal. */
+  log: string;
+  /** Needs a grown-up there, not only to sign. */
+  adult: boolean;
+  link?: { href: string; label: string };
 }
 export interface Sketch {
   file: string;

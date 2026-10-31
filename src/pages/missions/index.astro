@@ -22,12 +22,17 @@ const badges = [
       <div>
         <p class="eyebrow">Assistant Guide training</p>
         <h1>Your summer</h1>
-        <p class="lede">One mission per chapter, set by Dan. Read the chapter, do the mission, earn the badge. Your progress stays on this phone; nothing is sent anywhere.</p>
+        <p class="lede">
+          Two missions per chapter, set by Dan. Read the chapter and answer his question, then do the field mission for real and get a grown-up to sign it off. Your name stays on this
+          device.
+        </p>
+        <p class="small"><a href={url('/field-journal/')}>Print the Field Journal →</a></p>
       </div>
     </header>
 
     <div class="status">
       <p class="pill is-current" id="done-pill">0 of 23 done</p>
+      <p class="pill field-pill" id="field-pill">0 of 23 field missions signed</p>
       <ul class="badges" aria-label="Badges">
         {
           badges.map((b) => {
@@ -59,6 +64,10 @@ const badges = [
                   </span>
                   <span class="m-title">{m.title}</span>
                   <span class="m-ch small muted">{chapterByN.get(m.chapter)?.title}</span>
+                  <span class="m-field small">
+                    Field: {m.field.title}
+                    <span class="m-field-mark" aria-label="signed off">· signed ✓</span>
+                  </span>
                 </span>
                 <span class="m-check" aria-hidden="true">✓</span>
               </a>
@@ -70,11 +79,17 @@ const badges = [
   </div>
 
   <script>
-    import { load, countDone } from '../../scripts/progress';
+    import { load, pull, countDone, countField, type Progress } from '../../scripts/progress';
+    const render = (p: Progress) => {
+      document.getElementById('done-pill')!.textContent = `${countDone(p)} of 23 done`;
+      document.getElementById('field-pill')!.textContent = `${countField(p)} of 23 field missions signed`;
+      for (const id of Object.keys(p.missions)) document.querySelector(`[data-mission="${id}"]`)?.classList.add('done');
+      for (const id of Object.keys(p.field)) document.querySelector(`[data-mission="${id}"]`)?.classList.add('field-done');
+      for (const b of p.badges) document.querySelector(`[data-badge="${b}"]`)?.classList.add('earned');
+    };
     const p = load();
-    document.getElementById('done-pill')!.textContent = `${countDone(p)} of 23 done`;
-    for (const id of Object.keys(p.missions)) document.querySelector(`[data-mission="${id}"]`)?.classList.add('done');
-    for (const b of p.badges) document.querySelector(`[data-badge="${b}"]`)?.classList.add('earned');
+    render(p);
+    pull().then(render);
   </script>
 </Base>
 
@@ -189,6 +204,21 @@ const badges = [
     place-items: center;
     color: transparent;
     font-size: 0.9rem;
+  }
+  .field-pill {
+    background: color-mix(in srgb, var(--mangrove) 12%, var(--paper-2));
+    color: var(--mangrove);
+  }
+  .m-field {
+    color: var(--mangrove);
+    font-size: 0.8rem;
+  }
+  .m-field-mark {
+    display: none;
+    font-weight: 700;
+  }
+  .mission.field-done .m-field-mark {
+    display: inline;
   }
   .mission.done .m-check {
     background: var(--sunrise);

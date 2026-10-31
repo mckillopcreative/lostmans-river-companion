@@ -10,7 +10,7 @@
 //   POST /stripe/webhook        Stripe → key + welcome email
 //   GET  /session/:id           the key for a finished checkout (the welcome page polls this)
 //   GET  /key/:key              is this key valid?
-//   GET|PUT /progress/:key      the reader's missions, badges, start date
+//   GET|PUT /progress/:key      the reader's missions, field sign-offs, badges, start date
 //   POST /restore               {email} → re-send the link (same answer whether or not it exists)
 //   GET  /audio/:key/ch-NN.mp3  chapters 2–23 from R2, with Range support
 //   GET  /qr/:key.png           the start-link QR code for the email
@@ -112,9 +112,18 @@ async function fulfil(env, session) {
 function cleanProgress(p) {
   const missions = {};
   for (const id of Object.keys(p?.missions || {})) if (/^m\d{2}$/.test(id)) missions[id] = true;
+  const field = {};
+  for (const [id, d] of Object.entries(p?.field || {})) if (/^m\d{2}$/.test(id) && /^\d{4}-\d{2}-\d{2}$/.test(d)) field[id] = d;
   const badges = (Array.isArray(p?.badges) ? p.badges : []).filter((b) => BADGES.has(b));
   const started = /^\d{4}-\d{2}-\d{2}$/.test(p?.started || '') ? p.started : '';
-  return { missions, badges: [...new Set(badges)], started, updated: new Date().toISOString() };
+  return { missions, field, badges: [...new Set(badges)], started, updated: new Date().toISOString() };
+}
+
+// field sign-offs from two devices: keep every one, the earlier date when both have it
+function mergeField(a = {}, b = {}) {
+  const out = { ...a };
+  for (const [id, d] of Object.entries(b)) if (!out[id] || d < out[id]) out[id] = d;
+  return out;
 }
 
 // ---------- audio ----------
@@ -213,6 +222,7 @@ export default {
         const prev = JSON.parse((await env.LR.get(`p:${m[1]}`)) || '{}');
         const merged = cleanProgress({
           missions: { ...(prev.missions || {}), ...(incoming.missions || {}) },
+          field: mergeField(prev.field, incoming.field),
           badges: [...(prev.badges || []), ...(incoming.badges || [])],
           started: [prev.started, incoming.started].filter(Boolean).sort()[0] || '',
         });

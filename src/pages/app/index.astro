@@ -18,7 +18,7 @@ type Tile = { id: string; label: string; sub?: string; href: string; emblem?: st
 const tiles: Tile[] = [
   { id: 'read', label: 'Read the book', sub: `${chapters.length} chapters`, href: '/ch/1/', emblem: 'about', size: 'big', art: ['emblems', 'journal-card'] },
   { id: 'listen', label: 'Listen to the book', sub: 'Chapter 1 ready', href: '/ch/1/#listen-ch-01', emblem: 'sketchbook', size: 'wide' },
-  { id: 'missions', label: 'Your summer', sub: '23 missions · 3 badges', href: '/missions/', emblem: 'list', size: 'tall' },
+  { id: 'missions', label: 'Your summer', sub: '23 missions · 23 field missions · 3 badges', href: '/missions/', emblem: 'list', size: 'tall' },
   { id: 'chart', label: 'The Chart', href: '/map/', emblem: 'chart' },
   { id: 'fish', label: 'Fish', sub: `${fish.length} species`, href: '/fish/', emblem: 'fish' },
   { id: 'crew', label: 'Crew', href: '/crew/', emblem: 'crew' },
@@ -34,7 +34,7 @@ const tiles: Tile[] = [
   { id: 'list', label: 'Matt’s List', sub: `${todo.length} items`, href: '/list/', emblem: 'list' },
   { id: 'sketchbook', label: 'Sketchbook', href: '/sketchbook/', emblem: 'sketchbook' },
   { id: 'printables', label: 'Your license', sub: 'print it', href: '/license/', emblem: 'list' },
-  { id: 'catch-log', label: 'Catch log', sub: 'your own', href: '/list/#mine', emblem: 'fish', soon: true },
+  { id: 'journal', label: 'Field Journal', sub: 'print it · fill it in by hand', href: '/field-journal/', emblem: 'sketchbook' },
 ];
 // a tile's art: its own file in tiles/, or a named plate (shown whole, not cropped), else the section emblem
 const hero = artImage('tiles', 'app-hero');

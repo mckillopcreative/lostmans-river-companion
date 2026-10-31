@@ -38,7 +38,8 @@ const blank = artImage('tiles', 'license-blank');
         <p class="lic-sub">This certifies that</p>
         <p class="lic-name" id="lic-name-out">____________________</p>
         <p class="lic-sub lic-count">
-          spent a summer at Lostman’s River, completed <strong id="lic-count">0</strong> of 23 missions, learned the water, and signed the Guidebook.
+          spent a summer at Lostman’s River, completed <strong id="lic-count">0</strong> of 23 missions and <strong id="lic-field">0</strong> field missions signed off by a captain, learned the
+          water, and signed the Guidebook.
         </p>
       </div>
       <ul class="lic-badges">
@@ -66,7 +67,7 @@ const blank = artImage('tiles', 'license-blank');
   </section>
 
   <script>
-    import { load, setName, countDone } from '../../scripts/progress';
+    import { load, setName, countDone, countField } from '../../scripts/progress';
     import { track } from '../../scripts/track';
     const p = load();
     const out = document.getElementById('lic-name-out')!;
@@ -75,6 +76,7 @@ const blank = artImage('tiles', 'license-blank');
       const q = load();
       out.textContent = q.name || '____________________';
       document.getElementById('lic-count')!.textContent = String(countDone(q));
+      document.getElementById('lic-field')!.textContent = String(countField(q));
       for (const b of q.badges) document.querySelector(`[data-badge="${b}"]`)?.classList.add('earned');
       document.getElementById('lic-date')!.textContent = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
     };

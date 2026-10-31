@@ -136,6 +136,53 @@ const payload = { id: m.id, type: m.type, answer: m.answer ?? null, accept: m.ac
           <a class="btn" href={url(`/ch/${m.chapter}/`)}>Back to the chapter</a>
         </p>
       </div>
+
+      <section class="field" id="field" aria-labelledby="field-h" data-id={m.id} data-locked={site.gate?.live && m.chapter > 1 ? '1' : undefined}>
+        <p class="eyebrow field-eyebrow">Do it for real · Field mission {m.chapter}</p>
+        <h2 id="field-h" class="field-title">{m.field.title}</h2>
+        <p class="field-do">{m.field.do}</p>
+        <dl class="field-facts">
+          <div>
+            <dt class="mono">You need</dt>
+            <dd>{m.field.need}{m.field.adult && <strong class="field-adult"> · a grown-up with you</strong>}</dd>
+          </div>
+          {
+            m.field.home && (
+              <div>
+                <dt class="mono">Nowhere near water?</dt>
+                <dd>{m.field.home}</dd>
+              </div>
+            )
+          }
+          <div>
+            <dt class="mono">In your Field Journal</dt>
+            <dd>{m.field.log}</dd>
+          </div>
+        </dl>
+        {
+          m.field.link && (
+            <p class="small">
+              <a href={m.field.link.href.startsWith('/') ? url(m.field.link.href) : m.field.link.href} rel={m.field.link.href.startsWith('/') ? undefined : 'noopener'}>
+                {m.field.link.label} →
+              </a>
+            </p>
+          )
+        }
+        <div class="signoff" id="signoff">
+          <button type="button" class="btn btn-primary" id="signoff-ask">Captain’s sign-off</button>
+          <div class="signoff-confirm" id="signoff-confirm" hidden>
+            <p><strong>Grown-up:</strong> did you see this field mission done?</p>
+            <p class="cluster">
+              <button type="button" class="btn btn-primary" id="signoff-yes">Yes, I saw it. Signed.</button>
+              <button type="button" class="btn" id="signoff-no">Not yet</button>
+            </p>
+          </div>
+          <p class="stamp hand" id="signoff-stamp" hidden></p>
+        </div>
+        <p class="small muted">
+          Print the <a href={url('/field-journal/')}>Field Journal</a> to log it on paper, with a line for the grown-up to sign.
+        </p>
+      </section>
     </div>
   </article>
 
@@ -143,7 +190,40 @@ const payload = { id: m.id, type: m.type, answer: m.answer ?? null, accept: m.ac
     import { getKey } from '../../scripts/access';
     // missions 2–23 open on a device holding a purchase key; the page still renders for search and preview
     if (getKey()) document.getElementById('mission-lock')?.remove();
-    else document.querySelector<HTMLElement>('#play[data-locked]')?.setAttribute('inert', '');
+    else document.querySelectorAll<HTMLElement>('#play[data-locked], #field[data-locked]').forEach((el) => el.setAttribute('inert', ''));
+  </script>
+
+  <script>
+    import { load, signField } from '../../scripts/progress';
+    import { track } from '../../scripts/track';
+    const field = document.getElementById('field')!;
+    const id = field.dataset.id!;
+    const ask = document.getElementById('signoff-ask')!;
+    const confirm = document.getElementById('signoff-confirm')!;
+    const stamp = document.getElementById('signoff-stamp')!;
+    const show = (date: string) => {
+      const d = new Date(date + 'T12:00:00').toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
+      stamp.textContent = `Signed off by the captain, ${d}`;
+      stamp.hidden = false;
+      ask.hidden = true;
+      confirm.hidden = true;
+      field.classList.add('is-signed');
+    };
+    const signed = load().field[id];
+    if (signed) show(signed);
+    ask.addEventListener('click', () => {
+      ask.hidden = true;
+      confirm.hidden = false;
+    });
+    document.getElementById('signoff-no')!.addEventListener('click', () => {
+      confirm.hidden = true;
+      ask.hidden = false;
+    });
+    document.getElementById('signoff-yes')!.addEventListener('click', () => {
+      const p = signField(id);
+      track('field_signoff', { id });
+      show(p.field[id]);
+    });
   </script>
 
   <script>
@@ -286,9 +366,67 @@ const payload = { id: m.id, type: m.type, answer: m.answer ?? null, accept: m.ac
     color: var(--sunrise-ink);
     margin: 0 0 0.3rem;
   }
-  #play[inert] {
+  #play[inert],
+  #field[inert] {
     opacity: 0.45;
     filter: grayscale(0.4);
+  }
+  .field {
+    margin-top: 2rem;
+    padding: 1.1rem 1.25rem 0.75rem;
+    background: color-mix(in srgb, var(--mangrove) 8%, var(--paper-2));
+    border: 1.5px dashed color-mix(in srgb, var(--mangrove) 55%, transparent);
+    border-radius: var(--radius);
+  }
+  .field-eyebrow {
+    color: var(--mangrove);
+  }
+  .field-title {
+    margin: 0.1rem 0 0.5rem;
+    color: var(--mangrove);
+  }
+  .field-do {
+    font-size: 1.1rem;
+  }
+  .field-facts {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0.75rem 0;
+  }
+  .field-facts dt {
+    font-size: 0.7rem;
+    color: var(--sunrise-ink);
+  }
+  .field-facts dd {
+    margin: 0.1rem 0 0;
+  }
+  .field-adult {
+    color: var(--mangrove);
+  }
+  .signoff {
+    margin: 1rem 0 0.75rem;
+  }
+  .signoff-confirm {
+    padding: 0.75rem 1rem;
+    background: var(--paper-2);
+    border-left: 4px solid var(--sunrise);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .signoff-confirm p {
+    margin: 0 0 0.5rem;
+  }
+  .stamp {
+    display: inline-block;
+    margin: 0;
+    padding: 0.35rem 0.9rem;
+    font-size: 1.35rem;
+    color: var(--mangrove);
+    border: 2.5px solid var(--mangrove);
+    border-radius: 6px;
+    transform: rotate(-2deg);
+  }
+  .signoff [hidden] {
+    display: none !important;
   }
   .crumbs {
     margin-bottom: 0.5rem;
