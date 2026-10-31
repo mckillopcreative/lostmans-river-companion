@@ -8,6 +8,8 @@
 //   label: which prop becomes the text label   value: which prop becomes the number
 export const EVENTS = {
   buy_click: { label: 'page' },
+  waitlist_click: { label: 'page' },
+  waitlist_join: { label: 'page' },
   amazon_click: { label: 'page' },
   checkout_return: {},
   tile_click: { label: 'tile' },

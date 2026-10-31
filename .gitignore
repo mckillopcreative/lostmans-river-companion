@@ -12,3 +12,6 @@ public/audio/*
 
 # wrangler local state
 worker/.wrangler/
+
+# the full-book reader text (scripts/export-text.mjs); served from R2 to key holders, never committed
+private/

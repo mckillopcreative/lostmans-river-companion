@@ -30,6 +30,9 @@ function context() {
   return { src, own };
 }
 
+/** The first-touch campaign code, so a waitlist signup can say which ad brought it. */
+export const campaign = () => context().src;
+
 export function track(name: string, props?: Props) {
   // the ad pixel (parent-facing landing page only, ad-referred visits only) mirrors a few events
   (window as W).lrAds?.(name, props);

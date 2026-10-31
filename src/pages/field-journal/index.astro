@@ -7,6 +7,7 @@ import Base from '@layouts/Base.astro';
 import { missions, chapterByN, todo, knots } from '@lib/data';
 import { artImage, sketchImage } from '@lib/images';
 import { url } from '@lib/url';
+import { buyHref, buyTrack, buyLabel } from '@lib/buy';
 import site from '../../../site.config.mjs';
 
 const mark = artImage('emblems', 'site-mark');
@@ -33,8 +34,8 @@ const locked = !!site.gate?.live;
           <p class="hand journal-lock-h">The Field Journal comes with the Full Experience</p>
           <p class="small">The first pages are here to look at. The whole journal prints once the Experience is on this device.</p>
           <p class="cluster">
-            <a class="btn btn-primary" href={site.checkout.url} rel="noopener" data-track="buy_click" data-track-page="journal">
-              Get the Full Experience {site.checkout.price}
+            <a class="btn btn-primary" href={buyHref} data-track={buyTrack} data-track-page="journal">
+              {buyLabel}
             </a>
             <a class="small" href={url('/restore/')}>Already bought it?</a>
           </p>

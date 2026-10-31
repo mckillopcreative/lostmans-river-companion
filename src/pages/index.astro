@@ -12,6 +12,7 @@ import BuyButton from '@components/BuyButton.astro';
 import ExperienceBanner from '@components/ExperienceBanner.astro';
 import ReviewsStrip from '@components/ReviewsStrip.astro';
 import HowItWorks from '@components/HowItWorks.astro';
+import WhatsIncluded from '@components/WhatsIncluded.astro';
 import ChapterPill from '@components/ChapterPill.astro';
 import {
   chapters,
@@ -36,6 +37,7 @@ import {
 } from '@lib/data';
 import { artImage, sketchImage, coverImage } from '@lib/images';
 import { url } from '@lib/url';
+import { buyHref, isOpen } from '@lib/buy';
 import site from '../../site.config.mjs';
 
 // The titled journal (GPT, Oct 13) with the untitled emblem as fallback.
@@ -92,10 +94,16 @@ const ld = [
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: site.checkout.name,
-    description: 'The novel read aloud, 23 missions, real saltwater fishing skills, chart and knot puzzles, and a printable Assistant Guide license. Ages 10 to 15.',
+    description: 'The whole novel to read and hear read aloud, 23 missions and 23 real-world field missions, a printable Field Journal, chart and knot puzzles, and a printable Assistant Guide license. Ages 10 to 15.',
     brand: { '@type': 'Brand', name: 'Lostman’s River' },
     image: new URL('/social-share.jpg', Astro.site).toString(),
-    offers: { '@type': 'Offer', price: site.checkout.price.replace(/[^0-9.]/g, ''), priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: site.checkout.url },
+    offers: {
+      '@type': 'Offer',
+      price: site.checkout.price.replace(/[^0-9.]/g, ''),
+      priceCurrency: 'USD',
+      availability: isOpen ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+      url: new URL(buyHref, Astro.site).toString(),
+    },
   },
 ];
 ---
@@ -141,6 +149,9 @@ const ld = [
 
   <!-- ===== What readers say ===== -->
   <ReviewsStrip />
+
+  <!-- ===== What the one price buys ===== -->
+  <WhatsIncluded />
 
   <!-- ===== How a purchase reaches the reader's own device ===== -->
   <HowItWorks />

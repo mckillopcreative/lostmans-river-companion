@@ -3,6 +3,7 @@
 // The answer is the same whether or not the email bought anything, so it reveals nothing.
 import Base from '@layouts/Base.astro';
 import { url } from '@lib/url';
+import { buyHref, isOpen } from '@lib/buy';
 import site from '../../../site.config.mjs';
 ---
 
@@ -17,7 +18,7 @@ import site from '../../../site.config.mjs';
       <button class="btn btn-primary" type="submit">Send my link</button>
     </form>
     <p class="hand restore-msg" id="r-msg" aria-live="polite"></p>
-    <p class="small muted">Still stuck? Email <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a> and a person will sort it out. Haven’t bought it yet? <a href={site.checkout.url} rel="noopener">Get the Full Experience</a>.</p>
+    <p class="small muted">Still stuck? Email <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a> and a person will sort it out. Haven’t bought it yet? <a href={buyHref}>{isOpen ? 'Get the Full Experience' : `It opens ${site.checkout.opens}; join the list`}</a>.</p>
     <p class="small"><a href={url('/')}>← Back to Lostman’s River</a></p>
   </section>
 

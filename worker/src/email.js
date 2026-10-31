@@ -4,6 +4,45 @@ const SITE = 'https://lostmansriver.com';
 const API = 'https://api.lostmansriver.com';
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
+// Opening day. Keep in step with site.config.mjs → checkout.opens.
+export const OPENS = 'Friday, November 27';
+
+// The one email a waitlist signup gets before opening day.
+export function waitlistEmail(leave) {
+  const subject = 'You’re on the list for Lostman’s River';
+  const text = [
+    'Thanks. You’re on the list.',
+    '',
+    `The Summer Fishing Guide Experience opens ${OPENS}. We’ll email you that morning, once, with the link.`,
+    '',
+    'What your reader gets: the whole book, to read and to hear read aloud, chapter by chapter; 23 missions in the app and 23 field missions done for real, each signed off by a grown-up; a printable Field Journal; three badges; and an Assistant Fishing Guide license at the end.',
+    '',
+    'Buying it as a gift? It arrives instantly, with a printable gift card, so it works right up to the last minute.',
+    '',
+    'Until then, chapter 1 is free to read and hear at https://lostmansriver.com/ch/1/',
+    '',
+    'Linda and John McKillop',
+    '',
+    `Changed your mind? Take me off the list: ${leave}`,
+  ].join('\n');
+  const p = (s, extra = '') => `<p style="margin:0 0 14px;font-size:16px;line-height:1.5;color:#1f2a2e;${extra}">${s}</p>`;
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f6f1e7;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f1e7;"><tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#fbf8f1;border:1px solid #e2d9c7;border-radius:14px;">
+<tr><td style="padding:28px 28px 20px;font-family:Georgia,'Times New Roman',serif;">
+  <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">You’re on the list</p>
+  <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Summer Fishing Guide Experience</h1>
+  ${p(`It opens <strong>${OPENS}</strong>. We’ll email you that morning, once, with the link.`)}
+  ${p('<strong>What your reader gets:</strong> the whole book, to read and to hear read aloud, chapter by chapter; 23 missions in the app and 23 field missions done for real, each signed off by a grown-up; a printable Field Journal; three badges; and an Assistant Fishing Guide license at the end.')}
+  ${p('<strong>Buying it as a gift?</strong> It arrives instantly, with a printable gift card, so it works right up to the last minute.', 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
+  ${p(`Until then, <a href="${SITE}/ch/1/" style="color:#2a7f8e;">chapter 1 is free to read and hear</a>.`)}
+  <p style="margin:18px 0 0;font-size:16px;color:#2f5d50;font-style:italic;">Linda and John McKillop</p>
+  <p style="margin:22px 0 0;font-size:13px;color:#4b5a60;">Changed your mind? <a href="${esc(leave)}" style="color:#4b5a60;">Take me off the list</a>.</p>
+</td></tr>
+</table></td></tr></table></body></html>`;
+  return { subject, text, html };
+}
+
 export function startLink(key) {
   return `${SITE}/start/#${key}`;
 }

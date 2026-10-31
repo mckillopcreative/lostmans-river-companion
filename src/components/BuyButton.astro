@@ -1,7 +1,9 @@
 ---
 // The one Buy button: Stripe Payment Link from site.config, with the paperback pointed at
-// Amazon underneath (no shipping sold here; decided 2026-10-20).
+// Amazon underneath (no shipping sold here; decided 2026-10-20). Before opening day it goes to
+// the waitlist instead (src/lib/buy.ts).
 import site from '../../site.config.mjs';
+import { isOpen, buyHref, buyTrack, opens, price } from '@lib/buy';
 
 interface Props {
   compact?: boolean;
@@ -11,21 +13,29 @@ interface Props {
   note?: boolean;
 }
 const { compact = false, label = 'Get the Full Experience', note = true } = Astro.props;
-const c = site.checkout;
 ---
 
-{
-  c?.url && (
-    <div class:list={['buy', { compact }]}>
-      <a class="btn btn-primary buy-btn" href={c.url} rel="noopener" data-track="buy_click" data-track-page={Astro.url.pathname}>
-        {label} <span class="buy-price mono">{c.price}</span>
-      </a>
-      {note && <p class="small muted buy-note">
-        One-time purchase, 30-day refund. Want the paperback? <a href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page={Astro.url.pathname}>It’s on Amazon</a>{site.reviews && <>, rated <strong>{site.reviews.rating}</strong> by {site.reviews.count} readers</>}.
-      </p>}
-    </div>
-  )
-}
+<div class:list={['buy', { compact }]}>
+  <a class="btn btn-primary buy-btn" href={buyHref} rel={isOpen ? 'noopener' : undefined} data-track={buyTrack} data-track-page={Astro.url.pathname}>
+    {isOpen ? label : `Opens ${opens}: join the list`} <span class="buy-price mono">{price}</span>
+  </a>
+  {
+    note && (
+      <p class="small muted buy-note">
+        {isOpen ? 'One-time purchase, 30-day refund.' : `One-time purchase. We’ll email you once, on ${opens}.`} Want the paperback?{' '}
+        <a href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page={Astro.url.pathname}>
+          It’s on Amazon
+        </a>
+        {site.reviews && (
+          <>
+            , rated <strong>{site.reviews.rating}</strong> by {site.reviews.count} readers
+          </>
+        )}
+        .
+      </p>
+    )
+  }
+</div>
 
 <style>
   .buy {

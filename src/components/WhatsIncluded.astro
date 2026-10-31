@@ -1,0 +1,83 @@
+---
+// What the one price buys, for the parent deciding. Used on the landing page and /waitlist/.
+import { missions } from '@lib/data';
+import audioData from '../../data/audio.json';
+import { price } from '@lib/buy';
+
+const hours = Math.round(Object.values(audioData.minutes as Record<string, number>).reduce((a, b) => a + b, 0) / 60);
+const items = [
+  { t: 'The whole book', d: `Read it on screen, or listen to all ${missions.length} chapters read aloud: about ${hours} hours, narrated with an AI voice.` },
+  { t: `${missions.length} missions`, d: 'One per chapter, set by Uncle Dan: rig the poles, read the water, pick the tide, crack the case.' },
+  { t: `${missions.length} field missions`, d: 'Done for real, off the screen: knots on real line, a treasure map, a cleanup, a fishing day. A grown-up signs each one off.' },
+  { t: 'The Field Journal', d: '30 printable pages to fill in by hand with a pencil: logs, sketches, the case file, a fish log and a knot log.' },
+  { t: 'Badges and a license', d: 'Three badges along the way and a printable Assistant Fishing Guide license at the end.' },
+  { t: 'Gift-ready', d: 'Arrives instantly with a printable gift card. Works on their phone, tablet or computer; no account, no app.' },
+];
+---
+
+<section class="incl" aria-labelledby="incl-h">
+  <div class="wrap-wide">
+    <p class="eyebrow">The Summer Fishing Guide Experience</p>
+    <h2 id="incl-h">Everything a summer at Lostman’s River needs, for {price}</h2>
+    <ul class="incl-list" data-reveal-stagger>
+      {
+        items.map((i) => (
+          <li>
+            <h3>{i.t}</h3>
+            <p>{i.d}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="small muted incl-foot">For readers about 10 to 15. One price for the household, on as many of your family’s devices as you like. The chart, fish, crew and knots on this site stay free for everyone.</p>
+  </div>
+</section>
+
+<style>
+  .incl {
+    padding-block: 1.75rem 0.5rem;
+  }
+  .incl h2 {
+    margin: 0.1rem 0 1rem;
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+  }
+  .incl-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .incl-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 980px) {
+    .incl-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .incl-list li {
+    padding: 1rem 1.1rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-left: 4px solid var(--mangrove);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .incl-list h3 {
+    margin: 0 0 0.3rem;
+    font-size: 1.05rem;
+    color: var(--mangrove);
+  }
+  .incl-list p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .incl-foot {
+    margin: 0.8rem 0 0;
+    max-width: 70ch;
+  }
+</style>

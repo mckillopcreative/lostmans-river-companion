@@ -6,6 +6,7 @@ import ChapterPill from '@components/ChapterPill.astro';
 import { missions, chapterByN, fishById, placeById, type Mission } from '@lib/data';
 import { artImage } from '@lib/images';
 import { url } from '@lib/url';
+import { buyHref, buyTrack, buyLabel } from '@lib/buy';
 import site from '../../../site.config.mjs';
 
 export function getStaticPaths() {
@@ -47,10 +48,10 @@ const payload = { id: m.id, type: m.type, answer: m.answer ?? null, accept: m.ac
         site.gate?.live && m.chapter > 1 && (
           <div class="mission-lock" id="mission-lock">
             <p class="hand mission-lock-h">Mission {m.chapter} is part of the Full Experience</p>
-            <p class="small">Mission 1 is free. The other 22, the three badges and the Assistant Guide license come with the Experience, along with every chapter read aloud.</p>
+            <p class="small">Mission 1 is free. The other 22, their field missions, the Field Journal, the three badges and the Assistant Guide license come with the Experience, along with the whole book to read and hear.</p>
             <p class="cluster">
-              <a class="btn btn-primary" href={site.checkout.url} rel="noopener" data-track="buy_click" data-track-page={`mission-${m.chapter}`}>
-                Get the Full Experience {site.checkout.price}
+              <a class="btn btn-primary" href={buyHref} data-track={buyTrack} data-track-page={`mission-${m.chapter}`}>
+                {buyLabel}
               </a>
               <a class="small" href={url('/restore/')}>Already bought it?</a>
             </p>

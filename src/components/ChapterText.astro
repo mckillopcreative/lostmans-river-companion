@@ -1,9 +1,13 @@
 ---
-// The free reading sample: the welcome line, the chapter heading, the opening paragraphs, and
-// the rest of the chapter behind a "Keep reading" fold (a <details>, so it works without JS).
-// Only chapter 1 has a sample (data/sample-ch01.json, from scripts/extract-sample.mjs).
+// Chapter 1: the free reading sample: the welcome line, the chapter heading, the opening
+// paragraphs, and the rest behind a "Keep reading" fold (a <details>, so it works without JS),
+// from data/sample-ch01.json (scripts/extract-sample.mjs).
+// Chapters 2–23: the full-book reader. The text is never in the page; on a device holding a
+// purchase key it is fetched from the Worker (from 2026-11-26, after KDP Select) and set here.
 import sample from '../../data/sample-ch01.json';
 import site from '../../site.config.mjs';
+import { chapterByN } from '@lib/data';
+import { url } from '@lib/url';
 import BuyButton from './BuyButton.astro';
 
 interface Props {
@@ -15,7 +19,31 @@ const { n, open = 3 } = Astro.props;
 const s = sample.n === n ? sample : null;
 const head = s?.paragraphs.slice(0, open) ?? [];
 const rest = s?.paragraphs.slice(open) ?? [];
+const full = !s && n >= 2 && n <= 23 && !!site.gate?.live;
+const title = chapterByN.get(n)?.title ?? '';
+const next = chapterByN.get(n + 1);
 ---
+
+{
+  full && (
+    <section class="read read-full" id={`read-ch-${String(n).padStart(2, '0')}`} aria-labelledby="read-h" data-ch={n} hidden>
+      <h2 id="read-h" class="read-title">
+        Chapter {n} <span class="read-dash">–</span> <em>{title}</em>
+      </h2>
+      <p class="read-status small muted" aria-live="polite">Opening the chapter…</p>
+      <div class="read-body" />
+      <div class="read-after" hidden>
+        <p class="read-end hand">End of Chapter {n}.</p>
+        <p class="cluster read-after-links">
+          <a class="btn btn-primary" href={url(`/missions/m${String(n).padStart(2, '0')}/`)}>
+            Mission {n} →
+          </a>
+          {next && <a class="btn" href={url(`/ch/${n + 1}/`)}>Chapter {n + 1}: {next.title}</a>}
+        </p>
+      </div>
+    </section>
+  )
+}
 
 {
   s && (
@@ -39,7 +67,7 @@ const rest = s?.paragraphs.slice(open) ?? [];
               <p class="read-next-opts">
                 <a class="btn" href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page="read-end">Read the whole book: paperback or Kindle on Amazon →</a>
               </p>
-              <p class="small muted">Or hear it all, with the missions and the license:</p>
+              <p class="small muted">Or read and hear the whole book here, with the missions, the field missions and the license:</p>
               <BuyButton compact note={false} />
               <p class="small muted">One-time purchase, 30-day refund.</p>
             </div>
@@ -51,8 +79,49 @@ const rest = s?.paragraphs.slice(open) ?? [];
 }
 
 <script>
+  import { textUrl } from '../scripts/access';
   import { track } from '../scripts/track';
-  document.querySelectorAll<HTMLElement>('.read').forEach((sec) => {
+
+  // the full-book reader (chapters 2–23): only on a device with a purchase key
+  document.querySelectorAll<HTMLElement>('.read-full').forEach(async (sec) => {
+    const ch = Number(sec.dataset.ch);
+    const src = textUrl(ch);
+    if (!src) return; // no key: the audio panel above already says what the Experience includes
+    sec.hidden = false;
+    const status = sec.querySelector<HTMLElement>('.read-status')!;
+    const body = sec.querySelector<HTMLElement>('.read-body')!;
+    try {
+      const r = await fetch(src);
+      if (r.status === 425) {
+        status.textContent = 'The text of every chapter arrives here on November 26. Until then, listen to it above, or read along in the paperback.';
+        return;
+      }
+      if (!r.ok) throw new Error(String(r.status));
+      const j = (await r.json()) as { paragraphs: string[] };
+      for (const t of j.paragraphs) {
+        const p = document.createElement('p');
+        p.textContent = t;
+        body.appendChild(p);
+      }
+      status.remove();
+      const after = sec.querySelector<HTMLElement>('.read-after')!;
+      after.hidden = false;
+      const end = after.querySelector('.read-end')!;
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((es) => {
+          if (es.some((e) => e.isIntersecting)) {
+            track('read_end', { ch });
+            io.disconnect();
+          }
+        });
+        io.observe(end);
+      }
+    } catch {
+      status.textContent = 'Couldn’t open the chapter just now. Check the connection and reload the page.';
+    }
+  });
+
+  document.querySelectorAll<HTMLElement>('.read:not(.read-full)').forEach((sec) => {
     const ch = Number(sec.id.replace(/\D/g, '')) || 0;
     const more = sec.querySelector<HTMLDetailsElement>('.read-more');
     more?.addEventListener('toggle', () => {
@@ -180,6 +249,20 @@ const rest = s?.paragraphs.slice(open) ?? [];
   .read-next :global(.buy) {
     display: grid;
     justify-items: center;
+  }
+  .read-full[hidden],
+  .read-after[hidden] {
+    display: none;
+  }
+  .read-status {
+    text-align: center;
+    margin: 0;
+  }
+  .read-after-links {
+    justify-content: center;
+  }
+  .read-after-links .btn {
+    white-space: normal;
   }
   .read-end {
     text-indent: 0 !important;

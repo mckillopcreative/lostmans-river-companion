@@ -42,6 +42,11 @@ export function audioUrl(n: number): string | null {
   return k ? `${API}/audio/${k}/ch-${String(n).padStart(2, '0')}.mp3` : null;
 }
 
+export function textUrl(n: number): string | null {
+  const k = getKey();
+  return k ? `${API}/text/${k}/ch-${String(n).padStart(2, '0')}.json` : null;
+}
+
 export function startLink(k: string) {
   return `${location.origin}/start/#${k}`;
 }

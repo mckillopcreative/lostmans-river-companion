@@ -3,7 +3,7 @@
 // so little. Have it reviewed by an attorney who does children's privacy before ads run.
 import Base from '@layouts/Base.astro';
 import { url } from '@lib/url';
-const updated = 'October 21, 2026';
+const updated = 'October 31, 2026';
 ---
 
 <Base title="Privacy" description="What Lostman’s River collects, and what it never does.">
@@ -18,8 +18,9 @@ const updated = 'October 21, 2026';
     <h2>What we collect, and why</h2>
     <ul>
       <li><strong>When you buy the Experience:</strong> your email address, from checkout, so we can send your reader’s link and send it again if you lose it. Payment is handled by Stripe; we never see or store card details.</li>
+      <li><strong>If you join the opening-day list:</strong> your email address, the date, and which ad or link brought you (a campaign name, never anything about you), so we can email you once when the Experience opens. Only grown-ups may join. Every email has a one-click way off the list, and after opening week we delete the list except for anyone who buys.</li>
       <li><strong>Your purchase link:</strong> a random code that unlocks the Experience. It is not tied to your child’s name or anything about them.</li>
-      <li><strong>Progress:</strong> which missions are done, which badges are earned, and the date the summer started, saved under that random code so the summer picks up on any device.</li>
+      <li><strong>Progress:</strong> which missions and field missions are done (and the date a grown-up signed each field mission off), which badges are earned, and the date the summer started, saved under that random code so the summer picks up on any device.</li>
       <li><strong>Counts of what happens on the site:</strong> for example, how many people played Chapter 1 or finished Mission 6. These are tallies with no identifier attached: no name, email, IP address or device ID is stored with them. Page views are counted by Cloudflare Web Analytics, which does not use cookies.</li>
     </ul>
 
@@ -30,7 +31,7 @@ const updated = 'October 21, 2026';
     </ul>
 
     <h2>Advertising</h2>
-    <p>If you reach our landing page from an online ad, that one page may tell the ad platform (Meta or Google) that the visit happened and whether a purchase began, so we can see which ads work. This happens only on the landing page and only for visits that came from an ad click. It never happens on any page a reader uses.</p>
+    <p>If you reach our landing page from an online ad, that page and the opening-day list page may tell the ad platform (Meta or Google) that the visit happened and whether you joined the list or began a purchase, so we can see which ads work. Your email address is never sent to them. This happens only on those two pages for grown-ups, and only for visits that came from an ad click. It never happens on any page a reader uses.</p>
 
     <h2>Who we share it with</h2>
     <p>Only the services that run the site: Stripe (payment), Cloudflare (hosting, email delivery, storage and the anonymous counts) and GitHub (hosting the public pages). We do not sell or rent any information, and we do not share it for anyone else’s marketing.</p>

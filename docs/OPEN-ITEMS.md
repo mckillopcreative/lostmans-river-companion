@@ -10,6 +10,12 @@ See SPEC.md §8. Placeholders used during the build are listed here with where t
   - Cloudflare → SSL/TLS → set mode to **Full** (not Flexible), and leave “Always use HTTPS” off until GitHub’s certificate is issued.
   Then in GitHub (Settings → Pages) wait for the DNS check to pass and tick **Enforce HTTPS**, or run `gh api -X PUT repos/mckillopcreative/lostmans-river-companion/pages -f https_enforced=true`.
 
+## Before opening day (2026-11-27; docs/LAUNCH-DAY.md)
+- [ ] **Mailing address** for the footer of the opening email (US law for marketing email; a P.O. box is fine).
+- [ ] **Opening offer?** The waitlist page and confirmation promise nothing beyond the date. Decide whether the list gets a code (e.g. SUMMER, 20% off) on opening day.
+- [ ] **Field missions** (`data/missions.json` → `field`): read all 23 as the author; they are new writing, checked for safety but not against the manuscript beyond each chapter's events.
+- [ ] **Test families**: 5–10 free keys before the ads, for feedback and quotes.
+
 ## Content placeholders on the live site
 - [ ] **Dedication photo caption** — `src/pages/about.astro`, marked `[Caption to come from the author.]`. Who are the three anglers?
 - [ ] **Email sign-up** — `site.config.mjs` → `email.provider` and `email.action`. Forms show "Sign-up opens soon." until set. Buttondown is simplest (free tier, no cookies): the action URL is `https://buttondown.com/api/emails/embed-subscribe/<username>`.

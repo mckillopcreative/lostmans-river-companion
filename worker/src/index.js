@@ -13,20 +13,28 @@
 //   GET|PUT /progress/:key      the reader's missions, field sign-offs, badges, start date
 //   POST /restore               {email} → re-send the link (same answer whether or not it exists)
 //   GET  /audio/:key/ch-NN.mp3  chapters 2–23 from R2, with Range support
+//   GET  /text/:key/ch-NN.json  chapters 2–23's text from R2 (text/), from READER_OPENS only
 //   GET  /qr/:key.png           the start-link QR code for the email
 //   POST /admin/issue           {email, note?, send?} with x-admin-key: comps, reviewers, tests
+//   POST /waitlist              {email, adult: true, page?, src?} → on the opening-day list + one confirmation
+//   GET  /waitlist/leave?e&t    signed one-click removal
+//   GET  /admin/waitlist        the list, with x-admin-key
 //
 // KV (binding LR): k:<key> → {email, created, session, comp}; e:<email> → key;
-// s:<session> → key; p:<key> → progress; rl:<email> → restore count (1 h TTL)
+// s:<session> → key; p:<key> → progress; rl:<email> → restore count (1 h TTL);
+// w:<email> → {created, page, src} (waitlist); rlw:<ip> → waitlist signups this hour
 import { EVENTS } from '../../src/lib/events.mjs';
 import { qrPng } from './qr.js';
-import { welcomeEmail } from './email.js';
+import { welcomeEmail, waitlistEmail } from './email.js';
 
 const ORIGINS = [/^https:\/\/(www\.)?lostmansriver\.com$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
 const KEY_RE = /^[A-HJ-NP-Za-km-z2-9]{24}$/; // no 0/O/1/I/l, so it survives being read aloud or retyped
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
 const BADGES = new Set(['snook', 'tarpon', 'captain']);
 const FROM = { email: 'help@lostmansriver.com', name: 'Lostman’s River' };
+// The ebook's KDP Select exclusivity runs through 2026-11-25: no book text leaves before
+// midnight in Florida on the 26th (scripts/export-text.mjs refuses to upload before then too).
+const READER_OPENS = '2026-11-26T05:00:00Z';
 
 const clean = (s, n = 40) => String(s ?? '').replace(/[^\w .:/-]/g, '').slice(0, n);
 const normEmail = (e) => String(e || '').trim().toLowerCase();
@@ -58,8 +66,9 @@ async function issueKey(env, { email, session = null, comp = false, note = '' })
 }
 const getKey = async (env, key) => (KEY_RE.test(key) ? JSON.parse((await env.LR.get(`k:${key}`)) || 'null') : null);
 
-async function sendWelcome(env, email, key, opts) {
-  const m = welcomeEmail(key, opts);
+const sendWelcome = (env, email, key, opts) => sendMail(env, email, welcomeEmail(key, opts));
+
+async function sendMail(env, email, m) {
   // Resend (the author's existing account; free tier 3,000/month) when its key is set
   if (env.RESEND_API_KEY) {
     try {
@@ -108,6 +117,21 @@ async function fulfil(env, session) {
   return key;
 }
 
+// ---------- waitlist ----------
+// The signed "take me off the list" token, so nobody can remove someone else's address.
+async function leaveToken(env, email) {
+  const secret = env.WAITLIST_SECRET || env.ADMIN_KEY || '';
+  const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const mac = new Uint8Array(await crypto.subtle.sign('HMAC', k, new TextEncoder().encode(`leave:${email}`)));
+  return Array.from(mac.slice(0, 16), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+const leaveLink = async (env, email) => `https://api.lostmansriver.com/waitlist/leave?e=${encodeURIComponent(email)}&t=${await leaveToken(env, email)}`;
+const page = (title, body) =>
+  new Response(
+    `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><body style="margin:0;background:#f6f1e7;font-family:Georgia,serif;color:#1f2a2e"><div style="max-width:520px;margin:12vh auto;padding:0 16px"><h1 style="color:#2f5d50">${title}</h1><p style="font-size:18px;line-height:1.5">${body}</p><p><a style="color:#2a7f8e" href="https://lostmansriver.com/">lostmansriver.com</a></p></div>`,
+    { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } }
+  );
+
 // ---------- progress ----------
 function cleanProgress(p) {
   const missions = {};
@@ -151,7 +175,7 @@ async function audio(request, env, key, file, cors) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
     const cors = corsFor(request);
@@ -248,7 +272,61 @@ export default {
       return same;
     }
 
+    // ---- waitlist (before opening day) ----
+    if (path === '/waitlist' && request.method === 'POST') {
+      const same = json({ ok: true }, 200, cors);
+      let b;
+      try {
+        b = await request.json();
+      } catch {
+        return json({ ok: false }, 400, cors);
+      }
+      const email = normEmail(b.email);
+      if (!okEmail(email)) return json({ ok: false, why: 'email' }, 400, cors);
+      if (b.adult !== true) return json({ ok: false, why: 'adult' }, 400, cors);
+      // a few signups an hour per address is plenty for a family; stops anyone using us to mail strangers
+      const ip = request.headers.get('cf-connecting-ip') || 'x';
+      const n = Number((await env.LR.get(`rlw:${ip}`)) || 0);
+      if (n >= 8) return same;
+      await env.LR.put(`rlw:${ip}`, String(n + 1), { expirationTtl: 3600 });
+      if (await env.LR.get(`w:${email}`)) return same; // already on it: no second email
+      const meta = { created: new Date().toISOString(), page: clean(b.page, 40), src: clean(b.src, 40) };
+      await env.LR.put(`w:${email}`, JSON.stringify(meta), { metadata: meta });
+      // answer the page now; the confirmation goes out after the reply
+      ctx.waitUntil(leaveLink(env, email).then((l) => sendMail(env, email, waitlistEmail(l))));
+      return same;
+    }
+
+    if (path === '/waitlist/leave') {
+      const email = normEmail(url.searchParams.get('e'));
+      const t = url.searchParams.get('t') || '';
+      if (!okEmail(email) || t !== (await leaveToken(env, email))) return page('That link didn’t work', 'Email <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a> and we’ll take you off by hand.');
+      await env.LR.delete(`w:${email}`);
+      return page('You’re off the list', 'We won’t email you about the opening. Thanks for looking in on Lostman’s River.');
+    }
+
+    if (path === '/admin/waitlist') {
+      if (!env.ADMIN_KEY || request.headers.get('x-admin-key') !== env.ADMIN_KEY) return new Response('no', { status: 403 });
+      const out = [];
+      let cursor;
+      do {
+        const r = await env.LR.list({ prefix: 'w:', cursor });
+        for (const k of r.keys) out.push({ email: k.name.slice(2), ...(k.metadata || {}) });
+        cursor = r.list_complete ? null : r.cursor;
+      } while (cursor);
+      return json({ count: out.length, list: out }, 200);
+    }
+
     if ((m = /^\/audio\/([A-Za-z0-9]+)\/([\w.-]+)$/.exec(path))) return audio(request, env, m[1], m[2], cors);
+
+    // ---- the book's text, chapters 2–23, for key holders from READER_OPENS ----
+    if ((m = /^\/text\/([A-Za-z0-9]+)\/(ch-(?:0[2-9]|1\d|2[0-3])\.json)$/.exec(path))) {
+      if (!(await getKey(env, m[1]))) return json({ ok: false }, 404, cors);
+      if (Date.now() < Date.parse(READER_OPENS)) return json({ ok: false, opens: READER_OPENS }, 425, cors);
+      const obj = await env.AUDIO?.get(`text/${m[2]}`);
+      if (!obj) return json({ ok: false, opens: READER_OPENS }, 425, cors);
+      return new Response(obj.body, { headers: { 'content-type': 'application/json', 'cache-control': 'private, max-age=3600', ...cors } });
+    }
 
     if ((m = /^\/qr\/([A-Za-z0-9]+)\.png$/.exec(path))) {
       if (!(await getKey(env, m[1]))) return new Response('not found', { status: 404 });

@@ -1,0 +1,172 @@
+---
+// /waitlist/: where every Buy button goes before opening day (src/lib/buy.ts). Grown-ups only:
+// the address goes to the Worker (POST /waitlist), which sends one confirmation with a one-click
+// way off the list. A parent-facing page, so it may carry the ad pixel for ad-referred visits.
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import WhatsIncluded from '@components/WhatsIncluded.astro';
+import ChapterAudio from '@components/ChapterAudio.astro';
+import { coverImage } from '@lib/images';
+import { url } from '@lib/url';
+import { isOpen, opens, price } from '@lib/buy';
+import site from '../../../site.config.mjs';
+
+const cover = coverImage();
+---
+
+<Base title="Opening day list" description={`The Summer Fishing Guide Experience opens ${opens}. Leave your email and we’ll send the link that morning.`} ads>
+  <section class="wrap-wide section wl">
+    <div class="wl-grid">
+      <div>
+        <p class="eyebrow">For parents and grandparents</p>
+        <h1>{isOpen ? 'It’s open' : `Opens ${opens}`}</h1>
+        {
+          isOpen ? (
+            <p class="lede">
+              The Summer Fishing Guide Experience is open. <a href={site.checkout.url}>Get it here, {price}.</a>
+            </p>
+          ) : (
+            <p class="lede">
+              The Summer Fishing Guide Experience for <em>{site.title}</em> opens on {opens}. Leave your email and we’ll send you the link that morning. One email, no newsletter.
+            </p>
+          )
+        }
+        {
+          !isOpen && (
+            <form id="wl" class="wl-form" novalidate>
+              <label for="wl-email">Your email</label>
+              <input id="wl-email" type="email" required autocomplete="email" inputmode="email" maxlength="200" />
+              <label class="wl-check">
+                <input id="wl-adult" type="checkbox" required />
+                <span>I’m a grown-up (18 or older). Readers: ask a parent to sign up for you.</span>
+              </label>
+              <button class="btn btn-primary" type="submit">Save my spot</button>
+              <p class="small muted">
+                We use it once, on opening day, then only if you buy. Never shared. <a href={url('/privacy/')}>Privacy</a>.
+              </p>
+            </form>
+          )
+        }
+        <p class="hand wl-msg" id="wl-msg" aria-live="polite"></p>
+        <div class="wl-free">
+          <ChapterAudio n={1} title="While you wait: hear Chapter 1" compact />
+          <p class="small">
+            Or <a href={url('/ch/1/')}>read Chapter 1</a>, and look around <a href={url('/map/')}>the chart</a> and <a href={url('/fish/')}>the fish</a>. Want the paperback now? <a href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page="waitlist">It’s on Amazon</a>.
+          </p>
+        </div>
+      </div>
+      {cover && (
+        <figure class="wl-cover">
+          <Image src={cover} alt={`${site.title}: Book + Summer Fishing Guide Experience`} width={520} loading="eager" />
+        </figure>
+      )}
+    </div>
+  </section>
+
+  <WhatsIncluded />
+
+  <script>
+    import { API } from '../../scripts/access';
+    import { track, campaign } from '../../scripts/track';
+    const form = document.getElementById('wl') as HTMLFormElement | null;
+    const msg = document.getElementById('wl-msg')!;
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = (document.getElementById('wl-email') as HTMLInputElement).value.trim();
+      const adult = (document.getElementById('wl-adult') as HTMLInputElement).checked;
+      if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)) {
+        msg.textContent = 'That email doesn’t look right.';
+        return;
+      }
+      if (!adult) {
+        msg.textContent = 'This list is for grown-ups. Ask a parent to sign up.';
+        return;
+      }
+      const btn = form.querySelector('button')!;
+      btn.disabled = true;
+      msg.textContent = 'Saving…';
+      try {
+        const r = await fetch(`${API}/waitlist`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email, adult: true, page: document.referrer ? new URL(document.referrer).pathname : '', src: campaign() }),
+        });
+        if (!r.ok) throw new Error(String(r.status));
+        track('waitlist_join', { page: 'waitlist' });
+        form.hidden = true;
+        msg.textContent = 'You’re on the list. Check your inbox for a note from us.';
+      } catch {
+        msg.textContent = 'Couldn’t reach us just now. Try again in a minute.';
+        btn.disabled = false;
+      }
+    });
+  </script>
+</Base>
+
+<style>
+  .wl-grid {
+    display: grid;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (min-width: 820px) {
+    .wl-grid {
+      grid-template-columns: 1.3fr 1fr;
+    }
+  }
+  .wl h1 {
+    margin: 0.1rem 0 0.4rem;
+  }
+  .wl-form {
+    display: grid;
+    gap: 0.6rem;
+    margin: 1rem 0;
+    max-width: 520px;
+  }
+  .wl-form input[type='email'] {
+    min-height: 48px;
+    padding: 0.5rem 0.75rem;
+    border: 1.5px solid var(--oyster);
+    border-radius: var(--radius);
+    background: var(--paper-2);
+    color: var(--ink);
+    font: inherit;
+  }
+  .wl-check {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    font-size: 0.95rem;
+  }
+  .wl-check input {
+    width: 22px;
+    height: 22px;
+    margin-top: 0.1rem;
+    flex: none;
+  }
+  .wl-form .btn {
+    justify-self: start;
+  }
+  .wl-form p {
+    margin: 0;
+  }
+  .wl-msg {
+    font-size: 1.35rem;
+    color: var(--sunrise-ink);
+    min-height: 1.5em;
+  }
+  .wl-free {
+    margin-top: 1rem;
+  }
+  .wl-cover {
+    margin: 0;
+    justify-self: center;
+  }
+  .wl-cover img {
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 6px 24px rgb(0 0 0 / 0.25);
+  }
+</style>

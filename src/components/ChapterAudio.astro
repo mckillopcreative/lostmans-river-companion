@@ -4,6 +4,7 @@
 import { existsSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { url } from '@lib/url';
+import { buyHref, buyTrack, buyLabel } from '@lib/buy';
 import audioData from '../../data/audio.json';
 import site from '../../site.config.mjs';
 
@@ -49,11 +50,11 @@ const minutes = present ? Math.max(1, Math.round(statSync(file).size / 16000 / 6
           <audio class="listen-audio" controls preload="none" data-rate="1.1" data-ch={n} hidden />
           <div class="listen-lock">
             <p class="small">
-              <strong>Chapter {n} is part of the Full Experience.</strong> Every chapter read aloud, plus the missions and the license.
+              <strong>Chapter {n} is part of the Full Experience.</strong> The whole book to read and hear, plus the missions, the field missions and the license.
             </p>
             <p class="cluster">
-              <a class="btn btn-primary btn-sm" href={site.checkout.url} rel="noopener" data-track="buy_click" data-track-page={`ch-${n}-audio`}>
-                Get the Full Experience {site.checkout.price}
+              <a class="btn btn-primary btn-sm" href={buyHref} data-track={buyTrack} data-track-page={`ch-${n}-audio`}>
+                {buyLabel}
               </a>
               <a class="small" href={url('/restore/')}>Already bought it?</a>
             </p>

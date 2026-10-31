@@ -25,12 +25,15 @@ export default {
   authorsHeadline: 'Built by a son and his mother, children’s-book co-authors.',
 
   /** The paid product: Stripe Payment Link (created 2026-10-20). Price shown on the button; change both here. */
-  checkout: { url: 'https://buy.stripe.com/28EaEZ73B49jegveo093y00', price: '$24.99', name: 'Lostman’s River: Fishing Guide Experience' },
+  /** `open: false` sends every Buy button to /waitlist/ instead of Stripe (pre-launch). On opening
+   *  day set `open: true`; `opens` is the date the waitlist page and buttons quote (keep the
+   *  Worker's OPENS in worker/src/email.js in step). */
+  checkout: { url: 'https://buy.stripe.com/28EaEZ73B49jegveo093y00', price: '$24.99', name: 'Lostman’s River: Fishing Guide Experience', open: false, opens: 'November 27' },
 
   /** The purchase gate (docs/LAUNCH-FLOW.md). While false, missions 2–23 stay open and chapters
-   *  2–23 show no player, so nobody can buy into locked content. Set true once the Stripe webhook,
-   *  R2 audio and the welcome email are all connected (docs/GATE-SETUP.md). */
-  gate: { live: false },
+   *  2–23 show no player, so nobody can buy into locked content. Live from 2026-10-31 (built as if
+   *  launched; the Buy buttons go to the waitlist until checkout.open). */
+  gate: { live: true },
 
   /** Amazon listing. Replace with the Associates link (…?tag=xxx-20) once the account exists. */
   buyUrl: 'https://www.amazon.com/dp/B0BV41JY8N', // the paperback (QR-code edition); Kindle is B0BVJ4XR65
