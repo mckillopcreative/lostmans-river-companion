@@ -19,6 +19,7 @@
 //   POST /waitlist              {email, adult: true, page?, src?} → on the opening-day list + one confirmation
 //   GET  /waitlist/leave?e&t    signed one-click removal
 //   GET  /admin/waitlist        the list, with x-admin-key
+//   POST /admin/meta-test       {test_code} with x-admin-key: a pretend purchase to Meta's Test events
 //
 // KV (binding LR): k:<key> → {email, created, session, comp}; e:<email> → key;
 // s:<session> → key; p:<key> → progress; rl:<email> → restore count (1 h TTL);
@@ -26,6 +27,7 @@
 import { EVENTS } from '../../src/lib/events.mjs';
 import { qrPng } from './qr.js';
 import { welcomeEmail, waitlistEmail } from './email.js';
+import { reportPurchase } from './meta.js';
 
 const ORIGINS = [/^https:\/\/(www\.)?lostmansriver\.com$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
 const KEY_RE = /^[A-HJ-NP-Za-km-z2-9]{24}$/; // no 0/O/1/I/l, so it survives being read aloud or retyped
@@ -109,11 +111,13 @@ async function verifyStripe(request, secret) {
   return ok ? JSON.parse(body) : null;
 }
 
-async function fulfil(env, session) {
+async function fulfil(env, session, ctx) {
   if (!session || session.payment_status !== 'paid') return null;
   const email = session.customer_details?.email || session.customer_email || '';
   const { key, created } = await issueKey(env, { email, session: session.id });
   if (created && email) await sendWelcome(env, email, key);
+  // tell Meta about a purchase that began with an ad click (worker/src/meta.js); after the reply
+  if (created) ctx?.waitUntil(reportPurchase(env, session));
   return key;
 }
 
@@ -209,7 +213,7 @@ export default {
       if (!env.STRIPE_WEBHOOK_SECRET) return new Response('webhook secret not set', { status: 503 });
       const event = await verifyStripe(request, env.STRIPE_WEBHOOK_SECRET);
       if (!event) return new Response('bad signature', { status: 400 });
-      if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') await fulfil(env, event.data?.object);
+      if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') await fulfil(env, event.data?.object, ctx);
       return new Response('ok');
     }
 
@@ -220,7 +224,7 @@ export default {
       // the webhook may be a few seconds behind the buyer; ask Stripe directly if we can
       if (!key && env.STRIPE_SECRET_KEY) {
         const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${m[1]}`, { headers: { authorization: `Bearer ${env.STRIPE_SECRET_KEY}` } });
-        if (r.ok) key = await fulfil(env, await r.json());
+        if (r.ok) key = await fulfil(env, await r.json(), ctx);
       }
       return key ? json({ key }, 200, cors) : json({ pending: true }, 202, cors);
     }
@@ -303,6 +307,17 @@ export default {
       if (!okEmail(email) || t !== (await leaveToken(env, email))) return page('That link didn’t work', 'Email <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a> and we’ll take you off by hand.');
       await env.LR.delete(`w:${email}`);
       return page('You’re off the list', 'We won’t email you about the opening. Thanks for looking in on Lostman’s River.');
+    }
+
+    // a pretend ad-click purchase to Events Manager → Test events, to check the Conversions API setup
+    if (path === '/admin/meta-test' && request.method === 'POST') {
+      if (!env.ADMIN_KEY || request.headers.get('x-admin-key') !== env.ADMIN_KEY) return new Response('no', { status: 403 });
+      const b = await request.json().catch(() => ({}));
+      const code = clean(b.test_code, 40);
+      if (!code) return json({ ok: false, why: 'test_code from Events Manager → Test events is required, so nothing counts as a real sale' }, 400);
+      const now = Date.now();
+      const fake = { id: `cs_test_${now}`, created: Math.floor(now / 1000), amount_total: 2499, currency: 'usd', client_reference_id: `fb1_${now}_TestClickFromLostmansRiverAdmin`, customer_details: { email: 'test@example.com' } };
+      return json(await reportPurchase({ ...env, META_TEST_EVENT_CODE: code }, fake), 200);
     }
 
     if (path === '/admin/waitlist') {

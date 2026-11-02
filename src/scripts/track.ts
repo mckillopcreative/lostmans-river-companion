@@ -30,6 +30,26 @@ function context() {
   return { src, own };
 }
 
+// A Meta ad click (?fbclid=…) is kept 7 days so a purchase that began with that ad can be
+// reported to Meta from the Worker (worker/src/meta.js). Only ad clicks carry an fbclid; book QR
+// codes and ordinary visits never do, so nothing is kept for them.
+const FBC = 'lr-fbc';
+function rememberAdClick() {
+  try {
+    const id = new URLSearchParams(location.search).get('fbclid') || '';
+    if (/^[A-Za-z0-9_-]{10,180}$/.test(id)) localStorage.setItem(FBC, JSON.stringify({ c: id, t: Date.now() }));
+  } catch {}
+}
+/** "fb1_<ms>_<fbclid>" for Stripe's client_reference_id, or '' (no ad click in the last 7 days). */
+function adClickRef() {
+  try {
+    const s = JSON.parse(localStorage.getItem(FBC) || 'null') as { c: string; t: number } | null;
+    if (s && Date.now() - s.t < 7 * 864e5) return `fb1_${s.t}_${s.c}`;
+    localStorage.removeItem(FBC);
+  } catch {}
+  return '';
+}
+
 /** The first-touch campaign code, so a waitlist signup can say which ad brought it. */
 export const campaign = () => context().src;
 
@@ -60,9 +80,18 @@ export function bindClicks() {
   // inline game scripts call window.lrTrack rather than importing
   (window as unknown as { lrTrack: typeof track }).lrTrack = track;
   context(); // records a campaign code or own-traffic flag from the landing URL
+  rememberAdClick();
   document.addEventListener(
     'click',
     (e) => {
+      // carry an ad click through Stripe checkout, so the purchase can be credited to the ad
+      const buy = (e.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="https://buy.stripe.com/"]');
+      const ref = buy ? adClickRef() : '';
+      if (buy && ref) {
+        const u = new URL(buy.href);
+        u.searchParams.set('client_reference_id', ref);
+        buy.href = u.toString();
+      }
       const el = (e.target as Element | null)?.closest<HTMLElement>('[data-track]');
       if (!el) return;
       const props: Props = {};

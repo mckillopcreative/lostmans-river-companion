@@ -2,8 +2,8 @@
 // Meta Pixel and Google Ads tag, for the parent-facing landing page only. Nothing loads unless
 // (a) an id is set in site.config.mjs → ads, (b) the page opted in with <Base ads>, and (c) this
 // visit arrived from an ad click. Book QR codes and organic visits never carry an ad click id,
-// so children scanning the paperback never load a pixel. The purchase itself should be reported
-// server-side (Meta Conversions API / Google offline conversion) from the Stripe webhook, so no
+// so children scanning the paperback never load a pixel. The purchase itself is reported
+// server-side to Meta's Conversions API from the Stripe webhook (worker/src/meta.js), so no
 // pixel ever runs on /app/.
 import site from '../../site.config.mjs';
 const { metaPixelId, googleTagId, googleBuyLabel } = site.ads ?? {};
