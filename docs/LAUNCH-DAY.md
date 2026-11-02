@@ -17,6 +17,13 @@ KDP released the ebook from Select early (confirmed on the bookshelf). The text 
 node scripts/export-text.mjs --upload
 ```
 
+## Meta purchase reporting (built 2026-11-02, needs two values)
+
+The Worker reports each purchase that began with a Meta ad click to the Conversions API (`worker/src/meta.js`). To switch it on:
+1. Events Manager → Connect data → Web → name it "Lostman's River website" → copy its dataset ID. Put it in `worker/wrangler.toml` under `[vars]` as `META_DATASET_ID`, and in `site.config.mjs` → `ads.metaPixelId` (the browser pixel on `/` and `/waitlist/`).
+2. The dataset → Settings → Conversions API → Generate access token. From the `worker` folder: `npx wrangler secret put META_CAPI_TOKEN` and paste it.
+3. Test: Events Manager → the dataset → Test events → copy the code, then `POST /admin/meta-test` with `{"test_code": "<code>"}` and the `x-admin-key` header. A Purchase of $24.99 appears there.
+
 ## November 27, opening morning
 
 1. Stripe connected and tested (`GATE-SETUP.md`: webhook, restricted key, terms checkbox, a CREW-code purchase end to end).
