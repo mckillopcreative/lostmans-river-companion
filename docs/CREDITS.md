@@ -16,6 +16,8 @@ Every image and third-party resource used on the site, with its license. Keep th
 | File | Subject | Source | License |
 |---|---|---|---|
 | assets/photos/for-dad-three-anglers.jpg | Dedication photo ("For Dad") | McKillop family | © McKillop family, used with permission |
+| assets/photos/authors.jpg | John and Linda McKillop today (selfie, warmed) | McKillop family | © McKillop family, used with permission |
+| assets/photos/john-and-linda-then.jpg | John as a boy with Linda, cropped from the framed photo (via the Bedside Stories handoff, 2026-11-02) | McKillop family | © McKillop family, used with permission |
 
 No other photographs are used yet. When adding Everglades / fish / boat photos, use only author-owned, public-domain (NPS, USFWS, NOAA) or CC0 images and record each one here.
 

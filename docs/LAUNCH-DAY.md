@@ -9,15 +9,13 @@
 - Test families: issue free keys with `POST /admin/issue` (see `GATE-SETUP.md`) or the CREW coupon once Stripe is connected.
 - Ads: the Meta pixel loads only on `/` and `/waitlist/`, only for ad-click visits; a signup reports `Lead`.
 
-## November 26 (KDP Select ends 2026-11-25)
+## The reader: done 2026-11-02
 
-From the project folder:
+KDP released the ebook from Select early (confirmed on the bookshelf). The text of chapters 2–23 is in R2 (`lostmans-audio/text/`) and appears under the audio player on any chapter page opened with a key. After editing the manuscript, re-run from the project folder:
 
 ```bash
 node scripts/export-text.mjs --upload
 ```
-
-It writes the text of chapters 2–23 from the manuscript and puts it in R2 (`lostmans-audio/text/`). It refuses to run before November 26 in Florida, and the Worker refuses to serve the text before midnight that night (`READER_OPENS`). Then open any chapter 2–23 on a device with a key: the text appears under the audio player.
 
 ## November 27, opening morning
 

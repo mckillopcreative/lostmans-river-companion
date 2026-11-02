@@ -13,6 +13,7 @@ import ExperienceBanner from '@components/ExperienceBanner.astro';
 import ReviewsStrip from '@components/ReviewsStrip.astro';
 import HowItWorks from '@components/HowItWorks.astro';
 import WhatsIncluded from '@components/WhatsIncluded.astro';
+import AuthorsCard from '@components/AuthorsCard.astro';
 import ChapterPill from '@components/ChapterPill.astro';
 import {
   chapters,
@@ -149,6 +150,13 @@ const ld = [
 
   <!-- ===== What readers say ===== -->
   <ReviewsStrip />
+
+  <!-- ===== Who made it: John and Linda, then and now ===== -->
+  <section class="j-authors">
+    <div class="wrap-wide">
+      <AuthorsCard compact />
+    </div>
+  </section>
 
   <!-- ===== What the one price buys ===== -->
   <WhatsIncluded />
@@ -469,6 +477,9 @@ const ld = [
   /* ---- banner + hero ---- */
   .j-banner {
     padding-block: 1.5rem 0;
+  }
+  .j-authors {
+    padding-block: 1.75rem 0.25rem;
   }
   .j-hero {
     padding-block: 2rem 1.5rem;

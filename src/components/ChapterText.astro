@@ -3,7 +3,8 @@
 // paragraphs, and the rest behind a "Keep reading" fold (a <details>, so it works without JS),
 // from data/sample-ch01.json (scripts/extract-sample.mjs).
 // Chapters 2–23: the full-book reader. The text is never in the page; on a device holding a
-// purchase key it is fetched from the Worker (from 2026-11-26, after KDP Select) and set here.
+// purchase key it is fetched from the Worker (R2 text/, open since KDP released the ebook from
+// Select on 2026-11-02) and set here.
 import sample from '../../data/sample-ch01.json';
 import site from '../../site.config.mjs';
 import { chapterByN } from '@lib/data';
@@ -93,7 +94,7 @@ const next = chapterByN.get(n + 1);
     try {
       const r = await fetch(src);
       if (r.status === 425) {
-        status.textContent = 'The text of every chapter arrives here on November 26. Until then, listen to it above, or read along in the paperback.';
+        status.textContent = 'This chapter’s text isn’t here yet. Listen to it above, or read along in the paperback.';
         return;
       }
       if (!r.ok) throw new Error(String(r.status));
@@ -181,15 +182,16 @@ const next = chapterByN.get(n + 1);
     line-height: 1.7;
     color: var(--ink);
   }
-  .read-body p {
+  /* :global so the reader's paragraphs, added by the script, are set the same way */
+  .read-body :global(p) {
     margin: 0;
     text-indent: 1.5em;
     hyphens: auto;
   }
-  .read-body > p:first-child {
+  .read-body > :global(p:first-child) {
     text-indent: 0;
   }
-  .read-body > p:first-child::first-letter {
+  .read-body > :global(p:first-child::first-letter) {
     float: left;
     font-size: 3.3em;
     line-height: 0.85;

@@ -3,14 +3,13 @@
 // purchase-key holders only, and only from READER_OPENS (worker/src/index.js).
 //
 //   node scripts/export-text.mjs            writes private/text/ch-02.json … ch-23.json
-//   node scripts/export-text.mjs --upload   also puts them in the R2 bucket (refuses before 2026-11-26:
-//                                           the ebook's KDP Select exclusivity runs through 2026-11-25)
+//   node scripts/export-text.mjs --upload   also puts them in the R2 bucket (refuses before OPENS)
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { chapters } from './narrate.mjs';
 
-const OPENS = '2026-11-26';
+const OPENS = '2026-11-02'; // KDP released the ebook from Select early (2026-11-02)
 const BUCKET = 'lostmans-audio';
 const root = resolve(import.meta.dirname, '..');
 const dir = resolve(root, 'private/text');
@@ -32,11 +31,11 @@ if (process.argv.includes('--upload')) {
   // the date in Florida, not UTC
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York' }).format(new Date());
   if (today < OPENS) {
-    console.error(`Not uploading: it is ${today} in Florida and the text may not leave this computer before ${OPENS} (KDP Select).`);
+    console.error(`Not uploading: it is ${today} in Florida and the text may not leave this computer before ${OPENS}.`);
     process.exit(1);
   }
   for (const f of files) {
-    execFileSync('npx', ['wrangler@4', 'r2', 'object', 'put', `${BUCKET}/text/${f}`, '--file', resolve(dir, f), '--content-type', 'application/json', '--remote'], {
+    execFileSync('npx', ['wrangler@4', 'r2', 'object', 'put', `${BUCKET}/text/${f}`, '--file', `"${resolve(dir, f)}"`, '--content-type', 'application/json', '--remote'], {
       cwd: resolve(root, 'worker'),
       stdio: 'inherit',
       shell: true,

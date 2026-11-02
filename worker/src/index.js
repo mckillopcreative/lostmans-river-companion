@@ -32,9 +32,9 @@ const KEY_RE = /^[A-HJ-NP-Za-km-z2-9]{24}$/; // no 0/O/1/I/l, so it survives bei
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
 const BADGES = new Set(['snook', 'tarpon', 'captain']);
 const FROM = { email: 'help@lostmansriver.com', name: 'Lostman’s River' };
-// The ebook's KDP Select exclusivity runs through 2026-11-25: no book text leaves before
-// midnight in Florida on the 26th (scripts/export-text.mjs refuses to upload before then too).
-const READER_OPENS = '2026-11-26T05:00:00Z';
+// KDP released the ebook from Select early (author, 2026-11-02, confirmed on the KDP bookshelf),
+// so the reader is open; the date stays as a switch.
+const READER_OPENS = '2026-11-02T00:00:00Z';
 
 const clean = (s, n = 40) => String(s ?? '').replace(/[^\w .:/-]/g, '').slice(0, n);
 const normEmail = (e) => String(e || '').trim().toLowerCase();

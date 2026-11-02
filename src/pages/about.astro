@@ -4,6 +4,7 @@ import Base from '@layouts/Base.astro';
 import SignupForm from '@components/SignupForm.astro';
 import Divider from '@components/Divider.astro';
 import SectionEmblem from '@components/SectionEmblem.astro';
+import AuthorsCard from '@components/AuthorsCard.astro';
 import { photoImages, coverImage } from '@lib/images';
 import { url } from '@lib/url';
 import site from '../../site.config.mjs';
@@ -58,32 +59,19 @@ const cover = coverImage();
 
       <section id="authors" class="authors">
         <h2>The authors</h2>
-        <div class="authors-row">
-          {
-            authorsPhoto ? (
-              <figure class="photo authors-photo">
-                <Image src={authorsPhoto} alt="Linda and John McKillop" width={520} sizes="(min-width: 720px) 300px, 94vw" loading="lazy" />
-                <figcaption class="mono">Linda and John McKillop. Photo courtesy of the McKillop family.</figcaption>
-              </figure>
-            ) : (
-              <div class="photo-slot hand" aria-hidden="true">
-                photo of Linda &amp; John goes here
-              </div>
-            )
-          }
-          <div>
-            <p>
-              <em>Escape to Lostman’s River</em> is by John and Linda McKillop, son and mother. John wrote the summer; Linda drew it. Every pen-and-ink sketch in the book, and on this site, is hers, including the hand-drawn chart of Lostman’s River at the back.
-            </p>
-            {
-              site.authorsBio ? (
-                <p set:html={site.authorsBio} />
-              ) : (
-                <p class="placeholder small">[Author bio from the back of the book goes here — set <code>authorsBio</code> in site.config.mjs.]</p>
-              )
-            }
-          </div>
-        </div>
+        {
+          authorsPhoto ? (
+            <AuthorsCard />
+          ) : (
+            <div class="photo-slot hand" aria-hidden="true">
+              photo of Linda &amp; John goes here
+            </div>
+          )
+        }
+        <p class="authors-more">
+          <em>Escape to Lostman’s River</em> is by John and Linda McKillop, son and mother. John wrote the summer; Linda drew it. Every pen-and-ink sketch in the book, and on this site, is hers, including the hand-drawn chart of Lostman’s River at the back.
+        </p>
+        <p class="small muted">Photos courtesy of the McKillop family.</p>
       </section>
 
       {
@@ -164,15 +152,8 @@ const cover = coverImage();
   .first {
     margin-top: 0;
   }
-  .authors-row {
-    display: grid;
-    gap: 1.25rem;
-  }
-  @media (min-width: 720px) {
-    .authors-row {
-      grid-template-columns: 300px 1fr;
-      align-items: start;
-    }
+  .authors-more {
+    margin-top: 1.25rem;
   }
   .photo {
     margin: 1rem 0;

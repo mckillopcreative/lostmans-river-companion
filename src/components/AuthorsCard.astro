@@ -1,6 +1,7 @@
 ---
-// The mother-and-son card: the whole photo (a portrait, shown uncropped with soft corners)
-// beside the headline and bio from site.config. Stacks on a phone, two columns from 640px.
+// The mother-and-son card: John and Linda then (the framed childhood photo) and now (the
+// selfie), beside the headline and bio from site.config. With only the "now" photo it shows
+// that one alone. Stacks on a phone, two columns from 640px. Photos: McKillop family.
 import { Image } from 'astro:assets';
 import { photoImages } from '@lib/images';
 import site from '../../site.config.mjs';
@@ -9,18 +10,29 @@ interface Props {
   compact?: boolean;
 }
 const { compact = false } = Astro.props;
-const photo = photoImages.get('authors.jpg') ?? photoImages.get('authors.png') ?? null;
+const now = photoImages.get('authors.jpg') ?? photoImages.get('authors.png') ?? null;
+const then = photoImages.get('john-and-linda-then.jpg') ?? null;
 ---
 
-<section class:list={['authors-card', { compact, 'has-photo': !!photo }]} aria-labelledby="authors-h">
+<section class:list={['authors-card', { compact, 'has-photo': !!now, pair: !!(now && then) }]} aria-labelledby="authors-h">
   {
-    photo && (
-      <div class="portrait">
-        <Image src={photo} alt="John McKillop and his mother Linda, the authors" width={photo.width} height={photo.height} loading="lazy" />
+    now && (
+      <div class="photos">
+        {then && (
+          <figure class="portrait then">
+            <Image src={then} alt="John as a boy with his mother Linda" width={340} height={340} loading="lazy" />
+            <figcaption class="hand">then</figcaption>
+          </figure>
+        )}
+        <figure class="portrait now">
+          <Image src={now} alt="John McKillop and his mother Linda, the authors, today" width={now.width} height={now.height} loading="lazy" />
+          <figcaption class="hand">now</figcaption>
+        </figure>
       </div>
     )
   }
   <div class="text">
+    {site.authorsEyebrow && <p class="eyebrow hand">{site.authorsEyebrow}</p>}
     <p id="authors-h" class="headline">{site.authorsHeadline}</p>
     <p class="bio" set:html={site.authorsBio} />
   </div>
@@ -32,7 +44,7 @@ const photo = photoImages.get('authors.jpg') ?? photoImages.get('authors.png') ?
     border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
     border-radius: 14px;
     padding: 1.5rem;
-    max-width: 760px;
+    max-width: 820px;
     margin-inline: auto;
     display: grid;
     gap: 1.25rem;
@@ -48,27 +60,59 @@ const photo = photoImages.get('authors.jpg') ?? photoImages.get('authors.png') ?
       justify-items: stretch;
       padding: 1.75rem 2rem;
     }
-    .authors-card.has-photo .portrait {
-      max-width: none;
+    .authors-card.pair {
+      grid-template-columns: 300px 1fr;
     }
   }
+  .photos {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    align-items: flex-end;
+  }
   .portrait {
+    margin: 0;
     width: 200px;
-    max-width: 70%;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 3px solid var(--sunrise);
-    box-shadow: 0 8px 20px -10px rgb(31 42 46 / 0.45);
-    background: var(--paper);
+    max-width: 70vw;
+  }
+  .pair .portrait {
+    width: 140px;
+    max-width: 42vw;
   }
   .portrait img {
     display: block;
     width: 100%;
     height: auto;
+    border-radius: 12px;
+    border: 3px solid var(--sunrise);
+    box-shadow: 0 8px 20px -10px rgb(31 42 46 / 0.45);
+    background: var(--paper);
+  }
+  .then img {
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+  .now img {
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+  }
+  .portrait figcaption {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--mangrove);
+    margin-top: 0.2rem;
+  }
+  .has-photo:not(.pair) .portrait figcaption {
+    display: none;
+  }
+  .eyebrow {
+    font-size: 1.2rem;
+    color: var(--sunrise-ink);
+    margin: 0 0 0.2rem;
   }
   .headline {
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     line-height: 1.25;
     color: var(--mangrove);
     margin: 0 0 0.6rem;
@@ -93,14 +137,18 @@ const photo = photoImages.get('authors.jpg') ?? photoImages.get('authors.png') ?
       grid-template-columns: 140px 1fr;
       padding: 1.25rem 1.5rem;
     }
+    .compact.pair {
+      grid-template-columns: 250px 1fr;
+    }
   }
-  .compact .portrait {
-    width: 140px;
+  .compact .pair .portrait,
+  .compact.pair .portrait {
+    width: 115px;
   }
   .compact .headline {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
   }
   .compact .bio {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
   }
 </style>

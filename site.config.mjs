@@ -22,7 +22,8 @@ export default {
   /** About the authors. PLACEHOLDER: paste the bio from the back of the book (docs/OPEN-ITEMS.md). */
   authorsBio:
     'John is an MD, a children’s novelist, and a father of four. Years ago he wrote <em>Escape to Lostman’s River</em> with his mom, Linda, who drew every picture in it. The Lostman’s River Experience is what came after: a way for kids to step into the Florida Everglades through an immersive story adventure that blends the novel with real-life angling skills, puzzles, and the places where it all happens.',
-  authorsHeadline: 'Built by a son and his mother, children’s-book co-authors.',
+  authorsHeadline: 'It took us decades. We finished it together.',
+  authorsEyebrow: 'son & mother · writer & illustrator',
 
   /** The paid product: Stripe Payment Link (created 2026-10-20). Price shown on the button; change both here. */
   /** `open: false` sends every Buy button to /waitlist/ instead of Stripe (pre-launch). On opening
