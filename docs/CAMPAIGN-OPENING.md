@@ -127,7 +127,9 @@ Every link: `https://lostmansriver.com/?utm_source=meta&utm_medium=paid_social&u
 - **Plan before build.** The review page (https://claude.ai/artifact/6xud5uvS38GXetXtr9c2JV) is now the editable spec: John changes words, buttons, audiences and budgets there; Claude reads them (`ArtifactData`, collection `plan`) and builds only on "build it". The Meta drafts below were made before this and carry the old wording; they are not to be published and can be deleted on John's word.
 - The plan now: one Sales campaign **LR - Launch** ($20/day, store-open day → Dec 24, Parents/Grandparents/Florida) and **LR - Gifts** ($15/day, Dec 1–24). The waitlist (Leads) campaign is dropped.
 
-## Built in Meta earlier on 2026-11-03 (all DRAFT, stale wording, nothing live)
+**Deleted 2026-11-03 evening** at John's request (from the Ads Manager table, two campaigns selected → Delete; the API cannot delete unpublished drafts, and "Discard drafts" would have taken Guided Recruit's draft too). The ids below are history. John added the ad account's payment method the same evening.
+
+## Built in Meta earlier on 2026-11-03 (deleted; kept for the record)
 
 Ad account McKillop Creative Ads 1825914471866172 · Page "Lostman's River" 1443510642172754 · dataset 2258563668038674. Advantage+ audience is on, so the age ranges are suggestions with a hard floor of 25.
 
