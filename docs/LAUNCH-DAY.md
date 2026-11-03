@@ -29,7 +29,7 @@ Also 2026-11-03: hello@lostmansriver.com forwards to the author's Gmail (Cloudfl
 
 1. Stripe connected and tested (`GATE-SETUP.md`: webhook, restricted key, terms checkbox, a CREW-code purchase end to end).
 2. `site.config.mjs` → `checkout.open: true`; build and push. Every button now goes to Stripe; `/waitlist/` says "It's open" with the link.
-3. Send the opening email to the waitlist (to build: needs the mailing address for the footer, see `OPEN-ITEMS.md`).
+3. Send the opening email to the waitlist: `node scripts/send-opening.mjs --dry` to see the count, `--to <your email>` to check one copy in a real inbox, then `node scripts/send-opening.mjs`. It sends 25 at a time through the Worker and never emails the same address twice (`ws:<email>` in KV).
 4. Watch: `node scripts/metrics.mjs 1 funnel`.
 
 ## After opening week

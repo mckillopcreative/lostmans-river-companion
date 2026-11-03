@@ -19,6 +19,7 @@
 //   POST /waitlist              {email, adult: true, page?, src?} → on the opening-day list + one confirmation
 //   GET  /waitlist/leave?e&t    signed one-click removal
 //   GET  /admin/waitlist        the list, with x-admin-key
+//   POST /admin/send-opening    {limit?|dry?|to?} with x-admin-key: the opening email to the list, once each
 //   POST /admin/meta-test       {test_code} with x-admin-key: a pretend purchase to Meta's Test events
 //
 // KV (binding LR): k:<key> → {email, created, session, comp}; e:<email> → key;
@@ -26,7 +27,7 @@
 // w:<email> → {created, page, src} (waitlist); rlw:<ip> → waitlist signups this hour
 import { EVENTS } from '../../src/lib/events.mjs';
 import { qrPng } from './qr.js';
-import { welcomeEmail, waitlistEmail } from './email.js';
+import { welcomeEmail, waitlistEmail, openingEmail } from './email.js';
 import { reportPurchase } from './meta.js';
 
 const ORIGINS = [/^https:\/\/(www\.)?lostmansriver\.com$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
@@ -318,6 +319,40 @@ export default {
       const now = Date.now();
       const fake = { id: `cs_test_${now}`, created: Math.floor(now / 1000), amount_total: 2499, currency: 'usd', client_reference_id: `fb1_${now}_TestClickFromLostmansRiverAdmin`, customer_details: { email: 'test@example.com' } };
       return json(await reportPurchase({ ...env, META_TEST_EVENT_CODE: code }, fake), 200);
+    }
+
+    // Opening morning: email the list, up to `limit` addresses per call, never the same address twice
+    // (ws:<email> records each send). {to} sends one copy to that address only, for checking;
+    // {dry: true} only counts. Run repeatedly until `remaining` is 0 (scripts/send-opening.mjs).
+    if (path === '/admin/send-opening' && request.method === 'POST') {
+      if (!env.ADMIN_KEY || request.headers.get('x-admin-key') !== env.ADMIN_KEY) return new Response('no', { status: 403 });
+      const b = await request.json().catch(() => ({}));
+      if (b.to) {
+        const to = normEmail(b.to);
+        if (!okEmail(to)) return json({ ok: false, why: 'bad email' }, 400);
+        return json({ ok: true, preview: to, mail: await sendMail(env, to, openingEmail(await leaveLink(env, to))) }, 200);
+      }
+      const limit = Math.min(Number(b.limit) || 25, 50);
+      const pending = [];
+      let cursor;
+      do {
+        const r = await env.LR.list({ prefix: 'w:', cursor });
+        for (const k of r.keys) pending.push(k.name.slice(2));
+        cursor = r.list_complete ? null : r.cursor;
+      } while (cursor);
+      const todo = [];
+      for (const email of pending) if (!(await env.LR.get(`ws:${email}`))) todo.push(email);
+      if (b.dry) return json({ ok: true, list: pending.length, unsent: todo.length }, 200);
+      const sent = [];
+      const failed = [];
+      for (const email of todo.slice(0, limit)) {
+        const m = await sendMail(env, email, openingEmail(await leaveLink(env, email)));
+        if (m.sent) {
+          await env.LR.put(`ws:${email}`, new Date().toISOString());
+          sent.push(email);
+        } else failed.push({ email, why: m.why });
+      }
+      return json({ ok: true, sent: sent.length, failed, remaining: todo.length - sent.length - failed.length }, 200);
     }
 
     if (path === '/admin/waitlist') {

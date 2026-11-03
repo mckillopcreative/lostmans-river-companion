@@ -6,6 +6,51 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 
 // Opening day. Keep in step with site.config.mjs → checkout.opens.
 export const OPENS = 'Friday, November 27';
+// The postal address US law requires on marketing email (the author's P.O. box, 2026-11-03).
+export const POSTAL = 'McKillop Creative, LLC · PO Box 8292, Greenville, SC 29604';
+
+const footer = (leave) =>
+  `<p style="margin:22px 0 0;font-size:12px;line-height:1.5;color:#6b7478;">${POSTAL}<br>You’re getting this because you joined the opening-day list at lostmansriver.com. <a href="${esc(leave)}" style="color:#6b7478;">Take me off the list</a>.</p>`;
+const footerText = (leave) => ['', '—', POSTAL, 'You’re getting this because you joined the opening-day list at lostmansriver.com.', `Take me off the list: ${leave}`].join('\n');
+
+// Opening morning: the one email the list was promised. Sent by POST /admin/send-opening.
+export function openingEmail(leave) {
+  const subject = 'It’s open: your reader’s summer at Lostman’s River';
+  const buy = `${SITE}/?utm_source=email&utm_medium=email&utm_campaign=opening`;
+  const text = [
+    'The Summer Fishing Guide Experience is open.',
+    '',
+    `Get it here: ${buy}`,
+    '',
+    'One price, $24.99, for the household. Your reader gets the whole book to read and to hear read aloud, 23 missions in the app and 23 field missions done for real and signed off by you, the printable Field Journal, three badges, and an Assistant Fishing Guide license at the end.',
+    '',
+    'It arrives in a minute: you buy on your phone or computer, your reader scans the code in the welcome email on their own device, and they’re aboard. No account, no app to install.',
+    '',
+    'Giving it for Christmas? It comes with a printable gift card, so it works right up to the last minute.',
+    '',
+    'Questions? Just reply; it comes to us.',
+    '',
+    'Linda and John McKillop',
+    footerText(leave),
+  ].join('\n');
+  const p = (s, extra = '') => `<p style="margin:0 0 14px;font-size:16px;line-height:1.5;color:#1f2a2e;${extra}">${s}</p>`;
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f6f1e7;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f1e7;"><tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#fbf8f1;border:1px solid #e2d9c7;border-radius:14px;">
+<tr><td style="padding:28px 28px 20px;font-family:Georgia,'Times New Roman',serif;">
+  <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">Opening day</p>
+  <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">The Summer Fishing Guide Experience is open</h1>
+  ${p('One price, <strong>$24.99</strong>, for the household. Your reader gets the whole book to read and to hear read aloud, 23 missions in the app and 23 field missions done for real and signed off by you, the printable Field Journal, three badges, and an Assistant Fishing Guide license at the end.')}
+  <p style="margin:6px 0 20px;text-align:center;"><a href="${esc(buy)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-family:Georgia,serif;font-weight:bold;font-size:17px;text-decoration:none;padding:13px 26px;border-radius:999px;">Get the Experience</a></p>
+  ${p('<strong>It arrives in a minute.</strong> You buy on your phone or computer, your reader scans the code in the welcome email on their own device, and they’re aboard. No account, no app to install.')}
+  ${p('<strong>Giving it for Christmas?</strong> It comes with a printable gift card, so it works right up to the last minute.', 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
+  ${p('Questions? Just reply; it comes to us.', 'font-size:15px;color:#4b5a60;')}
+  <p style="margin:18px 0 0;font-size:16px;color:#2f5d50;font-style:italic;">Linda and John McKillop</p>
+  ${footer(leave)}
+</td></tr>
+</table></td></tr></table></body></html>`;
+  return { subject, text, html };
+}
 
 // The one email a waitlist signup gets before opening day.
 export function waitlistEmail(leave) {
@@ -22,8 +67,7 @@ export function waitlistEmail(leave) {
     'Until then, chapter 1 is free to read and hear at https://lostmansriver.com/ch/1/',
     '',
     'Linda and John McKillop',
-    '',
-    `Changed your mind? Take me off the list: ${leave}`,
+    footerText(leave),
   ].join('\n');
   const p = (s, extra = '') => `<p style="margin:0 0 14px;font-size:16px;line-height:1.5;color:#1f2a2e;${extra}">${s}</p>`;
   const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f6f1e7;">
@@ -37,7 +81,7 @@ export function waitlistEmail(leave) {
   ${p('<strong>Buying it as a gift?</strong> It arrives instantly, with a printable gift card, so it works right up to the last minute.', 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
   ${p(`Until then, <a href="${SITE}/ch/1/" style="color:#2a7f8e;">chapter 1 is free to read and hear</a>.`)}
   <p style="margin:18px 0 0;font-size:16px;color:#2f5d50;font-style:italic;">Linda and John McKillop</p>
-  <p style="margin:22px 0 0;font-size:13px;color:#4b5a60;">Changed your mind? <a href="${esc(leave)}" style="color:#4b5a60;">Take me off the list</a>.</p>
+  ${footer(leave)}
 </td></tr>
 </table></td></tr></table></body></html>`;
   return { subject, text, html };
