@@ -120,6 +120,19 @@ Every link: `https://lostmansriver.com/?utm_source=meta&utm_medium=paid_social&u
 - **Countdown:** "26 days to opening" style posts, last week only.
 - **Two voices (if they'd do it):** a 20-second clip of Linda reading one line and John the next.
 
+## Built in Meta (2026-11-03, all DRAFT, nothing live)
+
+Ad account McKillop Creative Ads 1825914471866172 · Page "Lostman's River" 1443510642172754 · dataset 2258563668038674. Advantage+ audience is on, so the age ranges are suggestions with a hard floor of 25.
+
+| Campaign | Objective | Budget | Ad sets | Ads |
+|---|---|---|---|---|
+| LR - Waitlist (Nov 9-26) `52528758368729` | Leads (Lead event) | $12/day, CBO | Parents `52528758794729` · Grandparents `52528758810929` · Florida `52528758824129` | Then & now (all three), Decades (Grandparents) |
+| LR - Opening and gifts (Nov 27-Dec 24) `52528758390129` | Sales (Purchase event) | $20/day, CBO | Parents `52528758829529` · Grandparents `52528758841529` · Florida `52528758848329` | Then & now (all three), Decades (Grandparents) |
+
+Creatives: then-now waitlist `2405444780118340`, decades waitlist `972044015518507`, then-now opening `1144722481231377`, decades opening `1302000109187433`. Images on the site at `/ads/` (hosted only so Meta could fetch them).
+
+Blockers before anything goes live: the ad account has **no payment method** (Ads Manager → Billing); the AI-content disclosure on each creative was left unset (the photos are real, not generated), John to confirm; ads 3–8 need their images. Review page: https://claude.ai/artifact/6xud5uvS38GXetXtr9c2JV
+
 ## To do
 - **John:** save the ad account's time zone and card; send the mailing address; edit the ad 1 text into his own words; take the Field Journal photo (ad 8); create the Lostman's River Facebook page in the business portfolio if it isn't yet.
 - **Claude:** GPT briefs A–E (`docs/AD-BRIEF-FOR-GPT.md`); the opening email; Conversions API purchase reporting (if Sales objective); build the campaigns paused in Meta for John's review once the account is ready.
