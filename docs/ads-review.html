@@ -1,10 +1,11 @@
 <title>Lostman's River Ads</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Caveat:wght@600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-  /* Layout: a field-notes binder. One column of ad cards, image left, copy right, stacking on a phone. */
+  /* Layout: a field-notes binder. One column of ad cards, image left, editable copy right, stacking on a phone. */
   :root {
     --bg: #f6f1e7;      /* paper */
     --card: #fbf8f1;
+    --field: #fffdf8;
     --fg: #1f2a2e;      /* ink */
     --muted: #5b676b;
     --line: #d9d0bf;
@@ -19,10 +20,10 @@
     --mono: "IBM Plex Mono", Consolas, monospace;
   }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    --bg: #15201f; --card: #1d2a28; --fg: #ece6da; --muted: #a9b3b0; --line: #34443f; --green: #8fc5b2; --orange: #f0a265; --orange-ink: #f0a265; --teal: #7cc5d1;
+    --bg: #15201f; --card: #1d2a28; --field: #16221f; --fg: #ece6da; --muted: #a9b3b0; --line: #34443f; --green: #8fc5b2; --orange: #f0a265; --orange-ink: #f0a265; --teal: #7cc5d1;
     --ok-bg: #1f3a31; --ok-fg: #a9dcc4; --wait-bg: #4a2f16; --wait-fg: #f4c99a; color-scheme: dark } }
   :root[data-theme="dark"] {
-    --bg: #15201f; --card: #1d2a28; --fg: #ece6da; --muted: #a9b3b0; --line: #34443f; --green: #8fc5b2; --orange: #f0a265; --orange-ink: #f0a265; --teal: #7cc5d1;
+    --bg: #15201f; --card: #1d2a28; --field: #16221f; --fg: #ece6da; --muted: #a9b3b0; --line: #34443f; --green: #8fc5b2; --orange: #f0a265; --orange-ink: #f0a265; --teal: #7cc5d1;
     --ok-bg: #1f3a31; --ok-fg: #a9dcc4; --wait-bg: #4a2f16; --wait-fg: #f4c99a; color-scheme: dark }
   body { background: var(--bg); color: var(--fg); font-family: var(--serif); font-size: 17px; line-height: 1.5; }
   .wrap { max-width: 980px; margin: 0 auto; padding-block: 28px 56px; padding-inline: 16px; }
@@ -30,18 +31,22 @@
   .eyebrow { font-family: var(--hand); font-size: 24px; color: var(--orange-ink); margin: 0; }
   .lede { max-width: 62ch; color: var(--muted); margin: 8px 0 0; }
   h2 { font-size: 22px; margin: 36px 0 12px; color: var(--green); }
+  .save { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; margin: 14px 0 0; padding: 8px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; font-family: var(--mono); font-size: 13px; color: var(--muted); display: flex; gap: 10px; align-items: center; }
+  .save .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); flex: none; }
+  .save.saving .dot { background: var(--orange); }
+  .save.saved .dot { background: var(--ok-fg); }
+  .save.ro .dot { background: var(--wait-fg); }
   table { border-collapse: collapse; width: 100%; font-size: 15px; }
   .tablewrap { overflow-x: auto; }
   th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
   th { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .rules { columns: 2; column-gap: 32px; max-width: 70ch; padding-left: 20px; margin: 0; }
-  @media (max-width: 640px) { .rules { columns: 1; } }
-  .rules li { break-inside: avoid; margin-bottom: 6px; }
-  .ads { display: grid; gap: 18px; margin-top: 14px; }
-  .ad { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 20px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .cards { display: grid; gap: 18px; margin-top: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .camp { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .ad { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 20px; }
   @media (max-width: 720px) { .ad { grid-template-columns: 1fr; } }
-  .art { background: var(--bg); border-radius: 8px; overflow: hidden; display: grid; place-items: center; min-height: 240px; }
+  .art { background: var(--bg); border-radius: 8px; overflow: hidden; display: grid; place-items: center; min-height: 240px; align-self: start; }
   .art img { display: block; width: 100%; height: auto; }
   .art .todo { padding: 24px 18px; text-align: center; color: var(--muted); font-size: 15px; }
   .art .todo strong { display: block; color: var(--orange-ink); font-family: var(--hand); font-size: 26px; margin-bottom: 4px; }
@@ -50,157 +55,175 @@
   .chip { font-family: var(--mono); font-size: 12px; padding: 3px 9px; border-radius: 999px; }
   .chip.ok { background: var(--ok-bg); color: var(--ok-fg); }
   .chip.wait { background: var(--wait-bg); color: var(--wait-fg); }
-  .ad h3 { margin: 0 0 6px; font-size: 24px; line-height: 1.15; }
-  .ad .headline { font-weight: 700; color: var(--green); margin: 0 0 8px; }
-  .copy { margin: 0 0 12px; white-space: pre-line; }
-  .copy em { color: var(--orange-ink); }
-  dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; font-size: 15px; margin: 0; }
-  dt { font-family: var(--mono); font-size: 12px; color: var(--muted); padding-top: 3px; }
-  dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+  .card h3 { margin: 0 0 10px; font-size: 24px; line-height: 1.15; }
+  .f { display: grid; gap: 4px; margin-bottom: 10px; }
+  .f label { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: 0.03em; }
+  .f label small { color: var(--orange-ink); letter-spacing: 0; }
+  .f input, .f textarea, .f select { font: inherit; font-size: 16px; color: var(--fg); background: var(--field); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; min-width: 0; box-sizing: border-box; }
+  .f textarea { min-height: 7.5em; resize: vertical; line-height: 1.45; }
+  .f input:focus, .f textarea:focus, .f select:focus { outline: 2px solid var(--orange); outline-offset: 1px; border-color: var(--orange); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 520px) { .row2 { grid-template-columns: 1fr; } }
+  .fixed { font-size: 15px; color: var(--muted); margin: 0 0 10px; }
+  .fixed code { font-family: var(--mono); font-size: 13px; }
   a { color: var(--teal); }
-  .foot { margin-top: 40px; font-size: 14px; color: var(--muted); max-width: 70ch; }
+  .foot { margin-top: 24px; font-size: 14px; color: var(--muted); max-width: 70ch; }
   :focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 </style>
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">For John · built Nov 3, 2026 · nothing is live</p>
-    <h1>The opening campaign, ad by ad</h1>
-    <p class="lede">Every ad in the plan for the Summer Fishing Guide Experience, with its image, words, audience and the code that tells us which ad brought each signup. Two are built in Meta as paused drafts today; six wait on images.</p>
+    <p class="eyebrow">For John · a plan, not a build · Nov 3, 2026</p>
+    <h1>The launch campaign, ad by ad</h1>
+    <p class="lede">Every ad and campaign exactly as I'd build it in Meta, with the words, the button, the audience and the budget in boxes you can change. Edit anything; it saves as you go and I read it back before building. Nothing is in Meta from this page.</p>
   </header>
 
+  <div class="save" id="save"><span class="dot"></span><span id="save-msg">Loading your edits…</span></div>
+
   <h2>The run</h2>
-  <div class="tablewrap">
-  <table>
-    <thead><tr><th>Dates</th><th>Goal</th><th>Meta objective</th><th>Daily budget</th><th>Ads</th></tr></thead>
-    <tbody>
-      <tr><td class="num">Nov 9 – 26</td><td>Emails on the waitlist</td><td>Leads (a signup fires <code>Lead</code>)</td><td class="num">$10 – 15</td><td>1 Then &amp; now · 2 Decades · 3 Summer job</td></tr>
-      <tr><td class="num">Nov 27 – 30</td><td>First sales</td><td>Sales (purchases reach Meta from our server)</td><td class="num">$20 – 25</td><td>3 · 5 · 1, plus the opening email</td></tr>
-      <tr><td class="num">Dec 1 – 24</td><td>Gift season</td><td>Sales</td><td class="num">$15 – 20</td><td>5 Gift · 4 Reader · 6 Smugglers · 8 Journal</td></tr>
-      <tr><td class="num">Dec 18 – 24</td><td>Last minute</td><td>Sales</td><td class="num">push the winner</td><td>5 Gift, “arrives instantly”</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p class="foot" style="margin-top:10px">Roughly $700 – 900 if run as written. Check after the first week and move money to the ad with the cheapest signups.</p>
+  <p class="lede" style="margin:0 0 12px">No fixed opening date any more. The store opens the day Stripe is connected, and the ads start the same day. One campaign carries the launch; a second, smaller one carries the Christmas-gift angle in December.</p>
+  <div class="cards camp" id="campaigns"></div>
 
   <h2>Who sees them</h2>
   <div class="tablewrap">
   <table>
     <thead><tr><th>Ad set</th><th>Who</th><th>Why</th></tr></thead>
     <tbody>
-      <tr><td>Parents</td><td>US, 30 – 55, fishing · outdoors · boating · children’s books</td><td>the core buyer</td></tr>
-      <tr><td>Grandparents</td><td>US, 55+, same interests plus grandparenting</td><td>the gift buyer; the mother-and-son story lands hardest here</td></tr>
-      <tr><td>Florida</td><td>Florida, 30+, fishing · boating · Everglades</td><td>local pride, the real places</td></tr>
+      <tr><td>Parents</td><td>US, 30 – 55; fishing · outdoors · boating · children's books, as suggestions to Meta</td><td>the core buyer</td></tr>
+      <tr><td>Grandparents</td><td>US, 55 – 65+; same, plus grandparenting</td><td>the gift buyer; the mother-and-son story lands hardest here</td></tr>
+      <tr><td>Florida</td><td>Florida, 30+; fishing · boating · Everglades</td><td>local pride, the real places</td></tr>
     </tbody>
   </table>
   </div>
-  <p class="foot" style="margin-top:10px">Grown-ups only, 25 and up. No targeting aimed at children, and no child’s face or name in any image. Linda is credited wherever her drawings or her story appear.</p>
+  <p class="foot" style="margin-top:10px">Grown-ups only: Meta's Advantage+ audience keeps a hard floor of 25 and treats the ranges as suggestions. No targeting aimed at children; no child's face or name in any image. Linda is credited as illustrator wherever her drawings or the story appear.</p>
 
   <h2>The ads</h2>
-  <div class="ads">
+  <div class="cards" id="ads"></div>
 
-    <article class="ad" id="thennow">
-      <div class="art"><img src="ads/lr-thennow-4x5.png" alt="Then and now: John as a boy with Linda, and the two of them today. John wrote the summer. Linda drew it." width="1080" height="1350"></div>
-      <div>
-        <p class="meta"><span class="n">Ad 1 · code lr-thennow</span><span class="chip ok">Built in Meta · paused</span></p>
-        <h3>Then &amp; now</h3>
-        <p class="headline">John wrote the summer. Linda drew it.</p>
-        <p class="copy">Years ago my mom and I wrote a fishing adventure together. I wrote it, she drew it, and it took us decades to finish. Now we’ve turned it into a summer your kid can live: the whole book read aloud, real fishing skills, and 23 missions they do for real, from knots to a fishing day. Opens November 27. — John
-<em>Drafted in your voice. Edit it into your own words before it runs.</em></p>
-        <dl><dt>Button</dt><dd>Sign up → the waitlist (after opening: Shop now → the site)</dd><dt>Audience</dt><dd>Parents, Grandparents, Florida (both campaigns)</dd><dt>Image</dt><dd>from the Bedside Stories handoff, 1080 × 1350</dd><dt>In Meta</dt><dd><a href="https://business.facebook.com/ads/api/preview_iframe.php?d=AQJzyAtT-E1kGFwZSVPxUOJfpBuplOGAMgzF4QqDi6HUSB6FNeCdAIh9I8kny6sQuvnh_JsRhPyufH9Iqc6oY3GR0fKV2MhyIXE73oNZ4SAjskT9NMNh0fAjMVtOTX6eK_ONYsbrKSCb5ibOKKNhIPA7tV91E7ABDFhfCLyVLx0fI1kXKMS3fV8tMFw6tWlzviuKYH6Bf8S8Xd9I_xx2IGjtky_KHnGqVotgNit1LrpamQ&amp;t=AQIq-oar7V8F8q-cIaY">Facebook feed preview, waitlist version</a> · <a href="https://business.facebook.com/ads/api/preview_iframe.php?d=AQLh5OqNQuiMesuOVCqnXC16A3dH0999M748mQCFcORXOlS60M_4VUrTtJwbe5uXy3LLY_IPO-V4VdxZtLOViBZSU6qoyn6elFa80S2amcZt1J3Jcw5xdMmkTvCDkquvGz2H9JHmCpfcp2ogRP1UK7JxHSD6x_KHcOHh9hCGNphF5PuEyzvfl0BMpp9D1-CEy5AMGsdREjuTID_l6a9kWExzmCTDTbMBdiBP6VhPQL85Rg&amp;t=AQIHlC94gh3si8u-myM">opening version</a> (Meta login needed)</dd></dl>
-      </div>
-    </article>
-
-    <article class="ad" id="decades">
-      <div class="art"><img src="ads/lr-decades-1x1.png" alt="A round photo of John and Linda. It took us decades. We finished it together." width="1080" height="1080"></div>
-      <div>
-        <p class="meta"><span class="n">Ad 2 · code lr-decades</span><span class="chip ok">Built in Meta · paused</span></p>
-        <h3>It took us decades</h3>
-        <p class="headline">A mother-and-son fishing adventure</p>
-        <p class="copy">Linda drew every picture. John wrote every word. Escape to Lostman’s River is their Everglades adventure for readers 10 to 15, now a summer-long experience: read it, hear it, and earn a fishing guide license. Opens November 27.</p>
-        <dl><dt>Button</dt><dd>Sign up → the waitlist (after opening: Shop now → the site)</dd><dt>Audience</dt><dd>Grandparents (both campaigns)</dd><dt>Image</dt><dd>from the Bedside Stories handoff, 1080 × 1080</dd><dt>In Meta</dt><dd><a href="https://business.facebook.com/ads/api/preview_iframe.php?d=AQI9EQFoeWecHs0dKWSAXI-xDLX9e7Ma3bWCblepq0yVlyQoZHwB7tMPrTwmtLVM6BiVZjyGCX0KUdGZZaLjIf1YS0NPB7Wr3R38H0rwmmWipuYWg6wPdyhOuomFHW4twpE3_9f02zmCJTy46VSpOIMtXlbbZt_VYkQxD_PeNjM5Bo8iBTQ_tLY468dzaGIVO_k9ij1ezYj1FvL6yfK9aVh8dgLXJkDIDYhExVYp9_PQYA&amp;t=AQIWD3D1vf7fBXxk0oc">Facebook feed preview, waitlist version</a> · <a href="https://business.facebook.com/ads/api/preview_iframe.php?d=AQL2eB0lquldMZAqgog8Ae3SSRAW5Gll632dD9R4Tnd0U9O0tqQ2dW-ppq2uhIZ3S-8xDdYz9V0_93BuC-TcjASsOAsRjeMYfo7yjB0Zd1hL8t7T15SwIpx3Zf_YEaZ-tf6KcZdy8eybpeLjkI7u1AxQBMtCjOODg7hJYFg4KT-DqiyDCx0lOPOWnZxInwjAnNMhSNFKRk95Ie7KxUskytf1RH8nyloSTwguXvTpMXNgvA&amp;t=AQIx0n_ZjG1a_1xfyAk">opening version</a> (Meta login needed)</dd></dl>
-      </div>
-    </article>
-
-    <article class="ad" id="summerjob">
-      <div class="art"><div class="todo"><strong>Image to come</strong>GPT brief A: a skiff at a sunrise dock, the book, headphones, a knot, the license. Icon row: Read it · Hear it · Tie it · Earn it.</div></div>
-      <div>
-        <p class="meta"><span class="n">Ad 3 · code lr-summerjob</span><span class="chip wait">Waiting on the image</span></p>
-        <h3>Give them a summer job in the Everglades</h3>
-        <p class="headline">Read it. Hear it. Fish it.</p>
-        <p class="copy">Matt is fifteen and the new assistant fishing guide on Chokoloskee Island. So is your kid. The whole novel to read and hear, 23 missions, 23 real-world field missions signed off by you, a Field Journal to fill in by hand, and an Assistant Fishing Guide license at the end. Written by a mother and son.</p>
-        <dl><dt>Audience</dt><dd>Parents, Florida</dd></dl>
-      </div>
-    </article>
-
-    <article class="ad" id="reader">
-      <div class="art"><div class="todo"><strong>Image to come</strong>GPT brief B: dusk on a dock, a teen from behind with headphones and the open book. No face.</div></div>
-      <div>
-        <p class="meta"><span class="n">Ad 4 · code lr-reader</span><span class="chip wait">Waiting on the image</span></p>
-        <h3>The reluctant reader</h3>
-        <p class="headline">“The first time he connected to a book.”</p>
-        <p class="copy">“My 14-year-old really doesn’t like to read at all. It was the first time my son ever said he connected to the main character.” — a parent, Amazon review. Escape to Lostman’s River, 4.7 stars, now read aloud with missions and real fishing skills.</p>
-        <dl><dt>Audience</dt><dd>Parents</dd></dl>
-      </div>
-    </article>
-
-    <article class="ad" id="gift">
-      <div class="art"><div class="todo"><strong>Image to come</strong>GPT brief C: the book wrapped in brown paper, fishing line for ribbon, a lure as the bow, the printable gift card.</div></div>
-      <div>
-        <p class="meta"><span class="n">Ad 5 · code lr-gift</span><span class="chip wait">Waiting on the image</span></p>
-        <h3>For the kid who’d rather be fishing</h3>
-        <p class="headline">The gift that lasts all summer</p>
-        <p class="copy">For the kid who’d rather be fishing. A mother-and-son Everglades adventure they read, hear and live: missions, real knots, a fishing day, and a license at the end. Arrives instantly, with a printable gift card. One price for the household.</p>
-        <dl><dt>Audience</dt><dd>Grandparents, Parents (December)</dd></dl>
-      </div>
-    </article>
-
-    <article class="ad" id="story">
-      <div class="art"><div class="todo"><strong>Image to come</strong>GPT brief D: night water, a seaplane landing with no lights, a flashlight from the mangroves, a huge moon.</div></div>
-      <div>
-        <p class="meta"><span class="n">Ad 6 · code lr-story</span><span class="chip wait">Waiting on the image</span></p>
-        <h3>Smugglers</h3>
-        <p class="headline">Smugglers. A giant tarpon. And he’s fifteen.</p>
-        <p class="copy">A seaplane lands without lights. A name in the dark. A tarpon called Old Scarface. Escape to Lostman’s River is the coming-of-age Everglades adventure your reader solves chapter by chapter, with a case file to crack. Written by a mother and son.</p>
-        <dl><dt>Audience</dt><dd>Parents (readers 11 – 14)</dd></dl>
-      </div>
-    </article>
-
-    <article class="ad" id="license">
-      <div class="art"><div class="todo"><strong>Image to come</strong>GPT brief E, or a photo: the printed license with its three badges on an open tackle box.</div></div>
-      <div>
-        <p class="meta"><span class="n">Ad 7 · code lr-license</span><span class="chip wait">Waiting on the image</span></p>
-        <h3>Can your kid earn this?</h3>
-        <p class="headline">Can your kid earn this?</p>
-        <p class="copy">23 missions. 23 field missions. 5 knots. 23 fish. One Assistant Fishing Guide license, signed by the captain (that’s you).</p>
-        <dl><dt>Audience</dt><dd>Parents</dd></dl>
-      </div>
-    </article>
-
-    <article class="ad" id="journal">
-      <div class="art"><div class="todo"><strong>Your photo</strong>Printed Field Journal pages on a dock or picnic table, a pencil, a spool of line, a clinch knot, sunlight. Hands only.</div></div>
-      <div>
-        <p class="meta"><span class="n">Ad 8 · code lr-journal</span><span class="chip wait">Waiting on your photo</span></p>
-        <h3>The Field Journal, for real</h3>
-        <p class="headline">Screens off. Rod in hand.</p>
-        <p class="copy">Every chapter ends with a field mission done for real, and a page to fill in by hand: tie the knot, read the tide, make the treasure map, clean up the lost line. A grown-up signs each one off.</p>
-        <dl><dt>Audience</dt><dd>Parents</dd></dl>
-      </div>
-    </article>
-
-  </div>
-
-  <h2>What’s in Meta right now</h2>
-  <div class="tablewrap">
-  <table>
-    <thead><tr><th>Campaign</th><th>Objective</th><th>Budget</th><th>Ad sets</th><th>Draft ads</th></tr></thead>
-    <tbody>
-      <tr><td>LR - Waitlist (Nov 9–26)</td><td>Leads</td><td class="num">$12/day</td><td>Parents · Grandparents · Florida</td><td>Then &amp; now in all three; Decades for Grandparents</td></tr>
-      <tr><td>LR - Opening and gifts (Nov 27–Dec 24)</td><td>Sales</td><td class="num">$20/day</td><td>Parents · Grandparents · Florida</td><td>same two, with “It’s open” wording and a Shop now button</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p class="foot" style="margin-top:10px">Everything is a draft in Ads Manager, publishing from the Lostman’s River Page. Before anything can run: add a payment method (Ads Manager → Billing), confirm the AI-content disclosure on each ad (these are real photos, so “no”), and give the ad 1 text your own words. Budgets are editable in Ads Manager.</p>
-
-  <p class="foot">Every ad links to lostmansriver.com with its code, so each signup records which ad brought it. Before opening day the button goes to the waitlist and every ad says “Opens November 27”. Nothing here runs until you switch it on in Ads Manager.</p>
+  <p class="foot">Every ad links to lostmansriver.com with its code, so each sale records which ad brought it. Purchases that began with an ad reach Meta from our server; no pixel runs on any page a child uses. When you're happy, tell me "build it" and I'll create exactly what's on this page, paused, for one last look in Ads Manager.</p>
 </div>
+
+<script>
+(function () {
+  // ---- the plan: defaults live here; John's edits are documents in the artifact's store ----
+  const CAMPAIGNS = [
+    { id: 'launch', name: 'LR - Launch', objective: 'Sales (purchases, reported from our server)', budget: 20, dates: 'The day the store opens → Dec 24', adsets: 'Parents · Grandparents · Florida', ads: '1 Then & now · 2 Decades · 3 Summer job · 4 Reader · 6 Smugglers · 7 License (as images arrive)', notes: '' },
+    { id: 'gifts', name: 'LR - Gifts', objective: 'Sales (purchases, reported from our server)', budget: 15, dates: 'Dec 1 → Dec 24', adsets: 'Grandparents · Parents', ads: '5 Gift · 8 Journal · whichever launch ad is winning', notes: '' },
+  ];
+  const BUTTONS = ['Shop now', 'Learn more', 'Get started'];
+  const ADS = [
+    { id: 'thennow', n: 1, title: 'Then & now', img: 'ads/lr-thennow-4x5.png', alt: 'John as a boy with Linda, and the two of them today. We wrote it together. She drew every page.', ready: 'Image ready (re-rendered today with the corrected line)', headline: 'We wrote it together. She drew every page.',
+      primary: 'Years ago my mom and I wrote a fishing adventure together, and she drew every picture in it. It took us decades to finish. Now we’ve turned it into a summer your kid can live: the whole book to read and hear, real fishing skills, and 23 missions they do for real, from knots to a fishing day. — John',
+      button: 'Shop now', audience: 'Parents, Grandparents, Florida', campaign: 'Launch', hint: 'Drafted in your voice; make it yours.' },
+    { id: 'decades', n: 2, title: 'It took us decades', img: 'ads/lr-decades-1x1.png', alt: 'A round photo of John and Linda. It took us decades. We finished it together.', ready: 'Image ready (re-rendered today)', headline: 'A mother-and-son fishing adventure',
+      primary: 'Linda and John McKillop, mother and son, wrote Escape to Lostman’s River together, and Linda illustrated it. Their Everglades adventure for readers 10 to 15 is now a summer-long experience: read it, hear it, and earn a fishing guide license. One price for the household, and it arrives in a minute.',
+      button: 'Shop now', audience: 'Grandparents', campaign: 'Launch' },
+    { id: 'summerjob', n: 3, title: 'Give them a summer job in the Everglades', todo: 'GPT brief A: a skiff at a sunrise dock, the book, headphones, a knot, the license. Icon row: Read it · Hear it · Tie it · Earn it.', headline: 'Read it. Hear it. Fish it.',
+      primary: 'Matt is fifteen and the new assistant fishing guide on Chokoloskee Island. So is your kid. The whole novel to read and hear, 23 missions, 23 real-world field missions signed off by you, a Field Journal to fill in by hand, and an Assistant Fishing Guide license at the end. Written by a mother and son.',
+      button: 'Shop now', audience: 'Parents, Florida', campaign: 'Launch' },
+    { id: 'reader', n: 4, title: 'The reluctant reader', todo: 'GPT brief B: dusk on a dock, a teen from behind with headphones and the open book. No face.', headline: '“The first time he connected to a book.”',
+      primary: '“My 14-year-old really doesn’t like to read at all. It was the first time my son ever said he connected to the main character.” — a parent, Amazon review. Escape to Lostman’s River, 4.7 stars, now read aloud with missions and real fishing skills.',
+      button: 'Shop now', audience: 'Parents', campaign: 'Launch' },
+    { id: 'gift', n: 5, title: 'For the kid who’d rather be fishing', todo: 'GPT brief C: the book wrapped in brown paper, fishing line for ribbon, a lure as the bow, the printable gift card.', headline: 'The gift that lasts all summer',
+      primary: 'For the kid who’d rather be fishing. A mother-and-son Everglades adventure they read, hear and live: missions, real knots, a fishing day, and a license at the end. Arrives instantly, with a printable gift card. One price for the household.',
+      button: 'Shop now', audience: 'Grandparents, Parents', campaign: 'Gifts' },
+    { id: 'story', n: 6, title: 'Smugglers', todo: 'GPT brief D: night water, a seaplane landing with no lights, a flashlight from the mangroves, a huge moon.', headline: 'Smugglers. A giant tarpon. And he’s fifteen.',
+      primary: 'A seaplane lands without lights. A name in the dark. A tarpon called Old Scarface. Escape to Lostman’s River is the coming-of-age Everglades adventure your reader solves chapter by chapter, with a case file to crack. Written by a mother and son.',
+      button: 'Shop now', audience: 'Parents (readers 11 – 14)', campaign: 'Launch' },
+    { id: 'license', n: 7, title: 'Can your kid earn this?', todo: 'GPT brief E, or a photo: the printed license with its three badges on an open tackle box.', headline: 'Can your kid earn this?',
+      primary: '23 missions. 23 field missions. 5 knots. 23 fish. One Assistant Fishing Guide license, signed by the captain (that’s you).',
+      button: 'Shop now', audience: 'Parents', campaign: 'Launch' },
+    { id: 'journal', n: 8, title: 'The Field Journal, for real', todo: 'Your photo: printed Field Journal pages on a dock or picnic table, a pencil, a spool of line, a clinch knot, sunlight. Hands only.', headline: 'Screens off. Rod in hand.',
+      primary: 'Every chapter ends with a field mission done for real, and a page to fill in by hand: tie the knot, read the tide, make the treasure map, clean up the lost line. A grown-up signs each one off.',
+      button: 'Shop now', audience: 'Parents', campaign: 'Gifts' },
+  ];
+  const STATUS = ['proposed', 'approved as is', 'approved with my edits', 'needs work', 'drop it'];
+
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const field = (id, key, label, value, kind, opts) => {
+    const fid = `${id}-${key}`;
+    if (kind === 'select') return `<div class="f"><label for="${fid}">${label}</label><select id="${fid}" data-doc="${id}" data-key="${key}">${opts.map((o) => `<option${o === value ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select></div>`;
+    if (kind === 'textarea') return `<div class="f"><label for="${fid}">${label}</label><textarea id="${fid}" data-doc="${id}" data-key="${key}">${esc(value)}</textarea></div>`;
+    return `<div class="f"><label for="${fid}">${label}</label><input id="${fid}" type="${kind || 'text'}" data-doc="${id}" data-key="${key}" value="${esc(value)}"></div>`;
+  };
+
+  document.getElementById('campaigns').innerHTML = CAMPAIGNS.map((c) => `
+    <section class="card" id="c-${c.id}">
+      <h3>${esc(c.name)}</h3>
+      <p class="fixed">Objective: ${esc(c.objective)}. Budget shared across the ad sets (Meta moves it to whichever is working).</p>
+      ${field('campaign-' + c.id, 'budget', 'Daily budget, $', c.budget, 'number')}
+      ${field('campaign-' + c.id, 'dates', 'Runs', c.dates)}
+      ${field('campaign-' + c.id, 'adsets', 'Ad sets', c.adsets)}
+      ${field('campaign-' + c.id, 'ads', 'Ads in it', c.ads)}
+      ${field('campaign-' + c.id, 'notes', 'Your notes', c.notes, 'textarea')}
+    </section>`).join('');
+
+  document.getElementById('ads').innerHTML = ADS.map((a) => `
+    <article class="card ad" id="a-${a.id}">
+      <div class="art">${a.img ? `<img src="${a.img}" alt="${esc(a.alt)}">` : `<div class="todo"><strong>Image to come</strong>${esc(a.todo)}</div>`}</div>
+      <div>
+        <p class="meta"><span class="n">Ad ${a.n} · code lr-${a.id}</span><span class="chip ${a.img ? 'ok' : 'wait'}">${a.img ? esc(a.ready) : 'Waiting on the image'}</span></p>
+        <h3>${esc(a.title)}</h3>
+        ${field('ad-' + a.id, 'headline', 'Headline (under the image)', a.headline)}
+        ${field('ad-' + a.id, 'primary', `Primary text (above the image)${a.hint ? ` <small>· ${esc(a.hint)}</small>` : ''}`, a.primary, 'textarea')}
+        <div class="row2">
+          ${field('ad-' + a.id, 'button', 'Button', a.button, 'select', BUTTONS)}
+          ${field('ad-' + a.id, 'campaign', 'Campaign', a.campaign, 'select', ['Launch', 'Gifts', 'Both'])}
+        </div>
+        ${field('ad-' + a.id, 'audience', 'Ad sets it runs in', a.audience)}
+        <p class="fixed">Links to <code>lostmansriver.com/?utm_campaign=lr-${a.id}</code> · publishes from the Lostman’s River Page · Facebook and Instagram feeds, stories and reels.</p>
+        <div class="row2">
+          ${field('ad-' + a.id, 'status', 'Your verdict', 'proposed', 'select', STATUS)}
+        </div>
+        ${field('ad-' + a.id, 'notes', 'Your notes (anything: tone, a line to use, what to change)', '', 'textarea')}
+      </div>
+    </article>`).join('');
+
+  // ---- saving: one document per card, written on change, debounced ----
+  const save = document.getElementById('save');
+  const msg = document.getElementById('save-msg');
+  const setState = (cls, text) => { save.className = 'save ' + cls; msg.textContent = text; };
+  const inputs = Array.from(document.querySelectorAll('[data-doc]'));
+  let db = null;
+  const pending = new Map();
+  const timers = new Map();
+
+  function applyDoc(id, data) {
+    if (!data) return;
+    for (const el of inputs) if (el.dataset.doc === id && data[el.dataset.key] !== undefined && document.activeElement !== el) el.value = data[el.dataset.key];
+  }
+  async function flush(id) {
+    timers.delete(id);
+    const patch = pending.get(id); pending.delete(id);
+    if (!db || !patch) return;
+    setState('saving', 'Saving…');
+    try {
+      const ref = db.doc('plan/' + id);
+      const cur = await ref.get();
+      await ref.set({ ...(cur.exists ? cur.data() : {}), ...patch, updated: new Date().toISOString() });
+      setState('saved', 'Saved. Claude reads these before building.');
+    } catch (e) {
+      if (e && e.code === 'invalid_argument') setState('ro', 'This page is read-only for you; edits are not saved.');
+      else setState('ro', 'Couldn’t save just now; try the change again in a moment.');
+    }
+  }
+  for (const el of inputs) {
+    el.addEventListener('input', () => {
+      const id = el.dataset.doc;
+      pending.set(id, { ...(pending.get(id) || {}), [el.dataset.key]: el.type === 'number' ? Number(el.value) : el.value });
+      clearTimeout(timers.get(id));
+      timers.set(id, setTimeout(() => flush(id), 700));
+    });
+  }
+
+  (async () => {
+    db = await window.claude?.use?.('db');
+    if (!db) { setState('ro', 'Sign in to save edits; you can still read and copy the plan.'); return; }
+    const loading = setTimeout(() => setState('ro', 'Your saved edits haven’t loaded yet; the page shows the proposal.'), 10000);
+    db.collection('plan').onSnapshot((snap) => {
+      if (!snap.metadata.fromCache) { clearTimeout(loading); if (!save.classList.contains('saving')) setState('saved', snap.empty ? 'Nothing changed yet. Edit any box; it saves as you go.' : 'Your edits are loaded. Change anything; it saves as you go.'); }
+      for (const d of snap.docs) applyDoc(d.id, d.data());
+    }, () => { clearTimeout(loading); setState('ro', 'Edits can’t be saved right now; the page shows the proposal.'); });
+  })();
+})();
+</script>

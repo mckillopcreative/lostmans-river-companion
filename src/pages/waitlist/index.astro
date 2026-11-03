@@ -14,7 +14,7 @@ import site from '../../../site.config.mjs';
 const cover = coverImage();
 ---
 
-<Base title="Opening day list" description={`The Summer Fishing Guide Experience opens ${opens}. Leave your email and we’ll send the link that morning.`} ads>
+<Base title="Opening day list" description="The Summer Fishing Guide Experience opens soon. Leave your email and we’ll send the link the morning it does." ads>
   <section class="wrap-wide section wl">
     <div class="wl-grid">
       <div>
@@ -27,7 +27,7 @@ const cover = coverImage();
             </p>
           ) : (
             <p class="lede">
-              The Summer Fishing Guide Experience for <em>{site.title}</em> opens on {opens}. Leave your email and we’ll send you the link that morning. One email, no newsletter.
+              The Summer Fishing Guide Experience for <em>{site.title}</em> opens {opens}. Leave your email and we’ll send you the link the morning it does. One email, no newsletter.
             </p>
           )
         }

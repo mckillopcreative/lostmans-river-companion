@@ -22,7 +22,7 @@ const { compact = false, label = 'Get the Full Experience', note = true } = Astr
   {
     note && (
       <p class="small muted buy-note">
-        {isOpen ? 'One-time purchase, 30-day refund.' : `One-time purchase. We’ll email you once, on ${opens}.`} Want the paperback?{' '}
+        {isOpen ? 'One-time purchase, 30-day refund.' : 'One-time purchase. We’ll email you once, the morning it opens.'} Want the paperback?{' '}
         <a href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page={Astro.url.pathname}>
           It’s on Amazon
         </a>

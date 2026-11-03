@@ -23,13 +23,13 @@ export default {
   authorsBio:
     'John is an MD, a children’s novelist, and a father of four. Years ago he wrote <em>Escape to Lostman’s River</em> with his mom, Linda, who drew every picture in it. The Lostman’s River Experience is what came after: a way for kids to step into the Florida Everglades through an immersive story adventure that blends the novel with real-life angling skills, puzzles, and the places where it all happens.',
   authorsHeadline: 'It took us decades. We finished it together.',
-  authorsEyebrow: 'son & mother · writer & illustrator',
+  authorsEyebrow: 'mother & son · co-authors · her illustrations',
 
   /** The paid product: Stripe Payment Link (created 2026-10-20). Price shown on the button; change both here. */
-  /** `open: false` sends every Buy button to /waitlist/ instead of Stripe (pre-launch). On opening
-   *  day set `open: true`; `opens` is the date the waitlist page and buttons quote (keep the
-   *  Worker's OPENS in worker/src/email.js in step). */
-  checkout: { url: 'https://buy.stripe.com/28EaEZ73B49jegveo093y00', price: '$24.99', name: 'Lostman’s River: Fishing Guide Experience', open: false, opens: 'November 27' },
+  /** `open: false` sends every Buy button to /waitlist/ instead of Stripe (pre-launch). Set
+   *  `open: true` once Stripe is connected (docs/GATE-SETUP.md). `opens` is how the buttons and the
+   *  waitlist page say when: no fixed date since 2026-11-03 (KDP released the ebook early). */
+  checkout: { url: 'https://buy.stripe.com/28EaEZ73B49jegveo093y00', price: '$24.99', name: 'Lostman’s River: Fishing Guide Experience', open: false, opens: 'soon' },
 
   /** The purchase gate (docs/LAUNCH-FLOW.md). While false, missions 2–23 stay open and chapters
    *  2–23 show no player, so nobody can buy into locked content. Live from 2026-10-31 (built as if

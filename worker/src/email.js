@@ -4,8 +4,9 @@ const SITE = 'https://lostmansriver.com';
 const API = 'https://api.lostmansriver.com';
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
-// Opening day. Keep in step with site.config.mjs → checkout.opens.
-export const OPENS = 'Friday, November 27';
+// When it opens, as the waitlist email says it. No fixed date since 2026-11-03; keep in step
+// with site.config.mjs → checkout.opens.
+export const OPENS = 'soon';
 // The postal address US law requires on marketing email (the author's P.O. box, 2026-11-03).
 export const POSTAL = 'McKillop Creative, LLC · PO Box 8292, Greenville, SC 29604';
 
@@ -58,7 +59,7 @@ export function waitlistEmail(leave) {
   const text = [
     'Thanks. You’re on the list.',
     '',
-    `The Summer Fishing Guide Experience opens ${OPENS}. We’ll email you that morning, once, with the link.`,
+    `The Summer Fishing Guide Experience opens ${OPENS}. We’ll email you once, the morning it does, with the link.`,
     '',
     'What your reader gets: the whole book, to read and to hear read aloud, chapter by chapter; 23 missions in the app and 23 field missions done for real, each signed off by a grown-up; a printable Field Journal; three badges; and an Assistant Fishing Guide license at the end.',
     '',
@@ -76,7 +77,7 @@ export function waitlistEmail(leave) {
 <tr><td style="padding:28px 28px 20px;font-family:Georgia,'Times New Roman',serif;">
   <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">You’re on the list</p>
   <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Summer Fishing Guide Experience</h1>
-  ${p(`It opens <strong>${OPENS}</strong>. We’ll email you that morning, once, with the link.`)}
+  ${p(`It opens <strong>${OPENS}</strong>. We’ll email you once, the morning it does, with the link.`)}
   ${p('<strong>What your reader gets:</strong> the whole book, to read and to hear read aloud, chapter by chapter; 23 missions in the app and 23 field missions done for real, each signed off by a grown-up; a printable Field Journal; three badges; and an Assistant Fishing Guide license at the end.')}
   ${p('<strong>Buying it as a gift?</strong> It arrives instantly, with a printable gift card, so it works right up to the last minute.', 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
   ${p(`Until then, <a href="${SITE}/ch/1/" style="color:#2a7f8e;">chapter 1 is free to read and hear</a>.`)}
