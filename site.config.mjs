@@ -62,7 +62,7 @@ export default {
    *  page), and only for visits that arrived from an ad click (fbclid / gclid / utm_medium
    *  paid). Never on the app, chapters, missions or games: children use those (COPPA). */
   ads: {
-    metaPixelId: '', // Meta Events Manager → Data sources → Pixel id
+    metaPixelId: '2258563668038674', // "Lostman's River website" dataset, Events Manager (created 2026-11-03)
     googleTagId: '', // Google Ads: 'AW-…' (or GA4 'G-…')
     googleBuyLabel: '', // the conversion label for the Buy click, from Google Ads
   },

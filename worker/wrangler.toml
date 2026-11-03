@@ -6,12 +6,18 @@
 #                          welcome page instant even if the webhook is a few seconds late)
 #   ADMIN_KEY              for POST /admin/issue (comps, reviewers, tests)
 #   RESEND_API_KEY         re_… sending key from Resend (domain lostmansriver.com verified there)
+#   META_CAPI_TOKEN        Conversions API access token for the dataset below (worker/src/meta.js)
 name = "lostmans-river-api"
 main = "src/index.js"
 compatibility_date = "2026-10-01"
 account_id = "91cf99ba149df24d16edfbc523306bc8"
 
 routes = [{ pattern = "api.lostmansriver.com", custom_domain = true }]
+
+# Meta "Lostman's River website" dataset (Events Manager, created 2026-11-03); purchases that
+# began with an ad click are reported to it (src/meta.js). Same id as site.config → ads.metaPixelId.
+[vars]
+META_DATASET_ID = "2258563668038674"
 
 [[analytics_engine_datasets]]
 binding = "EVENTS"
