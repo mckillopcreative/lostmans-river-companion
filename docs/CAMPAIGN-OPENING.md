@@ -120,7 +120,14 @@ Every link: `https://lostmansriver.com/?utm_source=meta&utm_medium=paid_social&u
 - **Countdown:** "26 days to opening" style posts, last week only.
 - **Two voices (if they'd do it):** a 20-second clip of Linda reading one line and John the next.
 
-## Built in Meta (2026-11-03, all DRAFT, nothing live)
+## Corrections, 2026-11-03 evening (author)
+
+- Linda and John **wrote the book together**; Linda illustrated it. Never "John wrote it, Linda drew it". The then/now image and the "decades" card were re-rendered with "We wrote it together. She drew every page." and "mother & son · co-authors · her illustrations".
+- **No opening date.** KDP released the ebook, so the store opens the day Stripe is connected. "Opens November 27" is gone from the site, the buttons and the emails ("opens soon"); the waitlist stays as the fallback until then.
+- **Plan before build.** The review page (https://claude.ai/artifact/6xud5uvS38GXetXtr9c2JV) is now the editable spec: John changes words, buttons, audiences and budgets there; Claude reads them (`ArtifactData`, collection `plan`) and builds only on "build it". The Meta drafts below were made before this and carry the old wording; they are not to be published and can be deleted on John's word.
+- The plan now: one Sales campaign **LR - Launch** ($20/day, store-open day → Dec 24, Parents/Grandparents/Florida) and **LR - Gifts** ($15/day, Dec 1–24). The waitlist (Leads) campaign is dropped.
+
+## Built in Meta earlier on 2026-11-03 (all DRAFT, stale wording, nothing live)
 
 Ad account McKillop Creative Ads 1825914471866172 · Page "Lostman's River" 1443510642172754 · dataset 2258563668038674. Advantage+ audience is on, so the age ranges are suggestions with a hard floor of 25.
 
