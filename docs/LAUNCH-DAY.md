@@ -17,12 +17,13 @@ KDP released the ebook from Select early (confirmed on the bookshelf). The text 
 node scripts/export-text.mjs --upload
 ```
 
-## Meta purchase reporting (built 2026-11-02, needs two values)
+## Meta purchase reporting: live since 2026-11-03
 
-The Worker reports each purchase that began with a Meta ad click to the Conversions API (`worker/src/meta.js`). To switch it on:
-1. Events Manager → Connect data → Web → name it "Lostman's River website" → copy its dataset ID. Put it in `worker/wrangler.toml` under `[vars]` as `META_DATASET_ID`, and in `site.config.mjs` → `ads.metaPixelId` (the browser pixel on `/` and `/waitlist/`).
-2. The dataset → Settings → Conversions API → Generate access token. From the `worker` folder: `npx wrangler secret put META_CAPI_TOKEN` and paste it.
-3. Test: Events Manager → the dataset → Test events → copy the code, then `POST /admin/meta-test` with `{"test_code": "<code>"}` and the `x-admin-key` header. A Purchase of $24.99 appears there.
+The Worker reports each purchase that began with a Meta ad click to the Conversions API (`worker/src/meta.js`). Set up 2026-11-03: dataset "Lostman's River website" (2258563668038674) under the McKillop Creative portfolio, connected to the McKillop Creative Ads account; `META_DATASET_ID` in `worker/wrangler.toml` and `site.config.mjs` → `ads.metaPixelId`; `META_CAPI_TOKEN` added as a Worker secret in the Cloudflare dashboard (wrangler's `secret put` tripped Norton); a test Purchase of $24.99 reached Events Manager → Test events.
+
+To re-test after a change: Test events → Website → "Confirm your server's events" → copy the code, then `POST /admin/meta-test` with `{"test_code": "<code>"}` and the `x-admin-key` header.
+
+Also 2026-11-03: hello@lostmansriver.com forwards to the author's Gmail (Cloudflare Email Routing) and is the Meta portfolio's contact email; the portfolio's business details are filled in.
 
 ## November 27, opening morning
 
