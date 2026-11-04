@@ -1,6 +1,7 @@
 [
   {
     "id": "improved-clinch",
+    "chapter": 2,
     "name": "Improved clinch knot",
     "use": "The everyday hook-to-line knot. Matt's first knot.",
     "steps": [
@@ -13,6 +14,7 @@
   },
   {
     "id": "loop-knot",
+    "chapter": 5,
     "name": "Non-slip loop knot",
     "use": "Leaves an open loop at the lure eye so a Bagley Mullet or a spoon can swing freely.",
     "steps": [
@@ -25,6 +27,7 @@
   },
   {
     "id": "uni-knot",
+    "chapter": 3,
     "name": "Uni knot",
     "use": "Line to swivel. Two of them back to back join line to leader.",
     "steps": [
@@ -37,6 +40,7 @@
   },
   {
     "id": "palomar",
+    "chapter": 8,
     "name": "Palomar knot",
     "use": "The strongest simple hook knot. Good for the forged hooks on the boat poles.",
     "steps": [
@@ -49,6 +53,7 @@
   },
   {
     "id": "albright",
+    "chapter": 6,
     "name": "Albright knot",
     "use": "Main line to a heavier leader, the way Matt rigs the thirty-pound leader for the big snook.",
     "steps": [

@@ -27,7 +27,7 @@ import {
 import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 import PlaceList from '@components/PlaceList.astro';
-import ChapterAudio from '@components/ChapterAudio.astro';
+import ChapterDash from '@components/ChapterDash.astro';
 import ChapterText from '@components/ChapterText.astro';
 
 export function getStaticPaths() {
@@ -71,7 +71,7 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
         </div>
       </header>
 
-      <ChapterAudio n={n} />
+      <ChapterDash chapter={chapter} />
       <ChapterText n={n} />
 
       {
@@ -85,10 +85,9 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
       }
 
       {
-        hasRoute && placeItems.length > 0 && (
+        placeItems.length > 0 && (
           <section aria-labelledby="where">
-            <h2 id="where" class="h2-first">Where we are</h2>
-            <MiniMap chapter={n} placeIds={chapter.places} />
+            <h2 id="where" class="h2-first">Places in this chapter</h2>
             <PlaceList places={placeItems} />
           </section>
         )
@@ -110,16 +109,6 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
                 “{q.text}”<cite>— {q.who}</cite>
               </blockquote>
             ))}
-          </section>
-        )
-      }
-
-      {
-        !hasRoute && placeItems.length > 0 && (
-          <section aria-labelledby="where">
-            <h2 id="where">Where we are</h2>
-            <MiniMap chapter={n} placeIds={chapter.places} />
-            <PlaceList places={placeItems} />
           </section>
         )
       }

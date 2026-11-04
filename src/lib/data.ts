@@ -128,6 +128,8 @@ export interface Recipe {
 }
 export interface Knot {
   id: string;
+  /** The chapter where Matt learns it; the chapter page shows it as the knot of the chapter. */
+  chapter: number;
   name: string;
   use: string;
   steps: string[];

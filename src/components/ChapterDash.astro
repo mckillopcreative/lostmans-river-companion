@@ -1,0 +1,292 @@
+---
+// The chapter panel: the chart with the route, the fish of the chapter, the knot, the audio guide,
+// today's tide window and the chapter-to-chapter arrows, in one glance at the top of every
+// chapter page. Modelled on the app mock the author approved (2026-11-04).
+import { Image } from 'astro:assets';
+import MiniMap from '@components/MiniMap.astro';
+import ChapterAudio from '@components/ChapterAudio.astro';
+import TideWindow from '@components/TideWindow.astro';
+import { chapterByN, fishById, wildlifeById, knots, routeByChapter, type Chapter } from '@lib/data';
+import { artImage } from '@lib/images';
+import { chapterUrl, url } from '@lib/url';
+
+interface Props {
+  chapter: Chapter;
+}
+const { chapter } = Astro.props;
+const n = chapter.n;
+const prev = chapterByN.get(n - 1);
+const next = chapterByN.get(n + 1);
+const route = routeByChapter.get(n);
+
+// the fish of the chapter: the one the chapter's title or summary names (chapter 7 is the tarpon,
+// not the trout caught on the way), else the first listed; a chapter with no fish shows a critter
+const text = `${chapter.title} ${chapter.summary}`.toLowerCase();
+const named = chapter.fish.map((id) => fishById.get(id)!).find((f) => text.includes(f.common.split(/[ (]/)[0].toLowerCase()));
+const fish = named ?? (chapter.fish.length ? fishById.get(chapter.fish[0]) : undefined);
+const critter = !fish && chapter.wildlife.length ? wildlifeById.get(chapter.wildlife[0]) : undefined;
+const speciesArt = fish ? artImage('fish', fish.id) : critter ? artImage('wildlife', critter.id) : null;
+const clip = (s: string | undefined, n = 140) => (s && s.length > n ? s.slice(0, s.lastIndexOf(' ', n)) + '…' : s || '');
+
+// the knot of the chapter, else the latest one learned so far (keep practising)
+const learned = knots.filter((k) => k.chapter <= n).sort((a, b) => b.chapter - a.chapter);
+const knot = learned[0];
+const knotIsNew = knot?.chapter === n;
+const firstKnot = knots.slice().sort((a, b) => a.chapter - b.chapter)[0];
+---
+
+<section class="dash" aria-label={`Chapter ${n} at a glance`}>
+  <div class="dash-grid">
+    {
+      chapter.places.length > 0 && (
+        <div class="dc dc-chart">
+          <h2 class="dc-h">{route ? 'Chart & route' : 'Where we are'}</h2>
+          <div class="dc-b dc-b-chart">
+            <MiniMap chapter={n} placeIds={chapter.places} />
+          </div>
+        </div>
+      )
+    }
+
+    {
+      (fish || critter) && (
+        <div class="dc dc-fish">
+          <h2 class="dc-h">{fish ? 'Fish of the chapter' : 'Wildlife of the chapter'}</h2>
+          <a class="dc-b dc-b-fish" href={url(fish ? `/fish/${fish.id}/` : `/critters/${critter!.id}/`)}>
+            {speciesArt && <Image class="art" src={speciesArt} alt="" width={520} sizes="(min-width: 640px) 300px, 90vw" loading="lazy" />}
+            <span class="sp-name">{fish ? fish.common : critter!.name}</span>
+            {(fish?.scientific || critter?.scientific) && <span class="sp-sci">{fish ? fish.scientific : critter!.scientific}</span>}
+            {fish?.typical_size && <span class="sp-size mono">{fish.typical_size}</span>}
+            <span class="sp-line small">{clip(fish ? fish.in_book : critter!.in_book)}</span>
+          </a>
+        </div>
+      )
+    }
+
+    <div class="dc dc-knot">
+      <h2 class="dc-h">{knot ? (knotIsNew ? 'Knot of the chapter' : 'Keep practising') : 'Knots'}</h2>
+      <div class="dc-b">
+        {
+          knot ? (
+            <>
+              <a class="kn-name" href={url(`/knots/#${knot.id}`)}>
+                {knot.name}
+                {!knotIsNew && <span class="small muted"> · from chapter {knot.chapter}</span>}
+              </a>
+              <ol class="kn-steps">
+                {knot.steps.map((s, i) => (
+                  <li>
+                    <img src={url(`/knots/${knot.id}-${i + 1}.svg`)} alt="" width="120" height="60" loading="lazy" />
+                    <span>{s}</span>
+                  </li>
+                ))}
+              </ol>
+              <p class="small kn-use">{knot.use}</p>
+            </>
+          ) : (
+            <p class="small">
+              Matt ties his first knot, the {firstKnot.name.toLowerCase()}, in <a href={chapterUrl(firstKnot.chapter)}>chapter {firstKnot.chapter}</a>. <a href={url('/knots/')}>See all five →</a>
+            </p>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="dc dc-audio">
+      <h2 class="dc-h">Audio guide</h2>
+      <div class="dc-b dc-b-audio">
+        <ChapterAudio n={n} title={`Chapter ${n}, read aloud`} compact />
+      </div>
+    </div>
+
+    <div class="dc dc-tide">
+      <h2 class="dc-h">Tide &amp; bite window · today</h2>
+      <div class="dc-b">
+        <TideWindow />
+      </div>
+    </div>
+  </div>
+
+  <nav class="dash-nav" aria-label="Chapters">
+    {prev ? <a class="dn-side" href={chapterUrl(prev.n)}>‹ Chapter {prev.n}</a> : <a class="dn-side" href={url('/app/')}>‹ Home</a>}
+    <span class="dn-current">Chapter {n}</span>
+    {next ? <a class="dn-side dn-next" href={chapterUrl(next.n)}>Chapter {next.n} ›</a> : <a class="dn-side dn-next" href={url('/license/')}>Your license ›</a>}
+  </nav>
+</section>
+
+<style>
+  .dash {
+    margin: 1rem 0 1.5rem;
+  }
+  .dash-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 640px) {
+    .dash-grid {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    }
+    .dc-chart { grid-column: 1; }
+    .dc-fish { grid-column: 2; }
+    .dc-knot { grid-column: 1; }
+    .dc-audio { grid-column: 2; }
+    .dc-tide { grid-column: 1 / -1; }
+  }
+  .dc {
+    background: var(--paper-2);
+    border: 1px solid var(--oyster);
+    border-radius: 10px;
+    overflow: hidden;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .dc-h {
+    margin: 0;
+    padding: 0.42rem 0.85rem;
+    background: var(--mangrove);
+    color: var(--paper);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .dc-b {
+    padding: 0.75rem 0.85rem;
+    flex: 1;
+  }
+  .dc-b-chart {
+    padding: 0.5rem;
+  }
+  .dc-b-chart :global(.minimap) {
+    margin: 0;
+  }
+  .dc-b-fish {
+    display: grid;
+    gap: 0.2rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .dc-b-fish img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 0.3rem;
+  }
+  .sp-name {
+    font-weight: 700;
+    color: var(--mangrove);
+    font-size: 1.15rem;
+  }
+  .sp-sci {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+  }
+  .sp-size {
+    font-size: 0.72rem;
+    color: var(--sunrise-ink);
+  }
+  .sp-line {
+    color: var(--ink-soft);
+  }
+  .kn-name {
+    font-weight: 700;
+    color: var(--mangrove);
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
+  .kn-steps {
+    list-style: none;
+    counter-reset: step;
+    padding: 0;
+    margin: 0.6rem 0 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .kn-steps li {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 0.6rem;
+    align-items: center;
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+  .kn-steps li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--mangrove);
+    color: var(--paper);
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    transform: translate(-4px, -22px);
+  }
+  .kn-steps li {
+    position: relative;
+  }
+  .kn-steps img {
+    width: 120px;
+    height: 60px;
+    background: var(--paper);
+    border-radius: 4px;
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+  }
+  .kn-use {
+    margin: 0.6rem 0 0;
+    color: var(--ink-soft);
+  }
+  .dc-b-audio :global(.listen) {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .dash-nav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 12px;
+    padding: 0.5rem 0.75rem;
+    background: var(--paper-2);
+    border: 1px solid var(--oyster);
+    border-radius: 999px;
+  }
+  .dn-side {
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--mangrove);
+    font-size: 0.95rem;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  @media (max-width: 420px) {
+    .dn-side {
+      font-size: 0.85rem;
+    }
+    .dn-current {
+      padding-inline: 0.8rem;
+    }
+  }
+  .dn-next {
+    justify-self: end;
+  }
+  .dn-current {
+    padding: 0.3rem 1.1rem;
+    border-radius: 999px;
+    background: var(--mangrove);
+    color: var(--paper);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+</style>

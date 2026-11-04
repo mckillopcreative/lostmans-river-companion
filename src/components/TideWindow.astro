@@ -1,0 +1,87 @@
+---
+// Today's tide curve for the chapter panel, with Dan's rule drawn on: fish the hour either side
+// of the high. NOAA hourly predictions for the Naples reference station (same as /tides/), drawn
+// as an SVG on the device; no library. Falls back to a one-line note if NOAA can't be reached.
+import { url } from '@lib/url';
+const STATION = '8725110';
+---
+
+<div class="tw" data-station={STATION}>
+  <p class="tw-status small muted">Reading today’s tide…</p>
+  <svg class="tw-svg" viewBox="0 0 600 210" role="img" aria-label="Today’s tide curve with the fishing windows an hour either side of each high" hidden></svg>
+  <p class="tw-foot small">
+    <span class="hand tw-rule">Fish the hour either side of the high.</span>
+    <a href={url('/tides/')}>Full tide table →</a>
+  </p>
+</div>
+
+<script>
+  for (const box of document.querySelectorAll<HTMLElement>('.tw')) {
+    const svg = box.querySelector<SVGSVGElement>('.tw-svg')!;
+    const status = box.querySelector<HTMLElement>('.tw-status')!;
+    const d = new Date();
+    const day = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+    const q = `product=predictions&application=lostmansriver&begin_date=${day}&end_date=${day}&datum=MLLW&station=${box.dataset.station}&time_zone=lst_ldt&units=english&interval=h&format=json`;
+    fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?${q}`)
+      .then((r) => r.json())
+      .then((j: { predictions?: { t: string; v: string }[] }) => {
+        const pts = (j.predictions || []).map((p) => ({ h: new Date(p.t.replace(' ', 'T')).getHours(), v: Number(p.v) }));
+        if (pts.length < 12) throw new Error('short');
+        // highs: local maxima of the hourly series
+        const highs = pts.filter((p, i) => i > 0 && i < pts.length - 1 && p.v >= pts[i - 1].v && p.v > pts[i + 1].v).map((p) => p.h);
+        const W = 600, H = 210, L = 44, R = 12, T = 18, B = 34;
+        const lo = Math.min(...pts.map((p) => p.v)), hi = Math.max(...pts.map((p) => p.v));
+        const x = (h: number) => L + (h / 23) * (W - L - R);
+        const y = (v: number) => T + (1 - (v - lo) / Math.max(0.5, hi - lo)) * (H - T - B);
+        const path = pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.h).toFixed(1)},${y(p.v).toFixed(1)}`).join(' ');
+        const area = `${path} L${x(23).toFixed(1)},${H - B} L${x(0).toFixed(1)},${H - B} Z`;
+        const ticks = [0, 3, 6, 9, 12, 15, 18, 21].map((h) => `<text x="${x(h).toFixed(1)}" y="${H - 12}" text-anchor="middle" class="tw-t">${h === 0 ? '12 AM' : h === 12 ? '12 PM' : h < 12 ? h + ' AM' : h - 12 + ' PM'}</text>`).join('');
+        const ylab = [lo, (lo + hi) / 2, hi].map((v) => `<text x="${L - 6}" y="${(y(v) + 4).toFixed(1)}" text-anchor="end" class="tw-t">${v.toFixed(1)} ft</text>`).join('');
+        const wins = highs.map((h) => `<rect x="${x(Math.max(0, h - 1)).toFixed(1)}" y="${T}" width="${(x(Math.min(23, h + 1)) - x(Math.max(0, h - 1))).toFixed(1)}" height="${H - T - B}" class="tw-win"/><text x="${x(h).toFixed(1)}" y="${(y(pts[h].v) - 8).toFixed(1)}" text-anchor="middle" class="tw-fish">fish</text>`).join('');
+        const nowH = d.getHours() + d.getMinutes() / 60;
+        const now = `<line x1="${x(nowH).toFixed(1)}" x2="${x(nowH).toFixed(1)}" y1="${T}" y2="${H - B}" class="tw-now"/><text x="${x(nowH).toFixed(1)}" y="${H - B + 12}" text-anchor="middle" class="tw-t tw-nowt">now</text>`;
+        svg.innerHTML = `<line x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}" class="tw-axis"/>${wins}<path d="${area}" class="tw-area"/><path d="${path}" class="tw-line"/>${now}${ticks}${ylab}`;
+        svg.hidden = false;
+        status.remove();
+      })
+      .catch(() => {
+        status.textContent = 'Couldn’t reach NOAA just now. The rule still holds: fish the hour either side of the high.';
+      });
+  }
+</script>
+
+<style>
+  .tw-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .tw-svg[hidden] {
+    display: none;
+  }
+  .tw-status {
+    margin: 0 0 0.25rem;
+  }
+  .tw-foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0.3rem 0 0;
+    flex-wrap: wrap;
+  }
+  .tw-rule {
+    color: var(--sunrise-ink);
+    font-size: 1.15rem;
+  }
+</style>
+
+<style is:global>
+  .tw .tw-axis { stroke: var(--oyster); stroke-width: 1; }
+  .tw .tw-area { fill: var(--water); }
+  .tw .tw-line { fill: none; stroke: var(--gulf); stroke-width: 2.5; stroke-linejoin: round; }
+  .tw .tw-win { fill: var(--sunrise); opacity: 0.28; }
+  .tw .tw-fish { font-family: var(--font-hand); font-size: 15px; fill: var(--sunrise-ink); }
+  .tw .tw-now { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 3 3; }
+  .tw .tw-t { font-family: var(--font-mono, monospace); font-size: 10px; fill: var(--ink-soft); }
+  .tw .tw-nowt { fill: var(--ink); }
+</style>
