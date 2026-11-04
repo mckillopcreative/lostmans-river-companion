@@ -14,7 +14,7 @@ export default {
 
   title: "Escape to Lostman's River",
   shortTitle: "Lostman's River",
-  tagline: 'An Everglades adventure novel by Linda & John McKillop',
+  tagline: 'A coming-of-age fishing adventure in the Everglades, by Linda & John McKillop',
   authors: 'Linda & John McKillop',
   artist: 'Linda McKillop',
   /** Credit line under commissioned / generated art in assets/art (docs/VISUAL-BRIEF.md). */
