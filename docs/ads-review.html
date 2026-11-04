@@ -66,6 +66,8 @@
   @media (max-width: 520px) { .row2 { grid-template-columns: 1fr; } }
   .fixed { font-size: 15px; color: var(--muted); margin: 0 0 10px; }
   .fixed code { font-family: var(--mono); font-size: 13px; }
+  .rule { background: var(--card); border-left: 4px solid var(--green); border-radius: 0 10px 10px 0; padding: 12px 16px; margin: 12px 0 0; max-width: 72ch; }
+  .rule p { margin: 0 0 6px; }
   a { color: var(--teal); }
   .foot { margin-top: 24px; font-size: 14px; color: var(--muted); max-width: 70ch; }
   :focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
@@ -73,15 +75,20 @@
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">For John · a plan, not a build · Nov 3, 2026</p>
+    <p class="eyebrow">For John · a plan, not a build · revised Nov 4, 2026</p>
     <h1>The launch campaign, ad by ad</h1>
     <p class="lede">Every ad and campaign exactly as I'd build it in Meta, with the words, the button, the audience and the budget in boxes you can change. Edit anything; it saves as you go and I read it back before building. Nothing is in Meta from this page.</p>
   </header>
 
   <div class="save" id="save"><span class="dot"></span><span id="save-msg">Loading your edits…</span></div>
 
+  <div class="rule">
+    <p><strong>What every ad sells:</strong> a book-expansion experience, not the book. The novel on the reader's own tablet, read and read aloud, and with each chapter the real world it sends them into: the fish, the chart, the tides, the knots on real line, a field mission done off the screen and signed off by a grown-up, a paper Field Journal, a license at the end.</p>
+    <p><strong>So in every image:</strong> a screen showing the app, plus real-world evidence (a knot, a tide table, a journal page, the license). The paperback appears only as a small emblem. Hands and backs only; never a child's face. The GPT direction that produces these images is <code>ads-for-gpt/02-CREATIVE-DIRECTION-V2.md</code>.</p>
+  </div>
+
   <h2>The run</h2>
-  <p class="lede" style="margin:0 0 12px">No fixed opening date any more. The store opens the day Stripe is connected, and the ads start the same day. One campaign carries the launch; a second, smaller one carries the Christmas-gift angle in December.</p>
+  <p class="lede" style="margin:0 0 12px">No fixed opening date. The store opens the day Stripe is connected, and the ads start the same day. One campaign carries the launch; a second, smaller one carries the Christmas-gift angle in December.</p>
   <div class="cards camp" id="campaigns"></div>
 
   <h2>Who sees them</h2>
@@ -107,35 +114,44 @@
 (function () {
   // ---- the plan: defaults live here; John's edits are documents in the artifact's store ----
   const CAMPAIGNS = [
-    { id: 'launch', name: 'LR - Launch', objective: 'Sales (purchases, reported from our server)', budget: 20, dates: 'The day the store opens → Dec 24', adsets: 'Parents · Grandparents · Florida', ads: '1 Then & now · 2 Decades · 3 Summer job · 4 Reader · 6 Smugglers · 7 License (as images arrive)', notes: '' },
-    { id: 'gifts', name: 'LR - Gifts', objective: 'Sales (purchases, reported from our server)', budget: 15, dates: 'Dec 1 → Dec 24', adsets: 'Grandparents · Parents', ads: '5 Gift · 8 Journal · whichever launch ad is winning', notes: '' },
+    { id: 'launch', name: 'LR - Launch', objective: 'Sales (purchases, reported from our server)', budget: 20, dates: 'The day the store opens → Dec 24', adsets: 'Parents · Grandparents · Florida', ads: '9 Explainer · 1 Then & now · 3 Summer job · 10 Same job Matt had · 4 Reader · 6 Smugglers · 7 License (as images arrive)', notes: '' },
+    { id: 'gifts', name: 'LR - Gifts', objective: 'Sales (purchases, reported from our server)', budget: 15, dates: 'Dec 1 → Dec 24', adsets: 'Grandparents · Parents', ads: '5 Gift · 8 Screens off · 11 Grandparents · whichever launch ad is winning', notes: '' },
   ];
   const BUTTONS = ['Shop now', 'Learn more', 'Get started'];
   const ADS = [
-    { id: 'thennow', n: 1, title: 'Then & now', img: 'ads/lr-thennow-4x5.png', alt: 'John as a boy with Linda, and the two of them today. We wrote it together. She drew every page.', ready: 'Image ready (re-rendered today with the corrected line)', headline: 'We wrote it together. She drew every page.',
-      primary: 'Years ago my mom and I wrote a fishing adventure together, and she drew every picture in it. It took us decades to finish. Now we’ve turned it into a summer your kid can live: the whole book to read and hear, real fishing skills, and 23 missions they do for real, from knots to a fishing day. — John',
+    { id: 'explainer', n: 9, title: 'Read it. Hear it. Do it for real.', todo: 'Direction v2, image 1: one dock, three panels: a tablet on a chapter page, headphones with the fish card behind them, two hands tying a clinch knot with the knot diagram on a phone. The product explainer; the most important image.', headline: 'A book that sends them outside',
+      primary: 'The novel on their own tablet, read aloud chapter by chapter. Then the app sends them off the screen: tie the chapter’s knot on real line, check tomorrow’s tide, work the chart, log the catch in a paper Field Journal. A grown-up signs each mission. Twenty-three chapters, one summer, one Assistant Fishing Guide license. Written by a mother and son.',
+      button: 'Shop now', audience: 'Parents, Grandparents, Florida', campaign: 'Launch', hint: 'Lead with this one; it explains the product in one frame.' },
+    { id: 'thennow', n: 1, title: 'Then & now', img: 'ads/lr-thennow-4x5.png', alt: 'John as a boy with Linda, and the two of them today. We wrote it together. She drew every page.', ready: 'Image ready', headline: 'We wrote it together. She drew every page.',
+      primary: 'Years ago my mom and I wrote a fishing adventure together, and she drew every picture in it. It took us decades. Now it’s a summer your kid can live: read the book, hear it read aloud, and do the real thing chapter by chapter: tie the knots, read the tides, work the chart, and earn a fishing guide license. — John',
       button: 'Shop now', audience: 'Parents, Grandparents, Florida', campaign: 'Launch', hint: 'Drafted in your voice; make it yours.' },
-    { id: 'decades', n: 2, title: 'It took us decades', img: 'ads/lr-decades-1x1.png', alt: 'A round photo of John and Linda. It took us decades. We finished it together.', ready: 'Image ready (re-rendered today)', headline: 'A mother-and-son fishing adventure',
-      primary: 'Linda and John McKillop, mother and son, wrote Escape to Lostman’s River together, and Linda illustrated it. Their Everglades adventure for readers 10 to 15 is now a summer-long experience: read it, hear it, and earn a fishing guide license. One price for the household, and it arrives in a minute.',
+    { id: 'decades', n: 2, title: 'It took us decades', img: 'ads/lr-decades-1x1.png', alt: 'A round photo of John and Linda. It took us decades. We finished it together.', ready: 'Image ready', headline: 'A mother-and-son fishing adventure',
+      primary: 'Linda and John McKillop, mother and son, wrote Escape to Lostman’s River together, and Linda illustrated it. Now it’s a summer-long experience for readers 10 to 15: the book on screen and read aloud, and 23 missions done for real, off the screen, from a clinch knot to a fishing day. One price for the household.',
       button: 'Shop now', audience: 'Grandparents', campaign: 'Launch' },
-    { id: 'summerjob', n: 3, title: 'Give them a summer job in the Everglades', img: 'ads/lr-summerjob-4x5.jpg', alt: 'A skiff at a sunrise dock with the book, headphones, a knot and the license. Give them a summer job in the Everglades.', ready: 'Image ready (GPT, Nov 4)', headline: 'Read it. Hear it. Fish it.',
-      primary: 'Matt is fifteen and the new assistant fishing guide on Chokoloskee Island. So is your kid. The whole novel to read and hear, 23 missions, 23 real-world field missions signed off by you, a Field Journal to fill in by hand, and an Assistant Fishing Guide license at the end. Written by a mother and son.',
+    { id: 'summerjob', n: 3, title: 'Give them a summer job in the Everglades', img: 'ads/lr-summerjob-4x5.jpg', alt: 'First version: a skiff at a sunrise dock with the book, headphones, a knot and the license.', ready: 'First version shown; being redone to direction v2, image 2 (hands at the skiff console, phone on the chart page, tide table under a bungee)', headline: 'Read it. Hear it. Do it for real.',
+      primary: 'Matt is fifteen and the new assistant fishing guide on Chokoloskee Island. So is your kid. Every chapter comes with the real thing: the fish, the chart, the tides, the knots, and a field mission to do off the screen, signed off by you. A Field Journal to fill in by hand, three badges, and an Assistant Fishing Guide license at the end.',
       button: 'Shop now', audience: 'Parents, Florida', campaign: 'Launch' },
-    { id: 'reader', n: 4, title: 'The reluctant reader', todo: 'GPT follow-up F: dusk on a dock, a teen from behind with headphones and a tablet showing a chapter page. No face. (The first version showed a paper book and was set aside.)', headline: '“The first time he connected to a book.”',
-      primary: '“My 14-year-old really doesn’t like to read at all. It was the first time my son ever said he connected to the main character.” — a parent, Amazon review. Escape to Lostman’s River, 4.7 stars, now read aloud with missions and real fishing skills.',
+    { id: 'mattsjob', n: 10, title: 'Same job Matt had', todo: 'Direction v2, image 7: a kid’s silhouette from behind at the bow of a skiff, rod up, big low sun; on the deck a phone showing “Chapter 19 · Old Scarface” and the tarpon card.', headline: 'Same job Matt had.',
+      primary: 'Fifteen, new in town, and the assistant guide on a flats skiff for the summer. Your reader takes the same job: the book, read and heard, and the real skills chapter by chapter, from the first knot to Old Scarface.',
       button: 'Shop now', audience: 'Parents', campaign: 'Launch' },
-    { id: 'gift', n: 5, title: 'For the kid who’d rather be fishing', todo: 'GPT follow-up H: the printed gift card, a tablet on a chapter page, headphones and a lure; nothing wrapped. (The first version showed a wrapped paperback and was set aside.)', headline: 'The gift that lasts all summer',
-      primary: 'For the kid who’d rather be fishing. A mother-and-son Everglades adventure they read, hear and live: missions, real knots, a fishing day, and a license at the end. Arrives instantly, with a printable gift card. One price for the household.',
+    { id: 'reader', n: 4, title: 'The reluctant reader', todo: 'Direction v2, image 4: dusk on a dock, a teen from behind with headphones and a tablet on a chapter page, a rod against the piling. No face. No headline on the image.', headline: '“The first time he connected to a book.”',
+      primary: '“My 14-year-old really doesn’t like to read at all. It was the first time my son ever said he connected to the main character.” — a parent, Amazon review. Escape to Lostman’s River, 4.7 stars, now on their own tablet: read it, hear it read aloud, and do 23 missions for real.',
+      button: 'Shop now', audience: 'Parents', campaign: 'Launch' },
+    { id: 'gift', n: 5, title: 'For the kid who’d rather be fishing', todo: 'Direction v2, image 6: the printed gift card propped on a table, a tablet on the chart page, headphones, a lure on a short length of line, a pine sprig. Nothing wrapped.', headline: 'The gift that lasts all summer',
+      primary: 'For the kid who’d rather be fishing. A summer in the Everglades they read, hear and live: real knots, real tides, a fishing day, a license at the end. Arrives instantly on their own tablet, with a printable gift card. One price for the household.',
       button: 'Shop now', audience: 'Grandparents, Parents', campaign: 'Gifts' },
-    { id: 'story', n: 6, title: 'Smugglers', img: 'ads/lr-story-4x5.jpg', alt: 'Night water under a huge moon, a seaplane landing with no lights, a flashlight in the mangroves, a tarpon under the surface. Smugglers. A giant tarpon. And he’s fifteen.', ready: 'Image ready (GPT, Nov 4)', headline: 'Smugglers. A giant tarpon. And he’s fifteen.',
-      primary: 'A seaplane lands without lights. A name in the dark. A tarpon called Old Scarface. Escape to Lostman’s River is the coming-of-age Everglades adventure your reader solves chapter by chapter, with a case file to crack. Written by a mother and son.',
+    { id: 'story', n: 6, title: 'Smugglers', img: 'ads/lr-story-4x5.jpg', alt: 'Night water under a huge moon, a seaplane landing with no lights, a flashlight in the mangroves, a tarpon under the surface. Smugglers. A giant tarpon. And he’s fifteen.', ready: 'Image ready (GPT, Nov 4; kept as is)', headline: 'Smugglers. A giant tarpon. And he’s fifteen.',
+      primary: 'A seaplane lands without lights. A name in the dark. A tarpon called Old Scarface. Escape to Lostman’s River is the coming-of-age Everglades adventure your reader solves chapter by chapter, with a case file to crack and the real fishing skills to go with it. Written by a mother and son.',
       button: 'Shop now', audience: 'Parents (readers 11 – 14)', campaign: 'Launch' },
-    { id: 'license', n: 7, title: 'Can your kid earn this?', img: 'ads/lr-license-4x5.jpg', alt: 'The printed Assistant Fishing Guide license with its three badges beside an open tackle box and the book. Can your kid earn this?', ready: 'Image ready (GPT, Nov 4)', headline: 'Can your kid earn this?',
-      primary: '23 missions. 23 field missions. 5 knots. 23 fish. One Assistant Fishing Guide license, signed by the captain (that’s you).',
+    { id: 'license', n: 7, title: 'Can your kid earn this?', img: 'ads/lr-license-4x5.jpg', alt: 'First version: the printed license with its three badges beside an open tackle box and the book.', ready: 'First version shown; being redone to direction v2, image 5 (the license on the tackle box, a tablet showing the missions list mostly checked, a knot on real line)', headline: 'Can your kid earn this?',
+      primary: '23 chapters. 23 missions in the app. 23 field missions off the screen, signed off by you. 5 knots on real line. One Assistant Fishing Guide license, signed by the captain (that’s you).',
       button: 'Shop now', audience: 'Parents', campaign: 'Launch' },
-    { id: 'journal', n: 8, title: 'The Field Journal, for real', todo: 'Your photo: printed Field Journal pages on a dock or picnic table, a pencil, a spool of line, a clinch knot, sunlight. Hands only.', headline: 'Screens off. Rod in hand.',
-      primary: 'Every chapter ends with a field mission done for real, and a page to fill in by hand: tie the knot, read the tide, make the treasure map, clean up the lost line. A grown-up signs each one off.',
+    { id: 'journal', n: 8, title: 'Screens off. Rod in hand.', todo: 'Direction v2, image 3, or your own photo: Field Journal pages with pencil notes, a phone face-down, a clinch knot on real line, a lure, a compass, a treasure map, a grown-up’s hand signing the page.', headline: 'Screens off. Rod in hand.',
+      primary: 'Every chapter ends with a field mission done for real, and a page to fill in by hand: tie the knot, read the tide, make the treasure map, clean up the lost line. A grown-up signs each one off. The book is the start; the summer is the point.',
       button: 'Shop now', audience: 'Parents', campaign: 'Gifts' },
+    { id: 'grandparents', n: 11, title: 'A mother and son wrote it. Your kid lives it.', todo: 'Direction v2, image 8: a pen-and-ink snook on a journal page, a grown-up’s hand and a kid’s hand on the same knot, a phone with the chapter page beside them.', headline: 'A mother and son wrote it. Your kid lives it.',
+      primary: 'Linda and John McKillop wrote this Everglades adventure together; Linda drew every picture. Now it’s a summer your grandchild can live, off the screen as much as on it: real knots, real tides, a real fishing day, and a license to show for it.',
+      button: 'Shop now', audience: 'Grandparents', campaign: 'Gifts' },
   ];
   const STATUS = ['proposed', 'approved as is', 'approved with my edits', 'needs work', 'drop it'];
 
@@ -162,7 +178,7 @@
     <article class="card ad" id="a-${a.id}">
       <div class="art">${a.img ? `<img src="${a.img}" alt="${esc(a.alt)}">` : `<div class="todo"><strong>Image to come</strong>${esc(a.todo)}</div>`}</div>
       <div>
-        <p class="meta"><span class="n">Ad ${a.n} · code lr-${a.id}</span><span class="chip ${a.img ? 'ok' : 'wait'}">${a.img ? esc(a.ready) : 'Waiting on the image'}</span></p>
+        <p class="meta"><span class="n">Ad ${a.n} · code lr-${a.id}</span><span class="chip ${a.img && !/redone/.test(a.ready || '') ? 'ok' : 'wait'}">${a.img ? esc(a.ready) : 'Waiting on the image'}</span></p>
         <h3>${esc(a.title)}</h3>
         ${field('ad-' + a.id, 'headline', 'Headline (under the image)', a.headline)}
         ${field('ad-' + a.id, 'primary', `Primary text (above the image)${a.hint ? ` <small>· ${esc(a.hint)}</small>` : ''}`, a.primary, 'textarea')}
