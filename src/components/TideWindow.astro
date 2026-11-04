@@ -41,7 +41,7 @@ const STATION = '8725110';
         const nowH = d.getHours() + d.getMinutes() / 60;
         const now = `<line x1="${x(nowH).toFixed(1)}" x2="${x(nowH).toFixed(1)}" y1="${T}" y2="${H - B}" class="tw-now"/><text x="${x(nowH).toFixed(1)}" y="${H - B + 12}" text-anchor="middle" class="tw-t tw-nowt">now</text>`;
         svg.innerHTML = `<line x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}" class="tw-axis"/>${wins}<path d="${area}" class="tw-area"/><path d="${path}" class="tw-line"/>${now}${ticks}${ylab}`;
-        svg.hidden = false;
+        svg.removeAttribute('hidden'); // an <svg> has no .hidden property, only the attribute
         status.remove();
       })
       .catch(() => {
