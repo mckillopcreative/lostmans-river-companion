@@ -2,6 +2,8 @@
 // The chapter panel: the chart with the route, the fish of the chapter, the knot, the audio guide,
 // today's tide window and the chapter-to-chapter arrows, in one glance at the top of every
 // chapter page. Modelled on the app mock the author approved (2026-11-04).
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { Image } from 'astro:assets';
 import MiniMap from '@components/MiniMap.astro';
 import ChapterAudio from '@components/ChapterAudio.astro';
@@ -19,12 +21,11 @@ const prev = chapterByN.get(n - 1);
 const next = chapterByN.get(n + 1);
 const route = routeByChapter.get(n);
 
-// the fish of the chapter: the one the chapter's title or summary names (chapter 7 is the tarpon,
-// not the trout caught on the way), else the first listed; a chapter with no fish shows a critter
-const text = `${chapter.title} ${chapter.summary}`.toLowerCase();
-const named = chapter.fish.map((id) => fishById.get(id)!).find((f) => text.includes(f.common.split(/[ (]/)[0].toLowerCase()));
-const fish = named ?? (chapter.fish.length ? fishById.get(chapter.fish[0]) : undefined);
-const critter = !fish && chapter.wildlife.length ? wildlifeById.get(chapter.wildlife[0]) : undefined;
+// the species of the chapter: the fish or critter its text talks about most (chapters.json `star`,
+// from scripts/feature-fish.mjs); chapter 7 is the tarpon, chapter 2 the pelican rookery
+const star = chapter.star;
+const fish = star?.kind === 'fish' ? fishById.get(star.id) : undefined;
+const critter = star?.kind === 'wildlife' ? wildlifeById.get(star.id) : undefined;
 const speciesArt = fish ? artImage('fish', fish.id) : critter ? artImage('wildlife', critter.id) : null;
 const clip = (s: string | undefined, n = 140) => (s && s.length > n ? s.slice(0, s.lastIndexOf(' ', n)) + '…' : s || '');
 
@@ -33,6 +34,15 @@ const learned = knots.filter((k) => k.chapter <= n).sort((a, b) => b.chapter - a
 const knot = learned[0];
 const knotIsNew = knot?.chapter === n;
 const firstKnot = knots.slice().sort((a, b) => a.chapter - b.chapter)[0];
+
+// the step drawings keep their own shape: most knots are drawn tall, the Albright wide
+const knotBox = (id: string) => {
+  const svg = readFileSync(resolve(process.cwd(), `public/knots/${id}-1.svg`), 'utf8');
+  const [, vw, vh] = svg.match(/viewBox="0 0 (\d+) (\d+)"/) ?? [];
+  const w = Number(vw) || 120, h = Number(vh) || 60;
+  return h > w ? { w: Math.round((120 * w) / h), h: 120 } : { w: 120, h: Math.round((120 * h) / w) };
+};
+const box = knot ? knotBox(knot.id) : { w: 120, h: 60 };
 ---
 
 <section class="dash" aria-label={`Chapter ${n} at a glance`}>
@@ -76,7 +86,7 @@ const firstKnot = knots.slice().sort((a, b) => a.chapter - b.chapter)[0];
               <ol class="kn-steps">
                 {knot.steps.map((s, i) => (
                   <li>
-                    <img src={url(`/knots/${knot.id}-${i + 1}.svg`)} alt="" width="120" height="60" loading="lazy" />
+                    <img src={url(`/knots/${knot.id}-${i + 1}.svg`)} alt="" width={box.w} height={box.h} loading="lazy" />
                     <span>{s}</span>
                   </li>
                 ))}
@@ -208,7 +218,7 @@ const firstKnot = knots.slice().sort((a, b) => a.chapter - b.chapter)[0];
   }
   .kn-steps li {
     display: grid;
-    grid-template-columns: 120px minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 0.6rem;
     align-items: center;
     font-size: 0.9rem;
@@ -233,8 +243,9 @@ const firstKnot = knots.slice().sort((a, b) => a.chapter - b.chapter)[0];
     position: relative;
   }
   .kn-steps img {
-    width: 120px;
-    height: 60px;
+    display: block;
+    max-width: 120px;
+    height: auto;
     background: var(--paper);
     border-radius: 4px;
     border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);

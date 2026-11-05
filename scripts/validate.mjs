@@ -69,6 +69,12 @@ for (const s of sketches) {
 // 4b. boat types reference real boats
 for (const t of boatTypes) for (const b of t.book_boats) if (!ids.boats.has(b)) errors.push(`boat-types/${t.id}.book_boats: unknown boat "${b}"`);
 
+// 4b. chapter star: the fish or critter of the chapter, from its own lists
+for (const c of chapters) {
+  if (!('star' in c)) errors.push(`chapters/${c.n}: no star (run scripts/feature-fish.mjs)`);
+  else if (c.star && !(c.star.kind === 'fish' ? c.fish : c.wildlife).includes(c.star.id)) errors.push(`chapters/${c.n}: star ${c.star.kind}:${c.star.id} is not in the chapter's list`);
+}
+
 // 4c. missions: 23, one per chapter, fish/place options resolve
 if (missions.length !== 23) errors.push(`missions: expected 23, got ${missions.length}`);
 missions.forEach((m, i) => {

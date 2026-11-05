@@ -38,7 +38,11 @@
       "starboard",
       "zany"
     ],
-    "sketch": null
+    "sketch": null,
+    "star": {
+      "kind": "fish",
+      "id": "lionfish"
+    }
   },
   {
     "n": 2,
@@ -101,7 +105,11 @@
     "word_of_day": [
       "rookery"
     ],
-    "sketch": "pelican-on-dock.png"
+    "sketch": "pelican-on-dock.png",
+    "star": {
+      "kind": "wildlife",
+      "id": "pelican"
+    }
   },
   {
     "n": 3,
@@ -146,7 +154,11 @@
       "shrimp"
     ],
     "word_of_day": [],
-    "sketch": null
+    "sketch": null,
+    "star": {
+      "kind": "fish",
+      "id": "snapper"
+    }
   },
   {
     "n": 4,
@@ -179,7 +191,11 @@
       "setting-the-hook"
     ],
     "word_of_day": [],
-    "sketch": null
+    "sketch": null,
+    "star": {
+      "kind": "fish",
+      "id": "snook"
+    }
   },
   {
     "n": 5,
@@ -216,7 +232,11 @@
       "aerator"
     ],
     "word_of_day": [],
-    "sketch": null
+    "sketch": null,
+    "star": {
+      "kind": "fish",
+      "id": "mullet"
+    }
   },
   {
     "n": 6,
@@ -242,7 +262,11 @@
       "thirty-pound-leader"
     ],
     "word_of_day": [],
-    "sketch": "matt-holding-snook.png"
+    "sketch": "matt-holding-snook.png",
+    "star": {
+      "kind": "fish",
+      "id": "snook"
+    }
   },
   {
     "n": 7,
@@ -284,7 +308,11 @@
       "grass-beds-trout"
     ],
     "word_of_day": [],
-    "sketch": null
+    "sketch": null,
+    "star": {
+      "kind": "fish",
+      "id": "tarpon"
+    }
   },
   {
     "n": 8,
@@ -320,7 +348,11 @@
       "sand-pipes"
     ],
     "word_of_day": [],
-    "sketch": "shark-comer-key-beach.png"
+    "sketch": "shark-comer-key-beach.png",
+    "star": {
+      "kind": "wildlife",
+      "id": "shark"
+    }
   },
   {
     "n": 9,
@@ -357,7 +389,11 @@
       "tides"
     ],
     "word_of_day": [],
-    "sketch": "seaplane-smuggler-drop.png"
+    "sketch": "seaplane-smuggler-drop.png",
+    "star": {
+      "kind": "wildlife",
+      "id": "mangroves"
+    }
   },
   {
     "n": 10,
@@ -391,7 +427,8 @@
       "channel-16"
     ],
     "word_of_day": [],
-    "sketch": null
+    "sketch": null,
+    "star": null
   },
   {
     "n": 11,
@@ -418,7 +455,8 @@
       "provisioning"
     ],
     "word_of_day": [],
-    "sketch": "sea-belle-towing-bonefisher.png"
+    "sketch": "sea-belle-towing-bonefisher.png",
+    "star": null
   },
   {
     "n": 12,
@@ -448,7 +486,11 @@
       "tides"
     ],
     "word_of_day": [],
-    "sketch": null
+    "sketch": null,
+    "star": {
+      "kind": "wildlife",
+      "id": "oyster-bar"
+    }
   },
   {
     "n": 13,
@@ -478,7 +520,11 @@
       "yellow-feather"
     ],
     "word_of_day": [],
-    "sketch": "alligator-grouper-thief.png"
+    "sketch": "alligator-grouper-thief.png",
+    "star": {
+      "kind": "wildlife",
+      "id": "alligator"
+    }
   },
   {
     "n": 14,
@@ -510,7 +556,11 @@
       "navigational-chart"
     ],
     "word_of_day": [],
-    "sketch": "grouper.png"
+    "sketch": "grouper.png",
+    "star": {
+      "kind": "wildlife",
+      "id": "mangroves"
+    }
   },
   {
     "n": 15,
@@ -538,7 +588,11 @@
     "boats": [],
     "gear": [],
     "word_of_day": [],
-    "sketch": null
+    "sketch": null,
+    "star": {
+      "kind": "fish",
+      "id": "snook"
+    }
   },
   {
     "n": 16,
@@ -576,7 +630,11 @@
       "snorkel"
     ],
     "word_of_day": [],
-    "sketch": "dolphin-vs-hammerhead.png"
+    "sketch": "dolphin-vs-hammerhead.png",
+    "star": {
+      "kind": "wildlife",
+      "id": "dolphin"
+    }
   },
   {
     "n": 17,
@@ -610,7 +668,11 @@
       "medical-bag"
     ],
     "word_of_day": [],
-    "sketch": "doc-brown-skiff.png"
+    "sketch": "doc-brown-skiff.png",
+    "star": {
+      "kind": "fish",
+      "id": "grouper"
+    }
   },
   {
     "n": 18,
@@ -639,7 +701,11 @@
       "push-pole"
     ],
     "word_of_day": [],
-    "sketch": null
+    "sketch": null,
+    "star": {
+      "kind": "wildlife",
+      "id": "oyster-bar"
+    }
   },
   {
     "n": 19,
@@ -671,7 +737,11 @@
       "reviving-a-fish"
     ],
     "word_of_day": [],
-    "sketch": "tarpon-leap-houseboat.png"
+    "sketch": "tarpon-leap-houseboat.png",
+    "star": {
+      "kind": "fish",
+      "id": "tarpon"
+    }
   },
   {
     "n": 20,
@@ -710,7 +780,11 @@
       "undercover",
       "informant"
     ],
-    "sketch": null
+    "sketch": null,
+    "star": {
+      "kind": "fish",
+      "id": "tarpon"
+    }
   },
   {
     "n": 21,
@@ -742,7 +816,11 @@
     ],
     "gear": [],
     "word_of_day": [],
-    "sketch": null
+    "sketch": null,
+    "star": {
+      "kind": "fish",
+      "id": "tarpon"
+    }
   },
   {
     "n": 22,
@@ -769,7 +847,11 @@
     ],
     "gear": [],
     "word_of_day": [],
-    "sketch": null
+    "sketch": null,
+    "star": {
+      "kind": "wildlife",
+      "id": "pelican"
+    }
   },
   {
     "n": 23,
@@ -800,6 +882,10 @@
     ],
     "gear": [],
     "word_of_day": [],
-    "sketch": "lostmans-river-hand-map.png"
+    "sketch": "lostmans-river-hand-map.png",
+    "star": {
+      "kind": "wildlife",
+      "id": "alligator"
+    }
   }
 ]

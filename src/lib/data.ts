@@ -29,6 +29,8 @@ export interface Chapter {
   gear: string[];
   word_of_day: string[];
   sketch: string | null;
+  /** the species the chapter talks about most (scripts/feature-fish.mjs); null when it names none */
+  star: { kind: 'fish' | 'wildlife'; id: string; locked?: boolean } | null;
 }
 export interface Character {
   id: string;
