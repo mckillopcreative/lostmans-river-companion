@@ -49,8 +49,8 @@ import { url } from '@lib/url';
         $('start-h').textContent = 'Picking up where you left off';
         $('start-msg').textContent = `${done} of 23 missions done${p.badges.length ? ` and ${p.badges.length} badge${p.badges.length === 1 ? '' : 's'} earned` : ''}. This device is ready.`;
         const a = $('go-next') as HTMLAnchorElement;
-        if (next) ((a.textContent = `Next: Mission ${next}`), (a.href = a.href.replace('m01', 'm' + String(next).padStart(2, '0'))));
-        else ((a.textContent = 'Print your license'), (a.href = a.href.replace('missions/m01/', 'license/')));
+        if (next) ((a.textContent = `Pick up at Chapter ${next}`), (a.href = a.href.replace('/ch/1/', `/ch/${next}/`)));
+        else ((a.textContent = 'Print your license'), (a.href = a.href.replace('/ch/1/', '/license/')));
       } else {
         $('start-h').textContent = 'You’re the assistant fishing guide this summer';
         $('start-msg').textContent = 'This device is ready, and it will remember you. Every chapter is unlocked to read and hear, and each one ends with a mission from Uncle Dan.';
