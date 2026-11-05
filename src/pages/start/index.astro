@@ -15,8 +15,10 @@ import { url } from '@lib/url';
       <h1 id="start-h">Getting your summer ready</h1>
       <p class="lede" id="start-msg">Checking your link.</p>
       <p class="cluster" id="start-go" hidden>
-        <a class="btn btn-primary" id="go-next" href={url('/missions/m01/')}>Start Mission 1</a>
-        <a class="btn" href={url('/app/')}>Open the Experience</a>
+        <a class="btn btn-primary" id="go-next" href={url('/ch/1/')}>Open Chapter 1</a>
+      </p>
+      <p class="small muted" id="start-all" hidden>
+        Read or hear a chapter, then do its mission. <a href={url('/app/')}>Everything in the Experience →</a>
       </p>
       <p class="small muted" id="start-help" hidden>
         Link not working? <a href={url('/restore/')}>Get a new one sent</a> to the email used to buy it.
@@ -51,9 +53,10 @@ import { url } from '@lib/url';
         else ((a.textContent = 'Print your license'), (a.href = a.href.replace('missions/m01/', 'license/')));
       } else {
         $('start-h').textContent = 'You’re the assistant fishing guide this summer';
-        $('start-msg').textContent = 'This device is ready, and it will remember you. Every chapter is unlocked to read and hear, and Uncle Dan has 23 missions waiting.';
+        $('start-msg').textContent = 'This device is ready, and it will remember you. Every chapter is unlocked to read and hear, and each one ends with a mission from Uncle Dan.';
       }
       $('start-go').hidden = false;
+      $('start-all').hidden = false;
     })();
   </script>
 </Base>
