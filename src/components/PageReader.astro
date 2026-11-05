@@ -1,0 +1,344 @@
+---
+// The chapter as pages: a full-screen reader that turns pages with a swipe, a tap on either
+// edge, or the arrow keys, the way an e-reader does. The text is laid out in CSS columns one
+// screen wide, so the browser does the page breaks and nothing is measured by hand. Opened by
+// ChapterText with the chapter's paragraphs (never in the page source for chapters 2–23); the
+// page you were on is remembered on this device.
+import { url } from '@lib/url';
+
+interface Props {
+  n: number;
+  title: string;
+  nextTitle?: string;
+}
+const { n, title, nextTitle } = Astro.props;
+const nn = String(n).padStart(2, '0');
+---
+
+<div class="pager" id="pager" data-n={n} hidden role="dialog" aria-modal="true" aria-label={`Chapter ${n} as pages`}>
+  <header class="pager-top">
+    <button class="pager-back" type="button" id="pager-close">‹ Chapter page</button>
+    <span class="pager-title">
+      Chapter {n} · <em>{title}</em>
+    </span>
+    <span class="pager-count mono" id="pager-count" aria-live="polite"></span>
+  </header>
+  <div class="pager-scroll" id="pager-scroll">
+    <div class="pager-cols" id="pager-cols">
+      <h2 class="pager-h">
+        <span class="pager-h-n hand">Chapter {n}</span>
+        {title}
+      </h2>
+      <div class="pager-body" id="pager-body"></div>
+      <div class="pager-end">
+        <p class="hand pager-end-line">End of Chapter {n}.</p>
+        <p class="cluster">
+          <a class="btn btn-primary" href={url(`/missions/m${nn}/`)}>Mission {n} →</a>
+          {nextTitle && <a class="btn" href={url(`/ch/${n + 1}/`)}>Chapter {n + 1}: {nextTitle}</a>}
+        </p>
+      </div>
+    </div>
+  </div>
+  <footer class="pager-foot">
+    <button type="button" class="pager-btn" id="pager-prev" aria-label="Previous page">‹</button>
+    <span class="pager-hint small muted"><span class="pager-hint-long">Swipe, or tap an edge, to turn the page</span><span class="pager-hint-short">Swipe to turn</span> · <button type="button" class="linklike" id="pager-scrollmode">prefer scrolling?</button></span>
+    <button type="button" class="pager-btn" id="pager-next" aria-label="Next page">›</button>
+  </footer>
+</div>
+
+<script>
+  import { track } from '../scripts/track';
+
+  const pager = document.getElementById('pager')!;
+  const scroller = document.getElementById('pager-scroll')!;
+  const cols = document.getElementById('pager-cols')!;
+  const body = document.getElementById('pager-body')!;
+  const count = document.getElementById('pager-count')!;
+  const endCard = pager.querySelector<HTMLElement>('.pager-end')!;
+  const n = Number(pager.dataset.n);
+  const PREF = 'lr-reader';
+  const POS = `lr-page-${n}`;
+  let pw = 0;
+  let pages = 1;
+  let page = 0;
+  let opened = false;
+
+  const store = (k: string, v: string | null) => {
+    try {
+      v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v);
+    } catch {}
+  };
+  const read = (k: string) => {
+    try {
+      return localStorage.getItem(k);
+    } catch {
+      return null;
+    }
+  };
+
+  function layout(keep = 0) {
+    pw = scroller.clientWidth;
+    cols.style.width = '';
+    cols.style.setProperty('--pw', `${pw}px`);
+    // the browser breaks the text into columns one page wide and the end card is always the last
+    // page, so where the browser put the end card tells us how many pages there are
+    const pm = parseFloat(getComputedStyle(cols).paddingLeft) || 0;
+    const x = endCard.getBoundingClientRect().left - scroller.getBoundingClientRect().left + scroller.scrollLeft;
+    pages = Math.max(1, Math.round((x - pm) / pw) + 1);
+    // then size the sheet to exactly that many pages, so the last page lines up like the others
+    cols.style.width = `${pages * pw}px`;
+    goTo(Math.min(keep, pages - 1), false);
+  }
+  function goTo(i: number, smooth = true) {
+    page = Math.max(0, Math.min(pages - 1, i));
+    scroller.scrollTo({ left: page * pw, behavior: smooth ? 'smooth' : 'auto' });
+    count.textContent = `${page + 1} / ${pages}`;
+    store(POS, String(page));
+  }
+  const next = () => goTo(page + 1);
+  const prev = () => goTo(page - 1);
+
+  function open(paragraphs: string[]) {
+    if (!opened) {
+      for (const t of paragraphs) {
+        const p = document.createElement('p');
+        p.textContent = t;
+        body.appendChild(p);
+      }
+      opened = true;
+    }
+    pager.hidden = false;
+    document.documentElement.classList.add('pager-open');
+    store(PREF, 'pages');
+    const saved = Number(read(POS) || 0);
+    requestAnimationFrame(() => layout(saved));
+    track('read_pages', { ch: n });
+  }
+  function close(toScroll = false) {
+    pager.hidden = true;
+    document.documentElement.classList.remove('pager-open');
+    if (toScroll) store(PREF, 'scroll');
+  }
+
+  document.getElementById('pager-close')!.addEventListener('click', () => close());
+  document.getElementById('pager-scrollmode')!.addEventListener('click', () => close(true));
+  document.getElementById('pager-next')!.addEventListener('click', next);
+  document.getElementById('pager-prev')!.addEventListener('click', prev);
+
+  // a swipe turns the page; a tap near either edge does too
+  let sx = 0, sy = 0, st = 0;
+  scroller.addEventListener('touchstart', (e) => ((sx = e.touches[0].clientX), (sy = e.touches[0].clientY), (st = Date.now())), { passive: true });
+  scroller.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - sx;
+    const dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5 && Date.now() - st < 800) dx < 0 ? next() : prev();
+  });
+  scroller.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a, button')) return;
+    const x = e.clientX - scroller.getBoundingClientRect().left;
+    if (x < pw * 0.22) prev();
+    else if (x > pw * 0.78) next();
+  });
+  // the wheel scrolls sideways too (a trackpad swipe)
+  let wheelLock = 0;
+  scroller.addEventListener(
+    'wheel',
+    (e) => {
+      const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (Math.abs(d) < 10 || Date.now() < wheelLock) return;
+      wheelLock = Date.now() + 500;
+      d > 0 ? next() : prev();
+      e.preventDefault();
+    },
+    { passive: false },
+  );
+  document.addEventListener('keydown', (e) => {
+    if (pager.hidden) return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') (e.preventDefault(), next());
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') (e.preventDefault(), prev());
+    else if (e.key === 'Escape') close();
+  });
+  let rt = 0;
+  window.addEventListener('resize', () => {
+    if (pager.hidden) return;
+    clearTimeout(rt);
+    rt = window.setTimeout(() => layout(page), 150);
+  });
+
+  (window as any).lrPager = { open, prefersPages: () => read(PREF) === 'pages' };
+</script>
+
+<style is:global>
+  html.pager-open,
+  html.pager-open body {
+    overflow: hidden;
+  }
+</style>
+
+<style>
+  .pager {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: var(--paper);
+    color: var(--ink);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100dvh;
+  }
+  .pager[hidden] {
+    display: none;
+  }
+  .pager-top,
+  .pager-foot {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.9rem;
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--oyster);
+    font-size: 0.9rem;
+  }
+  .pager-foot {
+    border-bottom: 0;
+    border-top: 1px solid var(--oyster);
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    justify-content: space-between;
+  }
+  .pager-back {
+    background: none;
+    border: 0;
+    color: var(--mangrove);
+    font: inherit;
+    font-weight: 600;
+    padding: 0.35rem 0.2rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .pager-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+    color: var(--ink-soft);
+  }
+  .pager-count {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .pager-scroll {
+    overflow: hidden;
+    height: 100%;
+    touch-action: pan-y;
+    cursor: default;
+  }
+  .pager-cols {
+    --pw: 100vw;
+    --pm: 1.35rem;
+    height: 100%;
+    width: var(--pw);
+    box-sizing: border-box;
+    padding: 1.1rem var(--pm) 0.9rem;
+    column-width: calc(var(--pw) - 2 * var(--pm));
+    column-gap: calc(2 * var(--pm));
+    column-fill: auto;
+    font-size: 1.1rem;
+    line-height: 1.68;
+    text-align: left;
+    hyphens: auto;
+  }
+  @media (min-width: 640px) {
+    .pager-cols {
+      --pm: 3rem;
+      font-size: 1.18rem;
+      line-height: 1.7;
+    }
+  }
+  @media (min-width: 1000px) {
+    .pager-cols {
+      --pm: calc((var(--pw) - 64ch) / 2);
+    }
+  }
+  .pager-h {
+    margin: 0 0 1.1rem;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    text-align: center;
+    break-after: avoid;
+  }
+  .pager-h-n {
+    display: block;
+    color: var(--sunrise-ink);
+    font-size: 1.2rem;
+    font-weight: 400;
+  }
+  .pager-body :global(p) {
+    margin: 0;
+    text-indent: 1.5em;
+    orphans: 2;
+    widows: 2;
+  }
+  .pager-body > :global(p:first-child) {
+    text-indent: 0;
+  }
+  .pager-body > :global(p:first-child::first-letter) {
+    float: left;
+    font-size: 3.2em;
+    line-height: 0.85;
+    padding: 0.06em 0.08em 0 0;
+    color: var(--mangrove);
+    font-weight: 700;
+  }
+  .pager-end {
+    break-before: column;
+    text-align: center;
+    padding-top: 2rem;
+  }
+  .pager-end .cluster {
+    justify-content: center;
+  }
+  .pager-end-line {
+    color: var(--sunrise-ink);
+    font-size: 1.4rem;
+    margin: 0 0 1rem;
+  }
+  .pager-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--mangrove);
+    background: var(--paper);
+    color: var(--mangrove);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .pager-hint {
+    text-align: center;
+    flex: 1;
+  }
+  .pager-hint-short {
+    display: none;
+  }
+  @media (max-width: 480px) {
+    .pager-hint-long {
+      display: none;
+    }
+    .pager-hint-short {
+      display: inline;
+    }
+  }
+  .linklike {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: var(--mangrove);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+</style>

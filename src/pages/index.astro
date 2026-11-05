@@ -118,7 +118,7 @@ const ld = [
   <!-- ===== The product banner, then the journal hero beneath it ===== -->
   <section class="j-banner">
     <div class="wrap-wide">
-      <ExperienceBanner as="p" />
+      <ExperienceBanner as="p" eyebrow="Escape to Lostman’s River, expanded" line="The book as a fishing experience, on screen and off." />
     </div>
   </section>
 
@@ -127,23 +127,26 @@ const ld = [
     <div class="wrap-wide j-hero-grid">
       <div class="j-hero-copy">
         <p class="eyebrow">One of Joelbooks’ Top 8 adventure novels for teens</p>
-        <h1>Matt’s working journal</h1>
+        <h1>Read it. Hear it. Fish it.</h1>
         <p class="lede">
-          Matt’s dad left him the <em>South Florida Fishing Guidebook</em> with blank pages in the back. One summer in the Ten Thousand Islands filled them. This is that journal: every fish, every person, every place, every trick Dan taught him, chapter by chapter.
+          <em>Escape to Lostman’s River</em> is a coming-of-age fishing adventure in the Everglades. This is the book, expanded: the whole novel to read and hear on their own tablet, and, chapter by chapter, the real thing that goes with it: the chart, the fish, the knots, the tides, and 23 missions done off the screen. For readers 10 to 15. One price for the household.
+        </p>
+        <p class="try-note">
+          <strong>Chapter 1 is free, no sign-up.</strong> Read it as pages or hear it read aloud, with the chart, the fish, the knot and today’s tide that go with it.
         </p>
         <p class="cluster">
-          <a class="btn btn-primary" href={url('/ch/1/')}>Open to Chapter 1</a>
-          <a class="btn" href="#chapters">Browse the journal ↓</a>
+          <a class="btn btn-primary" href={url('/ch/1/')}>Try the first chapter now</a>
         </p>
         <ChapterAudio n={1} title="Hear Chapter 1 read aloud" compact />
         <BuyButton />
-        <p class="small"><a href={url('/app/')}>See what’s in the Experience →</a></p>
+        <p class="small"><a href={url('/app/')}>See everything in the Experience →</a> · <a href="#chapters">Browse Matt’s journal below ↓</a></p>
         <p class="small muted scan-note">
           Reading the paperback? The code at the top of each chapter opens that chapter’s page here. No spoilers past where you are.
         </p>
       </div>
       <figure class="j-hero-art art">
         {journal && <Image src={journal} alt="The Guidebook: a thick, water-stained journal with a heron and mangroves painted on its cover" width={900} sizes="(min-width: 900px) 460px, 80vw" loading="eager" fetchpriority="high" />}
+        <figcaption class="small muted">Matt’s working journal: every fish, every person, every place and every trick Dan taught him, chapter by chapter. It’s all below.</figcaption>
       </figure>
     </div>
   </section>
@@ -498,6 +501,15 @@ const ld = [
       gap: 3rem;
     }
   }
+  .try-note {
+    margin: 0.9rem 0 0.6rem;
+    color: var(--ink-soft);
+  }
+  .j-hero-art figcaption {
+    text-align: center;
+    margin-top: 0.6rem;
+    text-wrap: balance;
+  }
   .j-hero-copy h1 {
     font-size: clamp(2.4rem, 5.6vw, 3.9rem);
     line-height: 1.04;
@@ -506,7 +518,6 @@ const ld = [
     margin: 0;
     display: grid;
     place-items: center;
-    order: -1;
   }
   @media (min-width: 900px) {
     .j-hero-art {

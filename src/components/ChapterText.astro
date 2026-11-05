@@ -10,6 +10,7 @@ import site from '../../site.config.mjs';
 import { chapterByN } from '@lib/data';
 import { url } from '@lib/url';
 import BuyButton from './BuyButton.astro';
+import PageReader from './PageReader.astro';
 
 interface Props {
   n: number;
@@ -25,6 +26,8 @@ const title = chapterByN.get(n)?.title ?? '';
 const next = chapterByN.get(n + 1);
 ---
 
+{(full || s) && <PageReader n={n} title={title} nextTitle={next?.title} />}
+
 {
   full && (
     <section class="read read-full" id={`read-ch-${String(n).padStart(2, '0')}`} aria-labelledby="read-h" data-ch={n} hidden>
@@ -32,6 +35,10 @@ const next = chapterByN.get(n + 1);
         Chapter {n} <span class="read-dash">–</span> <em>{title}</em>
       </h2>
       <p class="read-status small muted" aria-live="polite">Opening the chapter…</p>
+      <p class="read-pages" hidden>
+        <button type="button" class="btn btn-primary read-pages-btn">Read it as pages →</button>
+        <span class="small muted">Swipe to turn, like a book. Or scroll down and read it here.</span>
+      </p>
       <div class="read-body" />
       <div class="read-after" hidden>
         <p class="read-end hand">End of Chapter {n}.</p>
@@ -53,6 +60,10 @@ const next = chapterByN.get(n + 1);
       <h2 id="read-h" class="read-title">
         Chapter {s.n} <span class="read-dash">–</span> <em>{s.title}</em>
       </h2>
+      <p class="read-pages" hidden>
+        <button type="button" class="btn btn-primary read-pages-btn">Read it as pages →</button>
+        <span class="small muted">Swipe to turn, like a book. Or scroll down and read it here.</span>
+      </p>
       <div class="read-body">
         {head.map((p) => <p>{p}</p>)}
         {rest.length > 0 && (
@@ -83,6 +94,17 @@ const next = chapterByN.get(n + 1);
   import { textUrl } from '../scripts/access';
   import { track } from '../scripts/track';
 
+  // the pages reader: wire the button, and open straight into it if that's how they read last time
+  const pagerOf = () => (window as any).lrPager as { open: (p: string[]) => void; prefersPages: () => boolean } | undefined;
+  function offerPages(sec: HTMLElement, paragraphs: () => string[]) {
+    const box = sec.querySelector<HTMLElement>('.read-pages');
+    const pager = pagerOf();
+    if (!box || !pager) return;
+    box.hidden = false;
+    box.querySelector('.read-pages-btn')!.addEventListener('click', () => pager.open(paragraphs()));
+    if (pager.prefersPages()) pager.open(paragraphs());
+  }
+
   // the full-book reader (chapters 2–23): only on a device with a purchase key
   document.querySelectorAll<HTMLElement>('.read-full').forEach(async (sec) => {
     const ch = Number(sec.dataset.ch);
@@ -105,6 +127,7 @@ const next = chapterByN.get(n + 1);
         body.appendChild(p);
       }
       status.remove();
+      offerPages(sec, () => j.paragraphs);
       const after = sec.querySelector<HTMLElement>('.read-after')!;
       after.hidden = false;
       const end = after.querySelector('.read-end')!;
@@ -124,6 +147,7 @@ const next = chapterByN.get(n + 1);
 
   document.querySelectorAll<HTMLElement>('.read:not(.read-full)').forEach((sec) => {
     const ch = Number(sec.id.replace(/\D/g, '')) || 0;
+    offerPages(sec, () => Array.from(sec.querySelectorAll<HTMLElement>('.read-body p:not(.read-end):not(.read-next p)')).map((p) => p.textContent || ''));
     const more = sec.querySelector<HTMLDetailsElement>('.read-more');
     more?.addEventListener('toggle', () => {
       if (more.open) track('read_more', { ch });
@@ -253,8 +277,16 @@ const next = chapterByN.get(n + 1);
     justify-items: center;
   }
   .read-full[hidden],
-  .read-after[hidden] {
+  .read-after[hidden],
+  .read-pages[hidden] {
     display: none;
+  }
+  .read-pages {
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    margin: 0 0 1.25rem;
+    text-align: center;
   }
   .read-status {
     text-align: center;

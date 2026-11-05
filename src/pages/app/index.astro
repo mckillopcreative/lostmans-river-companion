@@ -54,10 +54,11 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
         {!hero && <h1>Summer Fishing Guide Experience</h1>}
         {!hero && <p class="app-banner-line">You’re the assistant fishing guide this summer. Lots to learn.</p>}
         <p class="lede">Same job Matt had. Read the book, listen along, learn the water, and earn your Lostman’s River Fishing Guide license.</p>
+        <p class="small app-next-note">Read or hear a chapter, then take on its mission. Every chapter page opens with the chart, the fish, the knot, the audio and today’s tide.</p>
+        <p class="cluster app-next"><a class="btn btn-primary" id="p-next" href={url('/ch/1/')}>Open Chapter 1</a></p>
         <div class="progress" role="group" aria-label="Your progress">
           <span class="pill is-current" id="p-missions">0 of 23 missions</span>
           <span class="pill" id="p-badges">0 badges</span>
-          <a class="pill" id="p-next" href={url('/missions/m01/')}>Start: Mission 1</a>
         </div>
         <BuyButton compact />
       </div>
@@ -103,9 +104,9 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
     // first unfinished mission (they may be done out of order)
     const firstOpen = Array.from({ length: 23 }, (_, i) => i + 1).find((i) => !p.missions['m' + String(i).padStart(2, '0')]);
     const n = firstOpen ?? 23;
-    next.textContent = done >= 23 ? 'Print your license' : `${done ? 'Next' : 'Start'}: Mission ${n}`;
-    // the server renders the link to Mission 1; swap it for the next mission or the license
-    next.href = done >= 23 ? next.href.replace('missions/m01/', 'license/') : next.href.replace('m01', 'm' + String(n).padStart(2, '0'));
+    // the chapter whose mission isn't done yet is the one to read next
+    next.textContent = done >= 23 ? 'Print your license' : done ? `Pick up at Chapter ${n}` : 'Open Chapter 1';
+    next.href = done >= 23 ? next.href.replace('/ch/1/', '/license/') : next.href.replace('/ch/1/', `/ch/${n}/`);
   </script>
 
   <section class="wrap section">
@@ -148,6 +149,13 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
   .app-hero h1 {
     font-size: clamp(2rem, 4.5vw, 3rem);
     margin-bottom: 0.4rem;
+  }
+  .app-next-note {
+    margin: 0.75rem 0 0.4rem;
+    color: var(--ink-soft);
+  }
+  .app-next {
+    margin: 0 0 0.5rem;
   }
   .progress {
     display: flex;

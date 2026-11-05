@@ -17,6 +17,7 @@ export const EVENTS = {
   audio_progress: { label: 'ch', value: 'pct' },
   read_more: { label: 'ch' },
   read_end: { label: 'ch' },
+  read_pages: { label: 'ch' },
   mission_complete: { label: 'id' },
   badge_earned: { label: 'badge' },
   license_print: { value: 'missions' },

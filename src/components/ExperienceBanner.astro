@@ -10,8 +10,12 @@ interface Props {
   /** element for the title: 'h1' on the app home, 'p' elsewhere */
   as?: 'h1' | 'p';
   class?: string;
+  /** the small hand-lettered line above the welcome line */
+  eyebrow?: string;
+  /** the welcome line itself */
+  line?: string;
 }
-const { as = 'h1', class: cls } = Astro.props;
+const { as = 'h1', class: cls, eyebrow = 'Welcome aboard', line = 'You’re the assistant fishing guide this summer. Lots to learn.' } = Astro.props;
 const hero = artImage('tiles', 'app-hero');
 // GPT's lettered title (2026-10-21); the text title stays as the fallback and as the accessible name
 const lettering = artImage('emblems', 'title-summer');
@@ -26,8 +30,8 @@ const Title = as;
         {lettering ? <Image src={lettering} alt="Summer Fishing Guide Experience" width={1200} sizes="(min-width: 1200px) 900px, 88vw" loading="eager" class="title-art" /> : 'Summer Fishing Guide Experience'}
       </Title>
       <div class="app-banner-text">
-        <p class="eyebrow">Welcome aboard</p>
-        <p class="app-banner-line">You’re the assistant fishing guide this summer. Lots to learn.</p>
+        <p class="eyebrow">{eyebrow}</p>
+        <p class="app-banner-line">{line}</p>
       </div>
     </div>
   )
