@@ -62,16 +62,15 @@ const groups: { label: string; cards: ReturnType<typeof toCard>[] }[] = [
 <Base title={`Chapter ${n} — ${chapter.title}`} description={chapter.summary} chapter={n}` : undefined}>
   <article class="frame">
     <div class="wrap">
-      <header class:list={['ch-head', { 'has-spot': !!spot }]}>
+      <ChapterDash chapter={chapter} />
+
+      <div class:list={['ch-head', { 'has-spot': !!spot }]}>
         {spot && <Image class="spot art" src={spot} alt="" width={160} loading="eager" />}
         <div>
-          <p class="eyebrow">Chapter {n} of 23</p>
-          <h1>{chapter.title}</h1>
+          <p class="eyebrow">Chapter {n} of 23 · what happens</p>
           <p class="lede">{chapter.summary}</p>
         </div>
-      </header>
-
-      <ChapterDash chapter={chapter} />
+      </div>
       <ChapterText n={n} />
 
       {

@@ -39,6 +39,9 @@ const nn = String(n).padStart(2, '0');
       </div>
     </div>
   </div>
+  <div class="pager-audio" id="pager-audio" hidden>
+    <span class="pager-audio-k hand">Hear it</span>
+  </div>
   <footer class="pager-foot">
     <button type="button" class="pager-btn" id="pager-prev" aria-label="Previous page">‹</button>
     <span class="pager-hint small muted"><span class="pager-hint-long">Swipe, or tap an edge, to turn the page</span><span class="pager-hint-short">Swipe to turn</span> · <button type="button" class="linklike" id="pager-scrollmode">prefer scrolling?</button></span>
@@ -98,6 +101,24 @@ const nn = String(n).padStart(2, '0');
   const next = () => goTo(page + 1);
   const prev = () => goTo(page - 1);
 
+  // the chapter's narration player comes along into the reader (the same element, so it keeps
+  // playing and keeps its place) and goes back to the audio card when the reader closes
+  const audioBar = document.getElementById('pager-audio')!;
+  let audioHome: { el: HTMLAudioElement; parent: HTMLElement; next: Node | null } | null = null;
+  function bringAudio() {
+    const a = document.querySelector<HTMLAudioElement>(`audio.listen-audio[data-ch="${n}"]`);
+    if (!a || a.hidden || !a.getAttribute('src')) return;
+    audioHome = { el: a, parent: a.parentElement!, next: a.nextSibling };
+    audioBar.appendChild(a);
+    audioBar.hidden = false;
+  }
+  function returnAudio() {
+    if (!audioHome) return;
+    audioHome.parent.insertBefore(audioHome.el, audioHome.next);
+    audioHome = null;
+    audioBar.hidden = true;
+  }
+
   function open(paragraphs: string[]) {
     if (!opened) {
       for (const t of paragraphs) {
@@ -110,11 +131,13 @@ const nn = String(n).padStart(2, '0');
     pager.hidden = false;
     document.documentElement.classList.add('pager-open');
     store(PREF, 'pages');
+    bringAudio();
     const saved = Number(read(POS) || 0);
     requestAnimationFrame(() => layout(saved));
     track('read_pages', { ch: n });
   }
   function close(toScroll = false) {
+    returnAudio();
     pager.hidden = true;
     document.documentElement.classList.remove('pager-open');
     if (toScroll) store(PREF, 'scroll');
@@ -183,8 +206,29 @@ const nn = String(n).padStart(2, '0');
     background: var(--paper);
     color: var(--ink);
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
     height: 100dvh;
+  }
+  .pager-audio {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0.9rem;
+    background: var(--paper-2);
+    border-top: 1px solid var(--oyster);
+  }
+  .pager-audio[hidden] {
+    display: none;
+  }
+  .pager-audio-k {
+    color: var(--sunrise-ink);
+    font-size: 1.1rem;
+    white-space: nowrap;
+  }
+  .pager-audio :global(audio) {
+    flex: 1;
+    min-width: 0;
+    height: 38px;
   }
   .pager[hidden] {
     display: none;

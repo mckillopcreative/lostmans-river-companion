@@ -42,7 +42,8 @@
     "star": {
       "kind": "fish",
       "id": "lionfish"
-    }
+    },
+    "tactic": "Know your boat before you board: port, starboard, and where the guidebook lives."
   },
   {
     "n": 2,
@@ -109,7 +110,8 @@
     "star": {
       "kind": "wildlife",
       "id": "pelican"
-    }
+    },
+    "tactic": "Rig eight poles before dark: main line, swivel, weight, leader, and a clinch knot you can trust."
   },
   {
     "n": 3,
@@ -158,7 +160,8 @@
     "star": {
       "kind": "fish",
       "id": "snapper"
-    }
+    },
+    "tactic": "Sunrise run: read the oyster bars, then work the river mouth for snapper."
   },
   {
     "n": 4,
@@ -195,7 +198,8 @@
     "star": {
       "kind": "fish",
       "id": "snook"
-    }
+    },
+    "tactic": "Snook on the edges: fish the shadow line at night and keep the shrimp moving."
   },
   {
     "n": 5,
@@ -236,7 +240,8 @@
     "star": {
       "kind": "fish",
       "id": "mullet"
-    }
+    },
+    "tactic": "A lure for the dark: the Bagley Mullet, worked slow along the pilings."
   },
   {
     "n": 6,
@@ -266,7 +271,8 @@
     "star": {
       "kind": "fish",
       "id": "snook"
-    }
+    },
+    "tactic": "Land it, revive it, let it go: the four steps of a clean release."
   },
   {
     "n": 7,
@@ -312,7 +318,8 @@
     "star": {
       "kind": "fish",
       "id": "tarpon"
-    }
+    },
+    "tactic": "Tarpon on the flats: bow to the jump, and settle in for a long fight."
   },
   {
     "n": 8,
@@ -352,7 +359,8 @@
     "star": {
       "kind": "wildlife",
       "id": "shark"
-    }
+    },
+    "tactic": "Beach camp: pole the boat high, mind the snakes, and watch the shallows for sharks."
   },
   {
     "n": 9,
@@ -393,7 +401,8 @@
     "star": {
       "kind": "wildlife",
       "id": "mangroves"
-    }
+    },
+    "tactic": "Pre-dawn to Pavilion Key: run the channels by the chart, not by memory."
   },
   {
     "n": 10,
@@ -428,7 +437,8 @@
     ],
     "word_of_day": [],
     "sketch": null,
-    "star": null
+    "star": null,
+    "tactic": "Shallow-water escape: trim up, stay on plane, and know where the mud starts."
   },
   {
     "n": 11,
@@ -456,7 +466,8 @@
     ],
     "word_of_day": [],
     "sketch": "sea-belle-towing-bonefisher.png",
-    "star": null
+    "star": null,
+    "tactic": "Provision for three days: gas, water, ice, and a route down the Barron River."
   },
   {
     "n": 12,
@@ -490,7 +501,8 @@
     "star": {
       "kind": "wildlife",
       "id": "oyster-bar"
-    }
+    },
+    "tactic": "When the squall comes: bow into the wind, then tie off to the mangroves."
   },
   {
     "n": 13,
@@ -524,7 +536,8 @@
     "star": {
       "kind": "wildlife",
       "id": "alligator"
-    }
+    },
+    "tactic": "After a storm: muddy water and slow bites, so go small with a yellow feather."
   },
   {
     "n": 14,
@@ -560,7 +573,8 @@
     "star": {
       "kind": "wildlife",
       "id": "mangroves"
-    }
+    },
+    "tactic": "Live bait in the backcountry: a small snapper on a big hook, and hang on."
   },
   {
     "n": 15,
@@ -592,7 +606,8 @@
     "star": {
       "kind": "fish",
       "id": "snook"
-    }
+    },
+    "tactic": "A snook by hand: when the line is a bird’s nest, patience lands the fish."
   },
   {
     "n": 16,
@@ -634,7 +649,8 @@
     "star": {
       "kind": "wildlife",
       "id": "dolphin"
-    }
+    },
+    "tactic": "Tides are the earth turning: fish the moving water, and cut every ghost net you find."
   },
   {
     "n": 17,
@@ -672,7 +688,8 @@
     "star": {
       "kind": "fish",
       "id": "grouper"
-    }
+    },
+    "tactic": "First aid afloat: clean it, close it, and keep the kit where you can reach it."
   },
   {
     "n": 18,
@@ -705,7 +722,8 @@
     "star": {
       "kind": "wildlife",
       "id": "oyster-bar"
-    }
+    },
+    "tactic": "Aground: wait for the high tide, then push and tow together."
   },
   {
     "n": 19,
@@ -741,7 +759,8 @@
     "star": {
       "kind": "fish",
       "id": "tarpon"
-    }
+    },
+    "tactic": "Trolling the last day: a ninety-minute tarpon, sized by eye, released."
   },
   {
     "n": 20,
@@ -784,7 +803,8 @@
     "star": {
       "kind": "fish",
       "id": "tarpon"
-    }
+    },
+    "tactic": "Weigh-in day: 68 inches and 81 pounds is the number to beat."
   },
   {
     "n": 21,
@@ -820,7 +840,8 @@
     "star": {
       "kind": "fish",
       "id": "tarpon"
-    }
+    },
+    "tactic": "What the Big One really means: it was never only the fish."
   },
   {
     "n": 22,
@@ -851,7 +872,8 @@
     "star": {
       "kind": "wildlife",
       "id": "pelican"
-    }
+    },
+    "tactic": "Next summer’s project: an airboat, flat and wide, for the river of grass."
   },
   {
     "n": 23,
@@ -886,6 +908,7 @@
     "star": {
       "kind": "wildlife",
       "id": "alligator"
-    }
+    },
+    "tactic": "Pass it on: two blank lines in the guidebook for the next assistant guides."
   }
 ]

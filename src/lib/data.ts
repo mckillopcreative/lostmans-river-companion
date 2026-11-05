@@ -31,6 +31,8 @@ export interface Chapter {
   sketch: string | null;
   /** the species the chapter talks about most (scripts/feature-fish.mjs); null when it names none */
   star: { kind: 'fish' | 'wildlife'; id: string; locked?: boolean } | null;
+  /** the one-line tactic under the chapter title on its page (author-editable drafts) */
+  tactic?: string;
 }
 export interface Character {
   id: string;
