@@ -28,7 +28,7 @@
 import { EVENTS } from '../../src/lib/events.mjs';
 import { qrPng } from './qr.js';
 import { welcomeEmail, waitlistEmail, openingEmail } from './email.js';
-import { reportPurchase } from './meta.js';
+import { reportPurchase, fbcFrom, srcFrom } from './meta.js';
 
 const ORIGINS = [/^https:\/\/(www\.)?lostmansriver\.com$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
 const KEY_RE = /^[A-HJ-NP-Za-km-z2-9]{24}$/; // no 0/O/1/I/l, so it survives being read aloud or retyped
@@ -117,8 +117,15 @@ async function fulfil(env, session, ctx) {
   const email = session.customer_details?.email || session.customer_email || '';
   const { key, created } = await issueKey(env, { email, session: session.id });
   if (created && email) await sendWelcome(env, email, key);
-  // tell Meta about a purchase that began with an ad click (worker/src/meta.js); after the reply
-  if (created) ctx?.waitUntil(reportPurchase(env, session));
+  if (created) {
+    // count the sale under the campaign that brought it (the code rode through Stripe in
+    // client_reference_id); a Meta click with no code counts as "meta", the rest as "direct"
+    const ref = session.client_reference_id || '';
+    const src = srcFrom(ref) || (fbcFrom(ref) ? 'meta' : 'direct');
+    env.EVENTS?.writeDataPoint({ indexes: ['purchase'], blobs: ['purchase', src, src, ''], doubles: [1, (Number(session.amount_total) || 0) / 100] });
+    // tell Meta about a purchase that began with an ad click (worker/src/meta.js); after the reply
+    ctx?.waitUntil(reportPurchase(env, session));
+  }
   return key;
 }
 

@@ -17,8 +17,15 @@ async function sha256(s) {
 
 /** fb1_<ms>_<fbclid> → Meta's fbc cookie format, or null when the purchase didn't start from an ad. */
 export function fbcFrom(ref) {
-  const m = /^fb1_(\d{10,13})_([A-Za-z0-9_-]{10,180})$/.exec(ref || '');
+  // "fb1_<ms>_<fbclid>" (first form) or "v2_<campaign code>_fb1_<ms>_<fbclid>" (since 2026-11-06)
+  const m = /(?:^|^v2_[a-z0-9-]*_)fb1_(\d{10,13})_([A-Za-z0-9_-]{10,180})$/.exec(ref || '');
   return m ? `fb.1.${m[1]}.${m[2]}` : null;
+}
+
+/** The first-touch campaign code carried through Stripe ("v2_<code>_…"), or ''. */
+export function srcFrom(ref) {
+  const m = /^v2_([a-z0-9-]{0,32})_/.exec(ref || '');
+  return m ? m[1] : '';
 }
 
 export async function reportPurchase(env, session) {

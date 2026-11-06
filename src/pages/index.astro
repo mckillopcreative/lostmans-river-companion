@@ -135,7 +135,7 @@ const ld = [
           <strong>Chapter 1 is free, no sign-up.</strong> Read it as pages or hear it read aloud, with the chart, the fish, the knot and today’s tide that go with it.
         </p>
         <p class="cluster">
-          <a class="btn btn-primary" href={url('/ch/1/')}>Try the first chapter now</a>
+          <a class="btn btn-primary" href={url('/ch/1/')} data-track="sample_click" data-track-page="/">Try the first chapter now</a>
         </p>
         <ChapterAudio n={1} title="Hear Chapter 1 read aloud" compact />
         <BuyButton />
@@ -474,6 +474,24 @@ const ld = [
     // Offset anchor jumps for the sticky header + nav.
     document.documentElement.style.scrollPaddingTop = `${56 + nav.offsetHeight + 8}px`;
   </script>
+<script>
+  // Landing-page beacons: one view per visit (the campaign code rides along from the URL), then
+  // scroll depth at 50% and 90%, once each. Counts only; see docs/ANALYTICS.md.
+  import { track } from '../scripts/track';
+  track('landing_view', { page: '/' });
+  const fired = new Set<number>();
+  const depth = () => {
+    const h = document.documentElement;
+    const pct = Math.round(((h.scrollTop + h.clientHeight) / h.scrollHeight) * 100);
+    for (const m of [50, 90]) {
+      if (pct >= m && !fired.has(m)) {
+        fired.add(m);
+        track('scroll', { page: '/', pct: m });
+      }
+    }
+  };
+  addEventListener('scroll', depth, { passive: true });
+</script>
 </Base>
 
 <style>

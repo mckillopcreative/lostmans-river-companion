@@ -86,10 +86,15 @@ export function bindClicks() {
     (e) => {
       // carry an ad click through Stripe checkout, so the purchase can be credited to the ad
       const buy = (e.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="https://buy.stripe.com/"]');
+      // Stripe hands this back in the webhook: "v2_<campaign code>_<fb1_<ms>_<fbclid> or empty>".
+      // Only letters, digits, - and _ are allowed in it, so the code is reduced to [a-z0-9-].
       const ref = buy ? adClickRef() : '';
-      if (buy && ref) {
+      const code = buy ? context().src.replace(/[^a-z0-9-]/g, '-') : '';
+      let cref = ref || code ? `v2_${code}_${ref}` : '';
+      if (cref.length > 200) cref = ref; // an unusually long fbclid: keep the ad click, drop the code
+      if (buy && cref) {
         const u = new URL(buy.href);
-        u.searchParams.set('client_reference_id', ref);
+        u.searchParams.set('client_reference_id', cref);
         buy.href = u.toString();
       }
       const el = (e.target as Element | null)?.closest<HTMLElement>('[data-track]');

@@ -18,9 +18,13 @@ Events say what happened, never who.
 
 | Event | Where | Label / number |
 |---|---|---|
+| `landing_view` | one per visit to the landing page, with the campaign code | page |
+| `scroll` | 50% and 90% of the landing page, once each | page / percent |
+| `sample_click` | "Try the first chapter now" | page |
 | `buy_click` | the Buy button (landing page, app home, end of chapter 1) | page |
 | `amazon_click` | the Amazon links | page |
 | `checkout_return` | `/app/?welcome=1`, i.e. Stripe sent the buyer back | |
+| `purchase` | written by the Worker when Stripe confirms a sale; the campaign code rides through Stripe's `client_reference_id` (`v2_<code>_…`) | campaign / dollars |
 | `tile_click` | each tile on the app home | tile |
 | `audio_play` | first play of a chapter's narration | chapter |
 | `audio_progress` | 25 / 50 / 75 / 100% through a chapter | chapter / percent |
@@ -40,7 +44,7 @@ To add one: put it in `src/lib/events.mjs`, then call `track('name', { … })` o
 1. **Landing → purchase:** chapter 1 heard → chapter 1 finished → Buy clicked → back from checkout.
 2. **The summer:** Mission 1 → snook badge (m06) → tarpon badge (m19) → Mission 23 → license printed.
 
-Tag every ad link with `?utm_source=facebook&utm_medium=paid&utm_campaign=<name>` and the counts split by campaign.
+Tag every ad link with `?utm_source=meta&utm_campaign=<name>` and the counts split by campaign. `node scripts/metrics.mjs campaigns` prints one row per campaign code: views, scroll 50/90, sample clicks, chapter 1 plays, Buy clicks, returns from checkout, purchases and dollars. Meta's own numbers (reach, clicks, cost) live in Ads Manager; ours are the truth for what happened on the site.
 
 ## 4. Search (Google)
 

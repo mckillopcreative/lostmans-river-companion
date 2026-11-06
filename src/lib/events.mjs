@@ -7,6 +7,10 @@
 // free text or identifiers: children use this app.
 //   label: which prop becomes the text label   value: which prop becomes the number
 export const EVENTS = {
+  landing_view: { label: 'page' }, // one per visit to a grown-up page, with the campaign code
+  scroll: { label: 'page', value: 'pct' }, // 50 and 90% of the landing page, once each
+  sample_click: { label: 'page' }, // "Try the first chapter now"
+  purchase: { label: 'src', value: 'usd' }, // written by the Worker at fulfilment, never by a page
   buy_click: { label: 'page' },
   waitlist_click: { label: 'page' },
   waitlist_join: { label: 'page' },

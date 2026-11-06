@@ -53,6 +53,9 @@ const cfg = JSON.stringify({ meta: metaPixelId || '', google: googleTagId || '',
           if (name === 'waitlist_join') {
             if (window.fbq) window.fbq('track', 'Lead');
           }
+          if (name === 'sample_click') {
+            if (window.fbq) window.fbq('track', 'ViewContent', { content_name: 'Chapter 1' });
+          }
           if (name === 'buy_click') {
             if (window.fbq) window.fbq('track', 'InitiateCheckout', { value: 24.99, currency: 'USD' });
             if (window.gtag && c.buyLabel) window.gtag('event', 'conversion', { send_to: c.google + '/' + c.buyLabel, value: 24.99, currency: 'USD' });

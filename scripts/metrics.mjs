@@ -1,6 +1,8 @@
 // Reads the analytics counts from Workers Analytics Engine (dataset lostmans_events).
 //   node scripts/metrics.mjs [days=7] [--own]       counts per event and label
 //   node scripts/metrics.mjs funnel [days=30]       the landing → purchase → summer funnel
+//   node scripts/metrics.mjs campaigns [days=30]    the landing page by campaign code: views, scroll,
+//                                                    sample, audio, Buy, back from checkout, purchases
 // Auth: CLOUDFLARE_API_TOKEN (needs Account Analytics: Read), else the token wrangler stored
 // when you ran `wrangler login`. Rows marked own (authors' devices, ?own=1) are excluded
 // unless --own is passed.
@@ -29,10 +31,50 @@ async function sql(q) {
 const args = process.argv.slice(2);
 const own = args.includes('--own');
 const funnel = args[0] === 'funnel';
-const days = Number(args.find((a) => /^\d+$/.test(a)) || (funnel ? 30 : 7));
+const campaigns = args[0] === 'campaigns';
+const days = Number(args.find((a) => /^\d+$/.test(a)) || (funnel || campaigns ? 30 : 7));
 const where = `timestamp > NOW() - INTERVAL '${days}' DAY${own ? '' : " AND blob4 != 'own'"}`;
 
-if (funnel) {
+if (campaigns) {
+  const rows = await sql(`SELECT blob3 AS campaign, blob1 AS event, double2 AS v, SUM(_sample_interval) AS n, SUM(_sample_interval * double2) AS total FROM lostmans_events WHERE ${where} GROUP BY campaign, event, v FORMAT JSON`);
+  const codes = [...new Set(rows.map((r) => r.campaign || '(none)'))].sort();
+  const get = (c, e, v) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === e && (v === undefined || Number(r.v) === v)).reduce((a, r) => a + Number(r.n), 0);
+  const money = (c) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === 'purchase').reduce((a, r) => a + Number(r.total), 0);
+  const cols = ['views', 'scroll50', 'scroll90', 'sample', 'audio1', 'buy', 'returned', 'bought', '
+  const rows = await sql(`SELECT blob1 AS event, blob2 AS label, SUM(_sample_interval) AS n FROM lostmans_events WHERE ${where} GROUP BY event, label FORMAT JSON`);
+  const get = (e, l) => rows.filter((r) => r.event === e && (l === undefined || r.label === l)).reduce((a, r) => a + Number(r.n), 0);
+  const steps = [
+    ['Landing page views', get('landing_view')],
+    ['Scrolled 90% of it', rows.filter((r) => r.event === 'scroll').length ? Number((await sql(`SELECT SUM(_sample_interval) AS n FROM lostmans_events WHERE ${where} AND blob1 = 'scroll' AND double2 = 90 FORMAT JSON`))[0]?.n || 0) : 0],
+    ['Tried chapter 1', get('sample_click')],
+    ['Heard chapter 1', get('audio_play', '1')],
+    ['Listened to the end of ch 1', rows.filter((r) => r.event === 'audio_progress' && r.label === '1').length ? get('audio_progress', '1') : 0],
+    ['Clicked Buy', get('buy_click')],
+    ['Came back from checkout', get('checkout_return')],
+    ['Bought (Worker count)', get('purchase')],
+    ['Mission 1 done', get('mission_complete', 'm01')],
+    ['Snook badge (m06)', get('badge_earned', 'snook')],
+    ['Tarpon badge (m19)', get('badge_earned', 'tarpon')],
+    ['Mission 23 done', get('mission_complete', 'm23')],
+    ['License printed', get('license_print')],
+  ];
+  console.log(`Funnel, last ${days} days${own ? ' (including own traffic)' : ''}`);
+  for (const [k, n] of steps) console.log(`  ${String(n).padStart(6)}  ${k}`);
+} else {
+  const rows = await sql(`SELECT blob1 AS event, blob2 AS label, blob3 AS campaign, SUM(_sample_interval) AS n, SUM(_sample_interval * double2) AS total FROM lostmans_events WHERE ${where} GROUP BY event, label, campaign ORDER BY event, n DESC FORMAT JSON`);
+  console.log(`Events, last ${days} days${own ? ' (including own traffic)' : ''}`);
+  if (!rows.length) console.log('  (none yet)');
+  for (const r of rows) console.log(`  ${String(r.n).padStart(6)}  ${r.event}${r.label ? ' · ' + r.label : ''}${r.campaign ? ' · from ' + r.campaign : ''}${Number(r.total) ? ' · Σvalue ' + r.total : ''}`);
+}
+];
+  console.log(`Landing page by campaign, last ${days} days${own ? ' (including own traffic)' : ''}`);
+  console.log('  ' + 'campaign'.padEnd(18) + cols.map((c) => c.padStart(9)).join(''));
+  for (const c of codes) {
+    const vals = [get(c, 'landing_view'), get(c, 'scroll', 50), get(c, 'scroll', 90), get(c, 'sample_click'), get(c, 'audio_play'), get(c, 'buy_click'), get(c, 'checkout_return'), get(c, 'purchase'), money(c).toFixed(2)];
+    console.log('  ' + c.padEnd(18) + vals.map((v) => String(v).padStart(9)).join(''));
+  }
+  if (!codes.length) console.log('  (none yet)');
+} else if (funnel) {
   const rows = await sql(`SELECT blob1 AS event, blob2 AS label, SUM(_sample_interval) AS n FROM lostmans_events WHERE ${where} GROUP BY event, label FORMAT JSON`);
   const get = (e, l) => rows.filter((r) => r.event === e && (l === undefined || r.label === l)).reduce((a, r) => a + Number(r.n), 0);
   const steps = [
