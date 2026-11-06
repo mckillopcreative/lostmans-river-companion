@@ -143,6 +143,8 @@ const isActive = (href: string) => here.startsWith(url(href));
         )
       }
     </header>
+    <!-- under the open menu, over the page: a tap here closes the menu and does nothing else; it lives outside the header because the header's backdrop-filter would pin a fixed child to the header's box -->
+    <div class="nav-backdrop" id="nav-backdrop" hidden></div>
 
     <main id="main" class:list={{ bleed }}>
       <slot />
@@ -208,10 +210,20 @@ const isActive = (href: string) => here.startsWith(url(href));
 
       const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
       const list = document.getElementById('nav-list');
-      toggle?.addEventListener('click', () => {
-        const open = toggle.getAttribute('aria-expanded') === 'true';
-        toggle.setAttribute('aria-expanded', String(!open));
-        list?.classList.toggle('is-open', !open);
+      const backdrop = document.getElementById('nav-backdrop');
+      const setMenu = (open: boolean) => {
+        toggle?.setAttribute('aria-expanded', String(open));
+        list?.classList.toggle('is-open', open);
+        if (backdrop) backdrop.hidden = !open;
+      };
+      toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+      // a tap anywhere off the menu closes it; so does Escape, or choosing a link
+      backdrop?.addEventListener('click', () => setMenu(false));
+      list?.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('a')) setMenu(false);
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') (setMenu(false), toggle.focus());
       });
       document.querySelector('.theme-toggle')?.addEventListener('click', () => {
         const root = document.documentElement;
@@ -320,6 +332,15 @@ const isActive = (href: string) => here.startsWith(url(href));
   }
   .nav-list.is-open {
     display: block;
+  }
+  .nav-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 40; /* under the sticky header (50), over the page */
+    background: transparent;
+  }
+  .nav-backdrop[hidden] {
+    display: none;
   }
   .nav-list a {
     display: block;
