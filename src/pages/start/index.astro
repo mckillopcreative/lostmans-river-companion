@@ -9,7 +9,7 @@ import { url } from '@lib/url';
 
 <Base title="Welcome aboard" description="Starting the Summer Fishing Guide Experience on this device." noindex>
   <section class="wrap-wide start">
-    <ExperienceBanner as="p" />
+    <ExperienceBanner as="p" eyebrow="Escape to Lostman’s River, expanded" line="Read it. Hear it. Fish it." />
     <div class="start-card" id="start" aria-live="polite">
       <p class="hand start-eyebrow">One moment…</p>
       <h1 id="start-h">Getting your summer ready</h1>
@@ -52,7 +52,7 @@ import { url } from '@lib/url';
         if (next) ((a.textContent = `Pick up at Chapter ${next}`), (a.href = a.href.replace('/ch/1/', `/ch/${next}/`)));
         else ((a.textContent = 'Print your license'), (a.href = a.href.replace('/ch/1/', '/license/')));
       } else {
-        $('start-h').textContent = 'You’re the assistant fishing guide this summer';
+        $('start-h').textContent = 'Your summer at Lostman’s River starts here';
         $('start-msg').textContent = 'This device is ready, and it will remember you. Every chapter is unlocked to read and hear, and each one ends with a mission from Uncle Dan.';
       }
       $('start-go').hidden = false;
