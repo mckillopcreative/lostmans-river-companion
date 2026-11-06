@@ -1,6 +1,6 @@
 # Opening the Experience (November 2026)
 
-*Since 2026-10-31 the site runs as if launched: the purchase gate is on (missions 2–23, their field missions, chapters 2–23 audio and the Field Journal need a key), and every Buy button goes to `/waitlist/` instead of Stripe. Two switches remain.*
+*LIVE since 2026-11-06, 9:10 AM: Stripe connected in the Lostman's River Stripe account (webhook, restricted key, terms), a CREW-code purchase tested end to end, and `checkout.open: true` pushed. The notes below are kept for the record.*
 
 ## Now until opening day
 
