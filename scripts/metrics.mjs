@@ -51,11 +51,16 @@ if (campaigns) {
 } else if (funnel) {
   const rows = await sql(`SELECT blob1 AS event, blob2 AS label, SUM(_sample_interval) AS n FROM lostmans_events WHERE ${where} GROUP BY event, label FORMAT JSON`);
   const get = (e, l) => rows.filter((r) => r.event === e && (l === undefined || r.label === l)).reduce((a, r) => a + Number(r.n), 0);
+  const scroll90 = Number((await sql(`SELECT SUM(_sample_interval) AS n FROM lostmans_events WHERE ${where} AND blob1 = 'scroll' AND double2 = 90 FORMAT JSON`))[0]?.n || 0);
   const steps = [
+    ['Landing page views', get('landing_view')],
+    ['Scrolled 90% of it', scroll90],
+    ['Tried chapter 1', get('sample_click')],
     ['Heard chapter 1', get('audio_play', '1')],
     ['Listened to the end of ch 1', rows.filter((r) => r.event === 'audio_progress' && r.label === '1').length ? get('audio_progress', '1') : 0],
     ['Clicked Buy', get('buy_click')],
     ['Came back from checkout', get('checkout_return')],
+    ['Bought (Worker count)', get('purchase')],
     ['Mission 1 done', get('mission_complete', 'm01')],
     ['Snook badge (m06)', get('badge_earned', 'snook')],
     ['Tarpon badge (m19)', get('badge_earned', 'tarpon')],
