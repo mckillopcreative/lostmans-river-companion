@@ -29,7 +29,7 @@ export default {
   /** `open: false` sends every Buy button to /waitlist/ instead of Stripe (pre-launch). Set
    *  `open: true` once Stripe is connected (docs/GATE-SETUP.md). `opens` is how the buttons and the
    *  waitlist page say when: no fixed date since 2026-11-03 (KDP released the ebook early). */
-  checkout: { url: 'https://buy.stripe.com/28EaEZ73B49jegveo093y00', price: '$24.99', name: 'Lostman’s River: Fishing Guide Experience', open: false, opens: 'soon' },
+  checkout: { url: 'https://buy.stripe.com/28EaEZ73B49jegveo093y00', price: '$24.99', name: 'Lostman’s River: Fishing Guide Experience', open: true, opens: 'soon' },
 
   /** The purchase gate (docs/LAUNCH-FLOW.md). While false, missions 2–23 stay open and chapters
    *  2–23 show no player, so nobody can buy into locked content. Live from 2026-10-31 (built as if
