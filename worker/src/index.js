@@ -35,6 +35,8 @@ const KEY_RE = /^[A-HJ-NP-Za-km-z2-9]{24}$/; // no 0/O/1/I/l, so it survives bei
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
 const BADGES = new Set(['snook', 'tarpon', 'captain']);
 const FROM = { email: 'help@lostmansriver.com', name: 'Lostman’s River' };
+// where a one-line note goes for every sale (the author's own inbox)
+const NOTIFY = 'mckillopx3@gmail.com';
 // KDP released the ebook from Select early (author, 2026-11-02, confirmed on the KDP bookshelf),
 // so the reader is open; the date stays as a switch.
 const READER_OPENS = '2026-11-02T00:00:00Z';
@@ -123,6 +125,17 @@ async function fulfil(env, session, ctx) {
     const ref = session.client_reference_id || '';
     const src = srcFrom(ref) || (fbcFrom(ref) ? 'meta' : 'direct');
     env.EVENTS?.writeDataPoint({ indexes: ['purchase'], blobs: ['purchase', src, src, ''], doubles: [1, (Number(session.amount_total) || 0) / 100] });
+    // and tell the author: one short email per sale (the buyer's address is the seller's to see)
+    const usd = ((Number(session.amount_total) || 0) / 100).toFixed(2);
+    const when = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+    const line = `$${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET`;
+    ctx?.waitUntil(
+      sendMail(env, NOTIFY, {
+        subject: `Lostman’s River sale: $${usd} (${src})`,
+        text: `New purchase.\n${line}\n\nKey issued and welcome email sent. Stripe session ${session.id}.`,
+        html: `<p><strong>New purchase.</strong></p><p>${line}</p><p>Key issued and welcome email sent. Stripe session ${session.id}.</p>`,
+      }),
+    );
     // tell Meta about a purchase that began with an ad click (worker/src/meta.js); after the reply
     ctx?.waitUntil(reportPurchase(env, session));
   }
