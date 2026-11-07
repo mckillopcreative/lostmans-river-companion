@@ -491,6 +491,21 @@ const ld = [
     }
   };
   addEventListener('scroll', depth, { passive: true });
+  // every other link on the page, counted by where it goes; links with their own event are skipped
+  document.addEventListener(
+    'click',
+    (e) => {
+      const a = (e.target as Element | null)?.closest<HTMLAnchorElement>('a[href]');
+      if (!a || a.closest('[data-track]') || a.closest('header, footer')) return;
+      const href = a.getAttribute('href') || '';
+      let to = '';
+      if (href.startsWith('#')) to = 'section:' + href.slice(1);
+      else if (/^https?:/.test(href)) to = 'out:' + new URL(href).hostname.replace(/^www\./, '');
+      else to = href.replace(/^\//, '').split('/').filter(Boolean)[0] || 'home';
+      track('landing_click', { to: to.slice(0, 40) });
+    },
+    { capture: true },
+  );
 </script>
 </Base>
 
