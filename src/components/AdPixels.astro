@@ -56,6 +56,17 @@ const cfg = JSON.stringify({ meta: metaPixelId || '', google: googleTagId || '',
           if (name === 'sample_click') {
             if (window.fbq) window.fbq('track', 'ViewContent', { content_name: 'Chapter 1' });
           }
+          // engagement signals as custom events, for optimizing ad sets before purchases are plentiful:
+          // SampleListened (25/50/75/100% of the chapter 1 sample), LandingScroll (50/90%), LandingClick (by destination)
+          if (name === 'audio_progress' && props && props.ch === 1) {
+            if (window.fbq) window.fbq('trackCustom', 'SampleListened', { pct: props.pct });
+          }
+          if (name === 'scroll' && props) {
+            if (window.fbq) window.fbq('trackCustom', 'LandingScroll', { pct: props.pct });
+          }
+          if (name === 'landing_click' && props) {
+            if (window.fbq) window.fbq('trackCustom', 'LandingClick', { to: props.to });
+          }
           if (name === 'buy_click') {
             if (window.fbq) window.fbq('track', 'InitiateCheckout', { value: 24.99, currency: 'USD' });
             if (window.gtag && c.buyLabel) window.gtag('event', 'conversion', { send_to: c.google + '/' + c.buyLabel, value: 24.99, currency: 'USD' });

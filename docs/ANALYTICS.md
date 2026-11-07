@@ -63,6 +63,10 @@ Set `site.config.mjs` → `ads.metaPixelId`, `ads.googleTagId` and `ads.googleBu
 
 **Report the purchase server-side.** The Socrates app found ad blockers stopped about nine in ten browser pixel events. When the Stripe webhook lands on the Worker, relay the purchase to Meta's Conversions API and Google's offline conversions from there.
 
+## 5b. Events Meta can optimize for
+
+For ad-click visits to the landing page the pixel sends: `PageView`, `ViewContent` (sample click, or the chapter 1 sample played), `InitiateCheckout` (Buy), and `Purchase` from the Worker (server side, deduplicated by email hash and ad click). Plus three custom events: `SampleListened` (pct 25/50/75/100), `LandingScroll` (pct 50/90), `LandingClick` (to). To optimize an ad set for one of them: Events Manager → Custom conversions → create one from the custom event (e.g. SampleListened with pct ≥ 50), then set the ad set's performance goal to that conversion. Switch back to Purchase once there are ~50 purchases a week.
+
 ## 6. Author to-do
 
 1. Open `lostmansriver.com/?own=1` once on each of your own phones, tablets and computers.
