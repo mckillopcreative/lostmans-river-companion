@@ -22,7 +22,9 @@ Events say what happened, never who.
 | `scroll` | 50% and 90% of the landing page, once each | page / percent |
 | `sample_click` | "Try the first chapter now" | page |
 | `landing_click` | any other link on the landing page, by destination: `ch`, `app`, `map`, `fish`, `crew`, `about`, `section:chapters`, `out:amazon.com`… | to |
-| `buy_click` | the Buy button (landing page, app home, end of chapter 1) | page |
+| `buy_click` | the Buy button (landing page, app home, end of chapter 1); opens the confirm sheet | page |
+| `confirm_go` | "Continue to secure checkout" on the confirm sheet, the real hand-off to Stripe (Meta's InitiateCheckout fires here) | page |
+| `confirm_close` | the confirm sheet dismissed | page |
 | `amazon_click` | the Amazon links | page |
 | `checkout_return` | `/app/?welcome=1`, i.e. Stripe sent the buyer back | |
 | `purchase` | written by the Worker when Stripe confirms a sale; the campaign code rides through Stripe's `client_reference_id` (`v2_<code>_…`) | campaign / dollars |

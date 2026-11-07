@@ -67,7 +67,8 @@ const cfg = JSON.stringify({ meta: metaPixelId || '', google: googleTagId || '',
           if (name === 'landing_click' && props) {
             if (window.fbq) window.fbq('trackCustom', 'LandingClick', { to: props.to });
           }
-          if (name === 'buy_click') {
+          // the true hand-off to Stripe is the Continue click on the confirm sheet, not the first tap
+          if (name === 'confirm_go') {
             if (window.fbq) window.fbq('track', 'InitiateCheckout', { value: 24.99, currency: 'USD' });
             if (window.gtag && c.buyLabel) window.gtag('event', 'conversion', { send_to: c.google + '/' + c.buyLabel, value: 24.99, currency: 'USD' });
           }

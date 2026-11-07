@@ -8,6 +8,7 @@ import CompassRose from '@components/CompassRose.astro';
 import Divider from '@components/Divider.astro';
 import { artImage } from '@lib/images';
 import AdPixels from '@components/AdPixels.astro';
+import BuyConfirm from '@components/BuyConfirm.astro';
 const siteMark = artImage('emblems', 'site-mark');
 
 interface Props {
@@ -235,6 +236,7 @@ const isActive = (href: string) => here.startsWith(url(href));
         } catch {}
       });
     </script>
+    <BuyConfirm />
   </body>
 </html>
 
