@@ -50,7 +50,7 @@ const cfg = JSON.stringify({ meta: metaPixelId || '', google: googleTagId || '',
             if (window.fbq) window.fbq('track', 'ViewContent', { content_name: 'Chapter 1 narration' });
           }
           // before opening day: a waitlist signup is the conversion
-          if (name === 'waitlist_join') {
+          if (name === 'waitlist_join' || name === 'offer_join') {
             if (window.fbq) window.fbq('track', 'Lead');
           }
           if (name === 'sample_click') {

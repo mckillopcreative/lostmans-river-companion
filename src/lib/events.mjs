@@ -17,6 +17,9 @@ export const EVENTS = {
   confirm_close: { label: 'page' }, // the sheet dismissed
   waitlist_click: { label: 'page' },
   waitlist_join: { label: 'page' },
+  offer_view: { label: 'page' }, // the holiday promo-code sheet shown
+  offer_join: { label: 'page' }, // an email left for the code
+  offer_close: { label: 'page' }, // the sheet dismissed
   amazon_click: { label: 'page' },
   checkout_return: {},
   tile_click: { label: 'tile' },

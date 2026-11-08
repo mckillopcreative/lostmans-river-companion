@@ -19,6 +19,7 @@ Events say what happened, never who.
 | Event | Where | Label / number |
 |---|---|---|
 | `landing_view` | one per visit to the landing page, with the campaign code | page |
+| `offer_view`, `offer_join`, `offer_close` | the holiday promo-code sheet: shown, email left (Meta `Lead`), dismissed | page |
 | `scroll` | 50% and 90% of the landing page, once each | page / percent |
 | `sample_click` | "Try the first chapter now" | page |
 | `landing_click` | any other link on the landing page, by destination: `ch`, `app`, `map`, `fish`, `crew`, `about`, `section:chapters`, `out:amazon.com`… | to |

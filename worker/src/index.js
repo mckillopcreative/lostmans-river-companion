@@ -27,7 +27,7 @@
 // w:<email> → {created, page, src} (waitlist); rlw:<ip> → waitlist signups this hour
 import { EVENTS } from '../../src/lib/events.mjs';
 import { qrPng } from './qr.js';
-import { welcomeEmail, waitlistEmail, openingEmail } from './email.js';
+import { welcomeEmail, waitlistEmail, openingEmail, offerEmail } from './email.js';
 import { reportPurchase, fbcFrom, srcFrom } from './meta.js';
 
 const ORIGINS = [/^https:\/\/(www\.)?lostmansriver\.com$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
@@ -319,6 +319,31 @@ export default {
       await env.LR.put(`w:${email}`, JSON.stringify(meta), { metadata: meta });
       // answer the page now; the confirmation goes out after the reply
       ctx.waitUntil(leaveLink(env, email).then((l) => sendMail(env, email, waitlistEmail(l))));
+      return same;
+    }
+
+    // the holiday promo code list: same store (w:<email>, kind "offer") and leave link as the
+    // waitlist, but the reply email carries the code
+    if (path === '/offer' && request.method === 'POST') {
+      const same = json({ ok: true }, 200, cors);
+      let b;
+      try {
+        b = await request.json();
+      } catch {
+        return json({ ok: false }, 400, cors);
+      }
+      const email = normEmail(b.email);
+      if (!okEmail(email)) return json({ ok: false, why: 'email' }, 400, cors);
+      if (b.adult !== true) return json({ ok: false, why: 'adult' }, 400, cors);
+      const ip = request.headers.get('cf-connecting-ip') || 'x';
+      const n = Number((await env.LR.get(`rlw:${ip}`)) || 0);
+      if (n >= 8) return same;
+      await env.LR.put(`rlw:${ip}`, String(n + 1), { expirationTtl: 3600 });
+      const had = await env.LR.get(`w:${email}`, 'json');
+      const meta = { created: had?.created || new Date().toISOString(), page: clean(b.page, 40), src: clean(b.src, 40), kind: 'offer' };
+      await env.LR.put(`w:${email}`, JSON.stringify(meta), { metadata: meta });
+      // send the code every time it's asked for (people lose emails); the list entry stays one row
+      ctx.waitUntil(leaveLink(env, email).then((l) => sendMail(env, email, offerEmail(l))));
       return same;
     }
 

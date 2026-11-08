@@ -10,9 +10,9 @@ export const OPENS = 'soon';
 // The postal address US law requires on marketing email (the author's P.O. box, 2026-11-03).
 export const POSTAL = 'McKillop Creative, LLC · PO Box 8292, Greenville, SC 29604';
 
-const footer = (leave) =>
-  `<p style="margin:22px 0 0;font-size:12px;line-height:1.5;color:#6b7478;">${POSTAL}<br>You’re getting this because you joined the opening-day list at lostmansriver.com. <a href="${esc(leave)}" style="color:#6b7478;">Take me off the list</a>.</p>`;
-const footerText = (leave) => ['', '—', POSTAL, 'You’re getting this because you joined the opening-day list at lostmansriver.com.', `Take me off the list: ${leave}`].join('\n');
+const footer = (leave, why = 'joined the opening-day list') =>
+  `<p style="margin:22px 0 0;font-size:12px;line-height:1.5;color:#6b7478;">${POSTAL}<br>You’re getting this because you ${why} at lostmansriver.com. <a href="${esc(leave)}" style="color:#6b7478;">Take me off the list</a>.</p>`;
+const footerText = (leave, why = 'joined the opening-day list') => ['', '—', POSTAL, `You’re getting this because you ${why} at lostmansriver.com.`, `Take me off the list: ${leave}`].join('\n');
 
 // Opening morning: the one email the list was promised. Sent by POST /admin/send-opening.
 export function openingEmail(leave) {
@@ -48,6 +48,48 @@ export function openingEmail(leave) {
   ${p('Questions? Just reply; it comes to us.', 'font-size:15px;color:#4b5a60;')}
   <p style="margin:18px 0 0;font-size:16px;color:#2f5d50;font-style:italic;">Linda and John McKillop</p>
   ${footer(leave)}
+</td></tr>
+</table></td></tr></table></body></html>`;
+  return { subject, text, html };
+}
+
+// The holiday promo code, sent the moment a grown-up asks for it on the site (POST /offer).
+export const HOLIDAY_CODE = 'HOLIDAYPROMO';
+export function offerEmail(leave) {
+  const subject = 'Your Lostman’s River holiday code';
+  const buy = `${SITE}/?utm_source=email&utm_medium=email&utm_campaign=holiday-code`;
+  const text = [
+    'Here’s the code you asked for.',
+    '',
+    `Code: ${HOLIDAY_CODE}`,
+    'Buy one Summer Fishing Guide Experience and the second is half off: two households, two readers, $37.48 instead of $49.98. Enter the code at checkout and set the quantity to 2. Good through December 24.',
+    '',
+    `Get it here: ${buy}`,
+    '',
+    'One price covers a whole household, so the second copy is for the cousins, the grandkids across town, or a friend’s family. It arrives instantly with a printable gift card, so it works right up to Christmas Eve.',
+    '',
+    'What they get: the whole book, to read and to hear read aloud, chapter by chapter; 23 missions in the app and 23 field missions done for real, each signed off by a grown-up; a printable Field Journal; three badges; and an Assistant Fishing Guide license at the end.',
+    '',
+    'We’ll send one reminder before Christmas and nothing else.',
+    '',
+    'Linda and John McKillop',
+    footerText(leave, 'asked for the holiday code'),
+  ].join('\n');
+  const p = (s, extra = '') => `<p style="margin:0 0 14px;font-size:16px;line-height:1.5;color:#1f2a2e;${extra}">${s}</p>`;
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f6f1e7;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f1e7;"><tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#fbf8f1;border:1px solid #e2d9c7;border-radius:14px;">
+<tr><td style="padding:28px 28px 20px;font-family:Georgia,'Times New Roman',serif;">
+  <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">Your holiday code</p>
+  <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Give one, the second is half off</h1>
+  <p style="margin:0 0 16px;text-align:center;"><span style="display:inline-block;font-family:Consolas,Menlo,monospace;font-size:24px;letter-spacing:2px;background:#f1e7d6;color:#2f5d50;padding:12px 22px;border-radius:10px;border:1px dashed #a04d12;">${HOLIDAY_CODE}</span></p>
+  ${p('Buy one Summer Fishing Guide Experience and the second is half off: two households, two readers, <strong>$37.48</strong> instead of $49.98. Enter the code at checkout and set the quantity to 2. Good through <strong>December 24</strong>.')}
+  <p style="margin:6px 0 20px;text-align:center;"><a href="${esc(buy)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-family:Georgia,serif;font-weight:bold;font-size:17px;text-decoration:none;padding:13px 26px;border-radius:999px;">Hook the Experience</a></p>
+  ${p('One price covers a whole household, so the second copy is for the cousins, the grandkids across town, or a friend’s family. It arrives instantly with a printable gift card, so it works right up to Christmas Eve.', 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
+  ${p('<strong>What they get:</strong> the whole book, to read and to hear read aloud, chapter by chapter; 23 missions in the app and 23 field missions done for real, each signed off by a grown-up; a printable Field Journal; three badges; and an Assistant Fishing Guide license at the end.')}
+  ${p('We’ll send one reminder before Christmas and nothing else.', 'font-size:15px;color:#4b5a60;')}
+  <p style="margin:18px 0 0;font-size:16px;color:#2f5d50;font-style:italic;">Linda and John McKillop</p>
+  ${footer(leave, 'asked for the holiday code')}
 </td></tr>
 </table></td></tr></table></body></html>`;
   return { subject, text, html };

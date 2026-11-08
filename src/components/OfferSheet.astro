@@ -1,0 +1,204 @@
+---
+// The holiday offer sheet: one email field for grown-ups on the landing, gift and about pages.
+// The code itself is only in the email (HOLIDAYPROMO: the second copy half off through Dec 24).
+// Shows once per device after real interest (45 s on the page, or half-way down it), never on a
+// page a child uses, never for a key holder; "not now" keeps it away for two weeks, joining for
+// good. Reuses the Worker's list (POST /offer → w:<email> with kind "offer") and its signed
+// leave link. Events: offer_view, offer_join, offer_close.
+import { EVENT_ENDPOINT } from '@lib/events.mjs';
+const API = EVENT_ENDPOINT.replace(/\/ev$/, '');
+---
+
+<div class="os-bg" id="offer-sheet" hidden>
+  <form class="os" role="dialog" aria-modal="true" aria-labelledby="os-h" novalidate>
+    <button class="os-x" type="button" aria-label="Not now">×</button>
+    <p class="os-eyebrow hand">Giving it this Christmas?</p>
+    <h3 id="os-h">Get the holiday promo code</h3>
+    <p class="os-lede">Leave your email and we’ll send the code straight back. Good through December 24.</p>
+    <div class="os-row">
+      <label class="sr-only" for="os-email">Your email</label>
+      <input id="os-email" type="email" required autocomplete="email" inputmode="email" maxlength="200" placeholder="you@example.com" />
+      <button class="btn btn-primary os-go" type="submit">Send the code</button>
+    </div>
+    <p class="os-fine small muted">Grown-ups only. One email with the code and one reminder before Christmas. Nothing else, and one tap takes you off.</p>
+    <p class="os-done" hidden>Sent. Check your inbox (and the promotions tab) for the code.</p>
+    <p class="os-err small" hidden>That didn’t go through. Check the address and try again, or email help@lostmansriver.com.</p>
+  </form>
+</div>
+
+<script define:vars={{ API }}>
+  (() => {
+    const KEY = 'lr-offer';
+    const bg = document.getElementById('offer-sheet');
+    if (!bg || document.documentElement.classList.contains('has-key')) return;
+    const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { return null; } };
+    const write = (v) => { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {} };
+    const s = read();
+    if (s && (s.state === 'joined' || Date.now() - s.t < 14 * 864e5)) return;
+    const track = (n, p) => window.lrTrack && window.lrTrack(n, p);
+    const page = location.pathname;
+    let shown = false;
+    const show = () => {
+      if (shown || document.documentElement.classList.contains('bc-open')) return;
+      shown = true;
+      bg.hidden = false;
+      track('offer_view', { page });
+    };
+    // real interest first: 45 seconds on the page, or half-way down it
+    const timer = setTimeout(show, 45000);
+    const onScroll = () => {
+      const h = document.documentElement;
+      if (h.scrollTop + h.clientHeight > h.scrollHeight * 0.5) { removeEventListener('scroll', onScroll); clearTimeout(timer); show(); }
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    const close = () => {
+      bg.hidden = true;
+      write({ state: 'closed', t: Date.now() });
+      track('offer_close', { page });
+    };
+    bg.querySelector('.os-x').addEventListener('click', close);
+    bg.addEventListener('click', (e) => { if (e.target === bg) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !bg.hidden) close(); });
+    const form = bg.querySelector('form');
+    const email = form.querySelector('#os-email');
+    const go = form.querySelector('.os-go');
+    const done = form.querySelector('.os-done');
+    const err = form.querySelector('.os-err');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!email.checkValidity()) { email.reportValidity(); return; }
+      go.disabled = true; go.textContent = 'Sending…'; err.hidden = true;
+      let src = '';
+      try { src = (JSON.parse(localStorage.getItem('lr-src') || 'null') || {}).c || ''; } catch {}
+      try {
+        const r = await fetch(API + '/offer', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: email.value.trim(), adult: true, page, src }) });
+        if (!r.ok) throw new Error(String(r.status));
+        form.querySelector('.os-row').hidden = true;
+        form.querySelector('.os-fine').hidden = true;
+        done.hidden = false;
+        write({ state: 'joined', t: Date.now() });
+        track('offer_join', { page });
+        setTimeout(() => { bg.hidden = true; }, 3500);
+      } catch {
+        err.hidden = false; go.disabled = false; go.textContent = 'Send the code';
+      }
+    });
+  })();
+</script>
+
+<style>
+  .os-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    background: color-mix(in srgb, var(--ink) 35%, transparent);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .os-bg[hidden] {
+    display: none;
+  }
+  .os {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 18px 18px 0 0;
+    padding: 1.1rem 1.2rem calc(1rem + env(safe-area-inset-bottom));
+    box-shadow: var(--shadow);
+    display: grid;
+    gap: 0.6rem;
+    animation: os-in 0.3s ease-out;
+  }
+  @media (min-width: 820px) {
+    .os-bg {
+      align-items: center;
+    }
+    .os {
+      border-radius: 16px;
+      padding: 1.4rem 1.5rem 1.2rem;
+    }
+  }
+  @keyframes os-in {
+    from { transform: translateY(16px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+  .os-x {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.6rem;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--paper-2);
+    color: var(--ink);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .os-eyebrow {
+    margin: 0;
+    color: var(--sunrise-ink);
+    font-size: 1.2rem;
+    line-height: 1.1;
+    padding-right: 2.4rem;
+  }
+  .os h3 {
+    margin: 0;
+    font-size: 1.35rem;
+    line-height: 1.2;
+    padding-right: 2.4rem;
+  }
+  .os-lede {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.4;
+  }
+  .os-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+  }
+  .os-row[hidden] {
+    display: none;
+  }
+  .os-row input {
+    min-width: 0;
+    padding: 0.7rem 0.8rem;
+    border: 1.5px solid var(--oyster);
+    border-radius: 10px;
+    background: var(--paper-2);
+    font: inherit;
+    color: var(--ink);
+  }
+  .os-go {
+    white-space: nowrap;
+  }
+  .os-fine {
+    margin: 0;
+  }
+  .os-fine[hidden] {
+    display: none;
+  }
+  .os-done {
+    margin: 0;
+    font-weight: 600;
+    color: var(--mangrove);
+  }
+  .os-done[hidden],
+  .os-err[hidden] {
+    display: none;
+  }
+  .os-err {
+    margin: 0;
+    color: var(--sunrise-ink);
+  }
+  @media (max-width: 420px) {
+    .os-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
