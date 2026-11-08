@@ -15,7 +15,6 @@ export const EVENTS = {
   buy_click: { label: 'page' }, // the Buy tap (opens the confirm sheet)
   confirm_go: { label: 'page' }, // "Continue to secure checkout" on the sheet: the real hand-off to Stripe
   confirm_close: { label: 'page' }, // the sheet dismissed
-  safari_open: { label: 'page' }, // "Open this page in Safari" on the sheet (iPhone, inside Facebook/Instagram only)
   waitlist_click: { label: 'page' },
   waitlist_join: { label: 'page' },
   offer_view: { label: 'page' }, // the holiday promo-code sheet shown
