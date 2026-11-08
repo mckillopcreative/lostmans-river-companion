@@ -9,6 +9,7 @@ import Divider from '@components/Divider.astro';
 import { artImage } from '@lib/images';
 import AdPixels from '@components/AdPixels.astro';
 import BuyConfirm from '@components/BuyConfirm.astro';
+import HookButton from '@components/HookButton.astro';
 const siteMark = artImage('emblems', 'site-mark');
 
 interface Props {
@@ -237,6 +238,7 @@ const isActive = (href: string) => here.startsWith(url(href));
       });
     </script>
     <BuyConfirm />
+    <HookButton />
   </body>
 </html>
 

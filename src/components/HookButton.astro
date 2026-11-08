@@ -1,0 +1,65 @@
+---
+// "Hook the Experience": a sticky button, bottom right, that appears once the reader has scrolled
+// a screen down on a page without a purchase key. Same destination as every Buy button, so the
+// confirm sheet opens and the beacons fire the same way. Hidden for key holders (.has-key).
+import { buyHref, buyTrack } from '@lib/buy';
+---
+
+<a class="hook-btn btn btn-primary" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={Astro.url.pathname} hidden aria-label="Hook the Experience: get the full Lostman’s River experience">
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
+  Hook the Experience
+</a>
+
+<script>
+  const btn = document.querySelector<HTMLAnchorElement>('.hook-btn');
+  if (btn && !document.documentElement.classList.contains('has-key')) {
+    let shown = false;
+    const check = () => {
+      const past = window.scrollY > window.innerHeight * 0.8;
+      if (past !== shown) {
+        shown = past;
+        btn.hidden = !past;
+      }
+    };
+    addEventListener('scroll', check, { passive: true });
+    check();
+  }
+</script>
+
+<style>
+  .hook-btn {
+    position: fixed;
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(14px, env(safe-area-inset-bottom));
+    z-index: 900;
+    gap: 0.45rem;
+    padding: 0.7rem 1.1rem;
+    border-radius: 999px;
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+    font-size: 0.98rem;
+    animation: hook-in 0.3s ease-out;
+  }
+  .hook-btn[hidden] {
+    display: none;
+  }
+  :global(html.has-key) .hook-btn,
+  :global(html.bc-open) .hook-btn,
+  :global(html.pager-open) .hook-btn {
+    display: none;
+  }
+  @keyframes hook-in {
+    from {
+      transform: translateY(12px);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+  @media print {
+    .hook-btn {
+      display: none;
+    }
+  }
+</style>

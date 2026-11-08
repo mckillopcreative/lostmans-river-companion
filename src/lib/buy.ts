@@ -9,6 +9,6 @@ export const buyHref = isOpen ? c.url : url('/waitlist/');
 /** The click event: a real checkout, or interest before opening day. */
 export const buyTrack = isOpen ? 'buy_click' : 'waitlist_click';
 /** The button words in a lock panel. */
-export const buyLabel = isOpen ? `Get the Full Experience ${c.price}` : `Opens ${c.opens}: join the list`;
+export const buyLabel = isOpen ? `Hook the Full Experience ${c.price}` : `Opens ${c.opens}: join the list`;
 export const opens = c.opens;
 export const price = c.price;
