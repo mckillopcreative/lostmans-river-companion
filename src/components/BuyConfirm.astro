@@ -34,6 +34,7 @@ const price = site.checkout.price;
     </div>
     <a class="btn btn-primary bc-go" href={site.checkout.url} rel="noopener" data-track="confirm_go">Continue to secure checkout →</a>
     <p class="bc-fine small muted">🔒 Secure checkout by Stripe. The total shows before you pay.</p>
+    <p class="bc-safari small" hidden>Want Apple Pay? <a class="bc-safari-a" href="#" data-track="safari_open">Open this page in Safari</a></p>
     <button class="bc-later" type="button">Not yet</button>
     <p class="bc-human small">Made by a mother and son. A real person answers <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>.</p>
   </div>
@@ -45,6 +46,18 @@ const price = site.checkout.price;
   const go = bg.querySelector<HTMLAnchorElement>('.bc-go')!;
   let opener: HTMLElement | null = null;
   const page = location.pathname;
+
+  // inside the Facebook or Instagram app on an iPhone/iPad, Apple Pay is usually unavailable;
+  // offer to reopen this page in Safari (x-safari-https: needs iOS 17 or later)
+  const ua = navigator.userAgent;
+  const inApp = /FBAN|FBAV|FB_IAB|Instagram/i.test(ua) && /iPhone|iPad|iPod/i.test(ua);
+  if (inApp) {
+    const line = bg.querySelector<HTMLElement>('.bc-safari')!;
+    const a = line.querySelector<HTMLAnchorElement>('.bc-safari-a')!;
+    a.href = 'x-safari-' + location.href.replace(/^http:/, 'https:');
+    a.dataset.trackPage = page;
+    line.hidden = false;
+  }
 
   function open(from: HTMLAnchorElement) {
     opener = from;
@@ -205,6 +218,13 @@ const price = site.checkout.price;
   .bc-fine {
     margin: -0.3rem 0 0;
     text-align: center;
+  }
+  .bc-safari {
+    margin: -0.4rem 0 0;
+    text-align: center;
+  }
+  .bc-safari[hidden] {
+    display: none;
   }
   .bc-later {
     background: none;
