@@ -12,7 +12,7 @@ const thumb = artImage('tiles', 'app-hero');
 const price = site.checkout.price;
 ---
 
-<div class="bc-bg" id="buy-confirm" hidden>
+<div class="bc-bg" id="buy-confirm" data-price={price} hidden>
   <div class="bc" role="dialog" aria-modal="true" aria-labelledby="bc-h">
     <button class="bc-x" type="button" aria-label="Close">×</button>
     <div class="bc-head">
@@ -34,17 +34,37 @@ const price = site.checkout.price;
     </div>
     <a class="btn btn-primary bc-go" href={site.checkout.url} rel="noopener" data-track="confirm_go">Continue to secure checkout →</a>
     <p class="bc-fine small muted">🔒 Secure checkout by Stripe. The total shows before you pay.</p>
+    <p class="bc-cad small" hidden>In Canada? Checkout shows the price in Canadian dollars, about CA$35 at today’s rate, and that’s what your card is charged.</p>
     <button class="bc-later" type="button">Not yet</button>
     <p class="bc-human small">Made by a mother and son. A real person answers <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>.</p>
   </div>
 </div>
 
 <script>
-  import { track } from '../scripts/track';
+  import { track, campaign } from '../scripts/track';
   const bg = document.getElementById('buy-confirm')!;
   const go = bg.querySelector<HTMLAnchorElement>('.bc-go')!;
   let opener: HTMLElement | null = null;
   const page = location.pathname;
+
+  // Canada: Stripe's checkout shows Canadian dollars to Canadian visitors (Adaptive Pricing), so
+  // the site says the price is in US dollars and the sheet says what checkout will show. A visitor
+  // counts as Canadian by device time zone (Canada-only zones) or a Canada ad code (ends "-ca").
+  const CA_ZONES = /^America\/(Toronto|Montreal|Vancouver|Edmonton|Winnipeg|Regina|Swift_Current|Halifax|Glace_Bay|Moncton|Goose_Bay|St_Johns|Whitehorse|Dawson|Dawson_Creek|Fort_Nelson|Creston|Yellowknife|Inuvik|Iqaluit|Rankin_Inlet|Resolute|Cambridge_Bay|Atikokan|Thunder_Bay|Nipigon|Rainy_River|Pangnirtung|Blanc-Sablon)$/;
+  let inCanada = false;
+  try {
+    inCanada = CA_ZONES.test(Intl.DateTimeFormat().resolvedOptions().timeZone || '') || /-ca$/.test(campaign());
+  } catch {}
+  if (inCanada) {
+    const p = bg.dataset.price || '';
+    const us = 'US' + p;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const hits: Text[] = [];
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) if (p && n.nodeValue?.includes(p)) hits.push(n as Text);
+    // "$24.99" becomes "US$24.99"; one already reading "US$24.99" is left as it is
+    for (const t of hits) t.nodeValue = t.nodeValue!.split(us).join('§').split(p).join(us).split('§').join(us);
+    bg.querySelector<HTMLElement>('.bc-cad')!.hidden = false;
+  }
 
   function open(from: HTMLAnchorElement) {
     opener = from;
@@ -205,6 +225,14 @@ const price = site.checkout.price;
   .bc-fine {
     margin: -0.3rem 0 0;
     text-align: center;
+  }
+  .bc-cad {
+    margin: -0.4rem 0 0;
+    text-align: center;
+    color: var(--ink-soft);
+  }
+  .bc-cad[hidden] {
+    display: none;
   }
   .bc-later {
     background: none;
