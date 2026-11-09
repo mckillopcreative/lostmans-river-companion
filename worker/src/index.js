@@ -29,6 +29,7 @@ import { EVENTS } from '../../src/lib/events.mjs';
 import { qrPng } from './qr.js';
 import { welcomeEmail, waitlistEmail, openingEmail, offerEmail } from './email.js';
 import { reportPurchase, fbcFrom, srcFrom } from './meta.js';
+import { handleEmail } from './inbox.js';
 
 const ORIGINS = [/^https:\/\/(www\.)?lostmansriver\.com$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
 const KEY_RE = /^[A-HJ-NP-Za-km-z2-9]{24}$/; // no 0/O/1/I/l, so it survives being read aloud or retyped
@@ -441,5 +442,10 @@ export default {
 
     if (path === '/health') return new Response('ok', { headers: cors });
     return new Response('Lostman’s River', { status: 404 });
+  },
+
+  // mail to help@ / hello@ (Email Routing → this Worker): forward, and flag refund requests
+  async email(message, env, ctx) {
+    return handleEmail(message, env, ctx, { sendMail, notify: NOTIFY });
   },
 };
