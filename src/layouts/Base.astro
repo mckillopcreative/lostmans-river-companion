@@ -33,14 +33,9 @@ interface Props {
 }
 const { title, description = site.tagline, chapter, image, bleed = false, ads = false, offer = false, noindex = false, jsonLd } = Astro.props;
 const ld = jsonLd ? JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd]).replace(/</g, '\\u003c') : null;
-// The full book title ("Escape to Lostman's River") rides on every page title where it fits in
-// the ~60 characters Google shows, so the site is never confused with the other books called
-// Lostman's River; longer page names keep the short form.
-const fullTitle = title.startsWith(site.title)
-  ? title
-  : `${title} · ${site.title}`.length <= 62
-    ? `${title} · ${site.title}`
-    : `${title} · ${site.shortTitle}`;
+// The home page carries the full book title ("Escape to Lostman's River: …"); every other page
+// ends in the short name people type and remember (author's call, 2026-11-09).
+const fullTitle = title.startsWith(site.title) ? title : `${title} · ${site.shortTitle}`;
 // Descriptions are cut at a word to the ~160 characters a search result shows.
 const clampDesc = (s: string) => {
   const t = s.replace(/\s+/g, ' ').trim();
