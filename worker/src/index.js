@@ -28,7 +28,7 @@
 import { EVENTS } from '../../src/lib/events.mjs';
 import { qrPng } from './qr.js';
 import { welcomeEmail, waitlistEmail, openingEmail, offerEmail } from './email.js';
-import { reportPurchase, fbcFrom, srcFrom } from './meta.js';
+import { reportPurchase, reportCheckout, fbcFrom, srcFrom } from './meta.js';
 import { handleEmail } from './inbox.js';
 
 const ORIGINS = [/^https:\/\/(www\.)?lostmansriver\.com$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
@@ -227,6 +227,9 @@ export default {
         blobs: [name, spec.label ? clean(body.l) : '', clean(body.s, 32), body.o ? 'own' : ''],
         doubles: [1, spec.value ? Math.max(-1e6, Math.min(1e6, Number(body.v) || 0)) : 0],
       });
+      // the checkout hand-off from an ad click: tell Meta from the server too (worker/src/meta.js)
+      if (body.h && !body.o && (name === 'buy_click' || name === 'confirm_go'))
+        ctx.waitUntil(reportCheckout(env, { ref: String(body.f || ''), eventId: String(body.e || ''), ip: request.headers.get('cf-connecting-ip') || '', ua: request.headers.get('user-agent') || '' }));
       return new Response(null, { status: 204, headers: cors });
     }
 

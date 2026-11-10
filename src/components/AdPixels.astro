@@ -71,7 +71,7 @@ const cfg = JSON.stringify({ meta: metaPixelId || '', google: googleTagId || '',
           // (with the sheet switched off, the Buy tap itself is the hand-off)
           const sheetOff = document.getElementById('buy-confirm')?.dataset.sheet === 'off';
           if (name === 'confirm_go' || (name === 'buy_click' && sheetOff)) {
-            if (window.fbq) window.fbq('track', 'InitiateCheckout', { value: 24.99, currency: 'USD' });
+            if (window.fbq) window.fbq('track', 'InitiateCheckout', { value: 24.99, currency: 'USD' }, props && props.eid ? { eventID: props.eid } : undefined);
             if (window.gtag && c.buyLabel) window.gtag('event', 'conversion', { send_to: c.google + '/' + c.buyLabel, value: 24.99, currency: 'USD' });
           }
         };

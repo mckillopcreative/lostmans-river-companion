@@ -28,6 +28,43 @@ export function srcFrom(ref) {
   return m ? m[1] : '';
 }
 
+/** "Started checkout" from the server, for a Buy hand-off that began with a Meta ad click. Sent:
+ *  the event, the price, the ad click, the device's IP address and browser string (Meta's
+ *  matching fields). No email, nothing about the reader. Same event id as the browser pixel. */
+export async function reportCheckout(env, { ref, eventId, ip, ua }) {
+  if (!env.META_DATASET_ID || !env.META_CAPI_TOKEN) return { sent: false, why: 'not configured' };
+  const fbc = fbcFrom(ref);
+  if (!fbc || !/^ic_[a-z0-9_]{6,40}$/.test(eventId || '')) return { sent: false, why: 'not from an ad' };
+  const user_data = { fbc };
+  if (ip) user_data.client_ip_address = ip;
+  if (ua) user_data.client_user_agent = String(ua).slice(0, 400);
+  const body = {
+    data: [
+      {
+        event_name: 'InitiateCheckout',
+        event_time: Math.floor(Date.now() / 1000),
+        event_id: eventId,
+        action_source: 'website',
+        event_source_url: 'https://lostmansriver.com/',
+        user_data,
+        custom_data: { value: 24.99, currency: 'USD', content_name: 'Lostman’s River: Fishing Guide Experience', content_type: 'product' },
+      },
+    ],
+  };
+  if (env.META_TEST_EVENT_CODE) body.test_event_code = env.META_TEST_EVENT_CODE;
+  try {
+    const r = await fetch(`${GRAPH}/${encodeURIComponent(env.META_DATASET_ID)}/events?access_token=${encodeURIComponent(env.META_CAPI_TOKEN)}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const j = await r.json().catch(() => ({}));
+    return r.ok ? { sent: true, received: j.events_received } : { sent: false, why: `meta ${r.status}: ${String(j.error?.message || '').slice(0, 160)}` };
+  } catch (e) {
+    return { sent: false, why: String(e.message || e).slice(0, 160) };
+  }
+}
+
 export async function reportPurchase(env, session) {
   if (!env.META_DATASET_ID || !env.META_CAPI_TOKEN) return { sent: false, why: 'not configured' };
   const fbc = fbcFrom(session?.client_reference_id);

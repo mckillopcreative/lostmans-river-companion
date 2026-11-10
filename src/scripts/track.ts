@@ -54,8 +54,14 @@ function adClickRef() {
 export const campaign = () => context().src;
 
 export function track(name: string, props?: Props) {
+  // The checkout hand-off: the sheet's Continue, or the Buy tap itself while the sheet is switched
+  // off. For an ad-referred visit it carries the ad click and an event id, so the Worker can report
+  // "started checkout" to Meta from the server with the same id the browser pixel uses.
+  const handoff = name === 'confirm_go' || (name === 'buy_click' && document.getElementById('buy-confirm')?.dataset.sheet === 'off');
+  const adRef = handoff ? adClickRef() : '';
+  const eid = adRef ? `ic_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}` : '';
   // the ad pixel (parent-facing landing page only, ad-referred visits only) mirrors a few events
-  (window as W).lrAds?.(name, props);
+  (window as W).lrAds?.(name, eid ? { ...(props || {}), eid } : props);
   const spec = (EVENTS as Record<string, { label?: string; value?: string }>)[name];
   if (!spec) return; // not an allowed event; scripts/check-events.mjs catches this at build
   const body: Record<string, string | number | boolean> = { n: name };
@@ -64,6 +70,11 @@ export function track(name: string, props?: Props) {
   const { src, own } = context();
   if (src) body.s = src;
   if (own) body.o = true;
+  if (eid) {
+    body.h = 1;
+    body.f = adRef;
+    body.e = eid;
+  }
   const payload = JSON.stringify(body);
   try {
     // text/plain keeps it a "simple" request: no CORS preflight, nothing to wait for
