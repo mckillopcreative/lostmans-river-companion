@@ -115,19 +115,47 @@ async function verifyStripe(request, secret) {
   return ok ? JSON.parse(body) : null;
 }
 
+/** How many gift Experiences came with this checkout (0 for a plain single). Reads the line items
+ *  from Stripe: a $24.99 Experience counts once per unit, the $34.99 pair twice, the $9.99 add-on
+ *  once; everything beyond the buyer's own is a gift. Prices are matched in USD cents on the price
+ *  itself, so Adaptive Pricing (Canadians paying CAD) doesn't confuse it. Capped at 5. */
+async function giftCount(env, session) {
+  const sub = Number(session.amount_subtotal) || 0;
+  const usd = String(session.currency || 'usd').toLowerCase() === 'usd';
+  const isPairLink = !!env.PAIR_LINK && session.payment_link === env.PAIR_LINK;
+  if (env.STRIPE_SECRET_KEY && session.id && (isPairLink || !usd || sub > 2499)) {
+    try {
+      const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${session.id}/line_items?limit=20`, { headers: { authorization: `Bearer ${env.STRIPE_SECRET_KEY}` } });
+      if (r.ok) {
+        let n = 0;
+        for (const li of (await r.json()).data || []) {
+          const unit = Number(li.price?.unit_amount) || 0;
+          const q = Math.max(1, Number(li.quantity) || 1);
+          n += unit === 3499 ? 2 * q : q;
+        }
+        return Math.max(0, Math.min(5, n - 1));
+      }
+    } catch {}
+  }
+  // Stripe unreachable: fall back on the link and the USD subtotal
+  if (isPairLink) return 1;
+  if (usd && sub >= 3498) return 1;
+  return 0;
+}
+
 async function fulfil(env, session, ctx) {
   if (!session || session.payment_status !== 'paid') return null;
   const email = session.customer_details?.email || session.customer_email || '';
-  // "Keep one, give one": the gift key is issued first, so it already exists by the time the
-  // welcome page sees the buyer's own key. It carries no email (restore by email finds the
-  // buyer's key); the gift email goes to the buyer to pass on.
-  // Also a quantity-2 purchase on the single link (how the old HOLIDAYPROMO code was used; still
-  // honoured): its subtotal before the discount is two singles, $49.98 or more.
-  const pair = (!!env.PAIR_LINK && session.payment_link === env.PAIR_LINK) || Number(session.amount_subtotal) >= 4998;
-  let gift = null;
-  if (pair) gift = await issueKey(env, { email: '', session: `${session.id}:gift`, note: 'gift: keep one, give one' });
+  // Gift Experiences: "Keep one, give one" ($34.99), the $9.99 "gift a second Experience" add-on
+  // at checkout, or a quantity of 2+. Gift keys are issued first, so they already exist by the
+  // time the welcome page sees the buyer's own key. They carry no email (restore by email finds
+  // the buyer's key); each gift email goes to the buyer to pass on.
+  const gifts = await giftCount(env, session);
+  const pair = gifts > 0;
+  const giftKeys = [];
+  for (let i = 0; i < gifts; i++) giftKeys.push(await issueKey(env, { email: '', session: `${session.id}:gift${i ? i + 1 : ''}`, note: 'gift' }));
   const { key, created } = await issueKey(env, { email, session: session.id });
-  if (gift?.created && email) ctx?.waitUntil(sendMail(env, email, giftEmail(gift.key)));
+  for (const g of giftKeys) if (g.created && email) ctx?.waitUntil(sendMail(env, email, giftEmail(g.key)));
   if (created && email) await sendWelcome(env, email, key);
   if (created) {
     // count the sale under the campaign that brought it (the code rode through Stripe in
@@ -138,7 +166,7 @@ async function fulfil(env, session, ctx) {
     // and tell the author: one short email per sale (the buyer's address is the seller's to see)
     const usd = ((Number(session.amount_total) || 0) / 100).toFixed(2);
     const when = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
-    const line = `$${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET${pair ? ' · KEEP ONE, GIVE ONE (2 keys)' : ''}`;
+    const line = `$${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET${pair ? ` · PLUS ${gifts} GIFT EXPERIENCE${gifts > 1 ? 'S' : ''} (${gifts + 1} keys)` : ''}`;
     ctx?.waitUntil(
       sendMail(env, NOTIFY, {
         subject: `Lostman’s River sale: $${usd} (${src})`,
