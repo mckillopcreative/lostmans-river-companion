@@ -27,7 +27,7 @@
 // w:<email> → {created, page, src} (waitlist); rlw:<ip> → waitlist signups this hour
 import { EVENTS } from '../../src/lib/events.mjs';
 import { qrPng } from './qr.js';
-import { welcomeEmail, waitlistEmail, openingEmail, offerEmail } from './email.js';
+import { welcomeEmail, waitlistEmail, openingEmail, offerEmail, giftEmail } from './email.js';
 import { reportPurchase, reportCheckout, fbcFrom, srcFrom } from './meta.js';
 import { handleEmail } from './inbox.js';
 
@@ -118,7 +118,16 @@ async function verifyStripe(request, secret) {
 async function fulfil(env, session, ctx) {
   if (!session || session.payment_status !== 'paid') return null;
   const email = session.customer_details?.email || session.customer_email || '';
+  // "Keep one, give one": the gift key is issued first, so it already exists by the time the
+  // welcome page sees the buyer's own key. It carries no email (restore by email finds the
+  // buyer's key); the gift email goes to the buyer to pass on.
+  // Also a quantity-2 purchase on the single link (how the old HOLIDAYPROMO code was used; still
+  // honoured): its subtotal before the discount is two singles, $49.98 or more.
+  const pair = (!!env.PAIR_LINK && session.payment_link === env.PAIR_LINK) || Number(session.amount_subtotal) >= 4998;
+  let gift = null;
+  if (pair) gift = await issueKey(env, { email: '', session: `${session.id}:gift`, note: 'gift: keep one, give one' });
   const { key, created } = await issueKey(env, { email, session: session.id });
+  if (gift?.created && email) ctx?.waitUntil(sendMail(env, email, giftEmail(gift.key)));
   if (created && email) await sendWelcome(env, email, key);
   if (created) {
     // count the sale under the campaign that brought it (the code rode through Stripe in
@@ -129,7 +138,7 @@ async function fulfil(env, session, ctx) {
     // and tell the author: one short email per sale (the buyer's address is the seller's to see)
     const usd = ((Number(session.amount_total) || 0) / 100).toFixed(2);
     const when = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
-    const line = `$${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET`;
+    const line = `$${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET${pair ? ' · KEEP ONE, GIVE ONE (2 keys)' : ''}`;
     ctx?.waitUntil(
       sendMail(env, NOTIFY, {
         subject: `Lostman’s River sale: $${usd} (${src})`,
@@ -228,8 +237,8 @@ export default {
         doubles: [1, spec.value ? Math.max(-1e6, Math.min(1e6, Number(body.v) || 0)) : 0],
       });
       // the checkout hand-off from an ad click: tell Meta from the server too (worker/src/meta.js)
-      if (body.h && !body.o && (name === 'buy_click' || name === 'confirm_go'))
-        ctx.waitUntil(reportCheckout(env, { ref: String(body.f || ''), eventId: String(body.e || ''), ip: request.headers.get('cf-connecting-ip') || '', ua: request.headers.get('user-agent') || '' }));
+      if (body.h && !body.o && (name === 'buy_click' || name === 'confirm_go' || name === 'pair_click'))
+        ctx.waitUntil(reportCheckout(env, { ref: String(body.f || ''), eventId: String(body.e || ''), value: name === 'pair_click' ? 34.99 : 24.99, ip: request.headers.get('cf-connecting-ip') || '', ua: request.headers.get('user-agent') || '' }));
       return new Response(null, { status: 204, headers: cors });
     }
 
@@ -251,7 +260,8 @@ export default {
         const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${m[1]}`, { headers: { authorization: `Bearer ${env.STRIPE_SECRET_KEY}` } });
         if (r.ok) key = await fulfil(env, await r.json(), ctx);
       }
-      return key ? json({ key }, 200, cors) : json({ pending: true }, 202, cors);
+      const gift = key ? await env.LR.get(`s:${m[1]}:gift`) : null;
+      return key ? json(gift ? { key, gift } : { key }, 200, cors) : json({ pending: true }, 202, cors);
     }
 
     if ((m = /^\/key\/([A-Za-z0-9]+)$/.exec(path))) {

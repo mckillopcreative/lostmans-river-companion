@@ -55,41 +55,45 @@ export function openingEmail(leave) {
 
 // The holiday promo code, sent the moment a grown-up asks for it on the site (POST /offer).
 export const HOLIDAY_CODE = 'HOLIDAYPROMO';
+// Since 2026-11-10 the holiday offer is "Keep one, give one" ($34.99 for two Experiences), better
+// than the old code (still honoured if someone uses it). No code in this email any more.
+const PAIR_URL = 'https://buy.stripe.com/7sY7sN73BbBL5JZ1Be93y02';
 export function offerEmail(leave) {
-  const subject = 'Your Lostman’s River holiday code';
-  const buy = `${SITE}/?utm_source=email&utm_medium=email&utm_campaign=holiday-code`;
+  const subject = 'Your Lostman’s River holiday gift offer';
+  const buy = `${SITE}/?utm_source=email&utm_medium=email&utm_campaign=holiday-offer`;
+  const pairBuy = `${PAIR_URL}?client_reference_id=v2_holiday-offer_`;
   const text = [
-    'Here’s the code you asked for.',
+    'Here’s the holiday offer you asked for.',
     '',
-    `Code: ${HOLIDAY_CODE}`,
-    'Buy one Summer Fishing Guide Experience and the second is half off: two households, two readers, $37.48 instead of $49.98. Enter the code at checkout and set the quantity to 2. Good through December 24.',
+    'Keep one, give one: two Summer Fishing Guide Experiences for $34.99, one for your family and one to give to another. Bought separately, two are $49.98.',
     '',
-    `Get it here: ${buy}`,
+    `Get the pair: ${pairBuy}`,
+    `Or just one ($24.99): ${buy}`,
     '',
-    'One price covers a whole household, so the second copy is for the cousins, the grandkids across town, or a friend’s family. It arrives instantly with a printable gift card, so it works right up to Christmas Eve.',
+    'One price covers a whole household, so the second one is for the cousins, the grandkids across town, or a friend’s family. Each arrives instantly with its own printable gift card, so it works right up to Christmas Eve. Order by December 22 to have the card under the tree.',
     '',
     'What they get: the whole book, to read and to hear read aloud, chapter by chapter; 23 missions in the app and 23 field missions done for real, each signed off by a grown-up; a printable Field Journal; three badges; and an Assistant Fishing Guide license at the end.',
     '',
     'We’ll send one reminder before Christmas and nothing else.',
     '',
     'Linda and John McKillop',
-    footerText(leave, 'asked for the holiday code'),
+    footerText(leave, 'asked for the holiday offer'),
   ].join('\n');
   const p = (s, extra = '') => `<p style="margin:0 0 14px;font-size:16px;line-height:1.5;color:#1f2a2e;${extra}">${s}</p>`;
   const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f6f1e7;">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f1e7;"><tr><td align="center" style="padding:24px 12px;">
 <table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#fbf8f1;border:1px solid #e2d9c7;border-radius:14px;">
 <tr><td style="padding:28px 28px 20px;font-family:Georgia,'Times New Roman',serif;">
-  <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">Your holiday code</p>
-  <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Give one, the second is half off</h1>
-  <p style="margin:0 0 16px;text-align:center;"><span style="display:inline-block;font-family:Consolas,Menlo,monospace;font-size:24px;letter-spacing:2px;background:#f1e7d6;color:#2f5d50;padding:12px 22px;border-radius:10px;border:1px dashed #a04d12;">${HOLIDAY_CODE}</span></p>
-  ${p('Buy one Summer Fishing Guide Experience and the second is half off: two households, two readers, <strong>$37.48</strong> instead of $49.98. Enter the code at checkout and set the quantity to 2. Good through <strong>December 24</strong>.')}
-  <p style="margin:6px 0 20px;text-align:center;"><a href="${esc(buy)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-family:Georgia,serif;font-weight:bold;font-size:17px;text-decoration:none;padding:13px 26px;border-radius:999px;">Hook the Experience</a></p>
-  ${p('One price covers a whole household, so the second copy is for the cousins, the grandkids across town, or a friend’s family. It arrives instantly with a printable gift card, so it works right up to Christmas Eve.', 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
+  <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">Your holiday gift offer</p>
+  <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Keep one, give one</h1>
+  ${p('Two Summer Fishing Guide Experiences for <strong>$34.99</strong>: one for your family and one to give to another. Bought separately, two are $49.98.')}
+  <p style="margin:6px 0 10px;text-align:center;"><a href="${esc(pairBuy)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-family:Georgia,serif;font-weight:bold;font-size:17px;text-decoration:none;padding:13px 26px;border-radius:999px;">Keep one, give one: $34.99</a></p>
+  <p style="margin:0 0 20px;text-align:center;font-size:15px;"><a href="${esc(buy)}" style="color:#2a7f8e;">Or just one, $24.99</a></p>
+  ${p('One price covers a whole household, so the second one is for the cousins, the grandkids across town, or a friend’s family. Each arrives instantly with its own printable gift card, so it works right up to Christmas Eve. Order by <strong>December 22</strong> to have the card under the tree.', 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
   ${p('<strong>What they get:</strong> the whole book, to read and to hear read aloud, chapter by chapter; 23 missions in the app and 23 field missions done for real, each signed off by a grown-up; a printable Field Journal; three badges; and an Assistant Fishing Guide license at the end.')}
   ${p('We’ll send one reminder before Christmas and nothing else.', 'font-size:15px;color:#4b5a60;')}
   <p style="margin:18px 0 0;font-size:16px;color:#2f5d50;font-style:italic;">Linda and John McKillop</p>
-  ${footer(leave, 'asked for the holiday code')}
+  ${footer(leave, 'asked for the holiday offer')}
 </td></tr>
 </table></td></tr></table></body></html>`;
   return { subject, text, html };
@@ -132,6 +136,45 @@ export function waitlistEmail(leave) {
 
 export function startLink(key) {
   return `${SITE}/start/#${key}`;
+}
+
+/** The second Experience from "Keep one, give one": everything the buyer needs to give it. */
+export function giftEmail(key) {
+  const link = startLink(key);
+  const giftLink = `${SITE}/gift/#${key}`;
+  const subject = 'Your second Experience, ready to give';
+  const text = [
+    'This is the one to give.',
+    '',
+    'You bought Keep one, give one, so there are two Experiences: yours (in the other email) and this one, for another family.',
+    '',
+    `Print its gift card (it has its own code on it): ${giftLink}`,
+    `Or forward this email to the family, or send them this link: ${link}`,
+    '',
+    'It works the same way as yours: they open the link on the reader’s own tablet or phone and Mission 1 is waiting. Their progress is kept under this link, separate from yours.',
+    '',
+    'Keep this link for the family you give it to. Anyone with it can open that summer.',
+    '',
+    'Questions? Just reply. 30-day refund, no questions asked.',
+    '',
+    'Linda and John McKillop',
+  ].join('\n');
+  const p = (s, extra = '') => `<p style="margin:0 0 14px;font-size:16px;line-height:1.5;color:#1f2a2e;${extra}">${s}</p>`;
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f6f1e7;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f1e7;"><tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#fbf8f1;border:1px solid #e2d9c7;border-radius:14px;">
+<tr><td style="padding:28px 28px 20px;font-family:Georgia,'Times New Roman',serif;">
+  <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">Keep one, give one</p>
+  <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">This is the one to give</h1>
+  ${p('You have two Experiences: yours, in the other email, and this one for another family.')}
+  <p style="margin:0 0 18px;"><a href="${esc(giftLink)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-weight:bold;font-size:16px;text-decoration:none;padding:12px 22px;border-radius:999px;">Print its gift card</a></p>
+  ${p(`Or forward this email to the family, or send them this link:<br><a href="${esc(link)}" style="color:#2a7f8e;word-break:break-all;">${esc(link)}</a>`)}
+  ${p('It works just like yours: they open the link on the reader’s own tablet or phone and Mission 1 is waiting. Their progress is kept under this link, separate from yours.', 'font-size:15px;')}
+  ${p('Keep this link for the family you give it to. Anyone with it can open that summer.', 'font-size:14px;color:#4b5a60;')}
+  ${p('Questions? Just reply; it comes to us. 30-day refund, no questions asked.', 'font-size:14px;color:#4b5a60;')}
+  <p style="margin:18px 0 0;font-size:16px;color:#2f5d50;font-style:italic;">Linda and John McKillop</p>
+</td></tr></table></td></tr></table></body></html>`;
+  return { subject, text, html };
 }
 
 export function welcomeEmail(key, { resend = false } = {}) {

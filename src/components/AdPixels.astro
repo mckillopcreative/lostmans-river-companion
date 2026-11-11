@@ -70,9 +70,10 @@ const cfg = JSON.stringify({ meta: metaPixelId || '', google: googleTagId || '',
           // the true hand-off to Stripe is the Continue click on the confirm sheet, not the first tap
           // (with the sheet switched off, the Buy tap itself is the hand-off)
           const sheetOff = document.getElementById('buy-confirm')?.dataset.sheet === 'off';
-          if (name === 'confirm_go' || (name === 'buy_click' && sheetOff)) {
-            if (window.fbq) window.fbq('track', 'InitiateCheckout', { value: 24.99, currency: 'USD' }, props && props.eid ? { eventID: props.eid } : undefined);
-            if (window.gtag && c.buyLabel) window.gtag('event', 'conversion', { send_to: c.google + '/' + c.buyLabel, value: 24.99, currency: 'USD' });
+          if (name === 'confirm_go' || name === 'pair_click' || (name === 'buy_click' && sheetOff)) {
+            const v = name === 'pair_click' ? 34.99 : 24.99;
+            if (window.fbq) window.fbq('track', 'InitiateCheckout', { value: v, currency: 'USD' }, props && props.eid ? { eventID: props.eid } : undefined);
+            if (window.gtag && c.buyLabel) window.gtag('event', 'conversion', { send_to: c.google + '/' + c.buyLabel, value: v, currency: 'USD' });
           }
         };
       })();

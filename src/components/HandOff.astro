@@ -29,6 +29,15 @@
       <img id="ho-qr-img" alt="QR code that opens the Experience on your reader’s device" width="240" height="240" />
       <figcaption class="small muted">Scan with the reader’s device</figcaption>
     </figure>
+    <div class="ho-gift" id="ho-giftbox" hidden>
+      <p class="hand ho-eyebrow">And the one to give</p>
+      <p>You chose Keep one, give one, so there’s a second Experience for another family. It has its own code and its own progress. We’ve emailed it to you as well.</p>
+      <p class="cluster ho-actions">
+        <a class="btn btn-sm btn-primary" id="ho-g-card" href="#">Print its gift card</a>
+        <button type="button" class="btn btn-sm" id="ho-g-copy">Copy its link</button>
+        <a class="btn btn-sm" id="ho-g-mail" href="#">Email it</a>
+      </p>
+    </div>
   </div>
 </section>
 
@@ -42,11 +51,16 @@
     box.hidden = false;
     (async () => {
       let key = '';
+      let gift = '';
       // the webhook can trail the buyer by a few seconds; ask for up to ~30 s
       for (let i = 0; i < 15 && !key; i++) {
         try {
           const r = await fetch(`${API}/session/${session}`);
-          if (r.ok) key = (await r.json()).key || '';
+          if (r.ok) {
+            const j = await r.json();
+            key = j.key || '';
+            gift = j.gift || '';
+          }
         } catch {}
         if (!key) await new Promise((res) => setTimeout(res, 2000));
       }
@@ -72,6 +86,21 @@
           prompt('Copy this link:', link);
         }
       });
+      // "Keep one, give one": the second Experience, to hand to another family
+      if (isKey(gift)) {
+        const glink = startLink(gift);
+        ($('ho-g-card') as HTMLAnchorElement).href = `/gift/#${gift}`;
+        ($('ho-g-mail') as HTMLAnchorElement).href = `mailto:?subject=${encodeURIComponent('A summer at Lostman’s River, for you')}&body=${encodeURIComponent(`A gift for your reader: a summer as an assistant fishing guide. Open this on their tablet or phone: ${glink}`)}`;
+        $('ho-g-copy').addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(glink);
+            $('ho-g-copy').textContent = 'Copied';
+          } catch {
+            prompt('Copy this link:', glink);
+          }
+        });
+        $('ho-giftbox').hidden = false;
+      }
       // take the session id out of the address bar
       history.replaceState(null, '', location.pathname + '?welcome=1');
     })();
@@ -112,6 +141,14 @@
   }
   .ho-steps li + li {
     margin-top: 0.3rem;
+  }
+  .ho-gift {
+    grid-column: 1 / -1;
+    padding-top: 0.9rem;
+    border-top: 1px dashed var(--oyster);
+  }
+  .ho-gift p {
+    margin: 0 0 0.5rem;
   }
   .ho-qr {
     margin: 0;

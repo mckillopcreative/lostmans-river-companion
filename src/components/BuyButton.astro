@@ -13,12 +13,24 @@ interface Props {
   note?: boolean;
 }
 const { compact = false, label = 'Hook the Full Experience', note = true } = Astro.props;
+// the quieter second choice under the orange button: two Experiences, one to give
+const pair = isOpen ? site.checkout.pair : null;
 ---
 
 <div class:list={['buy', { compact }]}>
   <a class="btn btn-primary buy-btn" href={buyHref} rel={isOpen ? 'noopener' : undefined} data-track={buyTrack} data-track-page={Astro.url.pathname}>
     {isOpen ? label : `Opens ${opens}: join the list`} <span class="buy-price mono">{price}</span>
   </a>
+  {
+    pair && (
+      <p class="buy-pair">
+        <a class="btn pair-btn" href={pair.url} rel="noopener" data-pair="1" data-track="pair_click" data-track-page={Astro.url.pathname}>
+          Keep one, give one: two families <span class="mono">{pair.price}</span>
+        </a>
+        <span class="small muted pair-note">One for your house, one to give. Bought separately, two are {pair.was}.</span>
+      </p>
+    )
+  }
   {
     note && (
       <p class="small muted buy-note">
@@ -52,6 +64,25 @@ const { compact = false, label = 'Hook the Full Experience', note = true } = Ast
   }
   .buy-note {
     margin: 0.45rem 0 0;
+  }
+  .buy-pair {
+    margin: 0.55rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.75rem;
+  }
+  .pair-btn {
+    min-height: 40px;
+    padding: 0.4em 1em;
+    font-size: 0.95rem;
+    background: var(--paper);
+  }
+  .pair-note {
+    flex: 1 1 14rem;
+  }
+  .compact .pair-btn {
+    font-size: 0.9rem;
   }
   .compact {
     margin-top: 0.6rem;

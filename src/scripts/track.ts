@@ -57,7 +57,7 @@ export function track(name: string, props?: Props) {
   // The checkout hand-off: the sheet's Continue, or the Buy tap itself while the sheet is switched
   // off. For an ad-referred visit it carries the ad click and an event id, so the Worker can report
   // "started checkout" to Meta from the server with the same id the browser pixel uses.
-  const handoff = name === 'confirm_go' || (name === 'buy_click' && document.getElementById('buy-confirm')?.dataset.sheet === 'off');
+  const handoff = name === 'confirm_go' || name === 'pair_click' || (name === 'buy_click' && document.getElementById('buy-confirm')?.dataset.sheet === 'off');
   const adRef = handoff ? adClickRef() : '';
   const eid = adRef ? `ic_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}` : '';
   // the ad pixel (parent-facing landing page only, ad-referred visits only) mirrors a few events

@@ -13,15 +13,15 @@ const API = EVENT_ENDPOINT.replace(/\/ev$/, '');
   <form class="os" role="dialog" aria-modal="true" aria-labelledby="os-h" novalidate>
     <button class="os-x" type="button" aria-label="Not now">×</button>
     <p class="os-eyebrow hand">Giving it this Christmas?</p>
-    <h3 id="os-h">Get the holiday promo code</h3>
-    <p class="os-lede">Leave your email and we’ll send the code straight back. Good through December 24.</p>
+    <h3 id="os-h">Get the holiday gift offer</h3>
+    <p class="os-lede">Leave your email and we’ll send it straight back. Order by December 22 to have the card under the tree.</p>
     <div class="os-row">
       <label class="sr-only" for="os-email">Your email</label>
       <input id="os-email" type="email" required autocomplete="email" inputmode="email" maxlength="200" placeholder="you@example.com" />
-      <button class="btn btn-primary os-go" type="submit">Send the code</button>
+      <button class="btn btn-primary os-go" type="submit">Send it</button>
     </div>
-    <p class="os-fine small muted">Grown-ups only. One email with the code and one reminder before Christmas. Nothing else, and one tap takes you off.</p>
-    <p class="os-done" hidden>Sent. Check your inbox (and the promotions tab) for the code.</p>
+    <p class="os-fine small muted">Grown-ups only. One email with the offer and one reminder before Christmas. Nothing else, and one tap takes you off.</p>
+    <p class="os-done" hidden>Sent. Check your inbox (and the promotions tab).</p>
     <p class="os-err small" hidden>That didn’t go through. Check the address and try again, or email help@lostmansriver.com.</p>
   </form>
 </div>
@@ -80,7 +80,7 @@ const API = EVENT_ENDPOINT.replace(/\/ev$/, '');
         track('offer_join', { page });
         setTimeout(() => { bg.hidden = true; }, 3500);
       } catch {
-        err.hidden = false; go.disabled = false; go.textContent = 'Send the code';
+        err.hidden = false; go.disabled = false; go.textContent = 'Send it';
       }
     });
   })();

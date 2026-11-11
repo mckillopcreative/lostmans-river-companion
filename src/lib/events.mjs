@@ -13,6 +13,7 @@ export const EVENTS = {
   landing_click: { label: 'to' }, // any other link on the landing page, by where it goes (ch, app, map, fish, …)
   purchase: { label: 'src', value: 'usd' }, // written by the Worker at fulfilment, never by a page
   buy_click: { label: 'page' }, // the Buy tap (opens the confirm sheet)
+  pair_click: { label: 'page' }, // the "Keep one, give one" ($34.99, two Experiences) tap: straight to Stripe
   confirm_go: { label: 'page' }, // "Continue to secure checkout" on the sheet: the real hand-off to Stripe
   confirm_close: { label: 'page' }, // the sheet dismissed
   waitlist_click: { label: 'page' },

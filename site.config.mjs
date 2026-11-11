@@ -32,7 +32,11 @@ export default {
   checkout: { url: 'https://buy.stripe.com/28EaEZ73B49jegveo093y00', price: '$24.99', name: 'Lostman’s River: Fishing Guide Experience', open: true, opens: 'soon',
     // confirm sheet before Stripe (BuyConfirm.astro). Off for a one-week test from 2026-11-10:
     // 19 Buy taps → 5 Continue with it on (Nov 6–10). Set back to true to restore it.
-    confirmSheet: false },
+    confirmSheet: false,
+    // "Keep one, give one": two Experiences, one to keep and one to give to another family
+    // (2026-11-10). Its own Payment Link; the Worker issues the second, gift key (PAIR_LINK).
+    // "was" is the real single price times two, never an invented one.
+    pair: { url: 'https://buy.stripe.com/7sY7sN73BbBL5JZ1Be93y02', price: '$34.99', was: '$49.98' } },
 
   /** The purchase gate (docs/LAUNCH-FLOW.md). While false, missions 2–23 stay open and chapters
    *  2–23 show no player, so nobody can buy into locked content. Live from 2026-10-31 (built as if

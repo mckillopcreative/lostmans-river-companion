@@ -1,5 +1,8 @@
 # Holiday emails to the promo-code list
 
+> **Changed 2026-11-10 (John: "Go"):** the holiday offer is now **Keep one, give one**: two Experiences for $34.99 (`https://buy.stripe.com/7sY7sN73BbBL5JZ1Be93y02`), one to keep and one to give, against $49.98 for two singles. Rewrite both emails below around it before sending, and drop the HOLIDAYPROMO code (still honoured at checkout for anyone who already has it; a quantity-2 purchase gets its gift key automatically).
+
+
 *Drafts for John to edit. The list is everyone who asked for the code on the site (stored as `w:<email>` with kind `offer`), plus the pre-launch waitlist. Send with `scripts/send-opening.mjs` once a `--template` switch is added (one line in the script), or paste into the Worker's `/admin/send-opening` body. Each goes out once; the Worker marks sends so nobody gets a duplicate.*
 
 The code itself: `HOLIDAYPROMO`, 25% off orders of two or more copies (which is exactly "the second one half off" at quantity 2), through December 24, 11:59 PM Eastern. Buyers set the quantity to 2 on the Stripe page and enter the code.

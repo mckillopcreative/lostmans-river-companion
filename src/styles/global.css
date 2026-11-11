@@ -365,6 +365,20 @@ a.pill:hover {
   border-color: color-mix(in srgb, var(--sunrise) 85%, black);
   color: var(--on-sunrise);
 }
+/* a secondary call to action on cream: white, green outline (never competes with .btn-primary) */
+.btn-white {
+  background: #fff;
+  border-color: var(--mangrove);
+  color: var(--mangrove);
+}
+.btn-white:hover {
+  background: color-mix(in srgb, var(--mangrove) 8%, #fff);
+  color: var(--mangrove);
+}
+:root[data-theme='dark'] .btn-white {
+  background: color-mix(in srgb, #fff 92%, var(--mangrove));
+  color: #1f3a2e;
+}
 .btn-sm {
   min-height: 36px;
   padding: 0.35em 0.9em;

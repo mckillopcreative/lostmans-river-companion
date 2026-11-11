@@ -18,6 +18,9 @@ routes = [{ pattern = "api.lostmansriver.com", custom_domain = true }]
 # began with an ad click are reported to it (src/meta.js). Same id as site.config → ads.metaPixelId.
 [vars]
 META_DATASET_ID = "2258563668038674"
+# "Keep one, give one" ($34.99, two Experiences): purchases through this Payment Link get a
+# second, gift key (worker/src/index.js fulfil). Created 2026-11-10.
+PAIR_LINK = "plink_1UaRO8R6rTUxNaU85SUldLfs"
 
 [[analytics_engine_datasets]]
 binding = "EVENTS"
