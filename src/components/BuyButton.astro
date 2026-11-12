@@ -24,6 +24,7 @@ const crew = isOpen ? site.checkout.crew : null;
         <a class="btn btn-primary buy-btn" href={crew.url} rel="noopener" data-direct="1" data-track="crew_click" data-track-page={Astro.url.pathname}>
           The Full Crew Experience <span class="buy-price mono">{crew.price}</span>
         </a>
+        <p class="crew-promise hand">Guaranteed worth it, or the authors buy it back.</p>
         <p class="small crew-note">
           <strong class="crew-em">Up to five readers</strong> working the summer together or separately, each with their own missions, badges and license: brothers, sisters, cousins, friends.
         </p>
@@ -74,8 +75,14 @@ const crew = isOpen ? site.checkout.crew : null;
     font-size: 1.3rem;
     color: var(--sunrise-ink);
   }
+  .crew-promise {
+    margin: 0.35rem 0 0;
+    font-size: 1.2rem;
+    line-height: 1.3;
+    color: var(--sunrise-ink);
+  }
   .crew-note {
-    margin: 0.4rem 0 0.6rem;
+    margin: 0.3rem 0 0.6rem;
     max-width: 34rem;
   }
   .solo-btn {
