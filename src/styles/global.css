@@ -549,3 +549,9 @@ a.pill:hover {
 .has-key .read-next .buy {
   display: none !important;
 }
+
+/* "Up to five readers": the crew offer, called out in the heading green (John, 2026-11-12) */
+.crew-em {
+  color: var(--mangrove);
+  font-weight: 700;
+}
