@@ -100,7 +100,7 @@ const ld = [
     image: new URL('/social-share.jpg', Astro.site).toString(),
     offers: {
       '@type': 'Offer',
-      price: site.checkout.price.replace(/[^0-9.]/g, ''),
+      price: site.checkout.crew.price.replace(/[^0-9.]/g, ''),
       priceCurrency: 'USD',
       availability: isOpen ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
       url: new URL(buyHref, Astro.site).toString(),
@@ -128,9 +128,10 @@ const ld = [
     <div class="wrap-wide j-hero-grid">
       <div class="j-hero-copy">
         <p class="eyebrow">One of Joelbooks’ Top 8 adventure novels for teens</p>
-        <h1>Read it. Hear it. Fish it.</h1>
+        <h1>Reading and fishing are better together.</h1>
+        <p class="crew-quote hand">“My family fished together. That’s how we wrote the book. Now you build your crew.” <span class="crew-sig">— John</span></p>
         <p class="lede">
-          <em>Escape to Lostman’s River</em> is a coming-of-age fishing adventure in the Everglades. This is the book, expanded: the whole novel to read and hear on their own tablet, and, chapter by chapter, the real thing that goes with it: the chart, the fish, the knots, the tides, and 23 missions done off the screen. For readers 10 to 15. One price for the household.
+          <em>Escape to Lostman’s River</em> is a coming-of-age fishing adventure in the Everglades, now a summer your crew works together. Up to five readers each get the whole novel to read and hear on their own tablet, and, chapter by chapter, the real thing that goes with it: the chart, the fish, the knots, the tides, and 23 missions done off the screen, each earning their own badges and license. Brothers, sisters, cousins, friends. For readers 10 to 15.
         </p>
         <p class="try-note">
           <strong>Chapter 1 is free, no sign-up.</strong> Read it as pages or hear it read aloud, with the chart, the fish, the knot and today’s tide that go with it.
@@ -545,8 +546,17 @@ const ld = [
     text-wrap: balance;
   }
   .j-hero-copy h1 {
-    font-size: clamp(2.4rem, 5.6vw, 3.9rem);
-    line-height: 1.04;
+    font-size: clamp(2.2rem, 5.2vw, 3.6rem);
+    line-height: 1.06;
+  }
+  .crew-quote {
+    margin: 0.5rem 0 0.9rem;
+    font-size: 1.3rem;
+    line-height: 1.35;
+    color: var(--sunrise-ink);
+  }
+  .crew-sig {
+    white-space: nowrap;
   }
   .j-hero-art {
     margin: 0;

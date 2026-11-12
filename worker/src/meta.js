@@ -47,7 +47,7 @@ export async function reportCheckout(env, { ref, eventId, value = 24.99, ip, ua 
         action_source: 'website',
         event_source_url: 'https://lostmansriver.com/',
         user_data,
-        custom_data: { value: value === 34.99 ? 34.99 : 24.99, currency: 'USD', content_name: value === 34.99 ? 'Lostman’s River: Keep One, Give One' : 'Lostman’s River: Fishing Guide Experience', content_type: 'product' },
+        custom_data: { value: [39.99, 34.99, 29.99, 24.99].includes(value) ? value : 29.99, currency: 'USD', content_name: value === 39.99 ? 'Lostman’s River: Full Crew Experience' : 'Lostman’s River: Fishing Guide Experience', content_type: 'product' },
       },
     ],
   };

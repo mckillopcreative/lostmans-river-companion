@@ -12,7 +12,7 @@ const thumb = artImage('tiles', 'app-hero');
 const price = site.checkout.price;
 ---
 
-<div class="bc-bg" id="buy-confirm" data-price={price} data-prices={[price, site.checkout.pair?.price, site.checkout.pair?.was].filter(Boolean).join('|')} data-sheet={site.checkout.confirmSheet === false ? 'off' : 'on'} hidden>
+<div class="bc-bg" id="buy-confirm" data-price={price} data-prices={[price, site.checkout.crew?.price].filter(Boolean).join('|')} data-sheet={site.checkout.confirmSheet === false ? 'off' : 'on'} hidden>
   <div class="bc" role="dialog" aria-modal="true" aria-labelledby="bc-h">
     <button class="bc-x" type="button" aria-label="Close">×</button>
     <div class="bc-head">
@@ -26,7 +26,7 @@ const price = site.checkout.price;
     <ul class="bc-list">
       <li>The whole novel, <em>Escape to Lostman’s River</em>, to read and hear on their own phone or tablet, with 23 missions, 23 field missions, the printable Field Journal and the Assistant Fishing Guide license.</li>
       <li>Arrives the moment you pay: a link on screen and in your email. Nothing to install; it opens in the browser on any device.</li>
-      <li>One price for the whole household. No account, no password, nothing for a child to sign up for.</li>
+      <li>One reader, on any of your family’s devices. No account, no password, nothing for a child to sign up for.</li>
     </ul>
     <div class="bc-promise">
       <strong>No subscription. Nothing renews.</strong>
@@ -60,7 +60,7 @@ const price = site.checkout.price;
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     const hits: Text[] = [];
     for (let n = walker.nextNode(); n; n = walker.nextNode()) if (prices.some((p) => n.nodeValue?.includes(p))) hits.push(n as Text);
-    // "$24.99" becomes "US$24.99" (and the pair prices likewise); one already "US$…" is left as it is
+    // "$29.99" becomes "US$29.99" (and the crew price likewise); one already "US$…" is left as it is
     for (const t of hits)
       for (const p of prices) {
         const us = 'US' + p;
@@ -90,7 +90,7 @@ const price = site.checkout.price;
     if (bg.dataset.sheet !== 'on') return; // sheet switched off in site.config: Buy goes straight to Stripe
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     const a = (e.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="https://buy.stripe.com/"]');
-    if (!a || bg.contains(a) || a.dataset.pair) return; // "Keep one, give one" goes straight to Stripe
+    if (!a || bg.contains(a) || a.dataset.direct || a.dataset.pair) return; // the crew goes straight to Stripe
     e.preventDefault();
     open(a);
   });

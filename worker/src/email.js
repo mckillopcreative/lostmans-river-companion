@@ -55,22 +55,22 @@ export function openingEmail(leave) {
 
 // The holiday promo code, sent the moment a grown-up asks for it on the site (POST /offer).
 export const HOLIDAY_CODE = 'HOLIDAYPROMO';
-// Since 2026-11-10 the holiday offer is "Keep one, give one" ($34.99 for two Experiences), better
-// than the old code (still honoured if someone uses it). No code in this email any more.
-const PAIR_URL = 'https://buy.stripe.com/7sY7sN73BbBL5JZ1Be93y02';
+// Since 2026-11-11 the holiday offer is the Full Crew Experience ($39.99, up to five readers). The
+// old HOLIDAYPROMO code is still honoured if someone uses it; no code in this email.
+const CREW_URL = 'https://buy.stripe.com/eVqdRbdrZgW58Wbgw893y04';
 export function offerEmail(leave) {
   const subject = 'Your Lostman’s River holiday gift offer';
   const buy = `${SITE}/?utm_source=email&utm_medium=email&utm_campaign=holiday-offer`;
-  const pairBuy = `${PAIR_URL}?client_reference_id=v2_holiday-offer_`;
+  const crewBuy = `${CREW_URL}?client_reference_id=v2_holiday-offer_`;
   const text = [
     'Here’s the holiday offer you asked for.',
     '',
-    'Keep one, give one: two Summer Fishing Guide Experiences for $34.99, one for your family and one to give to another. Bought separately, two are $49.98.',
+    'Reading and fishing are better together. The Full Crew Experience is $39.99 for up to five readers, each with their own link, missions, badges and license: brothers, sisters, cousins, friends.',
     '',
-    `Get the pair: ${pairBuy}`,
-    `Or just one ($24.99): ${buy}`,
+    `Build your crew: ${crewBuy}`,
+    `Or just one reader ($29.99): ${buy}`,
     '',
-    'One price covers a whole household, so the second one is for the cousins, the grandkids across town, or a friend’s family. Each arrives instantly with its own printable gift card, so it works right up to Christmas Eve. Order by December 22 to have the card under the tree.',
+    'Every reader’s link arrives instantly with its own printable gift card, so it works right up to Christmas Eve. Order by December 22 to have the cards under the tree.',
     '',
     'What they get: the whole book, to read and to hear read aloud, chapter by chapter; 23 missions in the app and 23 field missions done for real, each signed off by a grown-up; a printable Field Journal; three badges; and an Assistant Fishing Guide license at the end.',
     '',
@@ -85,11 +85,11 @@ export function offerEmail(leave) {
 <table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#fbf8f1;border:1px solid #e2d9c7;border-radius:14px;">
 <tr><td style="padding:28px 28px 20px;font-family:Georgia,'Times New Roman',serif;">
   <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">Your holiday gift offer</p>
-  <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Keep one, give one</h1>
-  ${p('Two Summer Fishing Guide Experiences for <strong>$34.99</strong>: one for your family and one to give to another. Bought separately, two are $49.98.')}
-  <p style="margin:6px 0 10px;text-align:center;"><a href="${esc(pairBuy)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-family:Georgia,serif;font-weight:bold;font-size:17px;text-decoration:none;padding:13px 26px;border-radius:999px;">Keep one, give one: $34.99</a></p>
-  <p style="margin:0 0 20px;text-align:center;font-size:15px;"><a href="${esc(buy)}" style="color:#2a7f8e;">Or just one, $24.99</a></p>
-  ${p('One price covers a whole household, so the second one is for the cousins, the grandkids across town, or a friend’s family. Each arrives instantly with its own printable gift card, so it works right up to Christmas Eve. Order by <strong>December 22</strong> to have the card under the tree.', 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
+  <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Build your crew</h1>
+  ${p('Reading and fishing are better together. The Full Crew Experience is <strong>$39.99</strong> for up to five readers, each with their own link, missions, badges and license: brothers, sisters, cousins, friends.')}
+  <p style="margin:6px 0 10px;text-align:center;"><a href="${esc(crewBuy)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-family:Georgia,serif;font-weight:bold;font-size:17px;text-decoration:none;padding:13px 26px;border-radius:999px;">Build your crew: $39.99</a></p>
+  <p style="margin:0 0 20px;text-align:center;font-size:15px;"><a href="${esc(buy)}" style="color:#2a7f8e;">Or just one reader, $29.99</a></p>
+  ${p('Every reader’s link arrives instantly with its own printable gift card, so it works right up to Christmas Eve. Order by <strong>December 22</strong> to have the cards under the tree.', 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
   ${p('<strong>What they get:</strong> the whole book, to read and to hear read aloud, chapter by chapter; 23 missions in the app and 23 field missions done for real, each signed off by a grown-up; a printable Field Journal; three badges; and an Assistant Fishing Guide license at the end.')}
   ${p('We’ll send one reminder before Christmas and nothing else.', 'font-size:15px;color:#4b5a60;')}
   <p style="margin:18px 0 0;font-size:16px;color:#2f5d50;font-style:italic;">Linda and John McKillop</p>
@@ -136,6 +136,45 @@ export function waitlistEmail(leave) {
 
 export function startLink(key) {
   return `${SITE}/start/#${key}`;
+}
+
+/** The Full Crew Experience: the crew's other links in one email, each with its gift card. */
+export function crewEmail(keys) {
+  const rows = keys.map((k, i) => ({ n: i + 2, link: startLink(k), card: `${SITE}/gift/#${k}` }));
+  const subject = 'Your crew’s links: Lostman’s River';
+  const text = [
+    'Reading and fishing are better together. Here is the rest of your crew.',
+    '',
+    'Your own link is in the other email. Below are the other crew members’ links. Each one has its own missions, badges and license, so hand one to each reader: a brother or sister, a cousin, a friend.',
+    '',
+    ...rows.flatMap((r) => [`Crew member ${r.n}`, `  Link: ${r.link}`, `  Printable gift card: ${r.card}`, '']),
+    'Each reader opens their link on their own tablet or phone and Mission 1 is waiting. Keep each link to the reader it’s for.',
+    '',
+    'Questions? Just reply. 30-day refund, no questions asked.',
+    '',
+    'Linda and John McKillop',
+  ].join('\n');
+  const p = (s, extra = '') => `<p style="margin:0 0 14px;font-size:16px;line-height:1.5;color:#1f2a2e;${extra}">${s}</p>`;
+  const list = rows
+    .map(
+      (r) => `<tr><td style="padding:10px 0;border-top:1px solid #e2d9c7;font-family:Georgia,serif;font-size:16px;color:#2f5d50;"><strong>Crew member ${r.n}</strong><br>
+<a href="${esc(r.card)}" style="display:inline-block;margin-top:6px;background:#e8873a;color:#1f2a2e;font-weight:bold;font-size:14px;text-decoration:none;padding:8px 14px;border-radius:999px;">Print gift card</a>
+<span style="font-size:13px;color:#4b5a60;margin-left:8px;">or send this link: <a href="${esc(r.link)}" style="color:#2a7f8e;word-break:break-all;">${esc(r.link)}</a></span></td></tr>`,
+    )
+    .join('');
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f6f1e7;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f1e7;"><tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#fbf8f1;border:1px solid #e2d9c7;border-radius:14px;">
+<tr><td style="padding:28px 28px 20px;font-family:Georgia,'Times New Roman',serif;">
+  <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">The Full Crew Experience</p>
+  <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Here is the rest of your crew</h1>
+  ${p('Your own link is in the other email. Each link below has its own missions, badges and license, so hand one to each reader: a brother or sister, a cousin, a friend.')}
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0">${list}</table>
+  ${p('Each reader opens their link on their own tablet or phone and Mission 1 is waiting. Keep each link to the reader it’s for.', 'font-size:15px;margin-top:14px;')}
+  ${p('Questions? Just reply; it comes to us. 30-day refund, no questions asked.', 'font-size:14px;color:#4b5a60;')}
+  <p style="margin:18px 0 0;font-size:16px;color:#2f5d50;font-style:italic;">Linda and John McKillop</p>
+</td></tr></table></td></tr></table></body></html>`;
+  return { subject, text, html };
 }
 
 /** The second Experience from "Keep one, give one": everything the buyer needs to give it. */

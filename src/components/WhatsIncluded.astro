@@ -1,8 +1,10 @@
 ---
-// What the one price buys, for the parent deciding. Used on the landing page and /waitlist/.
+// What every reader in the crew gets, for the parent deciding. Used on the landing page and /waitlist/.
 import { missions } from '@lib/data';
 import audioData from '../../data/audio.json';
+import site from '../../site.config.mjs';
 import { price } from '@lib/buy';
+const crew = site.checkout.crew;
 
 const hours = Math.round(Object.values(audioData.minutes as Record<string, number>).reduce((a, b) => a + b, 0) / 60);
 const items = [
@@ -11,14 +13,15 @@ const items = [
   { t: `${missions.length} field missions`, d: 'Done for real, off the screen: knots on real line, a treasure map, a cleanup, a fishing day. A grown-up signs each one off.' },
   { t: 'The Field Journal', d: '30 printable pages to fill in by hand with a pencil: logs, sketches, the case file, a fish log and a knot log.' },
   { t: 'Badges and a license', d: 'Three badges along the way and a printable Assistant Fishing Guide license at the end.' },
-  { t: 'Gift-ready', d: 'Arrives instantly with a printable gift card. Works on their phone, tablet or computer; no account, no app.' },
+  { t: 'A crew of five', d: 'Up to five readers working the same summer together, each earning their own missions, badges and license: brothers, sisters, cousins, friends.' },
+  { t: 'Gift-ready', d: 'Arrives instantly, with a printable gift card for every reader. Works on their phone, tablet or computer; no account, no app.' },
 ];
 ---
 
 <section class="incl" aria-labelledby="incl-h">
   <div class="wrap-wide">
     <p class="eyebrow">The Summer Fishing Guide Experience</p>
-    <h2 id="incl-h">Everything a summer at Lostman’s River needs, for {price}</h2>
+    <h2 id="incl-h">Everything each reader in your crew gets</h2>
     <ul class="incl-list" data-reveal-stagger>
       {
         items.map((i) => (
@@ -29,7 +32,7 @@ const items = [
         ))
       }
     </ul>
-    <p class="small muted incl-foot">For readers about 10 to 15. One price for the household, on as many of your family’s devices as you like. The chart, fish, crew and knots on this site stay free for everyone.</p>
+    <p class="small muted incl-foot">For readers about 10 to 15. The Full Crew Experience is {crew ? crew.price : ''} for up to {crew ? crew.size : 5} readers; just one reader is {price}. Each reader’s link works on any of their devices. The chart, fish, crew and knots on this site stay free for everyone.</p>
   </div>
 </section>
 

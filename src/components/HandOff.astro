@@ -30,13 +30,9 @@
       <figcaption class="small muted">Scan with the reader’s device</figcaption>
     </figure>
     <div class="ho-gift" id="ho-giftbox" hidden>
-      <p class="hand ho-eyebrow">And the one to give</p>
-      <p>You chose Keep one, give one, so there’s a second Experience for another family. It has its own code and its own progress. We’ve emailed it to you as well.</p>
-      <p class="cluster ho-actions">
-        <a class="btn btn-sm btn-primary" id="ho-g-card" href="#">Print its gift card</a>
-        <button type="button" class="btn btn-sm" id="ho-g-copy">Copy its link</button>
-        <a class="btn btn-sm" id="ho-g-mail" href="#">Email it</a>
-      </p>
+      <p class="hand ho-eyebrow" id="ho-g-title">The rest of your crew</p>
+      <p id="ho-g-lede">Each crew member gets their own link, with their own missions, badges and license. Hand one to each reader: a brother or sister, a cousin, a friend. We’ve emailed them to you as well.</p>
+      <ol class="ho-crew" id="ho-crew"></ol>
     </div>
   </div>
 </section>
@@ -51,7 +47,7 @@
     box.hidden = false;
     (async () => {
       let key = '';
-      let gift = '';
+      let gifts: string[] = [];
       // the webhook can trail the buyer by a few seconds; ask for up to ~30 s
       for (let i = 0; i < 15 && !key; i++) {
         try {
@@ -59,7 +55,7 @@
           if (r.ok) {
             const j = await r.json();
             key = j.key || '';
-            gift = j.gift || '';
+            gifts = (Array.isArray(j.gifts) ? j.gifts : j.gift ? [j.gift] : []).filter(isKey);
           }
         } catch {}
         if (!key) await new Promise((res) => setTimeout(res, 2000));
@@ -86,18 +82,32 @@
           prompt('Copy this link:', link);
         }
       });
-      // "Keep one, give one": the second Experience, to hand to another family
-      if (isKey(gift)) {
-        const glink = startLink(gift);
-        ($('ho-g-card') as HTMLAnchorElement).href = `/gift/#${gift}`;
-        ($('ho-g-mail') as HTMLAnchorElement).href = `mailto:?subject=${encodeURIComponent('A summer at Lostman’s River, for you')}&body=${encodeURIComponent(`A gift for your reader: a summer as an assistant fishing guide. Open this on their tablet or phone: ${glink}`)}`;
-        $('ho-g-copy').addEventListener('click', async () => {
-          try {
-            await navigator.clipboard.writeText(glink);
-            $('ho-g-copy').textContent = 'Copied';
-          } catch {
-            prompt('Copy this link:', glink);
-          }
+      // The Full Crew Experience (and the older gift purchases): one more link per crew member,
+      // each with its own gift card, copy and email buttons
+      if (gifts.length) {
+        if (gifts.length === 1) {
+          $('ho-g-title').textContent = 'And the one to give';
+          $('ho-g-lede').textContent = 'There’s a second Experience to hand to another reader, with its own link, missions, badges and license. We’ve emailed it to you as well.';
+        }
+        const list = $('ho-crew');
+        gifts.forEach((g, i) => {
+          const glink = startLink(g);
+          const li = document.createElement('li');
+          const mail = `mailto:?subject=${encodeURIComponent('Join my Lostman’s River crew')}&body=${encodeURIComponent(`You’re on the crew for a summer as an assistant fishing guide. Open this on your tablet or phone: ${glink}`)}`;
+          li.innerHTML = `<span class="ho-crew-n">Crew member ${i + 2}</span>
+            <a class="btn btn-sm btn-primary" href="/gift/#${g}">Print gift card</a>
+            <button type="button" class="btn btn-sm">Copy link</button>
+            <a class="btn btn-sm" href="${mail}">Email it</a>`;
+          const copy = li.querySelector('button')!;
+          copy.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(glink);
+              copy.textContent = 'Copied';
+            } catch {
+              prompt('Copy this link:', glink);
+            }
+          });
+          list.appendChild(li);
         });
         $('ho-giftbox').hidden = false;
       }
@@ -149,6 +159,23 @@
   }
   .ho-gift p {
     margin: 0 0 0.5rem;
+  }
+  .ho-crew {
+    list-style: none;
+    margin: 0.4rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .ho-crew li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.5rem;
+  }
+  .ho-crew-n {
+    font-weight: 700;
+    min-width: 8.5rem;
   }
   .ho-qr {
     margin: 0;

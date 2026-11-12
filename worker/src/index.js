@@ -27,7 +27,7 @@
 // w:<email> → {created, page, src} (waitlist); rlw:<ip> → waitlist signups this hour
 import { EVENTS } from '../../src/lib/events.mjs';
 import { qrPng } from './qr.js';
-import { welcomeEmail, waitlistEmail, openingEmail, offerEmail, giftEmail } from './email.js';
+import { welcomeEmail, waitlistEmail, openingEmail, offerEmail, giftEmail, crewEmail } from './email.js';
 import { reportPurchase, reportCheckout, fbcFrom, srcFrom } from './meta.js';
 import { handleEmail } from './inbox.js';
 
@@ -123,7 +123,8 @@ async function giftCount(env, session) {
   const sub = Number(session.amount_subtotal) || 0;
   const usd = String(session.currency || 'usd').toLowerCase() === 'usd';
   const isPairLink = !!env.PAIR_LINK && session.payment_link === env.PAIR_LINK;
-  if (env.STRIPE_SECRET_KEY && session.id && (isPairLink || !usd || sub > 2499)) {
+  const isCrewLink = !!env.CREW_LINK && session.payment_link === env.CREW_LINK;
+  if (env.STRIPE_SECRET_KEY && session.id && (isPairLink || isCrewLink || !usd || sub > 2499)) {
     try {
       const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${session.id}/line_items?limit=20`, { headers: { authorization: `Bearer ${env.STRIPE_SECRET_KEY}` } });
       if (r.ok) {
@@ -131,13 +132,19 @@ async function giftCount(env, session) {
         for (const li of (await r.json()).data || []) {
           const unit = Number(li.price?.unit_amount) || 0;
           const q = Math.max(1, Number(li.quantity) || 1);
-          n += unit === 3499 ? 2 * q : q;
+          // $39.99 Full Crew = five readers, but only on the crew product (the signed paperback is
+          // also $39.99 and must stay one); $34.99 pair = two; everything else (the $29.99 and old
+          // $24.99 single, the $9.99 add-on) = one each
+          const prod = typeof li.price?.product === 'string' ? li.price.product : li.price?.product?.id;
+          const crew = unit === 3999 && (env.CREW_PRODUCT ? prod === env.CREW_PRODUCT : isCrewLink);
+          n += crew ? 5 * q : unit === 3499 ? 2 * q : q;
         }
-        return Math.max(0, Math.min(5, n - 1));
+        return Math.max(0, Math.min(9, n - 1));
       }
     } catch {}
   }
   // Stripe unreachable: fall back on the link and the USD subtotal
+  if (isCrewLink) return 4;
   if (isPairLink) return 1;
   if (usd && sub >= 3498) return 1;
   return 0;
@@ -155,7 +162,10 @@ async function fulfil(env, session, ctx) {
   const giftKeys = [];
   for (let i = 0; i < gifts; i++) giftKeys.push(await issueKey(env, { email: '', session: `${session.id}:gift${i ? i + 1 : ''}`, note: 'gift' }));
   const { key, created } = await issueKey(env, { email, session: session.id });
-  for (const g of giftKeys) if (g.created && email) ctx?.waitUntil(sendMail(env, email, giftEmail(g.key)));
+  // one email for the whole crew; the single-gift email for an older one-extra purchase
+  const freshGifts = giftKeys.filter((g) => g.created).map((g) => g.key);
+  if (freshGifts.length && email)
+    ctx?.waitUntil(sendMail(env, email, giftKeys.length > 1 ? crewEmail(giftKeys.map((g) => g.key)) : giftEmail(freshGifts[0])));
   if (created && email) await sendWelcome(env, email, key);
   if (created) {
     // count the sale under the campaign that brought it (the code rode through Stripe in
@@ -164,12 +174,14 @@ async function fulfil(env, session, ctx) {
     const src = srcFrom(ref) || (fbcFrom(ref) ? 'meta' : 'direct');
     env.EVENTS?.writeDataPoint({ indexes: ['purchase'], blobs: ['purchase', src, src, ''], doubles: [1, (Number(session.amount_total) || 0) / 100] });
     // and tell the author: one short email per sale (the buyer's address is the seller's to see)
-    const usd = ((Number(session.amount_total) || 0) / 100).toFixed(2);
+    // the amount in the currency the buyer paid (Canadians pay CAD through Adaptive Pricing)
+    const cur = String(session.currency || 'usd').toLowerCase();
+    const usd = `${cur === 'usd' ? '$' : cur === 'cad' ? 'CA$' : cur.toUpperCase() + ' '}${((Number(session.amount_total) || 0) / 100).toFixed(2)}`;
     const when = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
-    const line = `$${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET${pair ? ` · PLUS ${gifts} GIFT EXPERIENCE${gifts > 1 ? 'S' : ''} (${gifts + 1} keys)` : ''}`;
+    const line = `${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET${gifts >= 4 ? ` · FULL CREW (${gifts + 1} readers)` : pair ? ` · PLUS ${gifts} GIFT EXPERIENCE${gifts > 1 ? 'S' : ''} (${gifts + 1} keys)` : ''}`;
     ctx?.waitUntil(
       sendMail(env, NOTIFY, {
-        subject: `Lostman’s River sale: $${usd} (${src})`,
+        subject: `Lostman’s River sale: ${usd} (${src})`,
         text: `New purchase.\n${line}\n\nKey issued and welcome email sent. Stripe session ${session.id}.`,
         html: `<p><strong>New purchase.</strong></p><p>${line}</p><p>Key issued and welcome email sent. Stripe session ${session.id}.</p>`,
       }),
@@ -265,8 +277,8 @@ export default {
         doubles: [1, spec.value ? Math.max(-1e6, Math.min(1e6, Number(body.v) || 0)) : 0],
       });
       // the checkout hand-off from an ad click: tell Meta from the server too (worker/src/meta.js)
-      if (body.h && !body.o && (name === 'buy_click' || name === 'confirm_go' || name === 'pair_click'))
-        ctx.waitUntil(reportCheckout(env, { ref: String(body.f || ''), eventId: String(body.e || ''), value: name === 'pair_click' ? 34.99 : 24.99, ip: request.headers.get('cf-connecting-ip') || '', ua: request.headers.get('user-agent') || '' }));
+      if (body.h && !body.o && (name === 'buy_click' || name === 'confirm_go' || name === 'pair_click' || name === 'crew_click'))
+        ctx.waitUntil(reportCheckout(env, { ref: String(body.f || ''), eventId: String(body.e || ''), value: name === 'crew_click' ? 39.99 : name === 'pair_click' ? 34.99 : 29.99, ip: request.headers.get('cf-connecting-ip') || '', ua: request.headers.get('user-agent') || '' }));
       return new Response(null, { status: 204, headers: cors });
     }
 
@@ -288,8 +300,15 @@ export default {
         const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${m[1]}`, { headers: { authorization: `Bearer ${env.STRIPE_SECRET_KEY}` } });
         if (r.ok) key = await fulfil(env, await r.json(), ctx);
       }
-      const gift = key ? await env.LR.get(`s:${m[1]}:gift`) : null;
-      return key ? json(gift ? { key, gift } : { key }, 200, cors) : json({ pending: true }, 202, cors);
+      // the crew's other links (s:<cs>:gift, :gift2 …), for the welcome page
+      const gifts = [];
+      if (key)
+        for (let i = 1; i <= 9; i++) {
+          const g = await env.LR.get(`s:${m[1]}:gift${i > 1 ? i : ''}`);
+          if (!g) break;
+          gifts.push(g);
+        }
+      return key ? json(gifts.length ? { key, gift: gifts[0], gifts } : { key }, 200, cors) : json({ pending: true }, 202, cors);
     }
 
     if ((m = /^\/key\/([A-Za-z0-9]+)$/.exec(path))) {

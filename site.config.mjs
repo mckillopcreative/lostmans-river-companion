@@ -29,14 +29,16 @@ export default {
   /** `open: false` sends every Buy button to /waitlist/ instead of Stripe (pre-launch). Set
    *  `open: true` once Stripe is connected (docs/GATE-SETUP.md). `opens` is how the buttons and the
    *  waitlist page say when: no fixed date since 2026-11-03 (KDP released the ebook early). */
-  checkout: { url: 'https://buy.stripe.com/28EaEZ73B49jegveo093y00', price: '$24.99', name: 'Lostman’s River: Fishing Guide Experience', open: true, opens: 'soon',
+  // Two products since 2026-11-11 (John): "Just me", one reader ($29.99, this url/price), and the
+  // Full Crew Experience (crew, below), which the page leads with. The old $24.99 link
+  // (https://buy.stripe.com/28EaEZ73B49jegveo093y00) and the $34.99 pair are retired.
+  checkout: { url: 'https://buy.stripe.com/14A6oJ2Nl7lv4FV93G93y03', price: '$29.99', name: 'Lostman’s River: Fishing Guide Experience', open: true, opens: 'soon',
     // confirm sheet before Stripe (BuyConfirm.astro). Off for a one-week test from 2026-11-10:
     // 19 Buy taps → 5 Continue with it on (Nov 6–10). Set back to true to restore it.
     confirmSheet: false,
-    // "Keep one, give one": two Experiences, one to keep and one to give to another family
-    // (2026-11-10). Its own Payment Link; the Worker issues the second, gift key (PAIR_LINK).
-    // "was" is the real single price times two, never an invented one.
-    pair: { url: 'https://buy.stripe.com/7sY7sN73BbBL5JZ1Be93y02', price: '$34.99', was: '$49.98' } },
+    // The Full Crew Experience: up to five readers, each with their own link, missions, badges and
+    // license. The Worker issues the four extra keys (CREW_LINK) and emails them with gift cards.
+    crew: { url: 'https://buy.stripe.com/eVqdRbdrZgW58Wbgw893y04', price: '$39.99', size: 5 } },
 
   /** The purchase gate (docs/LAUNCH-FLOW.md). While false, missions 2–23 stay open and chapters
    *  2–23 show no player, so nobody can buy into locked content. Live from 2026-10-31 (built as if

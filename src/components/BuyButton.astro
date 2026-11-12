@@ -1,34 +1,39 @@
 ---
-// The one Buy button: Stripe Payment Link from site.config, with the paperback pointed at
-// Amazon underneath (no shipping sold here; decided 2026-10-20). Before opening day it goes to
-// the waitlist instead (src/lib/buy.ts).
+// The two ways to buy (2026-11-11, John: "lead with the crew"): the Full Crew Experience, up to
+// five readers each with their own link and progress, is the big orange button; "Just me", one
+// reader, is the quieter one underneath. Both are Stripe Payment Links from site.config. The
+// paperback is pointed at Amazon underneath (no shipping sold here). Before opening day it goes
+// to the waitlist instead (src/lib/buy.ts).
 import site from '../../site.config.mjs';
 import { isOpen, buyHref, buyTrack, opens, price } from '@lib/buy';
 
 interface Props {
   compact?: boolean;
-  /** what the button says before the price */
-  label?: string;
-  /** the refund / paperback line under the button */
+  /** the refund / paperback line under the buttons */
   note?: boolean;
 }
-const { compact = false, label = 'Hook the Full Experience', note = true } = Astro.props;
-// the quieter second choice under the orange button: two Experiences, one to give
-const pair = isOpen ? site.checkout.pair : null;
+const { compact = false, note = true } = Astro.props;
+const crew = isOpen ? site.checkout.crew : null;
 ---
 
 <div class:list={['buy', { compact }]}>
-  <a class="btn btn-primary buy-btn" href={buyHref} rel={isOpen ? 'noopener' : undefined} data-track={buyTrack} data-track-page={Astro.url.pathname}>
-    {isOpen ? label : `Opens ${opens}: join the list`} <span class="buy-price mono">{price}</span>
-  </a>
   {
-    pair && (
-      <p class="buy-pair">
-        <a class="btn pair-btn" href={pair.url} rel="noopener" data-pair="1" data-track="pair_click" data-track-page={Astro.url.pathname}>
-          Keep one, give one: two families <span class="mono">{pair.price}</span>
+    crew ? (
+      <>
+        <a class="btn btn-primary buy-btn" href={crew.url} rel="noopener" data-direct="1" data-track="crew_click" data-track-page={Astro.url.pathname}>
+          Build your crew: the Full Crew Experience <span class="buy-price mono">{crew.price}</span>
         </a>
-        <span class="small muted pair-note">One for your house, one to give. Bought separately, two are {pair.was}.</span>
-      </p>
+        <p class="small crew-note">
+          Up to {crew.size} readers working the summer together, each with their own missions, badges and license: brothers, sisters, cousins, friends.
+        </p>
+        <a class="btn solo-btn" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={Astro.url.pathname}>
+          Just me: one reader <span class="mono">{price}</span>
+        </a>
+      </>
+    ) : (
+      <a class="btn btn-primary buy-btn" href={buyHref} data-track={buyTrack} data-track-page={Astro.url.pathname}>
+        Opens {opens}: join the list
+      </a>
     )
   }
   {
@@ -57,37 +62,32 @@ const pair = isOpen ? site.checkout.pair : null;
     font-size: 1.05rem;
     padding-inline: 1.3rem;
     gap: 0.6rem;
+    text-align: left;
   }
   .buy-price {
     font-size: 0.8em;
     opacity: 0.9;
   }
-  .buy-note {
-    margin: 0.45rem 0 0;
+  .crew-note {
+    margin: 0.4rem 0 0.6rem;
+    max-width: 34rem;
   }
-  .buy-pair {
-    margin: 0.55rem 0 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.35rem 0.75rem;
-  }
-  .pair-btn {
+  .solo-btn {
     min-height: 40px;
     padding: 0.4em 1em;
     font-size: 0.95rem;
     background: var(--paper);
   }
-  .pair-note {
-    flex: 1 1 14rem;
-  }
-  .compact .pair-btn {
-    font-size: 0.9rem;
+  .buy-note {
+    margin: 0.55rem 0 0;
   }
   .compact {
     margin-top: 0.6rem;
   }
   .compact .buy-btn {
     font-size: 0.95rem;
+  }
+  .compact .solo-btn {
+    font-size: 0.9rem;
   }
 </style>

@@ -2,12 +2,16 @@
 // "Hook the Experience": a sticky button, bottom right, that appears once the reader has scrolled
 // a screen down on a page without a purchase key. Same destination as every Buy button, so the
 // confirm sheet opens and the beacons fire the same way. Hidden for key holders (.has-key).
-import { buyHref, buyTrack } from '@lib/buy';
+import site from '../../site.config.mjs';
+import { buyHref, buyTrack, isOpen } from '@lib/buy';
+// since 2026-11-11 the sticky button builds a crew (the Full Crew Experience)
+const href = isOpen && site.checkout.crew ? site.checkout.crew.url : buyHref;
+const track = isOpen && site.checkout.crew ? 'crew_click' : buyTrack;
 ---
 
-<a class="hook-btn btn btn-primary" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={Astro.url.pathname} hidden aria-label="Hook the Experience: get the full Lostman’s River experience">
+<a class="hook-btn btn btn-primary" href={href} rel="noopener" data-direct="1" data-track={track} data-track-page={Astro.url.pathname} hidden aria-label="Build your crew: the Full Crew Experience">
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
-  Hook the Experience
+  Build your crew
 </a>
 
 <script>

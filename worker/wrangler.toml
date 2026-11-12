@@ -21,6 +21,9 @@ META_DATASET_ID = "2258563668038674"
 # "Keep one, give one" ($34.99, two Experiences): purchases through this Payment Link get a
 # second, gift key (worker/src/index.js fulfil). Created 2026-11-10.
 PAIR_LINK = "plink_1UaRO8R6rTUxNaU85SUldLfs"
+# The Full Crew Experience ($39.99, up to five readers; 2026-11-11): four extra keys per purchase.
+CREW_LINK = "plink_1Uan0QR6rTUxNaU8jDZt5nIz"
+CREW_PRODUCT = "prod_VbegFKkQkjcsyt"
 
 [[analytics_engine_datasets]]
 binding = "EVENTS"
