@@ -72,8 +72,8 @@ export default {
    *  paid). Never on the app, chapters, missions or games: children use those (COPPA). */
   ads: {
     metaPixelId: '2258563668038674', // "Lostman's River website" dataset, Events Manager (created 2026-11-03)
-    googleTagId: '', // Google Ads: 'AW-…' (or GA4 'G-…')
-    googleBuyLabel: '', // the conversion label for the Buy click, from Google Ads
+    googleTagId: 'AW-18571980846', // Google Ads account 427-546-3184 (created 2026-11-12)
+    googleBuyLabel: 'GjaDCI3Pr7cdEK7g55dF', // conversion "Checkout tap (to Stripe)", Begin checkout category
   },
 
   /** Search Console: paste the content="" value of Google's HTML-tag verification here, or
