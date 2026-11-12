@@ -150,6 +150,15 @@ async function giftCount(env, session) {
   return 0;
 }
 
+/** A US billing address in South Carolina: the state when a wallet gives one, else a 290–299 ZIP. */
+export function isSouthCarolina(a) {
+  if (!a) return false;
+  const country = String(a.country || '').toUpperCase();
+  if (country && country !== 'US') return false;
+  if (String(a.state || '').toUpperCase() === 'SC') return true;
+  return /^29\d/.test(String(a.postal_code || '').trim());
+}
+
 async function fulfil(env, session, ctx) {
   if (!session || session.payment_status !== 'paid') return null;
   const email = session.customer_details?.email || session.customer_email || '';
@@ -179,11 +188,16 @@ async function fulfil(env, session, ctx) {
     const usd = `${cur === 'usd' ? '$' : cur === 'cad' ? 'CA$' : cur.toUpperCase() + ' '}${((Number(session.amount_total) || 0) / 100).toFixed(2)}`;
     const when = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
     const line = `${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET${gifts >= 4 ? ` · FULL CREW (${gifts + 1} readers)` : pair ? ` · PLUS ${gifts} GIFT EXPERIENCE${gifts > 1 ? 'S' : ''} (${gifts + 1} keys)` : ''}`;
+    // South Carolina buyers: checkout no longer collects tax (2026-11-12, John: no address forms;
+    // he remits SC sales tax himself), so flag them from the ZIP or wallet address Stripe has
+    const sc = isSouthCarolina(session.customer_details?.address);
+    if (sc) env.EVENTS?.writeDataPoint({ indexes: ['sc_sale'], blobs: ['sc_sale', src, src, ''], doubles: [1, (Number(session.amount_total) || 0) / 100] });
+    const scNote = sc ? `SOUTH CAROLINA buyer (ZIP ${session.customer_details?.address?.postal_code || '?'}): no tax was charged, so set aside SC sales tax on this sale.` : '';
     ctx?.waitUntil(
       sendMail(env, NOTIFY, {
-        subject: `Lostman’s River sale: ${usd} (${src})`,
-        text: `New purchase.\n${line}\n\nKey issued and welcome email sent. Stripe session ${session.id}.`,
-        html: `<p><strong>New purchase.</strong></p><p>${line}</p><p>Key issued and welcome email sent. Stripe session ${session.id}.</p>`,
+        subject: `${sc ? '[SC tax] ' : ''}Lostman’s River sale: ${usd} (${src})`,
+        text: `New purchase.\n${line}\n${scNote ? `\n${scNote}\n` : ''}\nKey issued and welcome email sent. Stripe session ${session.id}.`,
+        html: `<p><strong>New purchase.</strong></p><p>${line}</p>${scNote ? `<p><strong>${scNote}</strong></p>` : ''}<p>Key issued and welcome email sent. Stripe session ${session.id}.</p>`,
       }),
     );
     // tell Meta about a purchase that began with an ad click (worker/src/meta.js); after the reply
