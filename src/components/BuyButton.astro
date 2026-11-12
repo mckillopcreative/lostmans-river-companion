@@ -20,14 +20,15 @@ const crew = isOpen ? site.checkout.crew : null;
   {
     crew ? (
       <>
+        <p class="crew-lead hand">Fill your boat…</p>
         <a class="btn btn-primary buy-btn" href={crew.url} rel="noopener" data-direct="1" data-track="crew_click" data-track-page={Astro.url.pathname}>
-          Build your crew: the Full Crew Experience <span class="buy-price mono">{crew.price}</span>
+          The Full Crew Experience <span class="buy-price mono">{crew.price}</span>
         </a>
         <p class="small crew-note">
-          Up to {crew.size} readers working the summer together, each with their own missions, badges and license: brothers, sisters, cousins, friends.
+          Up to {crew.size} readers working the summer together or separately, each with their own missions, badges and license: brothers, sisters, cousins, friends.
         </p>
         <a class="btn solo-btn" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={Astro.url.pathname}>
-          Just me: one reader <span class="mono">{price}</span>
+          Single Reader <span class="mono">{price}</span>
         </a>
       </>
     ) : (
@@ -67,6 +68,11 @@ const crew = isOpen ? site.checkout.crew : null;
   .buy-price {
     font-size: 0.8em;
     opacity: 0.9;
+  }
+  .crew-lead {
+    margin: 0 0 0.35rem;
+    font-size: 1.3rem;
+    color: var(--sunrise-ink);
   }
   .crew-note {
     margin: 0.4rem 0 0.6rem;
