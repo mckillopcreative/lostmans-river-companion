@@ -40,11 +40,11 @@ if (campaigns) {
   const codes = [...new Set(rows.map((r) => r.campaign || '(none)'))].sort();
   const get = (c, e, v) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === e && (v === undefined || Number(r.v) === v)).reduce((a, r) => a + Number(r.n), 0);
   const money = (c) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === 'purchase').reduce((a, r) => a + Number(r.total), 0);
-  const cols = ['views', 'scroll50', 'scroll90', 'sample', 'audio1', 'offer', 'buy', 'confirm', 'returned', 'bought', 'dollars'];
+  const cols = ['views', 'scroll50', 'scroll90', 'sample', 'audio1', 'offer', 'single', 'crew', 'confirm', 'returned', 'bought', 'dollars'];
   console.log(`Landing page by campaign, last ${days} days${own ? ' (including own traffic)' : ''}`);
   console.log('  ' + 'campaign'.padEnd(18) + cols.map((c) => c.padStart(9)).join(''));
   for (const c of codes) {
-    const vals = [get(c, 'landing_view'), get(c, 'scroll', 50), get(c, 'scroll', 90), get(c, 'sample_click'), get(c, 'audio_play'), get(c, 'offer_join'), get(c, 'buy_click'), get(c, 'confirm_go'), get(c, 'checkout_return'), get(c, 'purchase'), money(c).toFixed(2)];
+    const vals = [get(c, 'landing_view'), get(c, 'scroll', 50), get(c, 'scroll', 90), get(c, 'sample_click'), get(c, 'audio_play'), get(c, 'offer_join'), get(c, 'buy_click'), get(c, 'crew_click'), get(c, 'confirm_go'), get(c, 'checkout_return'), get(c, 'purchase'), money(c).toFixed(2)];
     console.log('  ' + c.padEnd(18) + vals.map((v) => String(v).padStart(9)).join(''));
   }
   if (!codes.length) console.log('  (none yet)');
@@ -58,7 +58,8 @@ if (campaigns) {
     ['Tried chapter 1', get('sample_click')],
     ['Heard chapter 1', get('audio_play', '1')],
     ['Listened to the end of ch 1', rows.filter((r) => r.event === 'audio_progress' && r.label === '1').length ? get('audio_progress', '1') : 0],
-    ['Clicked Buy', get('buy_click')],
+    ['Clicked Full Crew ($39.99)', get('crew_click')],
+    ['Clicked Single Reader ($29.99)', get('buy_click')],
     ['Continued to checkout', get('confirm_go')],
     ['Came back from checkout', get('checkout_return')],
     ['Bought (Worker count)', get('purchase')],
