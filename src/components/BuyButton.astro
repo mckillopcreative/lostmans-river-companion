@@ -13,14 +13,24 @@ interface Props {
   note?: boolean;
   /** buttons only: no "Fill your boat" lead, promise line or crew note (the offer card says them) */
   plain?: boolean;
+  /** the id of the offer card: show one "Hook the Experience" pill that scrolls to it, in place of the buttons (the landing hero) */
+  jump?: string;
 }
-const { compact = false, note = true, plain = false } = Astro.props;
+const { compact = false, note = true, plain = false, jump = '' } = Astro.props;
 const crew = isOpen ? site.checkout.crew : null;
 ---
 
 <div class:list={['buy', { compact }]}>
   {
-    crew ? (
+    crew && jump ? (
+      <>
+        <p class="crew-lead hand">Fill your boat with up to 5 readers…</p>
+        <a class="btn btn-primary hook-pill" href={`#${jump}`}>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
+          Hook the Experience
+        </a>
+      </>
+    ) : crew ? (
       <>
         {!plain && <p class="crew-lead hand">Fill your boat with up to 5 readers…</p>}
         <a class="btn btn-primary buy-btn" href={crew.url} rel="noopener" data-direct="1" data-track="crew_click" data-track-page={Astro.url.pathname}>
@@ -89,6 +99,13 @@ const crew = isOpen ? site.checkout.crew : null;
   .crew-note {
     margin: 0.3rem 0 0.6rem;
     max-width: 34rem;
+  }
+  .hook-pill {
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.16);
   }
   .plain-gap {
     display: block;

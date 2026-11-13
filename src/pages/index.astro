@@ -146,8 +146,8 @@ const ld = [
           <a class="btn btn-white" href={url('/ch/1/')} data-track="sample_click" data-track-page="/">Try the first chapter now</a>
         </p>
         <ChapterAudio n={1} title="Hear Chapter 1 read aloud" compact />
-        <BuyButton />
-        <p class="small"><a href="#offer">See exactly what you get ↓</a> · <a href="#chapters">Browse Matt’s journal below ↓</a></p>
+        <BuyButton jump="offer" />
+        <p class="small"><a href={url('/app/')}>See everything in the Experience →</a> · <a href="#chapters">Browse Matt’s journal below ↓</a></p>
         <p class="small muted scan-note">
           Reading the paperback? The code at the top of each chapter opens that chapter’s page here. No spoilers past where you are.
         </p>
