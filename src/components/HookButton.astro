@@ -9,7 +9,7 @@ const href = isOpen && site.checkout.crew ? site.checkout.crew.url : buyHref;
 const track = isOpen && site.checkout.crew ? 'crew_click' : buyTrack;
 ---
 
-<a class="hook-btn btn btn-primary" href={href} rel="noopener" data-direct="1" data-track={track} data-track-page={Astro.url.pathname} hidden aria-label="Build your crew: The Full Crew Experience">
+<a class="hook-btn btn btn-primary" href={href} rel="noopener" data-direct="1" data-track={track} data-track-page={`${Astro.url.pathname}:sticky`} hidden aria-label="Build your crew: The Full Crew Experience">
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
   Build your crew
 </a>

@@ -17,8 +17,11 @@ interface Props {
   jump?: string;
   /** a small label pinned to the crew button, e.g. "Holiday Special" (the offer card passes site.checkout.crew.tag) */
   tag?: string;
+  /** where this set of buttons sits, added to the click label ("card" → "/:card") */
+  place?: string;
 }
-const { compact = false, note = true, plain = false, jump = '', tag = '' } = Astro.props;
+const { compact = false, note = true, plain = false, jump = '', tag = '', place = '' } = Astro.props;
+const where = Astro.url.pathname + (place ? `:${place}` : '');
 const crew = isOpen ? site.checkout.crew : null;
 ---
 
@@ -27,7 +30,7 @@ const crew = isOpen ? site.checkout.crew : null;
     crew && jump ? (
       <>
         <p class="crew-lead hand">Fill your boat with up to 5 readers…</p>
-        <a class="btn btn-primary hook-pill" href={`#${jump}`}>
+        <a class="btn btn-primary hook-pill" href={`#${jump}`} data-track="hook_click" data-track-page={Astro.url.pathname}>
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
           Hook the Experience
         </a>
@@ -35,7 +38,7 @@ const crew = isOpen ? site.checkout.crew : null;
     ) : crew ? (
       <>
         {!plain && <p class="crew-lead hand">Fill your boat with up to 5 readers…</p>}
-        <a class:list={['btn btn-primary buy-btn', { tagged: !!tag }]} href={crew.url} rel="noopener" data-direct="1" data-track="crew_click" data-track-page={Astro.url.pathname}>
+        <a class:list={['btn btn-primary buy-btn', { tagged: !!tag }]} href={crew.url} rel="noopener" data-direct="1" data-track="crew_click" data-track-page={where}>
           {tag && <span class="buy-tag">{tag}</span>}
           The Full Crew Experience <span class="buy-price mono">{crew.price}</span>
         </a>
@@ -46,12 +49,12 @@ const crew = isOpen ? site.checkout.crew : null;
           </p>
         )}
         {plain && <span class="plain-gap" />}
-        <a class="btn solo-btn" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={Astro.url.pathname}>
+        <a class="btn solo-btn" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={where}>
           Single Reader <span class="mono">{price}</span>
         </a>
       </>
     ) : (
-      <a class="btn btn-primary buy-btn" href={buyHref} data-track={buyTrack} data-track-page={Astro.url.pathname}>
+      <a class="btn btn-primary buy-btn" href={buyHref} data-track={buyTrack} data-track-page={where}>
         Opens {opens}: join the list
       </a>
     )
@@ -60,7 +63,7 @@ const crew = isOpen ? site.checkout.crew : null;
     note && (
       <p class="small muted buy-note">
         {isOpen ? 'One-time purchase, 30-day refund.' : 'One-time purchase. We’ll email you once, the morning it opens.'} Want the paperback?{' '}
-        <a href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page={Astro.url.pathname}>
+        <a href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page={where}>
           It’s on Amazon
         </a>
         {site.reviews && (

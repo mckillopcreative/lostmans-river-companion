@@ -17,6 +17,14 @@ const hours = Math.round(Object.values(audioData.minutes as Record<string, numbe
 const perReader = crew ? Math.round(Number(crew.price.replace(/[^0-9.]/g, '')) / crew.size) : null;
 const authorsPhoto = photoImages.get('authors.jpg') ?? null;
 
+// the four things a reader does, as a row of icons under the sub line (John, 2026-11-13)
+const ways = [
+  { t: 'Read', d: 'M4 5.5c2.6-1 5.4-.9 8 .6v13c-2.6-1.5-5.4-1.6-8-.6v-13zM20 5.5c-2.6-1-5.4-.9-8 .6v13c2.6-1.5 5.4-1.6 8-.6v-13z' },
+  { t: 'Listen', d: 'M4 14v-2a8 8 0 0 1 16 0v2M4 14h3v6H5.5A1.5 1.5 0 0 1 4 18.5V14zM20 14h-3v6h1.5a1.5 1.5 0 0 0 1.5-1.5V14z' },
+  { t: 'Fish', d: 'M2.5 12c3-4.6 8.4-5.6 12.4-3 1.5 1 2.6 2 3.4 3-.8 1-1.9 2-3.4 3-4 2.6-9.4 1.6-12.4-3zM18.3 12l3.2-3.2v6.4L18.3 12zM7 11.2h.01' },
+  { t: 'Get outside', d: 'M12 6.2a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zM12 2.2v1.6M5.6 4.9l1.1 1.1M18.4 4.9l-1.1 1.1M3 9.6h1.6M19.4 9.6H21M3 17c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0M5 20.6c1.6-1.1 3.2-1.1 4.8 0s3.2 1.1 4.8 0 3.2-1.1 4.4-.2' },
+];
+
 const items = [
   { t: 'The whole novel, to read or to hear', d: `All ${n} chapters on screen or read aloud: about ${hours} hours, narrated with an AI voice.` },
   { t: `${n} missions from Uncle Dan`, d: 'One per chapter: rig the poles, read the water, pick the tide, crack the case.' },
@@ -34,6 +42,17 @@ const items = [
       <p class="eyebrow">What your crew gets</p>
       <h2 id="offer-h">{crew ? 'The Full Crew Experience' : 'The Summer Fishing Guide Experience'}</h2>
       <p class="offer-sub">One purchase. {crew ? `Up to ${crew.size === 5 ? 'five' : crew.size} readers.` : ''} A whole summer in the Everglades.</p>
+
+      <ul class="offer-ways" aria-label="What a reader does">
+        {
+          ways.map((w) => (
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={w.d} fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <span>{w.t}</span>
+            </li>
+          ))
+        }
+      </ul>
 
       <ul class="offer-list">
         {
@@ -63,7 +82,7 @@ const items = [
         )
       }
 
-      <BuyButton plain note={false} tag={crew?.tag || ''} />
+      <BuyButton plain note={false} tag={crew?.tag || ''} place="card" />
 
       <div class="offer-promise">
         <svg viewBox="0 0 24 24" aria-hidden="true" class="offer-seal"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><path d="M8.8 12.2l2.3 2.3 4.2-4.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg>
@@ -85,6 +104,29 @@ const items = [
     </div>
   </div>
 </section>
+
+<script>
+  // Who sees the card (docs/ANALYTICS.md): one beacon when its heading is on screen, one when its
+  // buy buttons are. Once each per visit; the button taps are crew_click / buy_click "/:card".
+  import { track } from '../scripts/track';
+  const card = document.querySelector<HTMLElement>('.offer-card');
+  if (card && 'IntersectionObserver' in window) {
+    const once = (el: Element | null, step: number, threshold: number) => {
+      if (!el) return;
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          io.disconnect();
+          track('card_view', { page: location.pathname, step });
+        },
+        { threshold },
+      );
+      io.observe(el);
+    };
+    once(card.querySelector('h2'), 1, 0.6);
+    once(card.querySelector('.buy-btn'), 2, 0.9);
+  }
+</script>
 
 <style>
   .offer {
@@ -113,6 +155,35 @@ const items = [
   .offer-sub {
     margin: 0 0 1rem;
     color: var(--ink-soft);
+  }
+  .offer-ways {
+    list-style: none;
+    margin: 0 0 1.1rem;
+    padding: 0.75rem 0.3rem;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.3rem;
+    background: var(--paper);
+    border: 1px solid var(--oyster);
+    border-radius: 12px;
+  }
+  .offer-ways li {
+    display: grid;
+    justify-items: center;
+    gap: 0.3rem;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--mangrove);
+  }
+  .offer-ways svg {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--mangrove) 12%, transparent);
+    color: var(--mangrove);
   }
   .offer-list {
     list-style: none;

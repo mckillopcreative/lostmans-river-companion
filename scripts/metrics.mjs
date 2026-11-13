@@ -36,28 +36,36 @@ const days = Number(args.find((a) => /^\d+$/.test(a)) || (funnel || campaigns ? 
 const where = `timestamp > NOW() - INTERVAL '${days}' DAY${own ? '' : " AND blob4 != 'own'"}`;
 
 if (campaigns) {
-  const rows = await sql(`SELECT blob3 AS campaign, blob1 AS event, double2 AS v, SUM(_sample_interval) AS n, SUM(_sample_interval * double2) AS total FROM lostmans_events WHERE ${where} GROUP BY campaign, event, v FORMAT JSON`);
+  const rows = await sql(`SELECT blob3 AS campaign, blob1 AS event, blob2 AS label, double2 AS v, SUM(_sample_interval) AS n, SUM(_sample_interval * double2) AS total FROM lostmans_events WHERE ${where} GROUP BY campaign, event, label, v FORMAT JSON`);
   const codes = [...new Set(rows.map((r) => r.campaign || '(none)'))].sort();
   const get = (c, e, v) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === e && (v === undefined || Number(r.v) === v)).reduce((a, r) => a + Number(r.n), 0);
   const money = (c) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === 'purchase').reduce((a, r) => a + Number(r.total), 0);
-  const cols = ['views', 'scroll50', 'scroll90', 'sample', 'audio1', 'offer', 'single', 'crew', 'confirm', 'returned', 'bought', 'dollars'];
+  // pill = the hero's "Hook the Experience"; card / cardbtn = the offer card's heading / buy buttons seen;
+  // sticky = the floating "Build your crew" button; crew = every other Full Crew tap
+  const getL = (c, e, re) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === e && re.test(r.label || '')).reduce((a, r) => a + Number(r.n), 0);
+  const cols = ['views', 'scroll50', 'scroll90', 'sample', 'audio1', 'offer', 'pill', 'card', 'cardbtn', 'single', 'crew', 'sticky', 'confirm', 'returned', 'bought', 'dollars'];
   console.log(`Landing page by campaign, last ${days} days${own ? ' (including own traffic)' : ''}`);
-  console.log('  ' + 'campaign'.padEnd(18) + cols.map((c) => c.padStart(9)).join(''));
+  console.log('  ' + 'campaign'.padEnd(18) + cols.map((c) => c.padStart(8)).join(''));
   for (const c of codes) {
-    const vals = [get(c, 'landing_view'), get(c, 'scroll', 50), get(c, 'scroll', 90), get(c, 'sample_click'), get(c, 'audio_play'), get(c, 'offer_join'), get(c, 'buy_click'), get(c, 'crew_click'), get(c, 'confirm_go'), get(c, 'checkout_return'), get(c, 'purchase'), money(c).toFixed(2)];
-    console.log('  ' + c.padEnd(18) + vals.map((v) => String(v).padStart(9)).join(''));
+    const vals = [get(c, 'landing_view'), get(c, 'scroll', 50), get(c, 'scroll', 90), get(c, 'sample_click'), get(c, 'audio_play'), get(c, 'offer_join'), get(c, 'hook_click'), get(c, 'card_view', 1), get(c, 'card_view', 2), get(c, 'buy_click'), get(c, 'crew_click') - getL(c, 'crew_click', /:sticky$/), getL(c, 'crew_click', /:sticky$/), get(c, 'confirm_go'), get(c, 'checkout_return'), get(c, 'purchase'), money(c).toFixed(2)];
+    console.log('  ' + c.padEnd(18) + vals.map((v) => String(v).padStart(8)).join(''));
   }
   if (!codes.length) console.log('  (none yet)');
 } else if (funnel) {
   const rows = await sql(`SELECT blob1 AS event, blob2 AS label, SUM(_sample_interval) AS n FROM lostmans_events WHERE ${where} GROUP BY event, label FORMAT JSON`);
   const get = (e, l) => rows.filter((r) => r.event === e && (l === undefined || r.label === l)).reduce((a, r) => a + Number(r.n), 0);
   const scroll90 = Number((await sql(`SELECT SUM(_sample_interval) AS n FROM lostmans_events WHERE ${where} AND blob1 = 'scroll' AND double2 = 90 FORMAT JSON`))[0]?.n || 0);
+  const cardStep = async (s) => Number((await sql(`SELECT SUM(_sample_interval) AS n FROM lostmans_events WHERE ${where} AND blob1 = 'card_view' AND double2 = ${s} FORMAT JSON`))[0]?.n || 0);
+  const [cardSeen, cardBtnSeen] = [await cardStep(1), await cardStep(2)];
   const steps = [
     ['Landing page views', get('landing_view')],
     ['Scrolled 90% of it', scroll90],
     ['Tried chapter 1', get('sample_click')],
     ['Heard chapter 1', get('audio_play', '1')],
     ['Listened to the end of ch 1', rows.filter((r) => r.event === 'audio_progress' && r.label === '1').length ? get('audio_progress', '1') : 0],
+    ['Tapped "Hook the Experience" (hero pill)', get('hook_click')],
+    ['Saw the offer card', cardSeen],
+    ['Saw the offer card\'s buy buttons', cardBtnSeen],
     ['Clicked Full Crew ($39.99)', get('crew_click')],
     ['Clicked Single Reader ($29.99)', get('buy_click')],
     ['Continued to checkout', get('confirm_go')],

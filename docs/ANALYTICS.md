@@ -23,6 +23,9 @@ Events say what happened, never who.
 | `scroll` | 50% and 90% of the landing page, once each | page / percent |
 | `sample_click` | "Try the first chapter now" | page |
 | `landing_click` | any other link on the landing page, by destination: `ch`, `app`, `map`, `fish`, `crew`, `about`, `section:chapters`, `out:amazon.com`… | to |
+| `hook_click` | the hero's "Hook the Experience" pill, which scrolls to the offer card | page |
+| `card_view` | the landing offer card seen, once each per visit: step 1 = its heading on screen, step 2 = its buy buttons on screen | page / step |
+| `crew_click` | the Full Crew button; the label says where: `/:card` = the offer card, `<page>:sticky` = the floating "Build your crew" button | page |
 | `buy_click` | the Buy button (landing page, app home, end of chapter 1); opens the confirm sheet | page |
 | `confirm_go` | "Continue to secure checkout" on the confirm sheet, the real hand-off to Stripe (Meta's InitiateCheckout fires here) | page |
 | `confirm_close` | the confirm sheet dismissed | page |
