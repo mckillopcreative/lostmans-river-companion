@@ -102,6 +102,13 @@ const price = site.checkout.price;
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') close('esc');
   });
+  // back from Stripe: a page restored from the back/forward cache comes back with the sheet
+  // still open and the page scroll-locked. Put it away quietly (not a confirm_close).
+  addEventListener('pageshow', (e) => {
+    if (!e.persisted || bg.hidden) return;
+    bg.hidden = true;
+    document.documentElement.classList.remove('bc-open');
+  });
 </script>
 
 <style is:global>

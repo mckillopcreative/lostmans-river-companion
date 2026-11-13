@@ -372,8 +372,10 @@ const isActive = (href: string) => here.startsWith(url(href));
   .nav-list a[aria-current='page'] {
     color: var(--sunrise);
   }
-  .nav-list a:hover {
-    background: var(--paper-2);
+  @media (hover: hover) and (pointer: fine) {
+    .nav-list a:hover {
+      background: var(--paper-2);
+    }
   }
   .nav-theme {
     border-top: 1px solid var(--oyster);
@@ -391,8 +393,10 @@ const isActive = (href: string) => here.startsWith(url(href));
     cursor: pointer;
     border-radius: var(--radius);
   }
-  .theme-toggle:hover {
-    background: var(--paper-2);
+  @media (hover: hover) and (pointer: fine) {
+    .theme-toggle:hover {
+      background: var(--paper-2);
+    }
   }
   .theme-toggle .i-sun {
     display: none;
@@ -425,8 +429,10 @@ const isActive = (href: string) => here.startsWith(url(href));
       border-radius: var(--radius);
       white-space: nowrap;
     }
-    .nav-list a:hover {
-      background: var(--paper-2);
+    @media (hover: hover) and (pointer: fine) {
+      .nav-list a:hover {
+        background: var(--paper-2);
+      }
     }
     .nav-theme {
       border: 0;

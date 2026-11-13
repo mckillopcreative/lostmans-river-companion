@@ -90,8 +90,20 @@ a {
   text-decoration-thickness: 1px;
   text-underline-offset: 0.15em;
 }
-a:hover {
-  color: var(--gulf);
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    color: var(--gulf);
+  }
+}
+/* no double-tap-zoom wait on anything tappable (in-app browsers add ~300 ms without this) */
+a,
+button,
+label,
+summary,
+input,
+select,
+[role='button'] {
+  touch-action: manipulation;
 }
 h1,
 h2,
@@ -324,9 +336,11 @@ blockquote cite {
   white-space: nowrap;
   min-height: 24px;
 }
-a.pill:hover {
-  border-color: var(--gulf);
-  color: var(--gulf);
+@media (hover: hover) and (pointer: fine) {
+  a.pill:hover {
+    border-color: var(--gulf);
+    color: var(--gulf);
+  }
 }
 .pill.is-current {
   background: var(--sunrise);
@@ -351,19 +365,23 @@ a.pill:hover {
   background: transparent;
   transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 }
-.btn:hover {
-  background: color-mix(in srgb, var(--mangrove) 10%, transparent);
-  color: var(--mangrove);
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    background: color-mix(in srgb, var(--mangrove) 10%, transparent);
+    color: var(--mangrove);
+  }
 }
 .btn-primary {
   background: var(--sunrise);
   border-color: var(--sunrise);
   color: var(--on-sunrise);
 }
-.btn-primary:hover {
-  background: color-mix(in srgb, var(--sunrise) 85%, black);
-  border-color: color-mix(in srgb, var(--sunrise) 85%, black);
-  color: var(--on-sunrise);
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover {
+    background: color-mix(in srgb, var(--sunrise) 85%, black);
+    border-color: color-mix(in srgb, var(--sunrise) 85%, black);
+    color: var(--on-sunrise);
+  }
 }
 /* a secondary call to action on cream: white, green outline (never competes with .btn-primary) */
 .btn-white {
@@ -371,9 +389,11 @@ a.pill:hover {
   border-color: var(--mangrove);
   color: var(--mangrove);
 }
-.btn-white:hover {
-  background: color-mix(in srgb, var(--mangrove) 8%, #fff);
-  color: var(--mangrove);
+@media (hover: hover) and (pointer: fine) {
+  .btn-white:hover {
+    background: color-mix(in srgb, var(--mangrove) 8%, #fff);
+    color: var(--mangrove);
+  }
 }
 :root[data-theme='dark'] .btn-white {
   background: color-mix(in srgb, #fff 92%, var(--mangrove));
@@ -399,10 +419,12 @@ a.pill:hover {
   transition: transform 0.15s, border-color 0.15s;
   position: relative;
 }
-.card:hover {
-  border-color: var(--gulf);
-  transform: translateY(-2px);
-  color: inherit;
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    border-color: var(--gulf);
+    transform: translateY(-2px);
+    color: inherit;
+  }
 }
 .card-tint {
   /* species colour stripe (data/fish.json "color") */

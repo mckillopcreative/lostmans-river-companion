@@ -642,9 +642,11 @@ const ld = [
     white-space: nowrap;
     border: 1px solid transparent;
   }
-  .j-nav a:hover {
-    background: var(--paper-2);
-    color: var(--mangrove);
+  @media (hover: hover) and (pointer: fine) {
+    .j-nav a:hover {
+      background: var(--paper-2);
+      color: var(--mangrove);
+    }
   }
   .j-nav a.is-current {
     background: var(--sunrise);
@@ -731,9 +733,11 @@ const ld = [
     height: 100%;
     transition: transform 0.15s, border-color 0.15s;
   }
-  .ch-tile:hover {
-    transform: translateY(-2px);
-    border-color: var(--gulf);
+  @media (hover: hover) and (pointer: fine) {
+    .ch-tile:hover {
+      transform: translateY(-2px);
+      border-color: var(--gulf);
+    }
   }
   .ch-spot {
     width: 72px;
@@ -812,8 +816,10 @@ const ld = [
     padding: 0.5rem;
     border-radius: var(--radius);
   }
-  .tk:hover {
-    background: var(--paper-2);
+  @media (hover: hover) and (pointer: fine) {
+    .tk:hover {
+      background: var(--paper-2);
+    }
   }
   .tk-art {
     width: 96px;
