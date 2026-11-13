@@ -11,8 +11,10 @@ interface Props {
   compact?: boolean;
   /** the refund / paperback line under the buttons */
   note?: boolean;
+  /** buttons only: no "Fill your boat" lead, promise line or crew note (the offer card says them) */
+  plain?: boolean;
 }
-const { compact = false, note = true } = Astro.props;
+const { compact = false, note = true, plain = false } = Astro.props;
 const crew = isOpen ? site.checkout.crew : null;
 ---
 
@@ -20,14 +22,17 @@ const crew = isOpen ? site.checkout.crew : null;
   {
     crew ? (
       <>
-        <p class="crew-lead hand">Fill your boat…</p>
+        {!plain && <p class="crew-lead hand">Fill your boat with up to 5 readers…</p>}
         <a class="btn btn-primary buy-btn" href={crew.url} rel="noopener" data-direct="1" data-track="crew_click" data-track-page={Astro.url.pathname}>
           The Full Crew Experience <span class="buy-price mono">{crew.price}</span>
         </a>
-        <p class="crew-promise hand">Guaranteed worth it, or the authors buy it back.</p>
-        <p class="small crew-note">
-          <strong class="crew-em">Up to five readers</strong> working the summer together or separately, each with their own missions, badges and license: brothers, sisters, cousins, friends.
-        </p>
+        {!plain && <p class="crew-promise hand">Guaranteed worth it, or the authors buy it back.</p>}
+        {!plain && (
+          <p class="small crew-note">
+            <strong class="crew-em">Up to five readers</strong> working the summer together or separately, each with their own missions, badges and license: brothers, sisters, cousins, friends.
+          </p>
+        )}
+        {plain && <span class="plain-gap" />}
         <a class="btn solo-btn" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={Astro.url.pathname}>
           Single Reader <span class="mono">{price}</span>
         </a>
@@ -84,6 +89,10 @@ const crew = isOpen ? site.checkout.crew : null;
   .crew-note {
     margin: 0.3rem 0 0.6rem;
     max-width: 34rem;
+  }
+  .plain-gap {
+    display: block;
+    height: 0.55rem;
   }
   .solo-btn {
     min-height: 40px;

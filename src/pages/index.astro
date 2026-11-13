@@ -12,7 +12,7 @@ import BuyButton from '@components/BuyButton.astro';
 import ExperienceBanner from '@components/ExperienceBanner.astro';
 import ReviewsStrip from '@components/ReviewsStrip.astro';
 import HowItWorks from '@components/HowItWorks.astro';
-import WhatsIncluded from '@components/WhatsIncluded.astro';
+import OfferCard from '@components/OfferCard.astro';
 import AuthorsCard from '@components/AuthorsCard.astro';
 import ChapterPill from '@components/ChapterPill.astro';
 import {
@@ -147,7 +147,7 @@ const ld = [
         </p>
         <ChapterAudio n={1} title="Hear Chapter 1 read aloud" compact />
         <BuyButton />
-        <p class="small"><a href={url('/app/')}>See everything in the Experience →</a> · <a href="#chapters">Browse Matt’s journal below ↓</a></p>
+        <p class="small"><a href="#offer">See exactly what you get ↓</a> · <a href="#chapters">Browse Matt’s journal below ↓</a></p>
         <p class="small muted scan-note">
           Reading the paperback? The code at the top of each chapter opens that chapter’s page here. No spoilers past where you are.
         </p>
@@ -169,8 +169,8 @@ const ld = [
     </div>
   </section>
 
-  <!-- ===== What the one price buys ===== -->
-  <WhatsIncluded />
+  <!-- ===== The offer card: what the one price buys, the guarantee, the buy buttons ===== -->
+  <OfferCard />
 
   <!-- ===== How a purchase reaches the reader's own device ===== -->
   <HowItWorks />
