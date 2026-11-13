@@ -63,7 +63,7 @@ const items = [
         )
       }
 
-      <BuyButton plain note={false} />
+      <BuyButton plain note={false} tag={crew?.tag || ''} />
 
       <div class="offer-promise">
         <svg viewBox="0 0 24 24" aria-hidden="true" class="offer-seal"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><path d="M8.8 12.2l2.3 2.3 4.2-4.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg>

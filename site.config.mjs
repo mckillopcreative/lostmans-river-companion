@@ -38,7 +38,9 @@ export default {
     confirmSheet: false,
     // The Full Crew Experience: up to five readers, each with their own link, missions, badges and
     // license. The Worker issues the four extra keys (CREW_LINK) and emails them with gift cards.
-    crew: { url: 'https://buy.stripe.com/eVqdRbdrZgW58Wbgw893y04', price: '$39.99', size: 5 } },
+    // `tag` is the small label pinned to the crew button in the offer card (John, 2026-11-13).
+    // Delete the tag (or set it to '') when the holidays are over.
+    crew: { url: 'https://buy.stripe.com/eVqdRbdrZgW58Wbgw893y04', price: '$39.99', size: 5, tag: 'Holiday Special' } },
 
   /** The purchase gate (docs/LAUNCH-FLOW.md). While false, missions 2–23 stay open and chapters
    *  2–23 show no player, so nobody can buy into locked content. Live from 2026-10-31 (built as if
