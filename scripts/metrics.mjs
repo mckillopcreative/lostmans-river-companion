@@ -45,10 +45,10 @@ if (campaigns) {
   const getL = (c, e, re) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === e && re.test(r.label || '')).reduce((a, r) => a + Number(r.n), 0);
   const cols = ['views', 'scroll50', 'scroll90', 'sample', 'audio1', 'offer', 'pill', 'card', 'cardbtn', 'single', 'crew', 'sticky', 'confirm', 'returned', 'bought', 'dollars'];
   console.log(`Landing page by campaign, last ${days} days${own ? ' (including own traffic)' : ''}`);
-  console.log('  ' + 'campaign'.padEnd(18) + cols.map((c) => c.padStart(8)).join(''));
+  console.log('  ' + 'campaign'.padEnd(18) + cols.map((c) => c.padStart(9)).join(''));
   for (const c of codes) {
     const vals = [get(c, 'landing_view'), get(c, 'scroll', 50), get(c, 'scroll', 90), get(c, 'sample_click'), get(c, 'audio_play'), get(c, 'offer_join'), get(c, 'hook_click'), get(c, 'card_view', 1), get(c, 'card_view', 2), get(c, 'buy_click'), get(c, 'crew_click') - getL(c, 'crew_click', /:sticky$/), getL(c, 'crew_click', /:sticky$/), get(c, 'confirm_go'), get(c, 'checkout_return'), get(c, 'purchase'), money(c).toFixed(2)];
-    console.log('  ' + c.padEnd(18) + vals.map((v) => String(v).padStart(8)).join(''));
+    console.log('  ' + c.padEnd(18) + vals.map((v) => String(v).padStart(9)).join(''));
   }
   if (!codes.length) console.log('  (none yet)');
 } else if (funnel) {
