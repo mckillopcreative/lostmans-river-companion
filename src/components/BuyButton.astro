@@ -23,6 +23,8 @@ interface Props {
 const { compact = false, note = true, plain = false, jump = '', tag = '', place = '' } = Astro.props;
 const where = Astro.url.pathname + (place ? `:${place}` : '');
 const crew = isOpen ? site.checkout.crew : null;
+// "up to five readers", said inside the crew button (John, 2026-11-13)
+const crewSize = crew ? (['zero', 'one', 'two', 'three', 'four', 'five'][crew.size] ?? String(crew.size)) : '';
 ---
 
 <div class:list={['buy', { compact }]}>
@@ -40,7 +42,10 @@ const crew = isOpen ? site.checkout.crew : null;
         {!plain && <p class="crew-lead hand">Fill your boat with up to 5 readers…</p>}
         <a class:list={['btn btn-primary buy-btn', { tagged: !!tag }]} href={crew.url} rel="noopener" data-direct="1" data-track="crew_click" data-track-page={where}>
           {tag && <span class="buy-tag">{tag}</span>}
-          The Full Crew Experience <span class="buy-price mono">{crew.price}</span>
+          <span class="buy-label">
+            The Full Crew Experience <span class="buy-sub"><span class="buy-dash">— </span>up to {crewSize} readers</span>
+          </span>
+          <span class="buy-price mono">{crew.price}</span>
         </a>
         {!plain && <p class="crew-promise hand">Guaranteed worth it, or the authors buy it back.</p>}
         {!plain && (
@@ -86,6 +91,21 @@ const crew = isOpen ? site.checkout.crew : null;
     padding-inline: 1.3rem;
     gap: 0.6rem;
     text-align: left;
+  }
+  /* the crew button's second thought: beside the name on a wide screen, under it on a phone */
+  .buy-sub {
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  @media (max-width: 560px) {
+    .buy-sub {
+      display: block;
+      font-size: 0.86em;
+      line-height: 1.25;
+    }
+    .buy-dash {
+      display: none;
+    }
   }
   .buy-price {
     font-size: 0.8em;
