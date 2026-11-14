@@ -142,8 +142,10 @@ const ld = [
         </div>
         <p class="crew-quote hand">“My family fished together. That’s how we wrote the book. Now build your crew.” <span class="crew-sig">— John</span></p>
         <p class="lede">
-          <em>Escape to Lostman’s River</em> is a coming-of-age fishing adventure in the Everglades, now a summer your crew works together. <strong class="crew-em">Up to five readers</strong> each get the whole novel to read and hear on their own tablet, and, chapter by chapter, the real thing that goes with it: the chart, the fish, the knots, the tides, and 23 missions done off the screen, each earning their own badges and license. Brothers, sisters, cousins, friends. For readers 10 to 15.
+          <em>Escape to Lostman’s River</em> is a coming-of-age fishing adventure in the Everglades, now a summer your crew works together. <strong class="crew-em">Up to five readers</strong> each get the whole novel to read and hear on their own tablet, and, chapter by chapter, the real thing that goes with it: the chart, the fish, the knots, the tides, and 23 missions done off the screen, each earning their own badges and license. Brothers, sisters, cousins, friends. Written for readers 10 to 15.
         </p>
+        <!-- adults read it too: the Amazon reviews and the ad comments say so (John, 2026-11-14) -->
+        <p class="grown-line hand">Not just for kids. Grown-ups who fish get hooked too.</p>
         <ReviewsCarousel />
         <p class="try-note">
           <strong>Chapter 1 is free, no sign-up.</strong> Read it as pages or hear it read aloud, with the chart, the fish, the knot and today’s tide that go with it.
@@ -547,6 +549,12 @@ const ld = [
       grid-template-columns: 1.1fr 0.9fr;
       gap: 3rem;
     }
+  }
+  .grown-line {
+    margin: 0.9rem 0 -0.4rem;
+    font-size: 1.3rem;
+    line-height: 1.3;
+    color: var(--sunrise-ink);
   }
   .try-note {
     margin: 0.9rem 0 0.6rem;
