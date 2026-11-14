@@ -1,0 +1,175 @@
+---
+// The Amazon reviews as one swipeable row, for the landing hero (John, 2026-11-14).
+// Same quotes as ReviewsStrip (site.config reviews). No auto-advance: the next card peeks in
+// from the right so a thumb knows to swipe; the arrows are for a mouse.
+import site from '../../site.config.mjs';
+
+const r = site.reviews;
+const quotes = r?.quotes ?? [];
+const full = Math.floor(r?.rating ?? 0);
+---
+
+{
+  r && quotes.length > 0 && (
+    <section class="rc" aria-labelledby="rc-h">
+      <header class="rc-head">
+        <p class="rc-stars" aria-hidden="true">
+          {Array.from({ length: 5 }, (_, i) => (
+            <span class:list={['rc-star', { on: i < full, half: i === full && r.rating - full >= 0.5 }]}>★</span>
+          ))}
+        </p>
+        <h2 id="rc-h">
+          <strong>{r.rating} out of 5</strong> on Amazon, from {r.count} readers
+        </h2>
+        <span class="rc-arrows">
+          <button type="button" class="rc-arrow" data-rc="-1" aria-label="Earlier reviews">‹</button>
+          <button type="button" class="rc-arrow" data-rc="1" aria-label="More reviews">›</button>
+        </span>
+      </header>
+      <ul class="rc-track" tabindex="0" aria-label="Reader reviews, swipe for more">
+        {quotes.map((q) => (
+          <li class="rc-card">
+            <blockquote>
+              <p>“{q.text}”</p>
+              <footer class="mono">— {q.who}, Amazon review</footer>
+            </blockquote>
+          </li>
+        ))}
+        <li class="rc-card rc-more">
+          <a href={r.url} rel="noopener">Read all {r.count} reviews on Amazon →</a>
+        </li>
+      </ul>
+    </section>
+  )
+}
+
+<script>
+  const track = document.querySelector<HTMLElement>('.rc-track');
+  if (track) {
+    const step = () => (track.querySelector<HTMLElement>('.rc-card')?.offsetWidth ?? 260) + 12;
+    document.querySelectorAll<HTMLButtonElement>('.rc-arrow').forEach((b) => {
+      b.addEventListener('click', () => track.scrollBy({ left: Number(b.dataset.rc) * step(), behavior: 'smooth' }));
+    });
+  }
+</script>
+
+<style>
+  .rc {
+    margin: 1rem 0 0.2rem;
+    min-width: 0;
+  }
+  .rc-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.2rem 0.6rem;
+    margin-bottom: 0.55rem;
+  }
+  .rc-head h2 {
+    margin: 0;
+    font-family: inherit;
+    font-size: 0.98rem;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  .rc-head h2 strong {
+    color: var(--sunrise-ink);
+  }
+  .rc-stars {
+    margin: 0;
+    font-size: 1.15rem;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    color: var(--oyster);
+  }
+  .rc-star.on,
+  .rc-star.half {
+    color: var(--sunrise);
+  }
+  .rc-star.half {
+    background: linear-gradient(90deg, var(--sunrise) 50%, var(--oyster) 50%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* arrows are for a mouse; a thumb swipes */
+  .rc-arrows {
+    display: none;
+    margin-left: auto;
+    gap: 0.35rem;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .rc-arrows {
+      display: inline-flex;
+    }
+    .rc-arrow:hover {
+      background: var(--paper-2);
+    }
+  }
+  .rc-arrow {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid var(--oyster);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .rc-track {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0.5rem;
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .rc-card {
+    flex: 0 0 82%;
+    max-width: 19rem;
+    scroll-snap-align: start;
+  }
+  .rc-card blockquote {
+    margin: 0;
+    height: 100%;
+    padding: 0.85rem 1rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-left: 4px solid var(--sunrise);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .rc-card p {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+  .rc-card footer {
+    margin-top: auto;
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+  }
+  .rc-more {
+    flex-basis: 60%;
+    display: grid;
+  }
+  .rc-more a {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    padding: 0.85rem 1rem;
+    text-align: center;
+    font-weight: 600;
+    border: 1px dashed var(--oyster);
+    border-radius: var(--radius);
+  }
+</style>
