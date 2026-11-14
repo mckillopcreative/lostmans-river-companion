@@ -1,7 +1,7 @@
 ---
 // The Amazon reviews as one swipeable row, for the landing hero (John, 2026-11-14).
-// Same quotes as ReviewsStrip (site.config reviews). No auto-advance: the next card peeks in
-// from the right so a thumb knows to swipe; the arrows are for a mouse.
+// Same quotes as ReviewsStrip (site.config reviews). The next card peeks in from the right so a
+// thumb knows to swipe; the arrows are for a mouse. It also drifts slowly on its own (see script).
 import site from '../../site.config.mjs';
 
 const r = site.reviews;
@@ -48,8 +48,92 @@ const full = Math.floor(r?.rating ?? 0);
   if (track) {
     const step = () => (track.querySelector<HTMLElement>('.rc-card')?.offsetWidth ?? 260) + 12;
     document.querySelectorAll<HTMLButtonElement>('.rc-arrow').forEach((b) => {
-      b.addEventListener('click', () => track.scrollBy({ left: Number(b.dataset.rc) * step(), behavior: 'smooth' }));
+      b.addEventListener('click', () => {
+        rest(6000);
+        track.scrollBy({ left: Number(b.dataset.rc) * step(), behavior: 'smooth' });
+      });
     });
+
+    // A slow drift to the left (John, 2026-11-14): about one card every 13 seconds, only while the
+    // row is on screen. Any touch, wheel, key or hover hands the row back to the reader (snap on),
+    // and the drift picks up again a few seconds after they let go. At the end it waits, slides
+    // back to the first card and starts over. Off for anyone who asked for reduced motion.
+    const SPEED = 24; // px per second
+    let pos = 0;
+    let last = 0;
+    let restUntil = 0; // no drifting before this time
+    let held = false; // a finger or the mouse is on the row
+    let onScreen = false;
+    let rewinding = false;
+    const rest = (ms: number) => {
+      restUntil = Math.max(restUntil, performance.now() + ms);
+      track.classList.remove('rc-drift');
+    };
+    const hold = () => {
+      held = true;
+      track.classList.remove('rc-drift');
+    };
+    const release = () => {
+      held = false;
+      rest(5000);
+    };
+    track.addEventListener('touchstart', hold, { passive: true });
+    track.addEventListener('touchend', release, { passive: true });
+    track.addEventListener('touchcancel', release, { passive: true });
+    // hover only where there is a real mouse: a phone fakes mouseenter on tap and never leaves
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      track.addEventListener('mouseenter', hold);
+      track.addEventListener('mouseleave', release);
+    }
+    track.addEventListener('wheel', () => rest(5000), { passive: true });
+    track.addEventListener('keydown', () => rest(8000));
+    track.addEventListener('focusin', () => rest(8000));
+
+    const tick = (now: number) => {
+      const dt = Math.min(now - last, 100);
+      last = now;
+      if (onScreen && !held && !document.hidden && now >= restUntil) {
+        const max = track.scrollWidth - track.clientWidth;
+        if (rewinding) {
+          // the smooth slide back has finished (or the reader took over): start again from here
+          rewinding = false;
+        }
+        if (!track.classList.contains('rc-drift')) {
+          track.classList.add('rc-drift'); // snap off while it drifts
+          pos = track.scrollLeft;
+        }
+        if (max > 4 && pos >= max - 1) {
+          // the last card is fully in: wait, slide back to the first, wait, go again
+          track.classList.remove('rc-drift');
+          rewinding = true;
+          restUntil = now + 3000;
+          window.setTimeout(() => {
+            if (!held && rewinding) track.scrollTo({ left: 0, behavior: 'smooth' });
+            restUntil = performance.now() + 3000;
+          }, 2500);
+        } else {
+          pos = Math.min(pos + (SPEED * dt) / 1000, max);
+          track.scrollLeft = pos;
+        }
+      }
+      requestAnimationFrame(tick);
+    };
+
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!calm && 'IntersectionObserver' in window) {
+      new IntersectionObserver(
+        (entries) => {
+          const was = onScreen;
+          onScreen = entries.some((e) => e.isIntersecting);
+          if (onScreen && !was) rest(1500); // let a new arrival read the first card
+        },
+        { threshold: 0.6 },
+      ).observe(track);
+      requestAnimationFrame((t) => {
+        last = t;
+        requestAnimationFrame(tick);
+      });
+    }
   }
 </script>
 
@@ -129,6 +213,10 @@ const full = Math.floor(r?.rating ?? 0);
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
+  }
+  /* while the row drifts on its own, snapping would yank it back to a card edge */
+  .rc-track:global(.rc-drift) {
+    scroll-snap-type: none;
   }
   .rc-card {
     flex: 0 0 82%;
