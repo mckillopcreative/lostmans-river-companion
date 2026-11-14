@@ -83,6 +83,7 @@ const items = [
       }
 
       <BuyButton plain note={false} tag={crew?.tag || ''} place="card" />
+      <p class="offer-now"><strong>Opens the minute you pay.</strong> No shipping, nothing to wait for.</p>
 
       <div class="offer-promise">
         <svg viewBox="0 0 24 24" aria-hidden="true" class="offer-seal"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><path d="M8.8 12.2l2.3 2.3 4.2-4.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg>
@@ -251,6 +252,13 @@ const items = [
     justify-content: space-between;
     padding-inline: 1rem;
   }
+  /* the narrowest phones (375 px): keep "The Full Crew Experience" on one line */
+  @media (max-width: 385px) {
+    .offer-card :global(.buy-btn) {
+      font-size: 0.97rem;
+      padding-inline: 0.8rem;
+    }
+  }
   .offer-promise {
     display: grid;
     grid-template-columns: 2.4rem minmax(0, 1fr);
@@ -300,6 +308,13 @@ const items = [
     object-fit: cover;
     object-position: center 25%;
     border: 2px solid #c9a24a;
+  }
+  .offer-now {
+    margin: 0.7rem 0 0;
+    text-align: center;
+    font-size: 0.98rem;
+    line-height: 1.35;
+    color: var(--mangrove);
   }
   .offer-fine {
     margin: 0.8rem 0 0;

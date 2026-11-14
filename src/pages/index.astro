@@ -131,6 +131,11 @@ const ld = [
       <div class="j-hero-copy">
         <p class="eyebrow">One of Joelbooks’ Top 8 adventure novels for teens</p>
         <h1>Reading and fishing are better together.</h1>
+        <!-- the no-wait pitch: this is the version you have today, not a stand-in for the paperback (John, 2026-11-14) -->
+        <p class="now-line">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5L5 13.5h6l-1 8 8-11h-6l1-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg>
+          <span><strong>For fishing fans who don’t want to wait.</strong> It opens the minute you buy. No shipping: ready for a car ride or a rainy day.</span>
+        </p>
         <div class="byline">
           {authorsPhoto && <Image src={authorsPhoto} alt="John McKillop and his mother Linda, the book’s co-authors" width={168} loading="eager" class="byline-photo" />}
           <p class="byline-text">A shared-imagination story app built by son and mother children’s book co-authors</p>
@@ -554,6 +559,29 @@ const ld = [
   .j-hero-copy h1 {
     font-size: clamp(2.2rem, 5.2vw, 3.6rem);
     line-height: 1.06;
+  }
+  .now-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    margin: 0.8rem 0 0.2rem;
+    padding: 0.6rem 0.8rem;
+    max-width: 34rem;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--mangrove) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mangrove) 28%, transparent);
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  .now-line svg {
+    flex: none;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0.05rem;
+    color: var(--mangrove);
+  }
+  .now-line strong {
+    color: var(--mangrove);
   }
   .byline {
     display: flex;
