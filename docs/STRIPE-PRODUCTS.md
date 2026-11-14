@@ -24,7 +24,7 @@
 | Paperback | Not sold here. Under the Buy button: “Want the paperback? It’s on Amazon.” linking to the Amazon listing (with the Associates tag once the account exists). Decided 2026-10-20: no shipping at launch; revisit a signed-book bundle if buyers ask for it. |
 
 **Short description (Checkout, ≤ 250 chars):**
-> A summer as an assistant fishing guide in the Everglades: the novel *Escape to Lostman’s River* to read and hear, 23 missions, real fishing skills, puzzles, and a license to earn and print. Ages 10 to 15. 15+ hours, much of it off the screen.
+> A summer as an assistant fishing guide in the Everglades: the novel *Escape to Lostman’s River* to read and hear, 23 missions, real fishing skills, puzzles, and a license to earn and print. Ages 10 and up. 15+ hours, much of it off the screen.
 
 **Long description (Payment Link page):**
 > Your child spends a summer in the Florida Everglades as an assistant fishing guide, the same job fifteen-year-old Matt Creek had in *Escape to Lostman’s River*, one of Joelbooks’ Top 8 Short Adventure Books for Teens.
