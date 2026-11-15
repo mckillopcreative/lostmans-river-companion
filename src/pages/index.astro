@@ -134,7 +134,7 @@ const ld = [
         <!-- the no-wait pitch: this is the version you have today, not a stand-in for the paperback (John, 2026-11-14) -->
         <p class="now-line">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5L5 13.5h6l-1 8 8-11h-6l1-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg>
-          <span><strong>For fishing fans who don’t want to wait.</strong> It opens the minute you buy. No shipping: ready for a car ride or a rainy day.</span>
+          <span><strong>For fishing fans who don’t want to wait.</strong> It opens the minute you buy. No shipping: ready for a car ride or rainy day.</span>
         </p>
         <div class="byline">
           {authorsPhoto && <Image src={authorsPhoto} alt="John McKillop and his mother Linda, the book’s co-authors" width={168} loading="eager" class="byline-photo" />}
@@ -603,6 +603,20 @@ const ld = [
   }
   .now-line strong {
     color: var(--mangrove);
+  }
+  /* Three lines on a phone, no stranded last word (John, 2026-11-15). The text needs about 19.9em
+     a line; (100vw - 80px) is the text width here once the box is tightened. If the wording
+     changes, measure again. */
+  @media (max-width: 480px) {
+    .now-line {
+      gap: 0.45rem;
+      padding-inline: 0.65rem;
+      font-size: min(1rem, calc((100vw - 80px) / 20.3));
+    }
+    .now-line svg {
+      width: 1.15rem;
+      height: 1.15rem;
+    }
   }
   .byline {
     display: flex;
