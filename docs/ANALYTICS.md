@@ -25,7 +25,8 @@ Events say what happened, never who.
 | `landing_click` | any other link on the landing page, by destination: `ch`, `app`, `map`, `fish`, `crew`, `about`, `section:chapters`, `out:amazon.com`… | to |
 | `hook_click` | the hero's "Hook the Experience" pill, which scrolls to the offer card | page |
 | `card_view` | the landing offer card seen, once each per visit: step 1 = its heading on screen, step 2 = its buy buttons on screen | page / step |
-| `crew_click` | the Full Crew button; the label says where: `/:card` = the offer card, `<page>:sticky` = the floating "Build your crew" button | page |
+| `crew_click` | the Full Crew Experience handed to Stripe. Since 2026-11-15: the confirm sheet's Continue with the Full Boat switch on, label `<page>:sheet`. Before: a tap straight to the $39.99 checkout (`/:card`, `<page>:sticky`) | page |
+| `boat_toggle` | the confirm sheet's Full Boat bonus switch (adds the Full Crew, up to five readers): value 1 = switched on, 0 = off | page / on |
 | `buy_click` | the Buy button (landing page, app home, end of chapter 1); opens the confirm sheet | page |
 | `confirm_go` | "Continue to secure checkout" on the confirm sheet, the real hand-off to Stripe (Meta's InitiateCheckout fires here) | page |
 | `confirm_close` | the confirm sheet dismissed | page |

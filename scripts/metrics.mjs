@@ -41,13 +41,16 @@ if (campaigns) {
   const get = (c, e, v) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === e && (v === undefined || Number(r.v) === v)).reduce((a, r) => a + Number(r.n), 0);
   const money = (c) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === 'purchase').reduce((a, r) => a + Number(r.total), 0);
   // pill = the hero's "Hook the Experience"; card / cardbtn = the offer card's heading / buy buttons seen;
-  // sticky = the floating "Build your crew" button; crew = every other Full Crew tap
+  // Since 2026-11-15 every Buy button opens the confirm sheet: buy = Buy taps (sticky = the ones
+  // from the floating button), boat = the sheet's Full Boat switch turned on, go1 = Continue at the
+  // one-reader price, go5 = Continue with the Full Boat (crew_click). Before that date crew_click
+  // was a tap straight to the $39.99 checkout.
   const getL = (c, e, re) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === e && re.test(r.label || '')).reduce((a, r) => a + Number(r.n), 0);
-  const cols = ['views', 'scroll50', 'scroll90', 'sample', 'audio1', 'offer', 'pill', 'card', 'cardbtn', 'single', 'crew', 'sticky', 'confirm', 'returned', 'bought', 'dollars'];
+  const cols = ['views', 'scroll50', 'scroll90', 'sample', 'audio1', 'offer', 'pill', 'card', 'cardbtn', 'buy', 'sticky', 'boat', 'go1', 'go5', 'returned', 'bought', 'dollars'];
   console.log(`Landing page by campaign, last ${days} days${own ? ' (including own traffic)' : ''}`);
   console.log('  ' + 'campaign'.padEnd(18) + cols.map((c) => c.padStart(9)).join(''));
   for (const c of codes) {
-    const vals = [get(c, 'landing_view'), get(c, 'scroll', 50), get(c, 'scroll', 90), get(c, 'sample_click'), get(c, 'audio_play'), get(c, 'offer_join'), get(c, 'hook_click'), get(c, 'card_view', 1), get(c, 'card_view', 2), get(c, 'buy_click'), get(c, 'crew_click') - getL(c, 'crew_click', /:sticky$/), getL(c, 'crew_click', /:sticky$/), get(c, 'confirm_go'), get(c, 'checkout_return'), get(c, 'purchase'), money(c).toFixed(2)];
+    const vals = [get(c, 'landing_view'), get(c, 'scroll', 50), get(c, 'scroll', 90), get(c, 'sample_click'), get(c, 'audio_play'), get(c, 'offer_join'), get(c, 'hook_click'), get(c, 'card_view', 1), get(c, 'card_view', 2), get(c, 'buy_click'), getL(c, 'buy_click', /:sticky$/) + getL(c, 'crew_click', /:sticky$/), get(c, 'boat_toggle', 1), get(c, 'confirm_go'), get(c, 'crew_click') - getL(c, 'crew_click', /:sticky$/), get(c, 'checkout_return'), get(c, 'purchase'), money(c).toFixed(2)];
     console.log('  ' + c.padEnd(18) + vals.map((v) => String(v).padStart(9)).join(''));
   }
   if (!codes.length) console.log('  (none yet)');
@@ -57,6 +60,7 @@ if (campaigns) {
   const scroll90 = Number((await sql(`SELECT SUM(_sample_interval) AS n FROM lostmans_events WHERE ${where} AND blob1 = 'scroll' AND double2 = 90 FORMAT JSON`))[0]?.n || 0);
   const cardStep = async (s) => Number((await sql(`SELECT SUM(_sample_interval) AS n FROM lostmans_events WHERE ${where} AND blob1 = 'card_view' AND double2 = ${s} FORMAT JSON`))[0]?.n || 0);
   const [cardSeen, cardBtnSeen] = [await cardStep(1), await cardStep(2)];
+  const boatOn = Number((await sql(`SELECT SUM(_sample_interval) AS n FROM lostmans_events WHERE ${where} AND blob1 = 'boat_toggle' AND double2 = 1 FORMAT JSON`))[0]?.n || 0);
   const steps = [
     ['Landing page views', get('landing_view')],
     ['Scrolled 90% of it', scroll90],
@@ -66,9 +70,11 @@ if (campaigns) {
     ['Tapped "Hook the Experience" (hero pill)', get('hook_click')],
     ['Saw the offer card', cardSeen],
     ['Saw the offer card\'s buy buttons', cardBtnSeen],
-    ['Clicked Full Crew ($39.99)', get('crew_click')],
-    ['Clicked Single Reader ($29.99)', get('buy_click')],
-    ['Continued to checkout', get('confirm_go')],
+    ['Tapped a Buy button (opens the sheet)', get('buy_click')],
+    ['Switched on the Full Boat bonus', boatOn],
+    ['Continued to checkout, one reader ($24.99)', get('confirm_go')],
+    ['Continued to checkout, Full Boat ($39.99)', get('crew_click')],
+    ['Closed the sheet', get('confirm_close')],
     ['Came back from checkout', get('checkout_return')],
     ['Bought (Worker count)', get('purchase')],
     ['Mission 1 done', get('mission_complete', 'm01')],

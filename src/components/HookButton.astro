@@ -4,14 +4,17 @@
 // confirm sheet opens and the beacons fire the same way. Hidden for key holders (.has-key).
 import site from '../../site.config.mjs';
 import { buyHref, buyTrack, isOpen } from '@lib/buy';
-// since 2026-11-11 the sticky button builds a crew (the Full Crew Experience)
-const href = isOpen && site.checkout.crew ? site.checkout.crew.url : buyHref;
-const track = isOpen && site.checkout.crew ? 'crew_click' : buyTrack;
+// 2026-11-15: back to the plain Buy link ($24.99), so it opens the confirm sheet like every other
+// Buy button; the crew is the sheet's Full Boat toggle, and nobody lands cold on a $39.99 checkout
+const href = buyHref;
+const track = buyTrack;
+void site;
+void isOpen;
 ---
 
-<a class="hook-btn btn btn-primary" href={href} rel="noopener" data-direct="1" data-track={track} data-track-page={`${Astro.url.pathname}:sticky`} hidden aria-label="Build your crew: The Full Crew Experience">
+<a class="hook-btn btn btn-primary" href={href} rel="noopener" data-track={track} data-track-page={`${Astro.url.pathname}:sticky`} hidden aria-label="Hook the Experience">
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
-  Build your crew
+  Hook the Experience
 </a>
 
 <script>

@@ -102,7 +102,7 @@ const ld = [
     image: new URL('/social-share.jpg', Astro.site).toString(),
     offers: {
       '@type': 'Offer',
-      price: site.checkout.crew.price.replace(/[^0-9.]/g, ''),
+      price: site.checkout.price.replace(/[^0-9.]/g, ''),
       priceCurrency: 'USD',
       availability: isOpen ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
       url: new URL(buyHref, Astro.site).toString(),
@@ -142,7 +142,7 @@ const ld = [
         </div>
         <p class="crew-quote hand">“My family fished together. That’s how we wrote the book. Now build your crew.” <span class="crew-sig">— John</span></p>
         <p class="lede">
-          <em>Escape to Lostman’s River</em> is a coming-of-age fishing adventure in the Everglades, now a summer your crew works together. <strong class="crew-em">Up to five readers</strong> each get the whole novel to read and hear on their own tablet, and, chapter by chapter, the real thing that goes with it: the chart, the fish, the knots, the tides, and 23 missions done off the screen, each earning their own badges and license. Brothers, sisters, cousins, friends. Written for readers 10 to 15.
+          <em>Escape to Lostman’s River</em> is a coming-of-age fishing adventure in the Everglades, now a summer on the water for your reader: the whole novel to read and hear on their own tablet, and, chapter by chapter, the real thing that goes with it: the chart, the fish, the knots, the tides, and 23 missions done off the screen, earning their own badges and license. <strong class="crew-em">Fill the boat</strong> and up to five readers each get their own: brothers, sisters, cousins, friends. Written for readers 10 to 15.
         </p>
         <!-- adults read it too: the Amazon reviews and the ad comments say so (John, 2026-11-14) -->
         <p class="grown-line hand">Not just for kids. Grown-ups who fish get hooked too.</p>

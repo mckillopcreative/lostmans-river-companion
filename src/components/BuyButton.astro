@@ -1,7 +1,7 @@
 ---
-// The two ways to buy (2026-11-11, John: "lead with the crew"): the Full Crew Experience, up to
-// five readers each with their own link and progress, is the big orange button; "Just me", one
-// reader, is the quieter one underneath. Both are Stripe Payment Links from site.config. The
+// One way in since 2026-11-15 (John): one orange button at the one-reader price, which opens the
+// confirm sheet (BuyConfirm.astro); the Full Boat bonus (the crew product, up to five readers) is
+// a toggle there and a line under the button here. Both are Stripe Payment Links from site.config. The
 // paperback is pointed at Amazon underneath (no shipping sold here). Before opening day it goes
 // to the waitlist instead (src/lib/buy.ts).
 import site from '../../site.config.mjs';
@@ -23,8 +23,11 @@ interface Props {
 const { compact = false, note = true, plain = false, jump = '', tag = '', place = '' } = Astro.props;
 const where = Astro.url.pathname + (place ? `:${place}` : '');
 const crew = isOpen ? site.checkout.crew : null;
-// "up to five readers", said inside the crew button (John, 2026-11-13)
-const crewSize = crew ? (['zero', 'one', 'two', 'three', 'four', 'five'][crew.size] ?? String(crew.size)) : '';
+// what the Full Boat bonus adds to the one-reader price, e.g. "+$15"
+const cents = (v: string) => Math.round(Number(v.replace(/[^0-9.]/g, '')) * 100);
+const boatDiff = crew ? (cents(crew.price) - cents(price)) / 100 : 0;
+const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixed(2));
+void tag;
 ---
 
 <div class:list={['buy', { compact }]}>
@@ -40,23 +43,14 @@ const crewSize = crew ? (['zero', 'one', 'two', 'three', 'four', 'five'][crew.si
     ) : crew ? (
       <>
         {!plain && <p class="crew-lead hand">Fill your boat with up to 5 readers…</p>}
-        <a class:list={['btn btn-primary buy-btn', { tagged: !!tag }]} href={crew.url} rel="noopener" data-direct="1" data-track="crew_click" data-track-page={where}>
-          {tag && <span class="buy-tag">{tag}</span>}
-          <span class="buy-label">
-            The Full Crew Experience <span class="buy-sub"><span class="buy-dash">— </span>up to {crewSize} readers</span>
-          </span>
-          <span class="buy-price mono">{crew.price}</span>
+        <a class="btn btn-primary buy-btn" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={where}>
+          <span class="buy-label">Hook the Experience</span>
+          <span class="buy-price mono">{price}</span>
         </a>
+        <p class="small boat-note">
+          <strong class="crew-em">Full Boat bonus:</strong> add up to four more readers for {boatPlus} at checkout, each with their own missions, badges and license.
+        </p>
         {!plain && <p class="crew-promise hand">Guaranteed worth it, or the authors buy it back.</p>}
-        {!plain && (
-          <p class="small crew-note">
-            <strong class="crew-em">Up to five readers</strong> working the summer together or separately, each with their own missions, badges and license: brothers, sisters, cousins, friends.
-          </p>
-        )}
-        {plain && <span class="plain-gap" />}
-        <a class="btn solo-btn" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={where}>
-          Single Reader <span class="mono">{price}</span>
-        </a>
       </>
     ) : (
       <a class="btn btn-primary buy-btn" href={buyHref} data-track={buyTrack} data-track-page={where}>
@@ -121,6 +115,10 @@ const crewSize = crew ? (['zero', 'one', 'two', 'three', 'four', 'five'][crew.si
     font-size: 1.2rem;
     line-height: 1.3;
     color: var(--sunrise-ink);
+  }
+  .boat-note {
+    margin: 0.45rem 0 0;
+    max-width: 34rem;
   }
   .crew-note {
     margin: 0.3rem 0 0.6rem;

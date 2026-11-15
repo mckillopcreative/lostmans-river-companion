@@ -15,12 +15,13 @@ export const EVENTS = {
   // buy_click and crew_click labels say where the button was: "/:card" = the landing offer card,
   // "<page>:sticky" = the floating "Build your crew" button, a bare page = any other Buy button
   buy_click: { label: 'page' }, // the Buy tap (opens the confirm sheet)
-  crew_click: { label: 'page' }, // "Build your crew": the Full Crew Experience ($39.99, up to five readers), straight to Stripe
+  crew_click: { label: 'page' }, // the Full Crew Experience ($39.99, up to five readers) handed to Stripe. Since 2026-11-15 that is the sheet's Continue with the Full Boat toggle on (label "<page>:sheet")
   hook_click: { label: 'page' }, // the hero's "Hook the Experience" pill: scrolls to the offer card
   card_view: { label: 'page', value: 'step' }, // the offer card seen, once each per visit: step 1 = its heading on screen, step 2 = its buy buttons on screen
   pair_click: { label: 'page' }, // the "Keep one, give one" ($34.99, two Experiences) tap: straight to Stripe
   confirm_go: { label: 'page' }, // "Continue to secure checkout" on the sheet: the real hand-off to Stripe
   confirm_close: { label: 'page' }, // the sheet dismissed
+  boat_toggle: { label: 'page', value: 'on' }, // the sheet's Full Boat bonus switch: value 1 = switched on, 0 = switched off
   waitlist_click: { label: 'page' },
   waitlist_join: { label: 'page' },
   offer_view: { label: 'page' }, // the holiday promo-code sheet shown

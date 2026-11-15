@@ -29,16 +29,20 @@ export default {
   /** `open: false` sends every Buy button to /waitlist/ instead of Stripe (pre-launch). Set
    *  `open: true` once Stripe is connected (docs/GATE-SETUP.md). `opens` is how the buttons and the
    *  waitlist page say when: no fixed date since 2026-11-03 (KDP released the ebook early). */
-  // Two products since 2026-11-11 (John): "Just me", one reader ($29.99, this url/price), and the
-  // Full Crew Experience (crew, below), which the page leads with. The old $24.99 link
-  // (https://buy.stripe.com/28EaEZ73B49jegveo093y00) and the $34.99 pair are retired.
-  checkout: { url: 'https://buy.stripe.com/14A6oJ2Nl7lv4FV93G93y03', price: '$29.99', name: 'Lostman’s River: Fishing Guide Experience', open: true, opens: 'soon',
-    // confirm sheet before Stripe (BuyConfirm.astro). Off for a one-week test from 2026-11-10:
-    // 19 Buy taps → 5 Continue with it on (Nov 6–10). Set back to true to restore it.
-    confirmSheet: false,
+  // 2026-11-15 (John): every Buy button starts at one reader, $24.99, and opens the confirm sheet,
+  // where a toggle adds the Full Boat bonus (the crew product below, +$15). Why: from Nov 12 to 15
+  // the page led with the $39.99 crew and Stripe logged checkouts opened and left with nothing
+  // typed, and no sales; the $24.99 link had sold before. This is the launch $24.99 link, switched
+  // back on in Stripe with tax collection and adjustable quantity off. The $29.99 link
+  // (https://buy.stripe.com/14A6oJ2Nl7lv4FV93G93y03) is still active for emails already sent.
+  checkout: { url: 'https://buy.stripe.com/28EaEZ73B49jegveo093y00', price: '$24.99', name: 'Lostman’s River: Fishing Guide Experience', open: true, opens: 'soon',
+    // confirm sheet before Stripe (BuyConfirm.astro). It was off Nov 10–15 (19 Buy taps → 5 Continue
+    // with it on, Nov 6–10); back on 2026-11-15 because it now carries the Full Boat toggle.
+    confirmSheet: true,
     // The Full Crew Experience: up to five readers, each with their own link, missions, badges and
     // license. The Worker issues the four extra keys (CREW_LINK) and emails them with gift cards.
-    // `tag` is the small label pinned to the crew button in the offer card (John, 2026-11-13).
+    // Since 2026-11-15 nobody is sent straight to this link from the page: it is the sheet's
+    // "Full Boat bonus" toggle. `tag` is the small label on that toggle (John, 2026-11-13).
     // Delete the tag (or set it to '') when the holidays are over.
     crew: { url: 'https://buy.stripe.com/eVqdRbdrZgW58Wbgw893y04', price: '$39.99', size: 5, tag: 'Holiday Special' } },
 

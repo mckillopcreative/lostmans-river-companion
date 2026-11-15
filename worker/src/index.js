@@ -292,7 +292,7 @@ export default {
       });
       // the checkout hand-off from an ad click: tell Meta from the server too (worker/src/meta.js)
       if (body.h && !body.o && (name === 'buy_click' || name === 'confirm_go' || name === 'pair_click' || name === 'crew_click'))
-        ctx.waitUntil(reportCheckout(env, { ref: String(body.f || ''), eventId: String(body.e || ''), value: name === 'crew_click' ? 39.99 : name === 'pair_click' ? 34.99 : 29.99, ip: request.headers.get('cf-connecting-ip') || '', ua: request.headers.get('user-agent') || '' }));
+        ctx.waitUntil(reportCheckout(env, { ref: String(body.f || ''), eventId: String(body.e || ''), value: name === 'crew_click' ? 39.99 : name === 'pair_click' ? 34.99 : 24.99, ip: request.headers.get('cf-connecting-ip') || '', ua: request.headers.get('user-agent') || '' }));
       return new Response(null, { status: 204, headers: cors });
     }
 

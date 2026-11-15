@@ -68,7 +68,7 @@ export function offerEmail(leave) {
     'Reading and fishing are better together. The Full Crew Experience is $39.99 for up to five readers, each with their own link, missions, badges and license: brothers, sisters, cousins, friends.',
     '',
     `Build your crew: ${crewBuy}`,
-    `Or just one reader ($29.99): ${buy}`,
+    `Or just one reader ($24.99): ${buy}`,
     '',
     'Every reader’s link arrives instantly with its own printable gift card, so it works right up to Christmas Eve. Order by December 22 to have the cards under the tree.',
     '',
@@ -88,7 +88,7 @@ export function offerEmail(leave) {
   <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Build your crew</h1>
   ${p('Reading and fishing are better together. The Full Crew Experience is <strong>$39.99</strong> for up to five readers, each with their own link, missions, badges and license: brothers, sisters, cousins, friends.')}
   <p style="margin:6px 0 10px;text-align:center;"><a href="${esc(crewBuy)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-family:Georgia,serif;font-weight:bold;font-size:17px;text-decoration:none;padding:13px 26px;border-radius:999px;">Build your crew: $39.99</a></p>
-  <p style="margin:0 0 20px;text-align:center;font-size:15px;"><a href="${esc(buy)}" style="color:#2a7f8e;">Or just one reader, $29.99</a></p>
+  <p style="margin:0 0 20px;text-align:center;font-size:15px;"><a href="${esc(buy)}" style="color:#2a7f8e;">Or just one reader, $24.99</a></p>
   ${p('Every reader’s link arrives instantly with its own printable gift card, so it works right up to Christmas Eve. Order by <strong>December 22</strong> to have the cards under the tree.', 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
   ${p('<strong>What they get:</strong> the whole book, to read and to hear read aloud, chapter by chapter; 23 missions in the app and 23 field missions done for real, each signed off by a grown-up; a printable Field Journal; three badges; and an Assistant Fishing Guide license at the end.')}
   ${p('We’ll send one reminder before Christmas and nothing else.', 'font-size:15px;color:#4b5a60;')}

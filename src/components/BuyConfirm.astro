@@ -5,36 +5,62 @@
 // fires the usual buy_click beacon (track.ts, capture phase, runs first), and opens the sheet.
 // Measured both ways: confirm_go (Continue) and confirm_close (dismissed). Added 2026-11-07
 // after Bedside Stories found the bare Payment Link hand-off was where buyers leaked.
+// 2026-11-15 (John): the sheet also carries the Full Boat bonus, a switch that swaps the one-reader
+// link for the Full Crew link (up to five readers) and shows the new total, so the higher price is
+// only ever seen as a chosen add-on. With the switch on, Continue counts as crew_click
+// ("<page>:sheet"); the switch itself is boat_toggle.
 import { Image } from 'astro:assets';
 import { artImage } from '@lib/images';
 import site from '../../site.config.mjs';
 const thumb = artImage('tiles', 'app-hero');
 const price = site.checkout.price;
+const crew = site.checkout.open ? site.checkout.crew : null;
+const cents = (v: string) => Math.round(Number(v.replace(/[^0-9.]/g, '')) * 100);
+const boatDiff = crew ? (cents(crew.price) - cents(price)) / 100 : 0;
+const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixed(2));
 ---
 
-<div class="bc-bg" id="buy-confirm" data-price={price} data-prices={[price, site.checkout.crew?.price].filter(Boolean).join('|')} data-sheet={site.checkout.confirmSheet === false ? 'off' : 'on'} hidden>
+<div class="bc-bg" id="buy-confirm" data-price={price} data-prices={[price, site.checkout.crew?.price].filter(Boolean).join('|')} data-sheet={site.checkout.confirmSheet === false ? 'off' : 'on'} data-crew-url={crew?.url || ''} data-crew-price={crew?.price || ''} hidden>
   <div class="bc" role="dialog" aria-modal="true" aria-labelledby="bc-h">
     <button class="bc-x" type="button" aria-label="Close">×</button>
     <div class="bc-head">
       {thumb && <Image class="bc-thumb" src={thumb} alt="" width={168} height={168} loading="lazy" />}
       <div>
-        <p class="bc-eyebrow hand">Your reader’s summer</p>
+        <p class="bc-eyebrow hand" data-one="Your reader’s summer" data-boat="Your crew’s summer">Your reader’s summer</p>
         <h3 id="bc-h">Lostman’s River: Fishing Guide Experience</h3>
-        <p class="bc-price">{price}, once</p>
+        <p class="bc-price" aria-live="polite"><span class="bc-amount">{price}</span>, once<span class="bc-for" hidden>, for up to five readers</span></p>
       </div>
     </div>
     <ul class="bc-list">
-      <li>The whole novel, <em>Escape to Lostman’s River</em>, to read and hear on their own phone or tablet, with 23 missions, 23 field missions, the printable Field Journal and the Assistant Fishing Guide license.</li>
-      <li>Arrives the moment you pay: a link on screen and in your email. Nothing to install; it opens in the browser on any device.</li>
-      <li>One reader, on any of your family’s devices. No account, no password, nothing for a child to sign up for.</li>
+      <li>The whole novel, <em>Escape to Lostman’s River</em>, to read and hear, with 23 missions, 23 field missions, the printable Field Journal and the Assistant Fishing Guide license.</li>
+      <li>Opens the minute you pay: a link on screen and in your email. Nothing to install.</li>
+      <li class="bc-who" data-one="One reader, on any of your family’s devices. No account, no password." data-boat="Up to five readers, each with their own link on their own device. No account, no password.">One reader, on any of your family’s devices. No account, no password.</li>
     </ul>
+    {
+      crew && (
+        <label class="bc-boat">
+          <input class="bc-boat-in" type="checkbox" role="switch" />
+          <span class="bc-switch" aria-hidden="true" />
+          <span class="bc-boat-text">
+            {crew.tag && <span class="bc-tag">{crew.tag}</span>}
+            <strong>
+              Add the Full Boat bonus <span class="bc-plus mono">{boatPlus}</span>
+            </strong>
+            <span>Fill your boat with up to five readers: brothers, sisters, cousins, friends. Each one gets their own link, missions, badges and license, and a printable gift card.</span>
+          </span>
+        </label>
+      )
+    }
     <div class="bc-promise">
       <strong>No subscription. Nothing renews.</strong>
       <span>30-day refund, no questions asked: email <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>.</span>
     </div>
-    <a class="btn btn-primary bc-go" href={site.checkout.url} rel="noopener" data-track="confirm_go">Continue to secure checkout →</a>
-    <p class="bc-fine small muted">🔒 Secure checkout by Stripe. The total shows before you pay.</p>
-    <p class="bc-cad small" hidden>In Canada? Checkout shows the price in Canadian dollars, about CA$37 at today’s rate, and that’s what your card is charged.</p>
+    <a class="btn btn-primary bc-go" href={site.checkout.url} rel="noopener" data-track="confirm_go">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+      Continue to secure checkout →
+    </a>
+    <p class="bc-fine small"><strong>Secure checkout by Stripe.</strong> Apple Pay, Link or any card. The total shows before you pay.</p>
+    <p class="bc-cad small" hidden>In Canada? Checkout shows the price in Canadian dollars, and that’s what your card is charged.</p>
     <button class="bc-later" type="button">Not yet</button>
     <p class="bc-human small">Made by a mother and son. A real person answers <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>.</p>
   </div>
@@ -69,10 +95,37 @@ const price = site.checkout.price;
     bg.querySelector<HTMLElement>('.bc-cad')!.hidden = false;
   }
 
+  // The Full Boat switch: off = the one-reader link the tap came from; on = the Full Crew link with
+  // the same ad click / campaign code. The price line, the who-it's-for line and the event follow.
+  const boat = bg.querySelector<HTMLInputElement>('.bc-boat-in');
+  let oneHref = go.href;
+  const paint = () => {
+    const on = !!boat?.checked && !!bg.dataset.crewUrl;
+    let href = oneHref;
+    if (on) {
+      const u = new URL(bg.dataset.crewUrl!);
+      const ref = new URL(oneHref).searchParams.get('client_reference_id');
+      if (ref) u.searchParams.set('client_reference_id', ref);
+      href = u.toString();
+    }
+    go.href = href;
+    go.dataset.track = on ? 'crew_click' : 'confirm_go';
+    go.dataset.trackPage = on ? `${page}:sheet` : page;
+    bg.querySelector<HTMLElement>('.bc-amount')!.textContent = (inCanada ? 'US' : '') + (on ? bg.dataset.crewPrice! : bg.dataset.price!);
+    bg.querySelector<HTMLElement>('.bc-for')!.hidden = !on;
+    for (const el of bg.querySelectorAll<HTMLElement>('[data-one][data-boat]')) el.textContent = on ? el.dataset.boat! : el.dataset.one!;
+    bg.querySelector('.bc-boat')?.classList.toggle('on', on);
+  };
+  boat?.addEventListener('change', () => {
+    track('boat_toggle', { page, on: boat.checked ? 1 : 0 });
+    paint();
+  });
+
   function open(from: HTMLAnchorElement) {
     opener = from;
-    go.href = from.href; // carries the ad click / campaign code track.ts put on the tapped link
-    go.dataset.trackPage = page;
+    oneHref = from.href; // carries the ad click / campaign code track.ts put on the tapped link
+    if (boat) boat.checked = false; // every opening starts at the one-reader price
+    paint();
     bg.hidden = false;
     document.documentElement.classList.add('bc-open');
     go.focus();
@@ -216,6 +269,88 @@ const price = site.checkout.price;
     left: 0;
     color: var(--sunrise);
   }
+  /* the Full Boat bonus: a whole-row switch */
+  .bc-boat {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+    padding: 0.75rem 0.85rem;
+    border: 2px dashed color-mix(in srgb, var(--sunrise) 75%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--sunrise) 8%, transparent);
+    cursor: pointer;
+  }
+  .bc-boat.on {
+    border-style: solid;
+    border-color: var(--mangrove);
+    background: color-mix(in srgb, var(--mangrove) 10%, transparent);
+  }
+  .bc-boat-in {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+  .bc-switch {
+    position: relative;
+    width: 46px;
+    height: 28px;
+    margin-top: 0.1rem;
+    border-radius: 999px;
+    background: var(--oyster);
+    transition: background 0.15s;
+  }
+  .bc-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
+    transition: transform 0.15s;
+  }
+  .bc-boat-in:checked + .bc-switch {
+    background: var(--mangrove);
+  }
+  .bc-boat-in:checked + .bc-switch::after {
+    transform: translateX(18px);
+  }
+  .bc-boat-in:focus-visible + .bc-switch {
+    outline: 2px solid var(--sunrise);
+    outline-offset: 2px;
+  }
+  .bc-boat-text {
+    display: grid;
+    gap: 0.2rem;
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+  .bc-boat-text strong {
+    font-size: 1rem;
+    color: var(--ink);
+  }
+  .bc-plus {
+    color: var(--sunrise-ink);
+    font-size: 1rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .bc-tag {
+    justify-self: start;
+    padding: 0.1rem 0.55rem 0.12rem;
+    border-radius: 999px;
+    background: var(--mangrove);
+    color: var(--paper);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
   .bc-promise {
     display: grid;
     gap: 0.15rem;
@@ -230,12 +365,14 @@ const price = site.checkout.price;
   }
   .bc-go {
     justify-content: center;
+    gap: 0.45rem;
     font-size: 1.05rem;
     width: 100%;
   }
   .bc-fine {
     margin: -0.3rem 0 0;
     text-align: center;
+    color: var(--ink-soft);
   }
   .bc-cad {
     margin: -0.4rem 0 0;
