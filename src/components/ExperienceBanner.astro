@@ -114,53 +114,52 @@ const Title = as;
     margin-inline: auto;
     filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--paper) 90%, transparent));
   }
-  /* the four icons, floating on the painting just under the title: paper discs and paper labels
-     so they read on sky, trees or water */
+  /* The four icons, as one row of see-through chips tucked right under the title, so they stay
+     on the sky and off the houseboat (John, 2026-11-15). Icon and word side by side keeps the row
+     one line tall. */
   .banner-ways {
     list-style: none;
-    margin: -1.55rem auto 0;
-    padding: 0 4%;
-    max-width: 30rem;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.25rem;
+    margin: -1.95rem auto 0;
+    padding: 0 3%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 0.3rem;
   }
   .banner-ways li {
-    display: grid;
-    justify-items: center;
+    display: inline-flex;
+    align-items: center;
     gap: 0.25rem;
-  }
-  .banner-ways svg {
-    width: 2.6rem;
-    height: 2.6rem;
-    padding: 0.55rem;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--paper) 94%, transparent);
-    color: var(--mangrove);
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.28);
-  }
-  .banner-ways span {
-    padding: 0.08rem 0.5rem 0.12rem;
+    padding: 0.16rem 0.5rem 0.18rem 0.4rem;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--paper) 90%, transparent);
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
-    font-size: 0.78rem;
+    background: color-mix(in srgb, var(--paper) 52%, transparent);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    border: 1px solid color-mix(in srgb, var(--paper) 60%, transparent);
+    font-size: 0.74rem;
     font-weight: 700;
-    line-height: 1.25;
+    line-height: 1.2;
     color: var(--mangrove);
     white-space: nowrap;
   }
+  .banner-ways svg {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+  }
   @media (min-width: 640px) {
     .banner-ways {
-      margin-top: -1.2rem;
+      margin-top: -1.7rem;
+      gap: 0.6rem;
+    }
+    .banner-ways li {
+      padding: 0.25rem 0.75rem 0.28rem 0.6rem;
+      gap: 0.35rem;
+      font-size: 0.92rem;
     }
     .banner-ways svg {
-      width: 3rem;
-      height: 3rem;
-      padding: 0.65rem;
-    }
-    .banner-ways span {
-      font-size: 0.88rem;
+      width: 1.2rem;
+      height: 1.2rem;
     }
   }
   .app-banner-text {
