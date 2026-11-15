@@ -5,6 +5,7 @@
 // own h1). Renders nothing if the painting is missing.
 import { Image } from 'astro:assets';
 import { artImage } from '@lib/images';
+import { ways as wayList } from '@lib/ways';
 
 interface Props {
   /** element for the title: 'h1' on the app home, 'p' elsewhere */
@@ -14,8 +15,10 @@ interface Props {
   eyebrow?: string;
   /** the welcome line itself */
   line?: string;
+  /** lay the four "what a reader does" icons over the painting, right under the title (the landing page) */
+  ways?: boolean;
 }
-const { as = 'h1', class: cls, eyebrow = 'Welcome aboard', line = 'You’re the assistant fishing guide this summer. Lots to learn.' } = Astro.props;
+const { as = 'h1', class: cls, eyebrow = 'Welcome aboard', line = 'You’re the assistant fishing guide this summer. Lots to learn.', ways = false } = Astro.props;
 const hero = artImage('tiles', 'app-hero');
 // GPT's lettered title (2026-10-21); the text title stays as the fallback and as the accessible name
 const lettering = artImage('emblems', 'title-summer');
@@ -26,9 +29,23 @@ const Title = as;
   hero && (
     <div class:list={['app-banner', cls]}>
       <Image src={hero} alt="A houseboat moored in the mangroves at dusk, a skiff tied alongside" width={1600} sizes="(min-width: 1200px) 1140px, 96vw" loading="eager" />
+      <div class="app-banner-top">
       <Title class:list={['app-banner-title', { lettered: !!lettering }]}>
         {lettering ? <Image src={lettering} alt="Summer Fishing Guide Experience" width={1200} sizes="(min-width: 1200px) 900px, 88vw" loading="eager" class="title-art" /> : 'Summer Fishing Guide Experience'}
       </Title>
+      {
+        ways && (
+          <ul class="banner-ways" aria-label="What a reader does">
+            {wayList.map((w) => (
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={w.d} fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <span>{w.t}</span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      </div>
       <div class="app-banner-text">
         <p class="eyebrow">{eyebrow}</p>
         <p class="app-banner-line">{line}</p>
@@ -62,9 +79,11 @@ const Title = as;
     object-position: center 30%;
   }
   /* the product title runs along the top of the painting on its own paper scrim */
-  .app-banner-title {
+  .app-banner-top {
     position: absolute;
     inset: 0 0 auto 0;
+  }
+  .app-banner-title {
     margin: 0;
     padding: 0.9rem 1.25rem 2.6rem;
     text-align: center;
@@ -94,6 +113,55 @@ const Title = as;
     height: auto;
     margin-inline: auto;
     filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--paper) 90%, transparent));
+  }
+  /* the four icons, floating on the painting just under the title: paper discs and paper labels
+     so they read on sky, trees or water */
+  .banner-ways {
+    list-style: none;
+    margin: -1.55rem auto 0;
+    padding: 0 4%;
+    max-width: 30rem;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.25rem;
+  }
+  .banner-ways li {
+    display: grid;
+    justify-items: center;
+    gap: 0.25rem;
+  }
+  .banner-ways svg {
+    width: 2.6rem;
+    height: 2.6rem;
+    padding: 0.55rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--paper) 94%, transparent);
+    color: var(--mangrove);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.28);
+  }
+  .banner-ways span {
+    padding: 0.08rem 0.5rem 0.12rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--paper) 90%, transparent);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--mangrove);
+    white-space: nowrap;
+  }
+  @media (min-width: 640px) {
+    .banner-ways {
+      margin-top: -1.2rem;
+    }
+    .banner-ways svg {
+      width: 3rem;
+      height: 3rem;
+      padding: 0.65rem;
+    }
+    .banner-ways span {
+      font-size: 0.88rem;
+    }
   }
   .app-banner-text {
     position: absolute;
