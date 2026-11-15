@@ -93,6 +93,9 @@ export default {
     url: 'https://www.amazon.com/product-reviews/B0BV41JY8N',
     quotes: [
       { text: 'If you love fishing, you’ll be hooked… if you don’t, you’ll still love it!', who: 'Jay Motley' },
+      // A comment on the Facebook ad post, 2026-11-13; Dan gave John permission to quote it (2026-11-15).
+      // `source` replaces the default "Amazon review" label so it is never mistaken for one.
+      { text: 'I’m getting in the guts of this book, and it’s really good!', who: 'Dan T.', source: 'reader, on Facebook' },
       { text: 'My 14-year-old really doesn’t like to read at all. It was the first time my son ever said he connected to the main character.', who: 'a parent' },
       { text: 'Bought it for my 12-year-old son who loves fishing. He said it was the best book about fishing he’d ever read.', who: 'Inna' },
       { text: 'I couldn’t put this book down! Danger, suspense, and countless feel-good moments.', who: 'Rachel' },

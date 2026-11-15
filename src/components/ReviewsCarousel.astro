@@ -31,7 +31,7 @@ const full = Math.floor(r?.rating ?? 0);
           <li class="rc-card">
             <blockquote>
               <p>“{q.text}”</p>
-              <footer class="mono">— {q.who}, Amazon review</footer>
+              <footer class="mono">— {q.who}, {q.source ?? 'Amazon review'}</footer>
             </blockquote>
           </li>
         ))}

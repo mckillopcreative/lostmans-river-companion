@@ -32,7 +32,7 @@ const full = Math.floor(r?.rating ?? 0);
             <li class="quote">
               <blockquote>
                 <p>“{q.text}”</p>
-                <footer class="mono">— {q.who}, Amazon review</footer>
+                <footer class="mono">— {q.who}, {q.source ?? 'Amazon review'}</footer>
               </blockquote>
             </li>
           ))}
