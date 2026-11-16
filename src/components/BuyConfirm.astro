@@ -68,7 +68,7 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
           <span class="bc-boat-text">
             {crew.tag && <span class="bc-tag">{crew.tag}</span>}
             <strong>
-              Add the Full Boat bonus <span class="bc-plus mono">{boatPlus}</span>
+              Add the <b class="bc-pulse">Full Boat bonus</b> <span class="bc-plus mono">{boatPlus}</span>
             </strong>
             <span>Fill your boat with <b>up to five readers</b>: brothers, sisters, cousins, friends. Each one gets their own link, missions, badges and license, and a printable gift card.</span>
           </span>
@@ -84,16 +84,16 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
             <span class="bc-boat-text">
               <span class="bc-tag">Add-on</span>
               <strong>
-                Add Wild Florida <span class="bc-plus mono">+{wild.price}</span>
+                Add <b class="bc-pulse bc-pulse-2">Wild Florida</b> — animal ID <span class="bc-plus mono">+{wild.price}</span>
               </strong>
-              <span data-one="Uncle Dan teaches your reader to name Florida’s sharks, snakes, gators, fish and birds on sight." data-boat="Uncle Dan teaches your crew to name Florida’s animals on sight. One add-on covers every reader in the boat.">
-                Uncle Dan teaches your reader to name Florida’s sharks, snakes, gators, fish and birds on sight.
+              <span class="bc-wild-desc">
+                <span data-one="Uncle Dan teaches your reader to name Florida’s sharks, snakes, gators, fish and birds on sight." data-boat="Uncle Dan teaches your crew to name Florida’s animals on sight. One add-on covers every reader in the boat.">Uncle Dan teaches your reader to name Florida’s sharks, snakes, gators, fish and birds on sight.</span>{' '}
+                <button class="bc-what" type="button" aria-expanded="false" aria-controls="bc-what-panel">
+                  What’s this? <span class="bc-what-arrow" aria-hidden="true">▾</span>
+                </button>
               </span>
             </span>
           </label>
-          <button class="bc-what" type="button" aria-expanded="false" aria-controls="bc-what-panel">
-            What’s this? <span class="bc-what-arrow" aria-hidden="true">▾</span>
-          </button>
           <div class="bc-what-panel" id="bc-what-panel" hidden>
             {
               wildPlates.length > 0 && (
@@ -121,10 +121,6 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
         </div>
       )
     }
-    <div class="bc-promise">
-      <strong>No subscription. Nothing renews.</strong>
-      <span>30-day refund, no questions asked: email <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>.</span>
-    </div>
     <p class="bc-total" aria-hidden="true">
       Your total: <strong class="bc-amount2">{price}</strong>, once
     </p>
@@ -134,6 +130,10 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
     </a>
     <p class="bc-fine small"><strong>Secure checkout by Stripe.</strong> Apple Pay, Link or any card. The total shows before you pay.</p>
     <p class="bc-cad small" hidden>In Canada? Checkout shows the price in Canadian dollars, and that’s what your card is charged.</p>
+    <div class="bc-promise">
+      <strong>No subscription. Nothing renews.</strong>
+      <span>30-day refund, no questions asked: email <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>.</span>
+    </div>
     <button class="bc-later" type="button">Not yet</button>
     <p class="bc-human small">Made by a mother and son. A real person answers <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>.</p>
   </div>
@@ -218,7 +218,9 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
     whatPanel.hidden = !show;
     what.setAttribute('aria-expanded', String(show));
   };
-  what?.addEventListener('click', () => {
+  what?.addEventListener('click', (e) => {
+    e.preventDefault(); // it sits inside the switch's label: opening it must not flip the switch
+    e.stopPropagation();
     const show = !!whatPanel?.hidden;
     showWhat(show);
     if (show) {
@@ -476,10 +478,38 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
     display: grid;
     gap: 0.35rem;
   }
+  /* the two things a buyer can add: their names in bold dark green, with a slow pulse */
+  .bc-pulse {
+    display: inline-block;
+    margin-right: 0.2em; /* room for the pulse before the price */
+    font-weight: 800;
+    color: var(--mangrove);
+    transform-origin: left center;
+    animation: bc-pulse 2.4s ease-in-out infinite;
+  }
+  .bc-pulse-2 {
+    animation-delay: 1.2s;
+  }
+  @keyframes bc-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      text-shadow: 0 0 0 transparent;
+    }
+    50% {
+      transform: scale(1.06);
+      text-shadow: 0 0 10px color-mix(in srgb, var(--mangrove) 45%, transparent);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bc-pulse {
+      animation: none;
+    }
+  }
   .bc-what {
-    justify-self: start;
-    margin-left: 0.2rem;
-    padding: 0.15rem 0.2rem;
+    display: inline;
+    white-space: nowrap;
+    padding: 0;
     background: none;
     border: 0;
     font: inherit;
