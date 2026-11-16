@@ -11,7 +11,7 @@
 | **Keeper or Release?** (2026-11-16) | `/guide-school/keeper-or-release/` | A fish on a measuring board and a practice rule card: keep it or let it go. Three levels (smallest size; slots; the whole card with a season line and a limit), eight fish a round | Deckhand level | `data/keeper-game.json` |
 | **Fish of the Everglades** | `/games/fish-id/` | The Fish ID game under its course name: 23 plates, three levels | All of it | `data/fish.json` |
 
-The hub is `/guide-school/`. It is on the app home (a tile per course), in the offer card ("Guide School: four courses") and in a strip above the offer card on the landing page.
+The hub is `/guide-school/`. It is on the app home (a tile per course), in the offer card ("Guide School: four courses") and in the "What your reader gets" section of the landing page (below).
 
 ## How the paid part works
 
@@ -36,6 +36,18 @@ node scripts/import-art.mjs private/art-pack/assets/art
 ```
 
 The prompts are in `scripts/art-batches/guide-school.json`. The PNG originals stay in `private/art-pack/` (not in the repo); the WebP masters are in `assets/art/rigs/`, `assets/art/boat-school/` and `assets/art/tiles/`. To redo one picture, delete its PNG and run the two commands again. The popping cork is the existing `assets/art/tackle/popping-cork.webp`.
+
+## On the landing page (2026-11-16)
+
+John asked that a visitor see at once, with numbers, that this is not only an audiobook. Three pieces do that:
+
+- `GlanceList.astro`: three numbered lines right under the headline (the book, Guide School, the journal), linking down to the section.
+- `WhatYouGet.astro` (replaced the Guide School strip): three numbered cards with count chips and a row of small previews that scrolls sideways (chapter paintings; the manual and course pictures; real pages of the journal), then a smaller "Bonus" block. Every count comes from the data.
+- `ManualSample.astro`: lesson 1 of the Training Manual as a one-line player, directly under the Chapter 1 player on the landing page and the Experience home.
+
+The journal page previews are `assets/art/journal-pages/page-NN.webp`, made by `node scripts/journal-pdf.mjs --thumbs` from the live page; make them again when the journal changes.
+
+**Pictures, second pass (2026-11-16).** John found the first course pictures thinner than the hero painting. The cause was the prompt ("bold, simple, loose wash, readable at thumbnail size"), not the file size. `scripts/art-batches/guide-school-v2.json` repaints the four course pictures, the Guide School hero and the manual cover in the hero's finish, with the hero itself as the style reference. They are painted to the edges, so the old 4.5% crop of two tiles is no longer needed. The first-pass PNGs are in `private/art-pack/_v1/`.
 
 ## Analytics
 

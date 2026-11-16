@@ -1,0 +1,405 @@
+---
+// "What your reader gets" on the landing page (John, 2026-11-16): the three big things, numbered
+// and with their counts, so a parent sees at once that this is not only an audiobook but a Guide
+// School: 1 the book, 2 Guide School with the Training Manual, 3 Matt's Fishing Journal; then
+// the bonus material in one smaller block. Each carries a row of small previews that scrolls
+// sideways (chapter paintings; course pictures; real pages of the journal, made by scripts/journal-pdf.mjs --thumbs).
+// It replaces the Guide School strip. Every count comes from the data.
+import { Image } from 'astro:assets';
+import { chapters, fish, missions, knots } from '@lib/data';
+import { artImage, coverImage } from '@lib/images';
+import { url } from '@lib/url';
+import audioData from '../../data/audio.json';
+import manual from '../../data/manual.json';
+import boat from '../../data/boat-school.json';
+import rigs from '../../data/rigs.json';
+import keeper from '../../data/keeper-game.json';
+import journal from '../../data/fishing-journal.json';
+
+const cover = coverImage();
+const bookHours = Math.round(Object.values(audioData.minutes as Record<string, number>).reduce((a, b) => a + b, 0) / 60);
+const manualMin = Object.values(((audioData as unknown as { manual?: Record<string, number> }).manual ?? {}) as Record<string, number>).reduce((a, b) => a + b, 0);
+const plates = fish.filter((f) => artImage('fish', f.id)).length;
+
+// 1. the book: the first chapters' spot paintings
+const spots = chapters
+  .slice(0, 10)
+  .map((c) => ({ n: c.n, title: c.title, art: artImage('chapters', `ch-${String(c.n).padStart(2, '0')}`) }))
+  .filter((c) => c.art);
+
+// 2. Guide School: the manual, the four courses, then a few of the boat lessons
+const school = [
+  { art: artImage('manual', 'cover'), label: 'Training Manual', sub: `${manual.lessons.length} audio lessons`, href: '/training-manual/' },
+  { art: artImage('tiles', 'rig-it-right'), label: 'Rig It Right', sub: `${rigs.scenarios.length} scenarios`, href: '/guide-school/rig-it-right/' },
+  { art: artImage('tiles', 'learn-the-boat'), label: 'Learn the Boat', sub: `${boat.lessons.length} lessons`, href: '/guide-school/learn-the-boat/' },
+  { art: artImage('tiles', 'keeper-or-release'), label: 'Keeper or Release?', sub: `${keeper.levels.length} levels`, href: '/guide-school/keeper-or-release/' },
+  { art: artImage('tiles', 'fish-id'), label: 'Fish of the Everglades', sub: `${plates} species`, href: '/games/fish-id/' },
+  ...['markers', 'read-the-water', 'aground', 'anchor', 'bait-and-ice'].map((id) => {
+    const l = boat.lessons.find((x) => x.id === id)!;
+    return { art: artImage(l.art[0], l.art[1]), label: l.title, sub: 'boat lesson', href: `/guide-school/learn-the-boat/${l.id}/` };
+  }),
+].filter((t) => t.art);
+
+// 3. Matt's Fishing Journal: its real pages, in order
+const pageNames = ['Cover', 'Before you cast', 'Know your fish', 'The rest of the river', 'Keeper or release?', 'Today’s rules', 'Find the spot', 'Signs of fish', 'Rig it right', 'Five knots', 'Set the hook', 'On the boat', 'If you run aground', 'The pack list', 'End of the day', 'The big one'];
+const pages = pageNames.map((label, i) => ({ art: artImage('journal-pages', `page-${String(i + 1).padStart(2, '0')}`), label })).filter((p) => p.art);
+const journalChapters = 10;
+
+const bonus = [
+  { n: String(missions.length), t: 'missions from Uncle Dan', d: 'one for every chapter' },
+  { n: String(missions.length), t: 'real-world field missions', d: 'done off the screen, signed off by a grown-up' },
+  { n: '30', t: 'pages in the Field Journal', d: 'to print and fill in by hand' },
+  { n: '3', t: 'badges and a guide license', d: 'earned, then printed with their name' },
+  { n: String(fish.length), t: 'fish in the field guide', d: `plus the chart, ${knots.length} knots and today’s tide` },
+  { n: '1', t: 'printable gift card', d: 'so it can go under the tree' },
+];
+---
+
+<section class="wyg" id="what-you-get" aria-labelledby="wyg-h">
+  <div class="wrap-wide">
+    <p class="eyebrow">What your reader gets</p>
+    <h2 id="wyg-h">More than an audiobook. It’s a Guide School.</h2>
+    <p class="wyg-sub">Three big things in one purchase, and a boatload of extras.</p>
+
+    <ol class="wyg-list">
+      <!-- 1. the book -->
+      <li class="wyg-item">
+        <div class="wyg-top">
+          <span class="wyg-n" aria-hidden="true">1</span>
+          <div>
+            <p class="wyg-kind mono">The book</p>
+            <h3>Escape to Lostman’s River</h3>
+          </div>
+        </div>
+        <ul class="wyg-nums">
+          <li><strong>{chapters.length}</strong> chapters</li>
+          <li><strong>{bookHours} hours</strong> read aloud</li>
+          <li><strong>2 ways</strong> read or listen</li>
+        </ul>
+        <div class="wyg-book">
+          {cover && <Image class="wyg-cover" src={cover} alt="The cover of Escape to Lostman’s River" width={240} sizes="96px" loading="lazy" />}
+          <p>The whole novel on their own tablet or phone: read it as pages, or hear every chapter read aloud. Each chapter opens with its chart, its fish, its knot and today’s tide.</p>
+        </div>
+        <ul class="wyg-scroll" aria-label="The chapters">
+          {
+            spots.map((c) => (
+              <li>
+                <a href={url(`/ch/${c.n}/`)} data-track="landing_click" data-track-to="wyg-chapter">
+                  <span class="wyg-thumb art">
+                    <Image src={c.art!} alt="" width={260} sizes="112px" loading="lazy" />
+                  </span>
+                  <span class="wyg-cap">{c.title}</span>
+                  <span class="wyg-cap-sub mono">Chapter {c.n}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="wyg-go"><a href={url('/ch/1/')} data-track="landing_click" data-track-to="wyg-book">Chapter 1 is free: try it →</a></p>
+      </li>
+
+      <!-- 2. Guide School -->
+      <li class="wyg-item">
+        <div class="wyg-top">
+          <span class="wyg-n" aria-hidden="true">2</span>
+          <div>
+            <p class="wyg-kind mono">Guide School</p>
+            <h3>{manual.title}</h3>
+          </div>
+        </div>
+        <ul class="wyg-nums">
+          <li><strong>{manual.lessons.length}</strong> audio lessons</li>
+          <li><strong>{manualMin >= 55 ? '1 hour' : `${manualMin} min`}</strong> of audio</li>
+          <li><strong>4</strong> courses to play</li>
+        </ul>
+        <p>The real skills of an Everglades fishing guide: the boat, the weather, the fish, the rigs and the guests. Hear it in the Training Manual, then play it in Rig It Right, Learn the Boat, Keeper or Release? and Fish of the Everglades.</p>
+        <ul class="wyg-scroll" aria-label="Inside Guide School">
+          {
+            school.map((t) => (
+              <li>
+                <a href={url(t.href)} data-track="landing_click" data-track-to="wyg-school">
+                  <span class="wyg-thumb art">
+                    <Image src={t.art!} alt="" width={260} sizes="112px" loading="lazy" />
+                  </span>
+                  <span class="wyg-cap">{t.label}</span>
+                  <span class="wyg-cap-sub mono">{t.sub}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="wyg-go"><a href={url('/training-manual/')} data-track="landing_click" data-track-to="wyg-manual">Hear lesson 1 free →</a> · <a href={url('/guide-school/')} data-track="landing_click" data-track-to="wyg-school-hub">Start a course free →</a></p>
+      </li>
+
+      <!-- 3. Matt's Fishing Journal -->
+      <li class="wyg-item">
+        <div class="wyg-top">
+          <span class="wyg-n" aria-hidden="true">3</span>
+          <div>
+            <p class="wyg-kind mono">The field guide</p>
+            <h3>{journal.title}</h3>
+          </div>
+        </div>
+        <ul class="wyg-nums">
+          <li><strong>{journalChapters}</strong> chapters</li>
+          <li><strong>20</strong> pages</li>
+          <li><strong>PDF</strong> to print</li>
+        </ul>
+        <p><em>{journal.subtitle}.</em> Name the fish, measure a keeper, find the spot, pick the rig, tie the knot, set the hook, pack the bag and put the boat away. Print it and keep it in the boat.</p>
+        <ul class="wyg-scroll wyg-pages" aria-label="Pages of the journal">
+          {
+            pages.map((p) => (
+              <li>
+                <a href={url('/fishing-journal/')} data-track="landing_click" data-track-to="wyg-journal">
+                  <span class="wyg-thumb wyg-page">
+                    <Image src={p.art!} alt="" width={240} sizes="96px" loading="lazy" />
+                  </span>
+                  <span class="wyg-cap">{p.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="wyg-go"><a href={url('/fishing-journal/')} data-track="landing_click" data-track-to="wyg-journal-open">Read the first chapter free →</a></p>
+      </li>
+    </ol>
+
+    <div class="wyg-bonus">
+      <p class="wyg-bonus-h hand">Bonus, in the same purchase</p>
+      <ul class="wyg-bonus-list">
+        {
+          bonus.map((b) => (
+            <li>
+              <strong>{b.n}</strong>
+              <span>
+                {b.t}
+                <span class="wyg-bonus-d">{b.d}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .wyg {
+    padding-block: 2rem 0.5rem;
+  }
+  .wyg h2 {
+    margin: 0.1rem 0 0.25rem;
+  }
+  .wyg-sub {
+    margin: 0 0 1rem;
+    color: var(--ink-soft);
+  }
+  .wyg-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.8rem;
+  }
+  @media (min-width: 980px) {
+    .wyg-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: stretch;
+    }
+  }
+  .wyg-item {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1rem 1rem 0.9rem;
+    background: var(--paper-2);
+    border: 1.5px solid var(--oyster);
+    border-radius: 16px;
+  }
+  .wyg-item p {
+    margin: 0;
+    line-height: 1.45;
+  }
+  .wyg-top {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .wyg-n {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    background: var(--sunrise);
+    color: var(--on-sunrise);
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .wyg-kind {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sunrise-ink);
+  }
+  .wyg-item h3 {
+    margin: 0.05rem 0 0;
+    font-size: 1.25rem;
+    line-height: 1.15;
+    color: var(--mangrove);
+  }
+  /* the counts: three chips, the number big */
+  .wyg-nums {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .wyg-nums li {
+    display: grid;
+    align-content: center;
+    gap: 0.05rem;
+    padding: 0.4rem 0.35rem;
+    text-align: center;
+    font-size: 0.78rem;
+    line-height: 1.2;
+    color: var(--ink-soft);
+    background: var(--paper);
+    border: 1px solid var(--oyster);
+    border-radius: 10px;
+  }
+  .wyg-nums strong {
+    display: block;
+    font-size: 1.12rem;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .wyg-book {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: start;
+  }
+  .wyg-cover {
+    width: 84px;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+  }
+  /* a row of small previews that scrolls sideways */
+  .wyg-scroll {
+    list-style: none;
+    margin: 0 -1rem;
+    padding: 0.1rem 1rem 0.5rem;
+    display: flex;
+    gap: 0.55rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .wyg-scroll li {
+    flex: none;
+    width: 104px;
+    scroll-snap-align: start;
+  }
+  .wyg-scroll a {
+    display: grid;
+    gap: 0.2rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  .wyg-thumb {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--oyster);
+    background: color-mix(in srgb, var(--mangrove) 14%, var(--paper));
+  }
+  .wyg-thumb :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .wyg-scroll a:hover .wyg-thumb {
+    border-color: var(--mangrove);
+  }
+  .wyg-pages li {
+    width: 92px;
+  }
+  .wyg-page {
+    aspect-ratio: 700 / 906;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: var(--shadow);
+  }
+  .wyg-cap {
+    font-size: 0.74rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .wyg-cap-sub {
+    font-size: 0.6rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--sunrise-ink);
+  }
+  .wyg-go {
+    margin-top: auto !important;
+    font-size: 0.95rem;
+  }
+  /* the bonus block: smaller, one line each */
+  .wyg-bonus {
+    margin-top: 0.8rem;
+    padding: 0.8rem 1rem 0.9rem;
+    border: 1.5px dashed var(--oyster);
+    border-radius: 16px;
+  }
+  .wyg-bonus-h {
+    margin: 0 0 0.5rem;
+    font-size: 1.35rem;
+    color: var(--sunrise-ink);
+  }
+  .wyg-bonus-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem 1.2rem;
+  }
+  @media (min-width: 620px) {
+    .wyg-bonus-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 980px) {
+    .wyg-bonus-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .wyg-bonus-list li {
+    display: grid;
+    grid-template-columns: 2.2rem minmax(0, 1fr);
+    gap: 0.5rem;
+    align-items: baseline;
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+  .wyg-bonus-list strong {
+    font-size: 1.2rem;
+    text-align: right;
+    color: var(--mangrove);
+  }
+  .wyg-bonus-d {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+</style>

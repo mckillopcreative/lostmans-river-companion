@@ -6,6 +6,7 @@ import { Image } from 'astro:assets';
 import Base from '@layouts/Base.astro';
 import AuthorsCard from '@components/AuthorsCard.astro';
 import ChapterAudio from '@components/ChapterAudio.astro';
+import ManualSample from '@components/ManualSample.astro';
 import BuyButton from '@components/BuyButton.astro';
 import ExperienceBanner from '@components/ExperienceBanner.astro';
 import HandOff from '@components/HandOff.astro';
@@ -70,7 +71,10 @@ const art = (t: Tile) => artImage('tiles', t.id) ?? (t.art ? artImage(t.art[0], 
         </div>
         <BuyButton compact />
       </div>
-      <ChapterAudio n={1} title="Start listening: Chapter 1" compact />
+      <div class="app-listen">
+        <ChapterAudio n={1} title="Start listening: Chapter 1" compact />
+        <ManualSample />
+      </div>
     </div>
   </section>
 

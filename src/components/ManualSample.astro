@@ -1,0 +1,98 @@
+---
+// The free taste of Guide School, as a one-line player: lesson 1 of the Training Manual
+// ("Welcome aboard, trainee"). Sits right under the Chapter 1 sample player on the landing page
+// and the Experience home (John, 2026-11-16). Renders only when public/audio/tm-01.mp3 exists.
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { url } from '@lib/url';
+import manual from '../../data/manual.json';
+import audioData from '../../data/audio.json';
+
+const present = existsSync(resolve(process.cwd(), 'public/audio/tm-01.mp3'));
+const first = manual.lessons[0];
+const mins = ((audioData as unknown as { manual?: Record<string, number> }).manual ?? {}) as Record<string, number>;
+const total = Object.values(mins).reduce((a, b) => a + b, 0);
+---
+
+{
+  present && (
+    <section class="msample" aria-labelledby="msample-h">
+      <div class="msample-head">
+        <svg class="msample-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+          <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
+        </svg>
+        <div>
+          <p class="eyebrow msample-eyebrow">Guide School · listen</p>
+          <h2 id="msample-h" class="msample-title">Hear lesson 1: “{first.title}”</h2>
+        </div>
+      </div>
+      <audio class="msample-audio" controls preload="none" src={url('/audio/tm-01.mp3')} data-rate={manual.rate}>
+        Your browser can’t play this audio.
+      </audio>
+      <p class="small msample-more">
+        <a href={url('/training-manual/')} data-track="landing_click" data-track-to="training-manual-sample">
+          The Training Manual: all {manual.lessons.length} lessons{total > 0 && `, ${total} minutes`} →
+        </a>
+      </p>
+    </section>
+  )
+}
+
+<script>
+  import { track } from '../scripts/track';
+  document.querySelectorAll<HTMLAudioElement>('audio.msample-audio').forEach((a) => {
+    const rate = Number(a.dataset.rate || '1');
+    const apply = () => (a.playbackRate = rate);
+    a.addEventListener('loadedmetadata', apply);
+    let played = false;
+    a.addEventListener('play', () => {
+      apply();
+      // one thing at a time: starting this pauses any other player on the page
+      document.querySelectorAll<HTMLAudioElement>('audio').forEach((o) => o !== a && o.pause());
+      if (!played) track('manual_play', { lesson: 1 });
+      played = true;
+    });
+    a.addEventListener('ended', () => track('manual_done', { lesson: 1 }));
+  });
+</script>
+
+<style>
+  .msample {
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-left: 4px solid var(--mangrove);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 0.75rem 1rem;
+    margin: 0.6rem 0 0;
+  }
+  .msample-head {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+    margin-bottom: 0.6rem;
+  }
+  .msample-icon {
+    flex: none;
+    color: var(--mangrove);
+    margin-top: 0.25rem;
+  }
+  .msample-eyebrow {
+    font-size: 1.2rem;
+    margin-bottom: 0;
+    color: var(--mangrove);
+  }
+  .msample-title {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.25;
+  }
+  .msample-audio {
+    width: 100%;
+    height: 44px;
+    border-radius: var(--radius);
+  }
+  .msample-more {
+    margin: 0.45rem 0 0;
+  }
+</style>

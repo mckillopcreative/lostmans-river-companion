@@ -1,0 +1,83 @@
+---
+// The three big things, with their numbers, in three short lines right under the landing
+// headline (John, 2026-11-16: "the user should know the main things they're getting right away
+// with numbers"). Each line jumps to the full "What your reader gets" section (WhatYouGet.astro).
+import { chapters } from '@lib/data';
+import audioData from '../../data/audio.json';
+import manual from '../../data/manual.json';
+
+const bookHours = Math.round(Object.values(audioData.minutes as Record<string, number>).reduce((a, b) => a + b, 0) / 60);
+const manualMin = Object.values(((audioData as unknown as { manual?: Record<string, number> }).manual ?? {}) as Record<string, number>).reduce((a, b) => a + b, 0);
+const manualLen = manualMin >= 55 ? 'about an hour' : `${manualMin} minutes`;
+---
+
+<a class="glance" href="#what-you-get" data-track="landing_click" data-track-to="glance" aria-label="What your reader gets: see the details">
+  <ol>
+    <li>
+      <span class="g-n" aria-hidden="true">1</span>
+      <span><strong>The book</strong>: {chapters.length} chapters to read, or hear read aloud ({bookHours} hours)</span>
+    </li>
+    <li>
+      <span class="g-n" aria-hidden="true">2</span>
+      <span><strong>Guide School</strong>: {manual.lessons.length} audio lessons ({manualLen}) and 4 courses to play</span>
+    </li>
+    <li>
+      <span class="g-n" aria-hidden="true">3</span>
+      <span><strong>Matt’s Fishing Journal</strong>: a 20-page field guide to print</span>
+    </li>
+  </ol>
+  <span class="g-more">Plus missions, badges and a guide license. See it all ↓</span>
+</a>
+
+<style>
+  .glance {
+    display: block;
+    margin: 0.9rem 0;
+    padding: 0.75rem 0.9rem 0.7rem;
+    background: var(--paper-2);
+    border: 1.5px solid var(--oyster);
+    border-radius: 14px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .glance:hover {
+    border-color: var(--mangrove);
+  }
+  .glance ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .glance li {
+    display: grid;
+    grid-template-columns: 1.7rem minmax(0, 1fr);
+    gap: 0.6rem;
+    align-items: start;
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+  .g-n {
+    display: grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    background: var(--sunrise);
+    color: var(--on-sunrise);
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .glance strong {
+    color: var(--mangrove);
+  }
+  .g-more {
+    display: block;
+    margin-top: 0.5rem;
+    padding-left: 2.3rem;
+    font-size: 0.9rem;
+    color: var(--sunrise-ink);
+  }
+</style>

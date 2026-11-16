@@ -3,6 +3,7 @@
 // Worker (GET /guide/:key/matts-fishing-journal.pdf, from R2) and the welcome email links to it.
 //
 //   node scripts/journal-pdf.mjs                 # → private/pdf/matts-fishing-journal.pdf (+ page shots for checking)
+//   node scripts/journal-pdf.mjs --thumbs        # also small page previews → assets/art/journal-pages/ (the landing page's scroller)
 //   node scripts/journal-pdf.mjs --url http://127.0.0.1:4321/fishing-journal/?unlocked   # from the dev server
 //   then, from worker/:  wrangler r2 object put lostmans-audio/guide/matts-fishing-journal.pdf \
 //                          --file ../private/pdf/matts-fishing-journal.pdf --content-type application/pdf --remote
@@ -132,6 +133,23 @@ try {
       writeFileSync(join(outDir, `section-${String(i + 1).padStart(2, '0')}.jpg`), Buffer.from(shot.data, 'base64'));
     }
     console.log(`  section pictures in ${outDir}`);
+  }
+  // --thumbs: the top of each section at letter proportions, as small page previews for the landing page
+  if (argv.includes('--thumbs')) {
+    const { default: sharp } = await import('sharp');
+    const dir = resolve(root, 'assets/art/journal-pages');
+    mkdirSync(dir, { recursive: true });
+    for (const [i, r] of rows.entries()) {
+      const shot = await S('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true, clip: { x: 0, y: r.y, width: 710, height: Math.min(r.h, 919), scale: 1 } });
+      // pad short sections to a full sheet of white paper, with a little margin all round
+      const page = await sharp(Buffer.from(shot.data, 'base64')).resize({ width: 640 }).toBuffer();
+      const m = await sharp(page).metadata();
+      await sharp({ create: { width: 700, height: 906, channels: 3, background: '#ffffff' } })
+        .composite([{ input: m.height > 846 ? await sharp(page).extract({ left: 0, top: 0, width: 640, height: 846 }).toBuffer() : page, left: 30, top: 30 }])
+        .webp({ quality: 84 })
+        .toFile(join(dir, `page-${String(i + 1).padStart(2, '0')}.webp`));
+    }
+    console.log(`  ${rows.length} page previews in assets/art/journal-pages`);
   }
 } catch (e) {
   console.error('failed:', e.message);

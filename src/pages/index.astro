@@ -11,7 +11,9 @@ import ChapterAudio from '@components/ChapterAudio.astro';
 import BuyButton from '@components/BuyButton.astro';
 import ExperienceBanner from '@components/ExperienceBanner.astro';
 import ReviewsCarousel from '@components/ReviewsCarousel.astro';
-import GuideSchoolStrip from '@components/GuideSchoolStrip.astro';
+import WhatYouGet from '@components/WhatYouGet.astro';
+import ManualSample from '@components/ManualSample.astro';
+import GlanceList from '@components/GlanceList.astro';
 import HowItWorks from '@components/HowItWorks.astro';
 import OfferCard from '@components/OfferCard.astro';
 import AuthorsCard from '@components/AuthorsCard.astro';
@@ -137,6 +139,7 @@ const ld = [
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5L5 13.5h6l-1 8 8-11h-6l1-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg>
           <span><strong>For fishing fans who don’t want to wait.</strong> It opens the minute you buy. No shipping: ready for a car ride or rainy day.</span>
         </p>
+        <GlanceList />
         <div class="byline">
           {authorsPhoto && <Image src={authorsPhoto} alt="John McKillop and his mother Linda, the book’s co-authors" width={168} loading="eager" class="byline-photo" />}
           <p class="byline-text">A shared-imagination story app built by son and mother children’s book co-authors</p>
@@ -155,6 +158,7 @@ const ld = [
           <a class="btn btn-white" href={url('/ch/1/')} data-track="sample_click" data-track-page="/">Try the first chapter now</a>
         </p>
         <ChapterAudio n={1} title="Hear Chapter 1 read aloud" compact />
+        <ManualSample />
         <BuyButton jump="offer" />
         <p class="small"><a href={url('/app/')}>See everything in the Experience →</a> · <a href="#chapters">Browse Matt’s journal below ↓</a></p>
         <p class="small muted scan-note">
@@ -171,15 +175,15 @@ const ld = [
   <!-- What readers say now sits in the hero as a swipe row (ReviewsCarousel, 2026-11-14), so the
        strip that used to be here is gone: the same six quotes twice in a row read as padding. -->
 
+  <!-- ===== What your reader gets: the book, Guide School, the journal, and the bonus material (John, 2026-11-16) ===== -->
+  <WhatYouGet />
+
   <!-- ===== Who made it: John and Linda, then and now ===== -->
   <section class="j-authors">
     <div class="wrap-wide">
       <AuthorsCard compact />
     </div>
   </section>
-
-  <!-- ===== Guide School: the three named courses (John, 2026-11-15) ===== -->
-  <GuideSchoolStrip />
 
   <!-- ===== The offer card: what the one price buys, the guarantee, the buy buttons ===== -->
   <OfferCard />
