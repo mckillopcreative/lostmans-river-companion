@@ -49,7 +49,7 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
       </div>
     </div>
     <ul class="bc-list">
-      <li>Read, listen, learn.</li>
+      <li>Read, listen, learn. <span class="hand bc-laugh">and laugh!</span></li>
       {
         bogo && (
           <li class="bc-bogo" data-bogo-until={bogo.until} data-one={`Buy one, give one: a second Experience to give, free, with a gift card you can send to anyone. Through ${bogo.through}.`} data-boat="Every reader’s link comes with its own gift card to print or send.">
@@ -376,6 +376,15 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
   .bc-list li {
     padding-left: 1.3rem;
     position: relative;
+  }
+  /* "and laugh!" (John, 2026-11-16): scribbled in after the list, in the orange handwriting */
+  .bc-laugh {
+    display: inline-block;
+    margin-left: 0.25rem;
+    font-size: 1.45rem;
+    line-height: 1;
+    color: var(--sunrise-ink);
+    transform: rotate(-4deg);
   }
   .bc-list li::before {
     content: '✦';
