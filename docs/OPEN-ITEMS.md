@@ -45,3 +45,11 @@ See SPEC.md §8. Placeholders used during the build are listed here with where t
 - [ ] **Knot diagrams** are drafts: have an angler trace each one before the Tackle Box is used as instruction. Steps and links are in `data/knots.json`.
 - [ ] **Review the portraits and places** for anything that contradicts the book (hair, boats, buildings). Replacements go in the same path with the same id.
 - [ ] **Wording of the art credit** — `artCredit` in `site.config.mjs` and the Credits page.
+
+## Amazon-link test (started 2026-11-16, review on or after 2026-11-30)
+
+John's question: are we losing $24.99 buyers to the paperback link? From 2026-11-16 the only Amazon button is on the About page (plus a small "Prefer paper?" line at the end of the free chapter). Gone: the "Want the paperback? It's on Amazon" link under every Buy button (the 4.7 rating stays as plain text), the orange Amazon buttons in the landing page's book section and in every page's footer, and the link at the foot of the app home.
+
+Baseline, the 12 days to Nov 16: about 14 taps on the link under the Buy button and 5 on the other Amazon links, about 73 Buy taps, 5 site purchases. Amazon (KDP dashboard, John's screenshot): 18 orders, $76.92 royalties, November to date; none in the months before the ads began.
+
+Read it this way after two weeks, at similar ad spend: site purchases up and Amazon orders flat or a little down = keep it. Site purchases flat and Amazon orders down = the link was not costing sales; put it back (revert the commit "Amazon-link test"). Amazon orders cannot be tied to site visitors, so this is a before-and-after comparison, not proof.
