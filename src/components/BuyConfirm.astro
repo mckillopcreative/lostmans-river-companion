@@ -10,7 +10,9 @@
 // only ever seen as a chosen add-on. With the switch on, Continue counts as crew_click
 // ("<page>:sheet"); the switch itself is boat_toggle.
 // 2026-11-16 (John): a second switch adds Wild Florida (+$9.99, one price for every seat in the
-// boat), with a "What's this?" link that drops down what the add-on is. The two switches pick one
+// boat), with a "What's this?" link that drops down what the add-on is. Later the same day: the total,
+// the Continue button and the Stripe line sit ABOVE the two switches (heading and button on the first
+// screen), the "No subscription" box below them, and the two pills glow. The two switches pick one
 // of four Stripe links (site.config → checkout: url, crew.url, wild.url, wild.crewUrl). Events:
 // wild_toggle, wild_what, and wild_go beside the usual Continue event. A Buy link with
 // data-wild="1" (the Wild Florida page's lock) opens the sheet with the add-on already on.
@@ -60,6 +62,15 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
       <li>Opens the minute you pay: a link on screen and in your email. Nothing to install.</li>
       <li class="bc-who" data-one="One reader, on any of your family’s devices. No account, no password." data-boat="Up to five readers, each with their own link on their own device. No account, no password.">One reader, on any of your family’s devices. No account, no password.</li>
     </ul>
+    <p class="bc-total" aria-hidden="true">
+      Your total: <strong class="bc-amount2">{price}</strong>, once
+    </p>
+    <a class="btn btn-primary bc-go" href={site.checkout.url} rel="noopener" data-track="confirm_go">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+      Continue to secure checkout →
+    </a>
+    <p class="bc-fine small"><strong>Secure checkout by Stripe.</strong> Apple Pay, Link or any card. The total shows before you pay.</p>
+    <p class="bc-cad small" hidden>In Canada? Checkout shows the price in Canadian dollars, and that’s what your card is charged.</p>
     {
       crew && (
         <label class="bc-boat">
@@ -121,15 +132,6 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
         </div>
       )
     }
-    <p class="bc-total" aria-hidden="true">
-      Your total: <strong class="bc-amount2">{price}</strong>, once
-    </p>
-    <a class="btn btn-primary bc-go" href={site.checkout.url} rel="noopener" data-track="confirm_go">
-      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
-      Continue to secure checkout →
-    </a>
-    <p class="bc-fine small"><strong>Secure checkout by Stripe.</strong> Apple Pay, Link or any card. The total shows before you pay.</p>
-    <p class="bc-cad small" hidden>In Canada? Checkout shows the price in Canadian dollars, and that’s what your card is charged.</p>
     <div class="bc-promise">
       <strong>No subscription. Nothing renews.</strong>
       <span>30-day refund, no questions asked: email <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>.</span>
@@ -478,31 +480,33 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
     display: grid;
     gap: 0.35rem;
   }
-  /* the two things a buyer can add: their names in bold dark green, with a slow pulse */
+  /* the two things a buyer can add: their names in bold dark green */
   .bc-pulse {
-    display: inline-block;
-    margin-right: 0.2em; /* room for the pulse before the price */
     font-weight: 800;
     color: var(--mangrove);
-    transform-origin: left center;
-    animation: bc-pulse 2.4s ease-in-out infinite;
   }
-  .bc-pulse-2 {
-    animation-delay: 1.2s;
+  /* and their pills ("Holiday Special", "Add-on") breathe a soft halo: glow only, the pill keeps its size */
+  .bc-tag {
+    animation: bc-glow 2.2s ease-in-out infinite;
   }
-  @keyframes bc-pulse {
+  .bc-wild .bc-tag {
+    animation-delay: 1.1s;
+  }
+  @keyframes bc-glow {
     0%,
     100% {
-      transform: scale(1);
-      text-shadow: 0 0 0 transparent;
+      box-shadow:
+        0 0 0 0 color-mix(in srgb, var(--sunrise) 0%, transparent),
+        0 0 0 0 color-mix(in srgb, var(--sunrise) 0%, transparent);
     }
     50% {
-      transform: scale(1.06);
-      text-shadow: 0 0 10px color-mix(in srgb, var(--mangrove) 45%, transparent);
+      box-shadow:
+        0 0 0 3px color-mix(in srgb, var(--sunrise) 40%, transparent),
+        0 0 14px 5px color-mix(in srgb, var(--sunrise) 60%, transparent);
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .bc-pulse {
+    .bc-tag {
       animation: none;
     }
   }
