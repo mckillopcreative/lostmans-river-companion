@@ -216,7 +216,42 @@ export function giftEmail(key) {
   return { subject, text, html };
 }
 
-export function welcomeEmail(key, { resend = false, gift = false } = {}) {
+/** Wild Florida added to a purchase that already has its Experience(s): n = how many links it unlocked. */
+export function wildEmail(n = 1) {
+  const where = n > 1 ? `all ${n} links from your purchase` : 'your reader’s link';
+  const subject = 'Wild Florida is unlocked';
+  const text = [
+    'Wild Florida is unlocked.',
+    '',
+    `Uncle Dan’s field school is now open on ${where}. There is nothing new to install and no new link: on the reader’s own device, open ${SITE}/wild-florida/`,
+    '',
+    'Every animal, all six games, the logbook and the certificate are in it.',
+    '',
+    `On a device that has lost its link? Go to ${SITE}/restore/ and enter this email address.`,
+    '',
+    'Questions? Just reply. 30-day refund, no questions asked.',
+    '',
+    'Linda and John McKillop',
+  ].join('\n');
+  const p = (s, extra = '') => `<p style="margin:0 0 14px;font-size:16px;line-height:1.5;color:#1f2a2e;${extra}">${s}</p>`;
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f6f1e7;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f1e7;"><tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#fbf8f1;border:1px solid #e2d9c7;border-radius:14px;">
+<tr><td style="padding:28px 28px 24px;font-family:Georgia,'Times New Roman',serif;">
+  <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">Uncle Dan’s field school</p>
+  <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Wild Florida is unlocked</h1>
+  ${p(`It is now open on ${where}. There is nothing new to install and no new link.`)}
+  <p style="margin:6px 0 18px;"><a href="${SITE}/wild-florida/" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-family:Georgia,serif;font-weight:bold;font-size:16px;text-decoration:none;padding:12px 22px;border-radius:999px;">Open Wild Florida</a></p>
+  ${p('Open it on the reader’s own device, the one that already has their link. Every animal, all six games, the logbook and the certificate are in it.', 'font-size:15px;')}
+  ${p(`<strong>On a device that has lost its link?</strong> Go to <a href="${SITE}/restore/" style="color:#2a7f8e;">lostmansriver.com/restore</a> and enter this email address.`, 'font-size:15px;')}
+  ${p('Questions? Just reply; it comes to us. 30-day refund, no questions asked.', 'font-size:14px;color:#4b5a60;')}
+  <p style="margin:18px 0 0;font-size:16px;color:#2f5d50;font-style:italic;">Linda and John McKillop</p>
+</td></tr>
+</table></td></tr></table></body></html>`;
+  return { subject, text, html };
+}
+
+export function welcomeEmail(key, { resend = false, gift = false, wild = false } = {}) {
   const link = startLink(key);
   const giftLink = `${SITE}/gift/#${key}`;
   const qr = `${API}/qr/${key}.png`;
@@ -238,6 +273,7 @@ export function welcomeEmail(key, { resend = false, gift = false } = {}) {
     'Also in the pack:',
     `- Matt’s Fishing Journal, a 20-page field guide to print and keep in the boat (PDF): ${pdf}`,
     `- The Assistant Fishing Guide Training Manual, fifteen short lessons to listen to: ${SITE}/training-manual/`,
+    ...(wild ? [`- Wild Florida, your add-on: Uncle Dan’s field school, unlocked on every link in this purchase: ${SITE}/wild-florida/`] : []),
     '',
     'Switching devices, or the browser was cleared? Open the same link on the new device and the summer picks up where they left off.',
     `Lost this email? Go to ${SITE}/restore/ and enter this email address.`,
@@ -276,6 +312,7 @@ export function welcomeEmail(key, { resend = false, gift = false } = {}) {
 </td></tr>
 <tr><td style="padding:0 28px 24px;font-family:Georgia,'Times New Roman',serif;">
   ${p(`<strong>Also in the pack.</strong> <a href="${esc(pdf)}" style="color:#2a7f8e;">Matt’s Fishing Journal</a>, a 20-page field guide to print and keep in the boat (PDF). And <a href="${SITE}/training-manual/" style="color:#2a7f8e;">the Assistant Fishing Guide Training Manual</a>, fifteen short lessons to listen to in the car.`, 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
+  ${wild ? p(`<strong>Your add-on: Wild Florida.</strong> <a href="${SITE}/wild-florida/" style="color:#2a7f8e;">Uncle Dan’s field school</a> is unlocked on every link in this purchase.`, 'font-size:15px;background:#e3efe6;padding:10px 12px;border-radius:8px;') : ''}
   ${p('<strong>Switching devices, or the browser was cleared?</strong> Scan the same code or open the same link on the new device and the summer picks up exactly where they left off.', 'font-size:15px;')}
   ${p(`<strong>Lost this email?</strong> Go to <a href="${SITE}/restore/" style="color:#2a7f8e;">lostmansriver.com/restore</a> and enter this email address.`, 'font-size:15px;')}
   ${p('<strong>What we keep:</strong> your email, so we can send the link. Your reader’s missions and badges are saved under the link, not under their name. We never ask your child for their name, email or anything else, and there are no ads or trackers in the Experience.', 'font-size:14px;color:#4b5a60;')}

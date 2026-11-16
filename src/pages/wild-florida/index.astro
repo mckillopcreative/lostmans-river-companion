@@ -9,13 +9,16 @@
 // box 0 to 4 on this device; a right answer moves it up, a miss moves it down; 3 or more = known).
 // Data: data/wild.json. Plates: assets/art/wild/ and assets/art/fish/. Dan's lines are spoken by
 // the book's narrator voice (public/audio/wild/<id>.mp3, scripts/wild-voice.mjs). An animal whose
-// plate has not been painted yet is simply left out. The starter set is free; the rest needs a
-// purchase key (client-side, like the rest of Guide School). Progress stays on the device.
+// plate has not been painted yet is simply left out. The starter set is free; the rest is the
+// Wild Florida add-on (John, 2026-11-16: $9.99 once, for every key of a purchase). The Worker says
+// whether a key holds it (GET /key/<key> → wild; src/scripts/access.ts keeps the answer as
+// html.has-wild). A visitor with no key is sent to the confirm sheet with the add-on switched on;
+// a family that has the Experience gets the $9.99 link with their key on it. Progress stays on the device.
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { getImage, Image } from 'astro:assets';
 import Base from '@layouts/Base.astro';
-import SchoolLock from '@components/SchoolLock.astro';
+import { buyHref, buyTrack, wild } from '@lib/buy';
 import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 import site from '../../../site.config.mjs';
@@ -94,15 +97,47 @@ const kinds = data.types.map((t) => t.name.toLowerCase()).join(', ');
       <button type="button" class="wf-mode" data-mode="test"><strong>The test</strong><span>pass with 8 in 10</span></button>
     </div>
 
-    {gated && <SchoolLock id="wf-lock" hidden title={`The other ${animals.length - starters} animals come with the Experience`} text={`The first ${starters} are free to learn. The rest of Wild Florida, Guide School, Matt’s Fishing Journal, the Training Manual, the whole book to read and hear, and all 23 missions come with the Summer Fishing Guide Experience.`} page="wild-florida" />}
+    <p class="wf-note" id="wf-note" role="status" hidden></p>
 
     <div class="wf-board" id="wf-board" data-game={JSON.stringify(payload)} aria-live="polite"></div>
+
+    {
+      gated && (
+        <div class="wf-lock" id="wf-lock" hidden>
+          <p class="hand wf-lock-h">The other {animals.length - starters} animals are in the full Wild Florida</p>
+          <p class="small wf-lock-new">
+            The first {starters} are free to learn. The full field school is an add-on to the Summer Fishing Guide Experience{wild ? ` (${wild.price}, once)` : ''}: a grown-up switches it on when they buy, and it unlocks for every reader in the purchase.
+          </p>
+          <p class="small wf-lock-have">
+            You have the Experience. Wild Florida is an add-on{wild ? `: ${wild.price}, once` : ''}. A grown-up can add it here, and it unlocks on every link from your purchase.
+          </p>
+          <p class="cluster">
+            <a class="btn btn-primary wf-lock-new" href={buyHref} data-wild="1" data-track={buyTrack} data-track-page="wild-florida">
+              Get the Experience + Wild Florida
+            </a>
+            {
+              wild && (
+                <a class="btn btn-primary wf-lock-have" id="wf-add" href={wild.addUrl} rel="noopener" data-direct="1" data-ref-keep="1" data-track="wild_add_click" data-track-page="wild-florida">
+                  Add Wild Florida {wild.price}
+                </a>
+              )
+            }
+            <a class="small wf-lock-new" href={url('/restore/')}>
+              Already bought it?
+            </a>
+            <button type="button" class="wf-linkish small wf-lock-have" id="wf-recheck">
+              Already added it? Check again
+            </button>
+          </p>
+        </div>
+      )
+    }
 
     <section class="wf-log" aria-labelledby="wf-log-h">
       <h2 id="wf-log-h">Your logbook</h2>
       <p class="wf-rank"><span class="hand" id="wf-rank">Greenhorn</span> <span class="small muted" id="wf-known"></span></p>
       <div class="wf-bar" aria-hidden="true"><span id="wf-bar"></span></div>
-      <p class="small muted" id="wf-next"></p>
+      <p class="small muted" id="wf-nextrank"></p>
       <ul class="wf-grid" id="wf-grid"></ul>
       <div class="wf-cert-tools" id="wf-cert-tools" hidden>
         <label>Name for the certificate <input id="wf-name" maxlength="40" placeholder="First name" autocomplete="off" /></label>
@@ -129,6 +164,7 @@ const kinds = data.types.map((t) => t.name.toLowerCase()).join(', ');
   </section>
 
   <script>
+    import { API, getKey, setKey, isKey, syncWild } from '../../scripts/access';
     type A = { id: string; name: string; type: string; regions: string[]; tell: string; dan: string; like: string[]; starter: boolean; book: string; img: string; more: { img: string; cap: string }[]; audio: boolean };
     type Rec = { b: number; r: number; w: number };
     const board = document.getElementById('wf-board')!;
@@ -137,8 +173,9 @@ const kinds = data.types.map((t) => t.name.toLowerCase()).join(', ');
     const $ = (id: string) => document.getElementById(id)!;
     const lock = document.getElementById('wf-lock');
     const track = (n: string, p: Record<string, string | number>) => (window as unknown as { lrTrack?: (n: string, p: Record<string, string | number>) => void }).lrTrack?.(n, p);
-    const hasKey = () => !G.gated || document.documentElement.classList.contains('has-key');
-    const open = (a: A) => hasKey() || a.starter;
+    // the whole field school is open when the gate is off, or this device's key holds the add-on
+    const hasAll = () => !G.gated || document.documentElement.classList.contains('has-wild');
+    const open = (a: A) => hasAll() || a.starter;
     const shuffle = <T,>(a: T[]) => {
       const x = [...a];
       for (let i = x.length - 1; i > 0; i--) {
@@ -389,11 +426,11 @@ const kinds = data.types.map((t) => t.name.toLowerCase()).join(', ');
       const p = pool();
       const lockedHere = all.length - p.length;
       const where = region === 'all' ? '' : ` in ${G.regions.find((r) => r.id === region)!.name}`;
-      $('wf-count').textContent = `${p.length} animal${p.length === 1 ? '' : 's'}${where}${lockedHere ? `, and ${lockedHere} more with the Experience` : ''}.`;
-      if (lock) lock.hidden = !(lockedHere > 0 && p.length < 4);
+      $('wf-count').textContent = `${p.length} animal${p.length === 1 ? '' : 's'}${where}${lockedHere ? `, and ${lockedHere} more in the full Wild Florida` : ''}.`;
+      if (lock) lock.hidden = !(lockedHere > 0);
       const need = mode === 'meet' ? 1 : 4;
       if (p.length < need) {
-        board.innerHTML = `<p class="wf-empty">${all.length === 0 ? 'No animals match that pick yet. Try another kind, or all of Florida.' : lockedHere ? 'The animals in this pick come with the Experience.' : 'That pick has too few animals for a round. Add another kind, or choose all of Florida.'}</p>`;
+        board.innerHTML = `<p class="wf-empty">${all.length === 0 ? 'No animals match that pick yet. Try another kind, or all of Florida.' : lockedHere ? 'The animals in this pick are in the full Wild Florida.' : 'That pick has too few animals for a round. Add another kind, or choose all of Florida.'}</p>`;
         return;
       }
       recent = [];
@@ -446,7 +483,7 @@ const kinds = data.types.map((t) => t.name.toLowerCase()).join(', ');
       $('wf-rank').textContent = rank.name;
       $('wf-known').textContent = `${k} of ${total} known on sight`;
       ($('wf-bar') as HTMLElement).style.width = `${Math.round((k / total) * 100)}%`;
-      $('wf-next').textContent = next ? `${next.at - k} more to make ${next.name}.${openList.length < total ? ` ${total - openList.length} animals open with the Experience.` : ''}` : 'Captain. You know them all.';
+      $('wf-nextrank').textContent = next ? `${next.at - k} more to make ${next.name}.${openList.length < total ? ` ${total - openList.length} more in the full Wild Florida.` : ''}` : 'Captain. You know them all.';
       const grid = $('wf-grid');
       if (!grid.children.length) {
         grid.innerHTML = G.animals.map((a) => `<li><button type="button" class="wf-cell" data-open="${a.id}"><span class="wf-thumb"><img src="${a.img}" alt="" width="160" height="160" loading="lazy" /></span><span class="wf-cell-n">${esc(a.name)}</span></button></li>`).join('');
@@ -492,6 +529,61 @@ const kinds = data.types.map((t) => t.name.toLowerCase()).join(', ');
 
     paintLog();
     start();
+
+    // ---- the add-on: does this device's key hold it? ----
+    const note = $('wf-note');
+    const say = (t: string) => {
+      note.textContent = t;
+      note.hidden = !t;
+    };
+    const refresh = () => {
+      paintLog();
+      start();
+    };
+    // the $9.99 link carries this reader's key, so the Worker knows which purchase to unlock
+    const add = document.getElementById('wf-add') as HTMLAnchorElement | null;
+    const myKey = getKey();
+    if (add && myKey) {
+      const u = new URL(add.href);
+      u.searchParams.set('client_reference_id', `wild_${myKey}`);
+      add.href = u.toString();
+    }
+    document.getElementById('wf-recheck')?.addEventListener('click', async () => {
+      say('Checking…');
+      const ok = await syncWild();
+      say(ok ? 'Wild Florida is unlocked. Every animal is in.' : 'Not yet on this link. If you paid in the last minute, try again shortly; if it still isn’t here, email help@lostmansriver.com and we’ll sort it out.');
+      if (ok) refresh();
+    });
+    const q = new URLSearchParams(location.search);
+    if (q.get('added') === '1') {
+      // back from Stripe after adding Wild Florida: the webhook may trail by a few seconds
+      const sid = q.get('session_id') || '';
+      history.replaceState(null, '', location.pathname);
+      say('Thank you. Unlocking Wild Florida…');
+      (async () => {
+        let ok = false;
+        for (let i = 0; i < 8 && !ok; i++) {
+          try {
+            if (/^cs_[A-Za-z0-9_]{10,200}$/.test(sid)) {
+              const r = await fetch(`${API}/session/${sid}`);
+              if (r.ok) {
+                const j = await r.json();
+                if (!getKey() && isKey(j.key || '')) setKey(j.key); // paid on a device that did not have the link yet
+              }
+            }
+          } catch {}
+          ok = await syncWild();
+          if (!ok) await new Promise((res) => setTimeout(res, 2000));
+        }
+        say(ok ? 'Wild Florida is unlocked. Every animal is in.' : 'Your payment went through, but this device hasn’t picked it up yet. Tap “Check again” below in a minute, or email help@lostmansriver.com.');
+        refresh();
+      })();
+    } else if (myKey) {
+      const before = hasAll();
+      syncWild().then((ok) => {
+        if (ok !== before) refresh();
+      });
+    }
   </script>
 </Base>
 
@@ -813,6 +905,47 @@ const kinds = data.types.map((t) => t.name.toLowerCase()).join(', ');
   .wf-names,
   .wf-vsline {
     margin: 0.2rem 0;
+  }
+  /* the add-on: the note after a purchase, and the lock under the board */
+  .wf-note {
+    margin: 0.8rem 0;
+    padding: 0.7rem 0.9rem;
+    background: color-mix(in srgb, var(--mangrove) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mangrove) 45%, transparent);
+    border-radius: 10px;
+    font-weight: 600;
+    color: var(--mangrove);
+  }
+  .wf-lock {
+    margin: 1rem 0;
+    padding: 1rem 1.1rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-left: 4px solid var(--sunrise);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .wf-lock-h {
+    font-size: 1.35rem;
+    line-height: 1.25;
+    color: var(--sunrise-ink);
+    margin: 0 0 0.3rem;
+  }
+  .wf-lock p:last-child {
+    margin-bottom: 0;
+  }
+  html.has-key .wf-lock .wf-lock-new,
+  html:not(.has-key) .wf-lock .wf-lock-have {
+    display: none;
+  }
+  .wf-linkish {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--mangrove);
+    text-decoration: underline;
+    cursor: pointer;
   }
   .wf-empty {
     margin: 0;

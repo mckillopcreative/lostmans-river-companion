@@ -38,7 +38,7 @@
 </section>
 
 <script>
-  import { API, setKey, startLink, isKey } from '../scripts/access';
+  import { API, setKey, setWild, startLink, isKey } from '../scripts/access';
   const q = new URLSearchParams(location.search);
   const session = q.get('session_id') || '';
   const box = document.getElementById('handoff')!;
@@ -48,6 +48,7 @@
     (async () => {
       let key = '';
       let gifts: string[] = [];
+      let wild = false; // the Wild Florida add-on came with this purchase
       // the webhook can trail the buyer by a few seconds; ask for up to ~30 s
       for (let i = 0; i < 15 && !key; i++) {
         try {
@@ -55,6 +56,7 @@
           if (r.ok) {
             const j = await r.json();
             key = j.key || '';
+            wild = !!j.wild;
             gifts = (Array.isArray(j.gifts) ? j.gifts : j.gift ? [j.gift] : []).filter(isKey);
           }
         } catch {}
@@ -65,6 +67,7 @@
         return;
       }
       setKey(key); // this device too, so the parent can look around
+      setWild(wild);
       const link = startLink(key);
       ($('ho-qr-img') as HTMLImageElement).src = `${API}/qr/${key}.png`;
       $('ho-status').textContent = 'It takes about a minute, on their own device:';

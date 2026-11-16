@@ -9,10 +9,26 @@
 // link for the Full Crew link (up to five readers) and shows the new total, so the higher price is
 // only ever seen as a chosen add-on. With the switch on, Continue counts as crew_click
 // ("<page>:sheet"); the switch itself is boat_toggle.
+// 2026-11-16 (John): a second switch adds Wild Florida (+$9.99, one price for every seat in the
+// boat), with a "What's this?" link that drops down what the add-on is. The two switches pick one
+// of four Stripe links (site.config → checkout: url, crew.url, wild.url, wild.crewUrl). Events:
+// wild_toggle, wild_what, and wild_go beside the usual Continue event. A Buy link with
+// data-wild="1" (the Wild Florida page's lock) opens the sheet with the add-on already on.
 import { Image } from 'astro:assets';
 import { artImage } from '@lib/images';
+import { url } from '@lib/url';
 import site from '../../site.config.mjs';
-import { bogo } from '@lib/buy';
+import { bogo, wild } from '@lib/buy';
+import { wildCount, wildTotal, wildStarters } from '@lib/wild';
+import wildData from '../../data/wild.json';
+// a few plates for the drop-down: the animals children ask about first
+const wildPlates = wild
+  ? ['bull-shark', 'alligator', 'cottonmouth', 'osprey', 'tiger-shark', 'manatee', 'crocodile', 'great-blue-heron']
+      .map((id) => ({ src: artImage('wild', id), name: wildData.animals.find((a) => a.id === id)?.name ?? '' }))
+      .filter((p) => p.src)
+      .slice(0, 4)
+  : [];
+const wildKinds = wildData.types.map((t) => t.name.toLowerCase()).join(', ');
 const thumb = artImage('tiles', 'app-hero');
 const price = site.checkout.price;
 const crew = site.checkout.open ? site.checkout.crew : null;
@@ -57,6 +73,52 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
             <span>Fill your boat with <b>up to five readers</b>: brothers, sisters, cousins, friends. Each one gets their own link, missions, badges and license, and a printable gift card.</span>
           </span>
         </label>
+      )
+    }
+    {
+      wild && (
+        <div class="bc-wild" data-url={wild.url} data-crew-url={wild.crewUrl} data-price={wild.price}>
+          <label class="bc-boat bc-wild-row">
+            <input class="bc-boat-in bc-wild-in" type="checkbox" role="switch" />
+            <span class="bc-switch" aria-hidden="true" />
+            <span class="bc-boat-text">
+              <span class="bc-tag">Add-on</span>
+              <strong>
+                Add Wild Florida <span class="bc-plus mono">+{wild.price}</span>
+              </strong>
+              <span data-one="Uncle Dan teaches your reader to name Florida’s animals on sight: sharks, snakes, gators, fish and birds." data-boat="Uncle Dan teaches your crew to name Florida’s animals on sight. One add-on covers every reader in the boat.">
+                Uncle Dan teaches your reader to name Florida’s animals on sight: sharks, snakes, gators, fish and birds.
+              </span>
+            </span>
+          </label>
+          <button class="bc-what" type="button" aria-expanded="false" aria-controls="bc-what-panel">
+            What’s this? <span class="bc-what-arrow" aria-hidden="true">▾</span>
+          </button>
+          <div class="bc-what-panel" id="bc-what-panel" hidden>
+            {
+              wildPlates.length > 0 && (
+                <div class="bc-what-art">
+                  {wildPlates.map((p) => (
+                    <Image src={p.src!} alt={p.name} width={150} height={150} loading="lazy" />
+                  ))}
+                </div>
+              )
+            }
+            <p>
+              <strong>Wild Florida: Uncle Dan’s field school.</strong> A game that teaches a reader to name Florida’s animals on sight: {wildKinds}.
+            </p>
+            <ul>
+              <li>{wildCount < wildTotal ? `${wildCount} animals in it today, and new ones are added as their plates are painted, until all ${wildTotal} are in.` : `${wildTotal} animals, each with its own painted plate.`}</li>
+              <li>One tell-tale for every animal, in Uncle Dan’s words and voice, with the look-alikes side by side: alligator or crocodile, coral snake or scarlet kingsnake, a dolphin’s fin or a shark’s.</li>
+              <li>Six ways to play, a logbook, five ranks from Greenhorn to Captain, and a certificate to print.</li>
+              <li>Pick the animals by kind, or by the part of Florida you’re in.</li>
+              <li>One add-on covers every seat in the boat: your reader, the Experience you give, and a full crew.</li>
+            </ul>
+            <p class="small">
+              <a href={url('/wild-florida/')}>Try the first {wildStarters} animals free</a>
+            </p>
+          </div>
+        </div>
       )
     }
     <div class="bc-promise">
@@ -113,13 +175,19 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
 
   // The Full Boat switch: off = the one-reader link the tap came from; on = the Full Crew link with
   // the same ad click / campaign code. The price line, the who-it's-for line and the event follow.
-  const boat = bg.querySelector<HTMLInputElement>('.bc-boat-in');
+  // The Wild Florida switch adds the add-on to whichever of the two is chosen: four links in all.
+  const boat = bg.querySelector<HTMLInputElement>('.bc-boat-in:not(.bc-wild-in)');
+  const wildBox = bg.querySelector<HTMLElement>('.bc-wild');
+  const wildIn = bg.querySelector<HTMLInputElement>('.bc-wild-in');
+  const cents = (v: string) => Math.round(Number(v.replace(/[^0-9.]/g, '')) * 100);
   let oneHref = go.href;
   const paint = () => {
     const on = !!boat?.checked && !!bg.dataset.crewUrl;
+    const addOn = !!wildIn?.checked && !!wildBox;
+    const target = addOn ? (on ? wildBox!.dataset.crewUrl! : wildBox!.dataset.url!) : on ? bg.dataset.crewUrl! : '';
     let href = oneHref;
-    if (on) {
-      const u = new URL(bg.dataset.crewUrl!);
+    if (target) {
+      const u = new URL(target);
       const ref = new URL(oneHref).searchParams.get('client_reference_id');
       if (ref) u.searchParams.set('client_reference_id', ref);
       href = u.toString();
@@ -127,11 +195,37 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
     go.href = href;
     go.dataset.track = on ? 'crew_click' : 'confirm_go';
     go.dataset.trackPage = on ? `${page}:sheet` : page;
-    bg.querySelector<HTMLElement>('.bc-amount')!.textContent = (inCanada ? 'US' : '') + (on ? bg.dataset.crewPrice! : bg.dataset.price!);
+    const total = cents(on ? bg.dataset.crewPrice! : bg.dataset.price!) + (addOn ? cents(wildBox!.dataset.price!) : 0);
+    bg.querySelector<HTMLElement>('.bc-amount')!.textContent = (inCanada ? 'US' : '') + '$' + (total / 100).toFixed(2);
     bg.querySelector<HTMLElement>('.bc-for')!.hidden = !on;
     for (const el of bg.querySelectorAll<HTMLElement>('[data-one][data-boat]')) el.textContent = on ? el.dataset.boat! : el.dataset.one!;
-    bg.querySelector('.bc-boat')?.classList.toggle('on', on);
+    bg.querySelector('.bc-boat:not(.bc-wild-row)')?.classList.toggle('on', on);
+    bg.querySelector('.bc-wild-row')?.classList.toggle('on', addOn);
   };
+  wildIn?.addEventListener('change', () => {
+    track('wild_toggle', { page, on: wildIn.checked ? 1 : 0 });
+    paint();
+  });
+  // "What's this?": the add-on explained, dropped down under its switch
+  const what = bg.querySelector<HTMLButtonElement>('.bc-what');
+  const whatPanel = bg.querySelector<HTMLElement>('.bc-what-panel');
+  const showWhat = (show: boolean) => {
+    if (!what || !whatPanel) return;
+    whatPanel.hidden = !show;
+    what.setAttribute('aria-expanded', String(show));
+  };
+  what?.addEventListener('click', () => {
+    const show = !!whatPanel?.hidden;
+    showWhat(show);
+    if (show) {
+      track('wild_what', { page });
+      whatPanel?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
+  // Continue with the add-on on: counted beside the usual hand-off event
+  go.addEventListener('click', () => {
+    if (wildIn?.checked && wildBox) track('wild_go', { page });
+  });
   boat?.addEventListener('change', () => {
     track('boat_toggle', { page, on: boat.checked ? 1 : 0 });
     paint();
@@ -141,6 +235,8 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
     opener = from;
     oneHref = from.href; // carries the ad click / campaign code track.ts put on the tapped link
     if (boat) boat.checked = false; // every opening starts at the one-reader price
+    if (wildIn) wildIn.checked = from.dataset.wild === '1'; // on only when the tap came from the Wild Florida page
+    showWhat(false);
     paint();
     bg.hidden = false;
     document.documentElement.classList.add('bc-open');
@@ -370,6 +466,66 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
     letter-spacing: 0.06em;
     line-height: 1.3;
     text-transform: uppercase;
+  }
+  /* the Wild Florida add-on: the same switch row, with "What's this?" under it */
+  .bc-wild {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .bc-what {
+    justify-self: start;
+    margin-left: 0.2rem;
+    padding: 0.15rem 0.2rem;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-size: 0.92rem;
+    color: var(--mangrove);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .bc-what-arrow {
+    display: inline-block;
+    transition: transform 0.15s;
+  }
+  .bc-what[aria-expanded='true'] .bc-what-arrow {
+    transform: rotate(180deg);
+  }
+  .bc-what-panel {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.75rem 0.85rem;
+    background: var(--paper-2);
+    border: 1px solid var(--oyster);
+    border-radius: 10px;
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+  .bc-what-panel[hidden] {
+    display: none;
+  }
+  .bc-what-panel p {
+    margin: 0;
+  }
+  .bc-what-panel ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.3rem;
+  }
+  .bc-what-art {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .bc-what-art img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+    background: var(--paper);
+    border: 1px solid var(--oyster);
+    border-radius: 8px;
   }
   .bc-promise {
     display: grid;

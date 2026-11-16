@@ -9,7 +9,7 @@
 //   POST /ev                    analytics counter (allow-listed events, Analytics Engine)
 //   POST /stripe/webhook        Stripe → key + welcome email
 //   GET  /session/:id           the key for a finished checkout (the welcome page polls this)
-//   GET  /key/:key              is this key valid?
+//   GET  /key/:key              is this key valid? (and does it hold the Wild Florida add-on)
 //   GET|PUT /progress/:key      the reader's missions, field sign-offs, badges, start date
 //   POST /restore               {email} → re-send the link (same answer whether or not it exists)
 //   GET  /audio/:key/ch-NN.mp3  chapters 2–23 from R2, with Range support (and tm-NN.mp3, Training Manual lessons 2–15)
@@ -23,12 +23,12 @@
 //   POST /admin/send-opening    {limit?|dry?|to?} with x-admin-key: the opening email to the list, once each
 //   POST /admin/meta-test       {test_code} with x-admin-key: a pretend purchase to Meta's Test events
 //
-// KV (binding LR): k:<key> → {email, created, session, comp}; e:<email> → key;
+// KV (binding LR): k:<key> → {email, created, session, comp, wild}; e:<email> → key;
 // s:<session> → key; p:<key> → progress; rl:<email> → restore count (1 h TTL);
 // w:<email> → {created, page, src} (waitlist); rlw:<ip> → waitlist signups this hour
 import { EVENTS } from '../../src/lib/events.mjs';
 import { qrPng } from './qr.js';
-import { welcomeEmail, waitlistEmail, openingEmail, offerEmail, giftEmail, crewEmail } from './email.js';
+import { welcomeEmail, waitlistEmail, openingEmail, offerEmail, giftEmail, crewEmail, wildEmail } from './email.js';
 import { reportPurchase, reportCheckout, fbcFrom, srcFrom } from './meta.js';
 import { handleEmail } from './inbox.js';
 
@@ -59,19 +59,81 @@ function corsFor(request) {
 const json = (data, status, cors) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store', ...cors } });
 
 // ---------- keys ----------
-async function issueKey(env, { email, session = null, comp = false, note = '' }) {
+async function issueKey(env, { email, session = null, comp = false, note = '', wild = false }) {
   if (session) {
     const existing = await env.LR.get(`s:${session}`);
     if (existing) return { key: existing, created: false };
   }
   const key = newKey();
-  const rec = { email: normEmail(email), created: new Date().toISOString(), session, comp, note: clean(note, 80) };
+  const rec = { email: normEmail(email), created: new Date().toISOString(), session, comp, note: clean(note, 80), ...(wild ? { wild: true } : {}) };
   await env.LR.put(`k:${key}`, JSON.stringify(rec));
   if (rec.email) await env.LR.put(`e:${rec.email}`, key);
   if (session) await env.LR.put(`s:${session}`, key);
   return { key, created: true };
 }
 const getKey = async (env, key) => (KEY_RE.test(key) ? JSON.parse((await env.LR.get(`k:${key}`)) || 'null') : null);
+
+// ---------- Wild Florida, the add-on (2026-11-16) ----------
+// A key holds it when it was bought with the purchase (wild: true on the record), when it is a
+// comp, or when the key is older than WILD_SINCE: Wild Florida was part of the Experience for the
+// hours before it became an add-on, and nobody who bought then loses it.
+const hasWild = (env, rec) => !!rec && (!!rec.wild || !!rec.comp || (!!env.WILD_SINCE && String(rec.created || '') < env.WILD_SINCE));
+/** Every key from the same purchase as this one: the buyer's and the gift or crew keys. */
+async function boatKeys(env, key) {
+  const rec = await getKey(env, key);
+  const out = new Set([key]);
+  const base = String(rec?.session || '').split(':')[0];
+  if (/^cs_/.test(base)) {
+    const own = await env.LR.get(`s:${base}`);
+    if (own) out.add(own);
+    for (let i = 1; i <= 9; i++) {
+      const g = await env.LR.get(`s:${base}:gift${i > 1 ? i : ''}`);
+      if (!g) break;
+      out.add(g);
+    }
+  }
+  return [...out];
+}
+/** The $9.99 Wild Florida link bought on its own, by a family that already has the Experience.
+ *  The page sends the reader's key in client_reference_id ("wild_<key>"); the email is the
+ *  fallback. It unlocks every key from that purchase: one add-on covers the whole boat. */
+async function addWild(env, session, ctx) {
+  const done = await env.LR.get(`s:${session.id}`);
+  if (done) return done;
+  const email = normEmail(session.customer_details?.email || session.customer_email || '');
+  const m = /^wild_([A-Za-z0-9]{24})$/.exec(session.client_reference_id || '');
+  let key = m && (await getKey(env, m[1])) ? m[1] : null;
+  if (!key && email) key = await env.LR.get(`e:${email}`);
+  const cur = String(session.currency || 'usd').toLowerCase();
+  const paid = `${cur === 'usd' ? '$' : cur.toUpperCase() + ' '}${((Number(session.amount_total) || 0) / 100).toFixed(2)}`;
+  if (!key) {
+    // paid, but nothing to attach it to: tell the author so it can be fixed by hand or refunded
+    ctx?.waitUntil(
+      sendMail(env, NOTIFY, {
+        subject: 'Lostman’s River: Wild Florida add-on paid, NO KEY FOUND',
+        text: `${paid} · ${email || 'no email'} · Stripe session ${session.id}\nNo purchase key came with the checkout and none is stored under that email. Find their purchase and switch Wild Florida on by hand, or refund it.`,
+        html: `<p><strong>Wild Florida add-on paid, no key found.</strong></p><p>${paid} · ${email || 'no email'} · Stripe session ${session.id}</p><p>No purchase key came with the checkout and none is stored under that email. Find their purchase and switch Wild Florida on by hand, or refund it.</p>`,
+      }),
+    );
+    return null;
+  }
+  const keys = await boatKeys(env, key);
+  for (const k of keys) {
+    const rec = await getKey(env, k);
+    if (rec && !rec.wild) await env.LR.put(`k:${k}`, JSON.stringify({ ...rec, wild: true, wildSession: session.id }));
+  }
+  await env.LR.put(`s:${session.id}`, key);
+  env.EVENTS?.writeDataPoint({ indexes: ['wild_sale'], blobs: ['wild_sale', 'upgrade', 'upgrade', ''], doubles: [1, (Number(session.amount_total) || 0) / 100] });
+  if (email) ctx?.waitUntil(sendMail(env, email, wildEmail(keys.length)));
+  ctx?.waitUntil(
+    sendMail(env, NOTIFY, {
+      subject: `Lostman’s River sale: ${paid} (Wild Florida add-on)`,
+      text: `Wild Florida added to an earlier purchase.\n${paid} · ${email || 'no email on the session'} · ${keys.length} key${keys.length > 1 ? 's' : ''} unlocked · Stripe session ${session.id}`,
+      html: `<p><strong>Wild Florida added to an earlier purchase.</strong></p><p>${paid} · ${email || 'no email on the session'} · ${keys.length} key${keys.length > 1 ? 's' : ''} unlocked · Stripe session ${session.id}</p>`,
+    }),
+  );
+  return key;
+}
 
 const sendWelcome = (env, email, key, opts) => sendMail(env, email, welcomeEmail(key, opts));
 
@@ -116,23 +178,29 @@ async function verifyStripe(request, secret) {
   return ok ? JSON.parse(body) : null;
 }
 
-/** How many gift Experiences came with this checkout (0 for a plain single). Reads the line items
+/** What came with this checkout beyond the buyer's own Experience: how many gift Experiences (0
+ *  for a plain single) and whether the Wild Florida add-on is in it. Reads the line items
  *  from Stripe: a $24.99 Experience counts once per unit, the $34.99 pair twice, the $9.99 add-on
  *  once; everything beyond the buyer's own is a gift. Prices are matched in USD cents on the price
- *  itself, so Adaptive Pricing (Canadians paying CAD) doesn't confuse it. Capped at 5. */
-async function giftCount(env, session) {
-  const paid = await paidGifts(env, session);
+ *  itself, so Adaptive Pricing (Canadians paying CAD) doesn't confuse it. Capped at 5. The Wild
+ *  Florida add-on (WILD_PRODUCT; links WILD_LINK and WILD_CREW_LINK) is not a reader: it is never
+ *  counted as a gift, and it marks every key of the purchase. */
+async function orderOf(env, session) {
+  const { gifts: paid, wild } = await paidOrder(env, session);
   // Holiday "buy one, give one" (John, 2026-11-16): until BOGO_UNTIL a purchase that paid for one
   // reader also gets one Experience to give. A pair or a crew already has its extra keys.
   const bogo = !!env.BOGO_UNTIL && Date.now() < Date.parse(env.BOGO_UNTIL) && (Number(session.amount_subtotal) || 0) > 0;
-  return paid === 0 && bogo ? 1 : paid;
+  return { gifts: paid === 0 && bogo ? 1 : paid, wild };
 }
-async function paidGifts(env, session) {
+async function paidOrder(env, session) {
   const sub = Number(session.amount_subtotal) || 0;
   const usd = String(session.currency || 'usd').toLowerCase() === 'usd';
-  const isPairLink = !!env.PAIR_LINK && session.payment_link === env.PAIR_LINK;
-  const isCrewLink = !!env.CREW_LINK && session.payment_link === env.CREW_LINK;
-  if (env.STRIPE_SECRET_KEY && session.id && (isPairLink || isCrewLink || !usd || sub > 2499)) {
+  const link = session.payment_link || '';
+  const isPairLink = !!env.PAIR_LINK && link === env.PAIR_LINK;
+  const isCrewLink = !!link && [env.CREW_LINK, env.WILD_CREW_LINK].filter(Boolean).includes(link);
+  const wildLink = !!link && [env.WILD_LINK, env.WILD_CREW_LINK].filter(Boolean).includes(link);
+  let wild = wildLink;
+  if (env.STRIPE_SECRET_KEY && session.id && (isPairLink || isCrewLink || wildLink || !usd || sub > 2499)) {
     try {
       const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${session.id}/line_items?limit=20`, { headers: { authorization: `Bearer ${env.STRIPE_SECRET_KEY}` } });
       if (r.ok) {
@@ -144,18 +212,22 @@ async function paidGifts(env, session) {
           // also $39.99 and must stay one); $34.99 pair = two; everything else (the $29.99 and old
           // $24.99 single, the $9.99 add-on) = one each
           const prod = typeof li.price?.product === 'string' ? li.price.product : li.price?.product?.id;
+          if (env.WILD_PRODUCT && prod === env.WILD_PRODUCT) {
+            wild = true; // the add-on: not a reader
+            continue;
+          }
           const crew = unit === 3999 && (env.CREW_PRODUCT ? prod === env.CREW_PRODUCT : isCrewLink);
           n += crew ? 5 * q : unit === 3499 ? 2 * q : q;
         }
-        return Math.max(0, Math.min(9, n - 1));
+        return { gifts: Math.max(0, Math.min(9, n - 1)), wild };
       }
     } catch {}
   }
-  // Stripe unreachable: fall back on the link and the USD subtotal
-  if (isCrewLink) return 4;
-  if (isPairLink) return 1;
-  if (usd && sub >= 3498) return 1;
-  return 0;
+  // Stripe unreachable: fall back on the link and the USD subtotal (less the add-on's $9.99)
+  if (isCrewLink) return { gifts: 4, wild };
+  if (isPairLink) return { gifts: 1, wild };
+  if (usd && sub - (wild ? 999 : 0) >= 3498) return { gifts: 1, wild };
+  return { gifts: 0, wild };
 }
 
 /** A US billing address in South Carolina: the state when a wallet gives one, else a 290–299 ZIP. */
@@ -169,33 +241,37 @@ export function isSouthCarolina(a) {
 
 async function fulfil(env, session, ctx) {
   if (!session || session.payment_status !== 'paid') return null;
+  // Wild Florida bought on its own, for a purchase that already exists: no new key
+  if (env.WILD_ADD_LINK && session.payment_link === env.WILD_ADD_LINK) return addWild(env, session, ctx);
   const email = session.customer_details?.email || session.customer_email || '';
   // Gift Experiences: "Keep one, give one" ($34.99), the $9.99 "gift a second Experience" add-on
   // at checkout, or a quantity of 2+. Gift keys are issued first, so they already exist by the
   // time the welcome page sees the buyer's own key. They carry no email (restore by email finds
   // the buyer's key); each gift email goes to the buyer to pass on.
-  const gifts = await giftCount(env, session);
+  // the Wild Florida add-on covers every seat in the boat: the buyer's key and each gift or crew key
+  const { gifts, wild } = await orderOf(env, session);
   const pair = gifts > 0;
   const giftKeys = [];
-  for (let i = 0; i < gifts; i++) giftKeys.push(await issueKey(env, { email: '', session: `${session.id}:gift${i ? i + 1 : ''}`, note: 'gift' }));
-  const { key, created } = await issueKey(env, { email, session: session.id });
+  for (let i = 0; i < gifts; i++) giftKeys.push(await issueKey(env, { email: '', session: `${session.id}:gift${i ? i + 1 : ''}`, note: 'gift', wild }));
+  const { key, created } = await issueKey(env, { email, session: session.id, wild });
   // one email for the whole crew; the single-gift email for an older one-extra purchase
   const freshGifts = giftKeys.filter((g) => g.created).map((g) => g.key);
   if (freshGifts.length && email)
     ctx?.waitUntil(sendMail(env, email, giftKeys.length > 1 ? crewEmail(giftKeys.map((g) => g.key)) : giftEmail(freshGifts[0])));
-  if (created && email) await sendWelcome(env, email, key, { gift: giftKeys.length === 1 });
+  if (created && email) await sendWelcome(env, email, key, { gift: giftKeys.length === 1, wild });
   if (created) {
     // count the sale under the campaign that brought it (the code rode through Stripe in
     // client_reference_id); a Meta click with no code counts as "meta", the rest as "direct"
     const ref = session.client_reference_id || '';
     const src = srcFrom(ref) || (fbcFrom(ref) ? 'meta' : 'direct');
     env.EVENTS?.writeDataPoint({ indexes: ['purchase'], blobs: ['purchase', src, src, ''], doubles: [1, (Number(session.amount_total) || 0) / 100] });
+    if (wild) env.EVENTS?.writeDataPoint({ indexes: ['wild_sale'], blobs: ['wild_sale', src, src, ''], doubles: [1, 9.99] });
     // and tell the author: one short email per sale (the buyer's address is the seller's to see)
     // the amount in the currency the buyer paid (Canadians pay CAD through Adaptive Pricing)
     const cur = String(session.currency || 'usd').toLowerCase();
     const usd = `${cur === 'usd' ? '$' : cur === 'cad' ? 'CA$' : cur.toUpperCase() + ' '}${((Number(session.amount_total) || 0) / 100).toFixed(2)}`;
     const when = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
-    const line = `${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET${gifts >= 4 ? ` · FULL CREW (${gifts + 1} readers)` : pair ? ` · PLUS ${gifts} GIFT EXPERIENCE${gifts > 1 ? 'S' : ''} (${gifts + 1} keys)` : ''}`;
+    const line = `${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET${gifts >= 4 ? ` · FULL CREW (${gifts + 1} readers)` : pair ? ` · PLUS ${gifts} GIFT EXPERIENCE${gifts > 1 ? 'S' : ''} (${gifts + 1} keys)` : ''}${wild ? ' · + WILD FLORIDA ADD-ON' : ''}`;
     // South Carolina buyers: checkout no longer collects tax (2026-11-12, John: no address forms;
     // he remits SC sales tax himself), so flag them from the ZIP or wallet address Stripe has
     const sc = isSouthCarolina(session.customer_details?.address);
@@ -331,12 +407,13 @@ export default {
           if (!g) break;
           gifts.push(g);
         }
-      return key ? json(gifts.length ? { key, gift: gifts[0], gifts } : { key }, 200, cors) : json({ pending: true }, 202, cors);
+      const wild = key && hasWild(env, await getKey(env, key)) ? { wild: true } : {};
+      return key ? json(gifts.length ? { key, gift: gifts[0], gifts, ...wild } : { key, ...wild }, 200, cors) : json({ pending: true }, 202, cors);
     }
 
     if ((m = /^\/key\/([A-Za-z0-9]+)$/.exec(path))) {
       const rec = await getKey(env, m[1]);
-      return rec ? json({ ok: true, since: rec.created.slice(0, 10) }, 200, cors) : json({ ok: false }, 404, cors);
+      return rec ? json({ ok: true, since: rec.created.slice(0, 10), wild: hasWild(env, rec) }, 200, cors) : json({ ok: false }, 404, cors);
     }
 
     if ((m = /^\/progress\/([A-Za-z0-9]+)$/.exec(path))) {
@@ -378,10 +455,10 @@ export default {
       await env.LR.put(`rl:${email}`, String(n + 1), { expirationTtl: 3600 });
       const key = await env.LR.get(`e:${email}`);
       if (key) {
-        await sendWelcome(env, email, key, { resend: true });
+        const rec = await getKey(env, key);
+        await sendWelcome(env, email, key, { resend: true, wild: !!rec?.wild });
         // the Experience(s) that came with that purchase to give away (buy one, give one; a crew):
         // they carry no email of their own, so this is the only way to get a lost one back
-        const rec = await getKey(env, key);
         const gifts = [];
         if (rec?.session)
           for (let i = 1; i <= 9; i++) {

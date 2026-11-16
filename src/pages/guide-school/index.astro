@@ -12,7 +12,8 @@ import rigs from '../../../data/rigs.json';
 import boat from '../../../data/boat-school.json';
 import keeper from '../../../data/keeper-game.json';
 import manual from '../../../data/manual.json';
-import { wildCount, wildTitle } from '@lib/wild';
+import { wildCount, wildTitle, wildStarters } from '@lib/wild';
+import { wild } from '@lib/buy';
 
 const hero = artImage('tiles', 'guide-school');
 const manualArt = artImage('manual', 'cover');
@@ -87,9 +88,9 @@ const courses = [
     <a class="gs-listen gs-wild" href={url('/wild-florida/')} data-track="tile_click" data-track-tile="school-wild">
       <span class="gs-listen-art art">{wildArt && <Image src={wildArt} alt="" width={300} sizes="84px" loading="lazy" />}</span>
       <span class="gs-listen-text">
-        <span class="course-kind mono">Field school · {wildCount} animals</span>
+        <span class="course-kind mono">Field school · {wildCount} animals · add-on</span>
         <span class="course-title">{wildTitle}</span>
-        <span class="small">Uncle Dan teaches you to name Florida’s fish, sharks, gators, snakes and birds on sight. Six ways to play, a logbook and a certificate. The first dozen are free.</span>
+        <span class="small">Uncle Dan teaches you to name Florida’s fish, sharks, gators, snakes and birds on sight. Six ways to play, a logbook and a certificate. The first {wildStarters} are free; the full field school is an add-on{wild ? ` (${wild.price})` : ''}.</span>
       </span>
     </a>
 

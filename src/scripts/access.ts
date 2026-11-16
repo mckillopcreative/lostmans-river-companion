@@ -22,8 +22,42 @@ export function setKey(k: string) {
 export function clearKey() {
   try {
     localStorage.removeItem(KEY);
+    localStorage.removeItem(WILD);
   } catch {}
-  document.documentElement.classList.remove('has-key');
+  document.documentElement.classList.remove('has-key', 'has-wild');
+}
+
+// The Wild Florida add-on (2026-11-16): whether this device's key holds it. The Worker decides
+// (GET /key/<key> → wild); the answer is remembered here so the page paints unlocked at once
+// (the layout adds html.has-wild before first paint).
+const WILD = 'lr-wild-ok';
+export function setWild(on: boolean) {
+  try {
+    if (on) localStorage.setItem(WILD, '1');
+    else localStorage.removeItem(WILD);
+  } catch {}
+  document.documentElement.classList.toggle('has-wild', on);
+}
+export function hasWild(): boolean {
+  try {
+    return !!getKey() && localStorage.getItem(WILD) === '1';
+  } catch {
+    return false;
+  }
+}
+/** Ask the Worker, remember the answer. Offline or an error: keep what this device already knew. */
+export async function syncWild(): Promise<boolean> {
+  const k = getKey();
+  if (!k) return false;
+  try {
+    const r = await fetch(`${API}/key/${k}`);
+    if (r.ok) {
+      const on = !!(await r.json()).wild;
+      setWild(on);
+      return on;
+    }
+  } catch {}
+  return hasWild();
 }
 export const isKey = (k: string) => KEY_RE.test(k);
 

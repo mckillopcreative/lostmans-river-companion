@@ -96,7 +96,11 @@ const isActive = (href: string) => here.startsWith(url(href));
       document.documentElement.classList.add('js');
       // a purchase key on this device: hide the Buy prompts (src/scripts/access.ts)
       try {
-        if (/^[A-HJ-NP-Za-km-z2-9]{24}$/.test(localStorage.getItem('lr-key') || '')) document.documentElement.classList.add('has-key');
+        if (/^[A-HJ-NP-Za-km-z2-9]{24}$/.test(localStorage.getItem('lr-key') || '')) {
+          document.documentElement.classList.add('has-key');
+          // and the Wild Florida add-on, if that key holds it
+          if (localStorage.getItem('lr-wild-ok') === '1') document.documentElement.classList.add('has-wild');
+        }
       } catch {}
       // Apply a saved theme before first paint to avoid a flash.
       try {

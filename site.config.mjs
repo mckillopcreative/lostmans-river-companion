@@ -50,7 +50,19 @@ export default {
     // Since 2026-11-15 nobody is sent straight to this link from the page: it is the sheet's
     // "Full Boat bonus" toggle. `tag` is the small label on that toggle (John, 2026-11-13).
     // Delete the tag (or set it to '') when the holidays are over.
-    crew: { url: 'https://buy.stripe.com/eVqdRbdrZgW58Wbgw893y04', price: '$39.99', size: 5, tag: 'Holiday Special' } },
+    crew: { url: 'https://buy.stripe.com/eVqdRbdrZgW58Wbgw893y04', price: '$39.99', size: 5, tag: 'Holiday Special' },
+    // Wild Florida, the add-on (John, 2026-11-16): a second switch on the confirm sheet, with a
+    // "What's this?" drop-down. One price covers every seat in the boat: the buyer's key, the
+    // buy-one-give-one key and a full crew all get it. `url` = one reader + Wild Florida ($34.98),
+    // `crewUrl` = the Full Crew + Wild Florida ($49.98), `addUrl` = Wild Florida alone, for a
+    // family that already has the Experience (the Wild Florida page sends their key with it).
+    // The Worker knows the same three links and the product (worker/wrangler.toml WILD_*).
+    wild: {
+      price: '$9.99',
+      url: 'https://buy.stripe.com/6oU8wRew30X70pFfs493y05',
+      crewUrl: 'https://buy.stripe.com/00w14pcnVfS14FV3Jm93y06',
+      addUrl: 'https://buy.stripe.com/bJe14pew3gW55JZcfS93y07',
+    } },
 
   /** The purchase gate (docs/LAUNCH-FLOW.md). While false, missions 2–23 stay open and chapters
    *  2–23 show no player, so nobody can buy into locked content. Live from 2026-10-31 (built as if

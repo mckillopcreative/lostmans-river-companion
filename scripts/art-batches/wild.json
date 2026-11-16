@@ -51,6 +51,11 @@
     },
     {
       "group": "plate",
+      "out": "private/art-pack/assets/art/wild/coral-snake.png",
+      "line": "an eastern coral snake (Micrurus fulvius): a slender, glossy snake with a BLACK snout and complete rings around the body in this exact order: wide red ring, narrow yellow ring, wide black ring, narrow yellow ring, wide red ring, so that every red ring touches yellow rings on both sides and red never touches black."
+    },
+    {
+      "group": "plate",
       "out": "private/art-pack/assets/art/wild/pelican.png",
       "line": "a brown pelican (Pelecanus occidentalis) standing on a dock piling in side view: a large gray-brown seabird with a very long bill and a big throat pouch, a white and pale yellow head, a chestnut-brown back of the neck, and webbed feet."
     },
@@ -73,6 +78,21 @@
       "group": "plate",
       "out": "private/art-pack/assets/art/wild/dolphin.png",
       "line": "a bottlenose dolphin (Tursiops truncatus) leaping in side view: a sleek, muscular gray marine mammal with a paler belly, a short rounded beak with a smiling mouth line, a curved (falcate) dorsal fin, and horizontal tail flukes."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/man-o-war.png",
+      "line": "a Portuguese man-o’-war (Physalia physalis) floating at the sea surface, seen from the side with the waterline shown: a translucent blue and purple gas-filled float shaped like a balloon with a pink-tinged crest along the top, above the water, and a mass of long, thin, dark blue trailing tentacles hanging down below the surface."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/octopus.png",
+      "line": "a common octopus (Octopus vulgaris) on a rocky seabed: a soft-bodied animal with a rounded mottled reddish-brown bag-like body, raised eyes with horizontal pupils, and eight long curling arms lined with two rows of pale suckers."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/black-widow.png",
+      "line": "a female southern black widow spider (Latrodectus mactans) hanging upside down in an irregular web so that her underside faces the viewer: a glossy jet-black spider with a large, round, shiny abdomen marked on its underside with a bright red hourglass shape, and long slender black legs."
     },
     {
       "group": "plate",
@@ -151,13 +171,23 @@
     },
     {
       "group": "plate",
-      "out": "private/art-pack/assets/art/wild/water-snake.png",
-      "line": "a banded water snake (Nerodia fasciata): a medium-sized, moderately slender brown snake with dark reddish-brown crossbands along its body, a narrow head barely wider than the neck, round pupils and dark vertical lines on the lip scales, on a wet bank."
+      "out": "private/art-pack/assets/art/wild/oceanic-whitetip.png",
+      "line": "an oceanic whitetip shark (Carcharhinus longimanus) in exact side view, head to the left: a stocky bronze-gray shark with a white belly, a short blunt snout, and very long, broad, rounded paddle-like pectoral fins and a tall rounded first dorsal fin, each with mottled white tips."
     },
     {
       "group": "plate",
-      "out": "private/art-pack/assets/art/wild/coral-snake.png",
-      "line": "an eastern coral snake (Micrurus fulvius): a slender, glossy snake with a BLACK snout and complete rings around the body in this exact order: wide red ring, narrow yellow ring, wide black ring, narrow yellow ring, wide red ring, so that every red ring touches yellow rings on both sides and red never touches black."
+      "out": "private/art-pack/assets/art/wild/sand-tiger.png",
+      "line": "a sand tiger shark (Carcharias taurus) in exact side view, head to the left: a bulky light brown shark with scattered darker reddish-brown spots, a pointed flattened snout, a mouth held slightly open showing long, narrow, ragged protruding teeth, small eyes, and two dorsal fins of about equal size set far back."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/cownose-ray.png",
+      "line": "a cownose ray (Rhinoptera bonasus) seen from above and slightly to the side, swimming: a plain golden-brown ray with pointed wing-like fins, a distinctly notched, squared-off double-lobed forehead like a cow’s nose, a whitish underside and a long thin tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/water-snake.png",
+      "line": "a banded water snake (Nerodia fasciata): a medium-sized, moderately slender brown snake with dark reddish-brown crossbands along its body, a narrow head barely wider than the neck, round pupils and dark vertical lines on the lip scales, on a wet bank."
     },
     {
       "group": "plate",
@@ -258,6 +288,86 @@
       "group": "plate",
       "out": "private/art-pack/assets/art/wild/softshell-turtle.png",
       "line": "a Florida softshell turtle (Apalone ferox) in side-and-above view at the water’s edge: a turtle with a flat, leathery, pancake-like olive-brown shell with no hard scutes, a long neck, and a long tubular snorkel-like snout."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/kingsnake.png",
+      "line": "a Florida kingsnake (Lampropeltis getula floridana) on sandy ground: a sturdy, medium-large snake with smooth glossy scales, dark brown to black with many thin pale yellowish crossbands, each dark scale having a pale base so the whole snake looks speckled."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/coachwhip.png",
+      "line": "an eastern coachwhip (Masticophis flagellum) stretched across sandy scrub, head raised: a very long, slender snake that is black on the head and front third, fading gradually to light tan on the rear half and tail, with large scales on the tail that look like a braided whip, and large eyes."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/caiman.png",
+      "line": "a spectacled caiman (Caiman crocodilus) in side view on a canal bank, head to the left: a small crocodilian, olive-brown with dark crossbands on the tail, a moderately broad snout, and a distinct curved bony ridge across the snout between the front of the eyes like the bridge of a pair of spectacles."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/brown-anole.png",
+      "line": "a brown anole (Anolis sagrei) on a concrete wall edge in side view: a small brown lizard with a pale pattern of chevrons and a light stripe down the back, a short snout, and an extended orange-red throat fan (dewlap) with a yellow edge."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/tegu.png",
+      "line": "an Argentine black and white tegu (Salvator merianae) walking in side view, head to the left: a large, heavy-bodied lizard with beaded skin in bold black and white bands and spots, a thick muscular tail, strong legs, a pointed head and a pink forked tongue flicking out."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/glass-lizard.png",
+      "line": "an eastern glass lizard (Ophisaurus ventralis) on grass: a long, legless, very shiny lizard that looks like a snake, tan-brown with dark stripes along the sides and a greenish tint, a groove along each side of the body, and a lizard-like head with visible eyelids and an ear opening."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/skink.png",
+      "line": "a young southeastern five-lined skink (Plestiodon inexpectatus) on a log in side view: a small, sleek, very glossy black lizard with five narrow cream-yellow stripes running from head to tail, and a brilliant electric blue tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/gecko.png",
+      "line": "a Mediterranean house gecko (Hemidactylus turcicus) clinging to a pale stucco wall, seen from above: a small, pale pinkish-tan lizard with bumpy skin and darker mottling, large lidless eyes with vertical pupils, and wide, flattened sticky toe pads on all four feet."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/snapping-turtle.png",
+      "line": "a Florida snapping turtle (Chelydra serpentina osceola) on a muddy bank in side view, head to the left: a freshwater turtle with a rough dark brown shell, a large head with a hooked beak, a thick neck with pointed bumps, heavy clawed legs, and a long thick tail with a saw-toothed ridge along the top."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/alligator-snapper.png",
+      "line": "an alligator snapping turtle (Macrochelys temminckii) on a river bottom in side view with its mouth open, head to the left: a huge, prehistoric-looking dark brown turtle with three rows of tall, pointed, spike-like ridges running down its shell, an enormous head with a strongly hooked beak, and a small pink worm-like lure visible on the tongue inside the open mouth."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/box-turtle.png",
+      "line": "a Florida box turtle (Terrapene bauri) walking on leaf litter in side view, head to the left: a small land turtle with a high, domed dark brown-black shell marked with bright yellow radiating streaks, and two yellow stripes on the side of the head."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/leatherback.png",
+      "line": "a leatherback sea turtle (Dermochelys coriacea) swimming in side view, head to the left: an enormous sea turtle with no hard scaly shell, covered instead in smooth dark blue-black leathery skin with white spots and seven long raised ridges running lengthwise down its back, and very long front flippers."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/treefrog.png",
+      "line": "a green treefrog (Dryophytes cinereus) clinging to a cattail stem in side view: a small, slender, smooth-skinned bright green frog with a clean white stripe running along each side from the lip to the hind leg, a few tiny gold spots, and round sticky toe pads."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/cuban-treefrog.png",
+      "line": "a Cuban treefrog (Osteopilus septentrionalis) clinging to a window frame in side view: a large, stocky treefrog with rough, warty pale tan-gray skin with faint darker blotches, very large bulging eyes, and very large round toe pads."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/cane-toad.png",
+      "line": "a cane toad (Rhinella marina) sitting on a patio in side view: a very large, heavy, warty tan-brown toad with a pale belly, bony ridges over the eyes, and a large, swollen, triangular gland behind each eye angling down onto the shoulder."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/pig-frog.png",
+      "line": "a pig frog (Lithobates grylio) sitting on a lily pad in side view: a large olive-green to brown frog with scattered dark spots, a rather pointed snout, a large round eardrum behind the eye, and big hind feet webbed all the way to the tips of the toes."
     },
     {
       "group": "detail",
@@ -451,6 +561,81 @@
     },
     {
       "group": "plate",
+      "out": "private/art-pack/assets/art/wild/blue-marlin.png",
+      "line": "an Atlantic blue marlin (Makaira nigricans) in exact side view, head to the left: a massive billfish with a long, round, spear-like bill, a cobalt-blue back, silver-white belly with faint pale blue vertical stripes, a low, pointed first dorsal fin that is highest at the front and NOT a sail, and a tall crescent tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/swordfish.png",
+      "line": "a swordfish (Xiphias gladius) in exact side view, head to the left: a large, stout, dark bronze-black fish with a pale belly, a very long, flat, broad sword-like bill, a very large eye, a tall curved crescent first dorsal fin, no pelvic fins, and a wide crescent tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/yellowfin-tuna.png",
+      "line": "a yellowfin tuna (Thunnus albacares) in exact side view, head to the left: a large torpedo-shaped tuna with a dark metallic blue back, a golden-yellow band along the side, a silver belly, bright yellow finlets, and very long, sickle-shaped bright yellow second dorsal and anal fins."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/red-grouper.png",
+      "line": "a red grouper (Epinephelus morio) in exact side view, head to the left, mouth slightly open: a stout, robust reddish-brown grouper with scattered pale whitish blotches, small dark specks around the eye, a squared-off tail, and a bright scarlet-orange lining visible inside the mouth."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/mutton-snapper.png",
+      "line": "a mutton snapper (Lutjanus analis) in exact side view, head to the left: an olive-backed snapper with rosy-red lower sides and reddish fins, a single small black spot on the upper side just below the soft dorsal fin, thin blue lines on the cheek below the eye, and a pointed anal fin."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/flying-fish.png",
+      "line": "an Atlantic flying fish gliding just above the wave tops, seen from the side and slightly above, head to the left: a slim fish with a dark blue back and silver belly, enormously long, transparent wing-like pectoral fins spread wide, a deeply forked tail with a longer lower lobe, and a few drops of water trailing."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/needlefish.png",
+      "line": "an Atlantic needlefish (Strongylura marina) in exact side view at the water’s surface, head to the left: an extremely long, slender, pencil-thin silvery-green fish with very long, narrow beak-like jaws lined with tiny needle teeth, and small fins set far back near the tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/remora.png",
+      "line": "a remora or sharksucker (Echeneis naucrates) in side view tilted slightly so the top of the head shows, head to the left: a slim, elongated gray fish with a dark stripe along the side edged in white, and a large, flat, oval ridged suction disc on top of its head."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/moray-eel.png",
+      "line": "a green moray eel (Gymnothorax funebris) emerging from a crevice in a coral reef, the front half of its body showing: a thick, muscular, uniformly yellowish-green eel with no pectoral fins, a continuous fin along the back, small eyes, and its mouth held open showing pointed teeth."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/parrotfish.png",
+      "line": "a stoplight parrotfish, adult male (Sparisoma viride) in exact side view, head to the left: a stout, large-scaled reef fish, bright emerald green and turquoise with pink and yellow markings on the head and fins, a yellow spot at the gill cover and tail base, and teeth fused into a pale parrot-like beak."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/angelfish.png",
+      "line": "a queen angelfish (Holacanthus ciliaris) in exact side view, head to the left: a very flat, disc-shaped reef fish, electric blue and bright yellow, with a round dark blue crown spot ringed in bright blue on the forehead, a yellow tail, and long trailing tips on the dorsal and anal fins."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/porcupinefish.png",
+      "line": "a porcupinefish (Diodon hystrix) inflated into a ball, in side view, head to the left: a round, pale tan fish with small dark spots, very large round eyes, a small beak-like mouth, and long sharp spines standing straight out all over its body."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/snakehead.png",
+      "line": "a bullseye snakehead (Channa marulius) in exact side view, head to the left: a long, cylindrical dark olive-brown freshwater fish with a flattened snake-like head, a very long dorsal fin and a long anal fin running along most of the body, pale spots on the sides, and a black eyespot ringed in bright orange at the upper base of the tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/channel-catfish.png",
+      "line": "a channel catfish (Ictalurus punctatus) in exact side view, head to the left: a smooth-skinned, slender blue-gray freshwater catfish with a white belly, scattered small dark spots on the sides, long dark whisker-like barbels around the mouth, and a deeply forked tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/sturgeon.png",
+      "line": "a Gulf sturgeon (Acipenser oxyrinchus desotoi) in exact side view, head to the left: a long, primitive brownish-gray fish with five rows of bony armor plates (scutes) along the body, a long flattened pointed snout with four short whisker-like barbels underneath ahead of the mouth, and a shark-like tail with a longer upper lobe."
+    },
+    {
+      "group": "plate",
       "out": "private/art-pack/assets/art/wild/white-pelican.png",
       "line": "an American white pelican (Pelecanus erythrorhynchos) floating on calm water in side view: a very large, bright white pelican with a long orange bill and pouch, orange legs, and black flight feathers showing at the wingtip."
     },
@@ -546,6 +731,76 @@
     },
     {
       "group": "plate",
+      "out": "private/art-pack/assets/art/wild/great-horned-owl.png",
+      "line": "a great horned owl (Bubo virginianus) perched on a pine branch facing the viewer: a large, heavy brown-mottled owl with two prominent feather ear tufts like horns, large round yellow eyes, a rusty-orange face outlined in black, a white throat patch and fine horizontal bars on the belly."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/burrowing-owl.png",
+      "line": "a burrowing owl (Athene cunicularia) standing upright on sandy ground beside the entrance of a burrow: a small, round-headed brown owl with white spots, no ear tufts, bright yellow eyes with white eyebrows, a barred pale belly, and conspicuously long, bare legs."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/wild-turkey.png",
+      "line": "a male wild turkey, Osceola subspecies (Meleagris gallopavo osceola) strutting in side view with its tail fanned: a very large, dark bronze-iridescent ground bird with a bare, wrinkled blue and red head and neck, a red wattle, a hair-like beard hanging from the chest, dark wings with narrow white bars, and a broad fan-shaped tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/mockingbird.png",
+      "line": "a northern mockingbird (Mimus polyglottos) perched on a fence post in side view with one wing partly raised: a slim, pale gray songbird with a paler whitish belly, a long dark tail with white outer feathers, dark wings with two white bars and a large white patch, and a thin dark bill."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/cardinal.png",
+      "line": "a male northern cardinal (Cardinalis cardinalis) perched on a branch in side view: a songbird that is brilliant red all over, with a tall pointed crest, a black mask around the eyes and chin, and a short, thick, cone-shaped orange-red bill."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/woodpecker.png",
+      "line": "a pileated woodpecker (Dryocopus pileatus) clinging upright to a tree trunk in side view: a crow-sized black woodpecker with a tall, pointed flaming red crest, a white stripe running from the bill down the side of the neck, a white chin, and a long chisel-like gray bill."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/hummingbird.png",
+      "line": "a male ruby-throated hummingbird (Archilochus colubris) hovering at a red tubular flower in side view: a tiny bird with a metallic emerald-green back and crown, a brilliant ruby-red throat, a white chest, a long needle-thin black bill, and blurred wings."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/kite.png",
+      "line": "a swallow-tailed kite (Elanoides forficatus) soaring, seen from below and the side: a slim, graceful raptor with a pure white head and underparts, long narrow pointed black wings with white linings, and a very long, deeply forked black scissor-like tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/caracara.png",
+      "line": "a crested caracara (Caracara plancus) standing on a fence post in side view: a large, long-legged raptor with a black cap and shaggy crest, a white neck and cheeks, bare orange-red skin on the face, a pale blue-gray hooked bill, a dark brown-black body, finely barred chest, and long yellow legs."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/gallinule.png",
+      "line": "a purple gallinule (Porphyrio martinica) walking across lily pads in side view: a chicken-sized marsh bird with a brilliant purple-blue head, neck and belly, a glossy green back, a pale blue shield on the forehead, a red bill with a yellow tip, and very long yellow legs and toes."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/scrub-jay.png",
+      "line": "a Florida scrub-jay (Aphelocoma coerulescens) perched on top of a scrub oak in side view: a slim jay with a blue head, wings and long tail, a pale gray back and belly, a whitish forehead and throat with a faint blue-gray necklace, NO crest, and a stout black bill."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/oystercatcher.png",
+      "line": "an American oystercatcher (Haematopus palliatus) standing on an oyster bar in side view: a stocky shorebird with a black head and neck, a dark brown back, a white belly, a long, straight, bright orange-red bill, a yellow eye with a red ring, and pale pink legs."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/black-vulture.png",
+      "line": "a black vulture (Coragyps atratus) standing on a fence post with wings partly spread, side view: a large all-black bird with a bald, wrinkled dark gray head and neck, a short squared tail, a thin dark bill with a pale tip, and whitish patches at the tips of the wings."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/green-heron.png",
+      "line": "a green heron (Butorides virescens) crouched on a mangrove root at the water’s edge in side view: a small, stocky, short-legged heron with a dark glossy green-black cap and back, a rich chestnut neck and chest, a dagger-like dark bill, and yellow-orange legs."
+    },
+    {
+      "group": "plate",
       "out": "private/art-pack/assets/art/wild/panther.png",
       "line": "a Florida panther (Puma concolor coryi) walking through sawgrass and palmetto in side view: a large, lean, plain tawny-tan cat with no spots, a pale muzzle and chest, small rounded ears, and a very long thick tail with a black tip."
     },
@@ -581,6 +836,101 @@
     },
     {
       "group": "plate",
+      "out": "private/art-pack/assets/art/wild/opossum.png",
+      "line": "a Virginia opossum (Didelphis virginiana) walking along a fence rail in side view, head to the left: a cat-sized mammal with shaggy gray fur, a long pointed white face with a pink nose and black eyes, thin black ears, and a long, bare, scaly pinkish tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/deer.png",
+      "line": "a white-tailed deer buck (Odocoileus virginianus) bounding away in side view with its tail raised: a slender tan-brown deer with a white belly and throat, a set of forward-curving antlers, and a tail held straight up showing its bright white underside like a flag."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/wild-hog.png",
+      "line": "a feral hog (Sus scrofa) rooting in the ground in side view, head to the left: a lean, powerful dark brown-black pig with coarse bristly hair, a ridge of longer bristles along the spine, a long narrow snout, small eyes, upright ears, short curved tusks at the mouth and a straight tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/coyote.png",
+      "line": "a coyote (Canis latrans) trotting in side view, head to the left: a lean, medium-sized wild dog with grizzled gray-tan fur, rusty legs and ears, large upright pointed ears, a narrow pointed muzzle, yellow eyes, and a bushy black-tipped tail carried low."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/fox.png",
+      "line": "a gray fox (Urocyon cinereoargenteus) standing on a fallen log in side view, head to the left: a small, cat-sized fox with a grizzled salt-and-pepper gray back, rusty-orange fur on the neck, sides and legs, a white throat, pointed ears, and a long bushy tail with a black stripe along the top and a black tip."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/marsh-rabbit.png",
+      "line": "a marsh rabbit (Sylvilagus palustris) sitting at the edge of marsh grass and water in side view: a small, dark chocolate-brown rabbit with short rounded ears, small feet, dark eyes, and a small dingy gray-brown tail with no white cotton-ball underside."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/bat.png",
+      "line": "a Brazilian free-tailed bat (Tadarida brasiliensis) in flight seen from the side and slightly below, wings spread: a small bat with dark brown velvety fur, broad forward-pointing ears, narrow leathery dark wings, and a short tail that extends beyond the tail membrane."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/right-whale.png",
+      "line": "a North Atlantic right whale (Eubalaena glacialis) at the surface in side view, head to the left, with a V-shaped spout: an enormous, stocky black whale with NO dorsal fin, a huge head with rough whitish-gray patches of thickened skin (callosities) on top and along the jaw, a strongly arched mouth line, and broad paddle-shaped flippers."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/jellyfish.png",
+      "line": "a moon jellyfish (Aurelia aurita) drifting in blue-green water, seen from the side and slightly above: a translucent, pale saucer-shaped bell with a fringe of short fine tentacles around the edge and four pale pink horseshoe-shaped rings visible in the centre like a four-leaf clover."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/squid.png",
+      "line": "a Caribbean reef squid (Sepioteuthis sepioidea) hovering in clear water in side view, arms to the left: a torpedo-shaped squid with a mottled brown, green and iridescent body, undulating fins running along almost the full length of each side, very large eyes, and a bunch of short arms held together and pointing forward."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/sea-star.png",
+      "line": "a red cushion sea star (Oreaster reticulatus) on a seagrass bed seen from above: a thick, heavy, inflated orange-red sea star with five short, broad arms and a raised net-like pattern of knobby tubercles across its back."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/sea-urchin.png",
+      "line": "a long-spined sea urchin (Diadema antillarum) wedged in a crevice of reef rock, seen from the side: a small black ball-shaped body bristling in all directions with very long, thin, sharp black needle-like spines."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/sand-dollar.png",
+      "line": "two sand dollars lying side by side on wet sand seen from above: on the left a living five-holed keyhole sand dollar, a flat round disc that is dark brownish-purple and velvety with fine fuzz and five slot-like holes; on the right a dead bleached white one of the same shape showing clearly the five-petalled flower pattern on its top."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/conch.png",
+      "line": "a queen conch (Aliger gigas) on a sandy seagrass bottom, tilted so the opening shows: a large, heavy spiral sea shell with blunt spines on its shoulders, a wide flared lip that is glossy pink inside, and the living animal partly out, showing two eyes on long stalks."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/hermit-crab.png",
+      "line": "a land hermit crab (Coenobita clypeatus) walking on sand in side view: a small reddish-purple crab with one large purple claw, stalked eyes and long antennae, its soft rear body hidden inside a borrowed spiral snail shell that it carries on its back."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/fiddler-crab.png",
+      "line": "a male sand fiddler crab (Leptuca pugilator) on a mud flat beside its burrow hole, seen from the front and side: a very small squarish tan-and-purple crab with eyes on tall thin stalks, one tiny claw and one enormously oversized pale claw, as large as its body, held raised."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/ghost-crab.png",
+      "line": "an Atlantic ghost crab (Ocypode quadrata) running across dry beach sand in side-front view: a pale sandy-white crab with a squarish box-like body, long pale legs, two unequal whitish claws, and large black eyes on tall upright stalks."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/shrimp.png",
+      "line": "a northern pink shrimp (Farfantepenaeus duorarum) swimming in side view, head to the left: a translucent pinkish-tan shrimp with a segmented curved body, a dark reddish-brown spot on the side of the tail section, a toothed spike (rostrum) above the eyes, black stalked eyes, very long thin antennae sweeping back, many small legs, and a fan-shaped tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/seahorse.png",
+      "line": "a lined seahorse (Hippocampus erectus) holding a blade of seagrass with its curled tail, in side view facing left: a small upright fish with a horse-like head and tubular snout, a bony ridged brownish-yellow body with fine pale lines on the head and neck, a small fin on its back and a prehensile tail curled around the grass."
+    },
+    {
+      "group": "plate",
       "out": "private/art-pack/assets/art/wild/stone-crab.png",
       "line": "a Florida stone crab (Menippe mercenaria) seen from the front and above: a stout crab with a thick, smooth, oval brownish-red shell with gray spots, and two very large, heavy claws with distinct black tips."
     },
@@ -598,6 +948,66 @@
       "group": "plate",
       "out": "private/art-pack/assets/art/wild/horseshoe-crab.png",
       "line": "an Atlantic horseshoe crab (Limulus polyphemus) on wet sand seen from above and slightly to the side: a smooth, domed, olive-brown horseshoe-shaped shell like a helmet, a hinged spiny rear section, and a long, straight, pointed spike of a tail."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/banana-spider.png",
+      "line": "a female golden silk orb-weaver (Trichonephila clavipes) in the centre of a large golden-yellow web: a large spider with a long, cylindrical yellow-olive abdomen with pale spots, a silvery-white head section, and very long banded brown-and-yellow legs with dark fuzzy tufts of hair at the joints."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/scorpion.png",
+      "line": "a Florida bark scorpion (Centruroides gracilis) on a piece of tree bark seen from above and the side: a slender dark reddish-brown scorpion with two long, thin pincers held forward, eight legs, and a long, thin, segmented tail arched over its back ending in a curved stinger."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/fire-ant.png",
+      "line": "a red imported fire ant mound in grass with ants swarming over it, and one worker ant shown large and close in the foreground in side view: a low dome of loose, crumbly soil with no opening on top; the ant is small, reddish-brown with a darker rear section, a two-segment waist and bent antennae."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/lubber.png",
+      "line": "an eastern lubber grasshopper (Romalea microptera) on a plant stem in side view, head to the left: a very large, heavy-bodied grasshopper, yellow-orange with black markings, short forewings tinged with rose-red that do not reach the end of the abdomen, and thick hind legs."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/dragonfly.png",
+      "line": "a blue dasher dragonfly (Pachydiplax longipennis) perched on the tip of a reed in side view with wings spread: a slender insect with a long powder-blue abdomen with a dark tip, a yellow-striped thorax, huge green compound eyes covering most of the head, and four long, clear, finely veined wings held straight out to the sides."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/monarch.png",
+      "line": "a monarch butterfly (Danaus plexippus) perched on a milkweed flower with wings open, seen from above: large bright orange wings with bold black veins and a wide black border dotted with two rows of small white spots, and a black body with white dots."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/zebra-longwing.png",
+      "line": "a zebra longwing butterfly (Heliconius charithonia) perched with wings open, seen from above: long, narrow black wings crossed by several bold pale yellow stripes, with a row of small yellow dots along the lower edge of the hindwings, and a slender black body."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/firefly.png",
+      "line": "a firefly beetle (Photinus) clinging to a blade of grass at dusk in side view: a small, soft, elongated dark brown beetle with a reddish-pink shield behind the head marked with a dark spot, pale edges on the wing covers, and the last segments of the abdomen glowing bright yellow-green."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/lovebug.png",
+      "line": "a pair of lovebugs (Plecia nearctica) joined tail to tail on a blade of grass, in side view: two small, slender black flies, each with a red-orange patch on top of the thorax just behind the head and smoky dark wings, attached to each other end to end."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/mosquito.png",
+      "line": "a mosquito (Aedes) standing on skin in side view about to bite: a tiny, very slender insect with a dark body with white bands on the legs and abdomen, long thin legs, a long needle-like mouthpart pointing down, feathery antennae and narrow clear wings."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/cicada.png",
+      "line": "a cicada (Neotibicen) clinging to tree bark in side view, with its empty shed brown shell also clinging to the bark just below it: a stout, thick-bodied insect with a black and green patterned body, a broad head with bulging eyes set far apart, and long, clear, veined wings folded like a roof over its back."
+    },
+    {
+      "group": "plate",
+      "out": "private/art-pack/assets/art/wild/palmetto-bug.png",
+      "line": "an American cockroach or palmetto bug (Periplaneta americana) on a palmetto frond seen from above: a large, flat, oval, glossy reddish-brown insect with a pale yellowish band on the shield behind the head, long wings covering the abdomen, spiny legs and very long thin antennae."
     },
     {
       "group": "tile",

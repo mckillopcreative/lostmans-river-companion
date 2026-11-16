@@ -22,6 +22,11 @@ export const EVENTS = {
   confirm_go: { label: 'page' }, // "Continue to secure checkout" on the sheet: the real hand-off to Stripe
   confirm_close: { label: 'page' }, // the sheet dismissed
   boat_toggle: { label: 'page', value: 'on' }, // the sheet's Full Boat bonus switch: value 1 = switched on, 0 = switched off
+  wild_toggle: { label: 'page', value: 'on' }, // the sheet's Wild Florida add-on switch (+$9.99): value 1 = switched on, 0 = off
+  wild_what: { label: 'page' }, // the sheet's "What's this?" under the add-on, opened
+  wild_go: { label: 'page' }, // Continue with the add-on switched on (sent as well as confirm_go or crew_click)
+  wild_add_click: { label: 'page' }, // "Add Wild Florida $9.99" on the Wild Florida page, by a family that has the Experience: straight to Stripe
+  wild_sale: { label: 'src', value: 'usd' }, // written by the Worker: the add-on sold, with a purchase (by campaign) or on its own ("upgrade")
   waitlist_click: { label: 'page' },
   waitlist_join: { label: 'page' },
   offer_view: { label: 'page' }, // the holiday promo-code sheet shown

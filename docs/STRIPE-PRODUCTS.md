@@ -47,6 +47,10 @@
 - Printables: fish cards, coloring pages, summer logbook
 - Ages 10–15 · no accounts, no child data · 30-day refund
 
+## Add-on: Wild Florida (2026-11-16)
+
+"Wild Florida: Uncle Dan's field school (add-on)", `prod_VdkojOlgfrWsSh`, $9.99 one-off. Sold three ways, each its own Payment Link: with one reader ($34.98), with the Full Crew ($49.98), and alone for a family that already has the Experience. One add-on covers every key of the purchase. Link ids, the Worker variables and how fulfilment works are in `docs/WILD-FLORIDA.md`.
+
 ## Coupons
 
 - `SUMMER` — 20% off at launch (ends on a date you choose).

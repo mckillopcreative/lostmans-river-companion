@@ -35,6 +35,11 @@ Events say what happened, never who.
 | `hook_click` | until 2026-11-15: the hero's "Hook the Experience" pill scrolling to the offer card. Since then the pill opens the confirm sheet and counts as `buy_click` with label `/:pill` | page |
 | `card_view` | the landing offer card seen, once each per visit: step 1 = its heading on screen, step 2 = its buy buttons on screen | page / step |
 | `crew_click` | the Full Crew Experience handed to Stripe. Since 2026-11-15: the confirm sheet's Continue with the Full Boat switch on, label `<page>:sheet`. Before: a tap straight to the $39.99 checkout (`/:card`, `<page>:sticky`) | page |
+| `wild_toggle` | the confirm sheet's Wild Florida add-on switch (+$9.99): value 1 = switched on, 0 = off | page / on |
+| `wild_what` | the sheet's "What's this?" under the add-on, opened | page |
+| `wild_go` | Continue with the add-on switched on (sent as well as `confirm_go` or `crew_click`) | page |
+| `wild_add_click` | "Add Wild Florida $9.99" on the Wild Florida page, tapped by a family that already has the Experience (straight to Stripe) | page |
+| `wild_sale` | written by the Worker: the add-on sold, with a purchase (label = campaign) or on its own (label `upgrade`) | src, value = dollars |
 | `boat_toggle` | the confirm sheet's Full Boat bonus switch (adds the Full Crew, up to five readers): value 1 = switched on, 0 = off | page / on |
 | `buy_click` | the Buy button (landing page, app home, end of chapter 1); opens the confirm sheet | page |
 | `confirm_go` | "Continue to secure checkout" on the confirm sheet, the real hand-off to Stripe (Meta's InitiateCheckout fires here) | page |

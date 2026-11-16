@@ -27,6 +27,15 @@ CREW_PRODUCT = "prod_VbegFKkQkjcsyt"
 # Holiday "buy one, give one" (2026-11-16): until this moment a one-reader purchase also gets a
 # second, gift key (worker/src/index.js giftCount). Keep it the same as site.config → checkout.bogo.until.
 BOGO_UNTIL = "2027-01-01T05:00:00Z"
+# Wild Florida, the add-on (2026-11-16; $9.99 once, covers every key of the purchase). The product,
+# the two links that sell it with an Experience (one reader; the Full Crew), and the link that adds
+# it to a purchase that already exists. Keys issued before WILD_SINCE keep Wild Florida without it:
+# it was part of the Experience until then. Same links as site.config → checkout.wild.
+WILD_PRODUCT = "prod_VdkojOlgfrWsSh"
+WILD_LINK = "plink_1UcTNDR6rTUxNaU8VEZawk9Y"
+WILD_CREW_LINK = "plink_1UcTPDR6rTUxNaU8uZg39hWk"
+WILD_ADD_LINK = "plink_1UcTRaR6rTUxNaU8VrUQwSCv"
+WILD_SINCE = "2026-11-16T17:50:00Z"
 
 [[analytics_engine_datasets]]
 binding = "EVENTS"

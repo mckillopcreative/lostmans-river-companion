@@ -103,7 +103,8 @@ export function bindClicks() {
       const code = buy ? context().src.replace(/[^a-z0-9-]/g, '-') : '';
       let cref = ref || code ? `v2_${code}_${ref}` : '';
       if (cref.length > 200) cref = ref; // an unusually long fbclid: keep the ad click, drop the code
-      if (buy && cref) {
+      // (the Wild Florida upgrade link carries the reader's key there instead: data-ref-keep)
+      if (buy && cref && !buy.dataset.refKeep) {
         const u = new URL(buy.href);
         u.searchParams.set('client_reference_id', cref);
         buy.href = u.toString();

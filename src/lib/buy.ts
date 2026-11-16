@@ -15,3 +15,6 @@ export const price = c.price;
 /** The holiday "buy one, give one" offer while it runs, else null (site.config → checkout.bogo). */
 const b = (c as { bogo?: { until: string; through: string } }).bogo;
 export const bogo = isOpen && b && Date.now() < Date.parse(b.until) ? b : null;
+/** The Wild Florida add-on while checkout is open, else null (site.config → checkout.wild). */
+const w = (c as { wild?: { price: string; url: string; crewUrl: string; addUrl: string } }).wild;
+export const wild = isOpen && w ? w : null;
