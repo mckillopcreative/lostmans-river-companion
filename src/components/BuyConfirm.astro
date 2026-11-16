@@ -18,10 +18,8 @@
 // data-wild="1" (the Wild Florida page's lock) opens the sheet with the add-on already on.
 import { Image } from 'astro:assets';
 import { artImage } from '@lib/images';
-import { url } from '@lib/url';
 import site from '../../site.config.mjs';
 import { bogo, wild } from '@lib/buy';
-import { wildCount, wildTotal, wildStarters } from '@lib/wild';
 import wildData from '../../data/wild.json';
 // a few plates for the drop-down: the animals children ask about first
 const wildPlates = wild
@@ -95,10 +93,10 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
             <span class="bc-boat-text">
               <span class="bc-tag">Add-on</span>
               <strong>
-                Add <b class="bc-pulse bc-pulse-2">Wild Florida</b> — animal ID <span class="bc-plus mono">+{wild.price}</span>
+                Add <b class="bc-pulse bc-pulse-2">Wild Florida</b> — animal ID Trainer <span class="bc-plus mono">+{wild.price}</span>
               </strong>
               <span class="bc-wild-desc">
-                <span data-one="Uncle Dan teaches your reader to name Florida’s sharks, snakes, gators, fish and birds on sight." data-boat="Uncle Dan teaches your crew to name Florida’s animals on sight. One add-on covers every reader in the boat.">Uncle Dan teaches your reader to name Florida’s sharks, snakes, gators, fish and birds on sight.</span>{' '}
+                <span data-one="Uncle Dan teaches your reader to name Florida’s sharks, snakes, gators, fish, and birds on sight." data-boat="Uncle Dan teaches your crew to name Florida’s animals on sight. One add-on covers every reader in the boat.">Uncle Dan teaches your reader to name Florida’s sharks, snakes, gators, fish, and birds on sight.</span>{' '}
                 <button class="bc-what" type="button" aria-expanded="false" aria-controls="bc-what-panel">
                   What’s this? <span class="bc-what-arrow" aria-hidden="true">▾</span>
                 </button>
@@ -110,7 +108,7 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
               wildPlates.length > 0 && (
                 <div class="bc-what-art">
                   {wildPlates.map((p) => (
-                    <Image src={p.src!} alt={p.name} width={150} height={150} loading="lazy" />
+                    <Image src={p.src!} alt={p.name} width={400} sizes="160px" loading="lazy" />
                   ))}
                 </div>
               )
@@ -119,15 +117,11 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
               <strong>Wild Florida: Uncle Dan’s field school.</strong> A game that teaches a reader to name Florida’s animals on sight: {wildKinds}.
             </p>
             <ul>
-              <li>{wildCount < wildTotal ? `${wildCount} animals in it today, and new ones are added as their plates are painted, until all ${wildTotal} are in.` : `${wildTotal} animals, each with its own painted plate.`}</li>
               <li>One tell-tale for every animal, in Uncle Dan’s words and voice, with the look-alikes side by side: alligator or crocodile, coral snake or scarlet kingsnake, a dolphin’s fin or a shark’s.</li>
               <li>Six ways to play, a logbook, five ranks from Greenhorn to Captain, and a certificate to print.</li>
               <li>Pick the animals by kind, or by the part of Florida you’re in.</li>
               <li>One add-on covers every seat in the boat: your reader, the Experience you give, and a full crew.</li>
             </ul>
-            <p class="small">
-              <a href={url('/wild-florida/')}>Try the first {wildStarters} animals free</a>
-            </p>
           </div>
         </div>
       )
@@ -553,14 +547,16 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
   }
   .bc-what-art {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* two wide boxes a row: a shark or an alligator is long */
     gap: 6px;
   }
   .bc-what-art img {
+    box-sizing: border-box;
     width: 100%;
     height: auto;
-    aspect-ratio: 1;
-    object-fit: contain;
+    aspect-ratio: 16 / 9;
+    padding: 6px;
+    object-fit: contain; /* the whole animal, never cropped */
     background: var(--paper);
     border: 1px solid var(--oyster);
     border-radius: 8px;
