@@ -377,7 +377,20 @@ export default {
       if (n >= 3) return same;
       await env.LR.put(`rl:${email}`, String(n + 1), { expirationTtl: 3600 });
       const key = await env.LR.get(`e:${email}`);
-      if (key) await sendWelcome(env, email, key, { resend: true });
+      if (key) {
+        await sendWelcome(env, email, key, { resend: true });
+        // the Experience(s) that came with that purchase to give away (buy one, give one; a crew):
+        // they carry no email of their own, so this is the only way to get a lost one back
+        const rec = await getKey(env, key);
+        const gifts = [];
+        if (rec?.session)
+          for (let i = 1; i <= 9; i++) {
+            const g = await env.LR.get(`s:${rec.session}:gift${i > 1 ? i : ''}`);
+            if (!g) break;
+            gifts.push(g);
+          }
+        if (gifts.length) ctx?.waitUntil(sendMail(env, email, gifts.length > 1 ? crewEmail(gifts) : giftEmail(gifts[0])));
+      }
       return same;
     }
 

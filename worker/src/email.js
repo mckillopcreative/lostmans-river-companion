@@ -187,8 +187,8 @@ export function giftEmail(key) {
     '',
     'Your purchase came with two Experiences: yours (in the other email) and this one, to give to another reader. Buy one, give one.',
     '',
-    `Print its gift card, or save it as a PDF to send (it has its own code on it): ${giftLink}`,
-    `Or forward this email to anyone you like, or send them this link: ${link}`,
+    `Print its gift card, save it as a PDF, or send it by email or text with a note from you: ${giftLink}`,
+    `Or simply pass on this link: ${link}`,
     '',
     'It works the same way as yours: they open the link on the reader’s own tablet or phone and Mission 1 is waiting. Their progress is kept under this link, separate from yours.',
     '',
@@ -206,8 +206,8 @@ export function giftEmail(key) {
   <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">Buy one, give one</p>
   <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">This is the one to give</h1>
   ${p('Your purchase came with two Experiences: yours, in the other email, and this one to give to another reader.')}
-  <p style="margin:0 0 18px;"><a href="${esc(giftLink)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-weight:bold;font-size:16px;text-decoration:none;padding:12px 22px;border-radius:999px;">Print its gift card</a></p>
-  ${p(`The card prints, or saves as a PDF you can send. Or forward this email to anyone you like, or send them this link:<br><a href="${esc(link)}" style="color:#2a7f8e;word-break:break-all;">${esc(link)}</a>`)}
+  <p style="margin:0 0 18px;"><a href="${esc(giftLink)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-weight:bold;font-size:16px;text-decoration:none;padding:12px 22px;border-radius:999px;">Print or send its gift card</a></p>
+  ${p(`The gift card page prints the card, saves it as a PDF, or sends it by email or text with a note from you. Or simply pass on this link:<br><a href="${esc(link)}" style="color:#2a7f8e;word-break:break-all;">${esc(link)}</a>`)}
   ${p('It works just like yours: they open the link on the reader’s own tablet or phone and Mission 1 is waiting. Their progress is kept under this link, separate from yours.', 'font-size:15px;')}
   ${p('Keep this link for the family you give it to. Anyone with it can open that summer.', 'font-size:14px;color:#4b5a60;')}
   ${p('Questions? Just reply; it comes to us. 30-day refund, no questions asked.', 'font-size:14px;color:#4b5a60;')}

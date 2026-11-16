@@ -13,14 +13,23 @@ const hero = artImage('tiles', 'app-hero');
 <Base title="Gift card" description="A printable gift card for the Summer Fishing Guide Experience." noindex offer>
   <div class="wrap section no-print gift-tools">
     <p class="eyebrow">Giving it as a gift</p>
-    <h1>Print a gift card</h1>
-    <p class="lede">Fill in the names, then print it or save it as a PDF. The code on the card opens the summer on the reader’s own tablet or phone.</p>
+    <h1>Print or send a gift card</h1>
+    <p class="lede">Fill in the names, then print the card, save it as a PDF, or send it by email or text. The code on the card opens the summer on the reader’s own tablet or phone.</p>
     <form class="gift-form" id="gift-form">
       <label>To <input id="g-to" maxlength="40" placeholder="Grace" /></label>
       <label>From <input id="g-from" maxlength="60" placeholder="Grandma and Grandpa" /></label>
       <label class="wide">A note (optional) <input id="g-note" maxlength="120" placeholder="For your summer of fishing. Love you!" /></label>
       <button type="button" class="btn btn-primary" id="g-print">Print the card</button>
     </form>
+    <div class="gift-send" id="g-send" hidden>
+      <p class="gift-send-h">Or send it now, to anyone:</p>
+      <p class="cluster">
+        <a class="btn btn-sm" id="g-mail" href="#">Email it</a>
+        <a class="btn btn-sm" id="g-sms" href="#">Text it</a>
+        <button type="button" class="btn btn-sm" id="g-copy">Copy the message</button>
+      </p>
+      <p class="small muted">The message has their link in it and uses the names and note above. Whoever opens the link gets the Experience on that device.</p>
+    </div>
     <p class="hand gift-msg" id="g-msg" aria-live="polite"></p>
   </div>
 
@@ -45,7 +54,7 @@ const hero = artImage('tiles', 'app-hero');
   </section>
 
   <script>
-    import { API, isKey, checkKey } from '../../scripts/access';
+    import { API, isKey, checkKey, startLink } from '../../scripts/access';
     const key = decodeURIComponent(location.hash.slice(1)).trim();
     const $ = (id: string) => document.getElementById(id)!;
     (async () => {
@@ -64,7 +73,23 @@ const hero = artImage('tiles', 'app-hero');
         $('c-from').textContent = from || '________________';
         $('c-note').textContent = note ? `“${note}”` : '';
         $('c-note').hidden = !note;
+        // the same gift as a message, written for the person receiving it
+        const msg = `${to ? to + ', here' : 'Here'}’s a gift${from ? ' from ' + from : ''}: a summer as an assistant fishing guide in the Florida Everglades. It’s the novel Escape to Lostman’s River to read and hear, with missions, fishing lessons and a guide license to earn. Open this on your tablet or phone to start: ${startLink(key)}${note ? '\n\n' + note : ''}`;
+        ($('g-mail') as HTMLAnchorElement).href = `mailto:?subject=${encodeURIComponent('A gift for you: a summer at Lostman’s River')}&body=${encodeURIComponent(msg)}`;
+        ($('g-sms') as HTMLAnchorElement).href = `sms:?&body=${encodeURIComponent(msg)}`;
+        $('g-copy').dataset.msg = msg;
       };
+      sync();
+      $('g-send').hidden = false;
+      $('g-copy').addEventListener('click', async () => {
+        const msg = $('g-copy').dataset.msg || '';
+        try {
+          await navigator.clipboard.writeText(msg);
+          $('g-copy').textContent = 'Copied';
+        } catch {
+          prompt('Copy this message:', msg);
+        }
+      });
       $('gift-form').addEventListener('input', sync);
       $('g-print').addEventListener('click', () => window.print());
     })();
@@ -99,6 +124,21 @@ const hero = artImage('tiles', 'app-hero');
   }
   .gift-form .btn {
     justify-self: start;
+  }
+  .gift-send {
+    margin: 0.4rem 0 1rem;
+    padding: 0.8rem 1rem;
+    background: var(--paper-2);
+    border: 1px solid var(--oyster);
+    border-radius: 12px;
+  }
+  .gift-send-h {
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+    color: var(--mangrove);
+  }
+  .gift-send p:last-child {
+    margin: 0.5rem 0 0;
   }
   .gift-msg {
     color: var(--sunrise-ink);
