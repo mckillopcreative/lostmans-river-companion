@@ -3,7 +3,10 @@
 // a screen down on a page without a purchase key. Same destination as every Buy button, so the
 // confirm sheet opens and the beacons fire the same way. Hidden for key holders (.has-key).
 import site from '../../site.config.mjs';
-import { buyHref, buyTrack, isOpen, price } from '@lib/buy';
+import { buyHref, buyTrack, isOpen, price, bogo } from '@lib/buy';
+// 2026-11-16 (John): while the holiday "buy one, give one" runs, the same small pill that sits on
+// the other Buy buttons rides on this one's top-left shoulder (it removes itself after the date,
+// like every [data-bogo-until]; BuyConfirm.astro does that)
 // 2026-11-15: back to the plain Buy link ($24.99), so it opens the confirm sheet like every other
 // Buy button; the crew is the sheet's Full Boat toggle, and nobody lands cold on a $39.99 checkout
 const href = buyHref;
@@ -11,7 +14,8 @@ const track = buyTrack;
 void site;
 ---
 
-<a class="hook-btn btn btn-primary" href={href} rel="noopener" data-track={track} data-track-page={`${Astro.url.pathname}:sticky`} hidden aria-label={isOpen ? `Hook the Experience, ${price}` : 'Hook the Experience'}>
+<a class="hook-btn btn btn-primary" href={href} rel="noopener" data-track={track} data-track-page={`${Astro.url.pathname}:sticky`} hidden aria-label={isOpen ? `Hook the Experience, ${price}${bogo ? ', buy one, give one' : ''}` : 'Hook the Experience'}>
+  {bogo && <span class="hook-bogo" data-bogo-until={bogo.until} aria-hidden="true">Buy one · Give one</span>}
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
   Hook the Experience
   {isOpen && <span class="hook-price mono">{price}</span>}
@@ -45,6 +49,24 @@ void site;
     box-shadow: 0 6px 18px rgb(0 0 0 / 0.22);
     font-size: 0.98rem;
     animation: hook-in 0.3s ease-out;
+  }
+  /* the holiday pill, on the button's top-left shoulder */
+  .hook-bogo {
+    position: absolute;
+    left: 0.9rem;
+    top: -0.72rem;
+    padding: 0.16rem 0.65rem 0.18rem;
+    border-radius: 999px;
+    background: var(--mangrove);
+    color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1.3;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.25);
   }
   .hook-price {
     font-size: 0.8em;
