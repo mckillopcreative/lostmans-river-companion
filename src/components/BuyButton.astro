@@ -40,6 +40,11 @@ void tag;
           Hook the Experience
           <span class="buy-price mono">{price}</span>
         </a>
+        {/* the gift line (John, 2026-11-15): the welcome email can be forwarded, and /gift/ prints a card or saves it as a PDF */}
+        <p class="gift-line">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1" /><path d="M12 8v13" /><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" /><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" /></svg>
+          <span><strong>A holiday gift that’s ready today.</strong> Email it, or print the gift card that comes with it.</span>
+        </p>
       </>
     ) : crew ? (
       <>
@@ -131,6 +136,24 @@ void tag;
     border-radius: 999px;
     font-size: 1.1rem;
     box-shadow: 0 4px 12px rgb(0 0 0 / 0.16);
+  }
+  .gift-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0.75rem 0 0;
+    max-width: 30rem;
+    font-size: 0.98rem;
+    line-height: 1.4;
+    color: var(--mangrove);
+    text-wrap: balance;
+  }
+  .gift-line svg {
+    flex: none;
+    width: 1.3rem;
+    height: 1.3rem;
+    margin-top: 0.08rem;
+    color: var(--sunrise-ink);
   }
   .tagged {
     position: relative;
