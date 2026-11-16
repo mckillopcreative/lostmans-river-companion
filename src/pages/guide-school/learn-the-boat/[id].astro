@@ -1,0 +1,329 @@
+---
+// One Learn the Boat lesson: the picture, what to know, the guide's rule, then three questions.
+// All three right marks the lesson passed on this device (localStorage "lr-boat").
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SchoolLock from '@components/SchoolLock.astro';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../../../site.config.mjs';
+import data from '../../../../data/boat-school.json';
+
+export function getStaticPaths() {
+  return data.lessons.map((l, i) => ({ params: { id: l.id }, props: { i } }));
+}
+const { i } = Astro.props as { i: number };
+const l = data.lessons[i];
+const next = data.lessons[i + 1];
+const total = data.lessons.length;
+const locked = !!site.gate?.live && i >= 2;
+const img = artImage(l.art[0], l.art[1]);
+const payload = { id: l.id, answers: l.quiz.map((q) => q.answer) };
+---
+
+<Base title={`${l.title} · Learn the Boat`} description={l.intro}>
+  <article class="wrap section">
+    <p class="crumbs small"><a href={url('/guide-school/learn-the-boat/')}>← Learn the Boat</a></p>
+    <p class="eyebrow">Lesson {i + 1} of {total} · {l.tag}</p>
+    <h1>{l.title}</h1>
+    {
+      img && (
+        <figure class="lb-art art">
+          <Image src={img} alt={l.alt} width={1200} sizes="(min-width: 760px) 720px, 94vw" loading="eager" />
+        </figure>
+      )
+    }
+    <p class="lede">{l.intro}</p>
+
+    {locked && <SchoolLock title={`Lesson ${i + 1} comes with the Experience`} text="Lessons 1 and 2 are free. The other eight, Rig It Right, the whole book to read and hear, and all 23 missions come with the Summer Fishing Guide Experience." page={`boat-${l.id}`} />}
+
+    <div class:list={['lb-body', { 'gs-paid': locked }]}>
+      <ol class="points">
+        {
+          l.points.map((p) => (
+            <li>
+              <strong>{p.t}</strong>
+              <span>{p.d}</span>
+            </li>
+          ))
+        }
+      </ol>
+
+      <blockquote class="pearl">
+        <p class="pearl-k mono">Guide’s rule</p>
+        <p class="hand">{l.pearl}</p>
+      </blockquote>
+      {l.book && <p class="small muted book-tie">In the book: {l.book}</p>}
+
+      <section class="quiz" id="quiz" data-quiz={JSON.stringify(payload)} aria-labelledby="quiz-h">
+        <h2 id="quiz-h">Three questions</h2>
+        {
+          l.quiz.map((q, qi) => (
+            <div class="q" data-q={qi}>
+              <p class="q-text">
+                {qi + 1}. {q.q}
+              </p>
+              <ul class="q-options">
+                {q.options.map((o, oi) => (
+                  <li>
+                    <button type="button" class="choice" data-o={oi}>
+                      {o}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <p class="q-explain small" hidden>
+                {q.explain}
+              </p>
+            </div>
+          ))
+        }
+        <p class="hand passed" id="passed" hidden>Lesson passed.</p>
+        <p class="cluster">
+          {
+            next ? (
+              <a class="btn btn-primary" id="q-next" href={url(`/guide-school/learn-the-boat/${next.id}/`)} hidden>
+                Next: {next.title} ›
+              </a>
+            ) : (
+              <a class="btn btn-primary" id="q-next" href={url('/guide-school/learn-the-boat/')} hidden>
+                See all ten ›
+              </a>
+            )
+          }
+          <button type="button" class="btn" id="q-retry" hidden>Try the questions again</button>
+        </p>
+      </section>
+    </div>
+
+    {
+      !next && (
+        <aside class="law">
+          <h2>{data.law.title}</h2>
+          <p>{data.law.text}</p>
+          <ul>
+            {data.law.links.map((k) => (
+              <li>
+                <a href={k.href} rel="noopener">
+                  {k.label} →
+                </a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )
+    }
+  </article>
+
+  <script>
+    const quiz = document.getElementById('quiz')!;
+    const { id, answers } = JSON.parse(quiz.dataset.quiz!) as { id: string; answers: number[] };
+    const qs = [...quiz.querySelectorAll<HTMLElement>('.q')];
+    const got: (boolean | null)[] = qs.map(() => null);
+    const $ = (x: string) => document.getElementById(x)!;
+    const load = (): string[] => {
+      try {
+        return JSON.parse(localStorage.getItem('lr-boat') || '[]');
+      } catch {
+        return [];
+      }
+    };
+    function finish() {
+      if (got.some((g) => g === null)) return;
+      const all = got.every(Boolean);
+      $('passed').hidden = !all;
+      $('q-next').hidden = !all;
+      $('q-retry').hidden = all;
+      if (!all) return;
+      const done = load();
+      if (!done.includes(id)) {
+        done.push(id);
+        try {
+          localStorage.setItem('lr-boat', JSON.stringify(done));
+        } catch {}
+        (window as unknown as { lrTrack?: (n: string, p: Record<string, string | number>) => void }).lrTrack?.('boat_lesson', { id });
+      }
+    }
+    qs.forEach((q, qi) => {
+      q.querySelectorAll<HTMLButtonElement>('.choice').forEach((b) =>
+        b.addEventListener('click', () => {
+          const ok = Number(b.dataset.o) === answers[qi];
+          got[qi] = ok;
+          q.querySelectorAll<HTMLButtonElement>('.choice').forEach((x) => {
+            x.disabled = true;
+            if (Number(x.dataset.o) === answers[qi]) x.classList.add('right');
+          });
+          if (!ok) b.classList.add('wrong');
+          q.querySelector<HTMLElement>('.q-explain')!.hidden = false;
+          finish();
+        }),
+      );
+    });
+    $('q-retry').addEventListener('click', () => {
+      got.fill(null);
+      quiz.querySelectorAll<HTMLButtonElement>('.choice').forEach((x) => {
+        x.disabled = false;
+        x.classList.remove('right', 'wrong');
+      });
+      quiz.querySelectorAll<HTMLElement>('.q-explain').forEach((e) => (e.hidden = true));
+      $('q-retry').hidden = true;
+      qs[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
+    if (load().includes(id)) {
+      $('passed').hidden = false;
+      $('passed').textContent = 'You’ve passed this one.';
+      $('q-next').hidden = false;
+    }
+  </script>
+</Base>
+
+<style>
+  h1 {
+    margin-bottom: 0.7rem;
+  }
+  .lb-art {
+    margin: 0 0 1rem;
+  }
+  .lb-art :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+  }
+  /* paid lessons: the picture and the opening line are the free taste; the rest waits for a key */
+  :global(html:not(.has-key)) .gs-paid {
+    display: none;
+  }
+  .points {
+    list-style: none;
+    counter-reset: pt;
+    margin: 1rem 0 1.2rem;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .points li {
+    counter-increment: pt;
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    column-gap: 0.7rem;
+    padding: 0.75rem 0.85rem;
+    background: var(--paper-2);
+    border: 1px solid var(--oyster);
+    border-radius: 12px;
+  }
+  .points li::before {
+    content: counter(pt);
+    grid-row: span 2;
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--mangrove);
+    color: var(--paper);
+    font-weight: 700;
+  }
+  .points strong {
+    color: var(--mangrove);
+    font-size: 1.05rem;
+    line-height: 1.3;
+  }
+  .points span {
+    line-height: 1.45;
+  }
+  .pearl {
+    margin: 0 0 0.6rem;
+    padding: 0.8rem 1rem;
+    border-left: 4px solid var(--sunrise);
+    background: color-mix(in srgb, var(--sunrise) 9%, transparent);
+    border-radius: 0 12px 12px 0;
+  }
+  .pearl p {
+    margin: 0;
+  }
+  .pearl-k {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .pearl .hand {
+    font-size: 1.55rem;
+    line-height: 1.25;
+    color: var(--sunrise-ink);
+  }
+  .book-tie {
+    margin: 0 0 1.4rem;
+    font-style: italic;
+  }
+  .quiz {
+    padding: 1rem;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+  }
+  .quiz h2 {
+    margin: 0 0 0.6rem;
+    font-size: 1.25rem;
+  }
+  .q {
+    margin-bottom: 1rem;
+  }
+  .q-text {
+    margin: 0 0 0.4rem;
+    font-weight: 600;
+  }
+  .q-options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .choice {
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    font-size: 0.98rem;
+    padding: 0.65rem 0.8rem;
+    min-height: 48px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--oyster);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .choice.right {
+    border-color: var(--sunrise);
+    background: color-mix(in srgb, var(--sunrise) 18%, var(--paper));
+  }
+  .choice.wrong {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+  .q-explain {
+    margin: 0.4rem 0 0;
+    color: var(--mangrove);
+  }
+  .passed {
+    font-size: 1.5rem;
+    color: var(--sunrise-ink);
+    margin: 0 0 0.5rem;
+  }
+  .law {
+    margin-top: 1.6rem;
+    padding: 1rem 1.1rem;
+    border: 1px dashed var(--oyster);
+    border-radius: 14px;
+  }
+  .law h2 {
+    margin: 0 0 0.4rem;
+    font-size: 1.2rem;
+  }
+  .law p {
+    margin: 0 0 0.5rem;
+  }
+  .law ul {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+</style>

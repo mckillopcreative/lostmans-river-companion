@@ -89,6 +89,25 @@ missions.forEach((m, i) => {
   if (f && typeof f.adult !== 'boolean') errors.push(`missions/${m.id}.field: adult must be true or false`);
 });
 
+// 4b. Guide School: every scenario points at rigs that exist; every lesson's answers are in range
+{
+  const rigsData = JSON.parse(readFileSync(resolve(import.meta.dirname, '..', 'data', 'rigs.json'), 'utf8'));
+  const rigIds = new Set(rigsData.rigs.map((r) => r.id));
+  for (const s of rigsData.scenarios) {
+    for (const o of [...s.options, s.answer, ...(s.also ? [s.also] : [])]) if (!rigIds.has(o)) errors.push(`rigs/${s.id}: unknown rig ${o}`);
+    if (!s.options.includes(s.answer)) errors.push(`rigs/${s.id}: the answer is not one of the options`);
+    if (s.also && s.options.includes(s.also) && s.also === s.answer) errors.push(`rigs/${s.id}: "also" repeats the answer`);
+    if (![1, 2, 3].includes(s.level)) errors.push(`rigs/${s.id}: level must be 1, 2 or 3`);
+    for (const k of ['spot', 'depth', 'tide', 'water', 'wind', 'light']) if (!s.cond?.[k]) errors.push(`rigs/${s.id}: missing condition ${k}`);
+  }
+  const boatData = JSON.parse(readFileSync(resolve(import.meta.dirname, '..', 'data', 'boat-school.json'), 'utf8'));
+  for (const l of boatData.lessons) {
+    if (!l.points?.length || !l.pearl || !l.intro) errors.push(`boat-school/${l.id}: needs intro, points and a pearl`);
+    for (const [i, q] of (l.quiz || []).entries()) if (!(q.answer >= 0 && q.answer < q.options.length) || !q.explain) errors.push(`boat-school/${l.id}: question ${i + 1} needs a valid answer and an explanation`);
+    if ((l.quiz || []).length !== 3) errors.push(`boat-school/${l.id}: three questions per lesson`);
+  }
+}
+
 // 5. places have numeric coordinates
 for (const p of entity.places) {
   if (typeof p.lat !== 'number' || typeof p.lng !== 'number') errors.push(`places/${p.id}: lat/lng must be numbers`);

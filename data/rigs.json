@@ -1,0 +1,241 @@
+{
+  "note": "Rig It Right (Guide School, 2026-11-15). General inshore practice for the Ten Thousand Islands and the Everglades backcountry: the rig most guides reach for first in each set of conditions, not the only one that works. No regulations here (sizes, seasons and bag limits change; link to FWC). Book ties cite data/gear.json.",
+  "rules": [
+    { "when": "Can’t see your lure a foot down?", "then": "Make noise, flash or smell: a popping cork, a gold spoon, a live shrimp." },
+    { "when": "Clear and calm?", "then": "Go quiet, light and natural. Splashy rigs send fish running." },
+    { "when": "Skinny or grassy?", "then": "Go weedless, or you’ll catch salad on every cast." },
+    { "when": "Deep, or the tide is ripping?", "then": "Add weight until you can feel the bottom." },
+    { "when": "Wind in your face?", "then": "Throw something small and heavy that cuts through it." },
+    { "when": "Dawn, dusk or a gray sky?", "then": "Look up. Low light is topwater time." },
+    { "when": "Water not moving?", "then": "Slow down, or go find water that is. Moving water feeds fish." }
+  ],
+  "rigs": [
+    {
+      "id": "popping-cork",
+      "name": "Popping cork",
+      "art": ["tackle", "popping-cork"],
+      "parts": "A cupped cork, a foot and a half to two feet of leader, a hook or a light jig, and a live shrimp.",
+      "how": "Cast it out and let it settle. Pop the rod tip twice, then wait. The pop sounds like a fish feeding, and the shrimp hangs right above the grass.",
+      "best": "Grass flats two to five feet deep, moving water, stained water and a breezy chop. The easiest rig for a beginner: when the cork goes under, reel.",
+      "skip": "Dead-calm, gin-clear, skinny water. The splash sends fish running.",
+      "book": { "chapter": 3, "line": "How Matt caught his first snook, and most of his redfish." }
+    },
+    {
+      "id": "jig",
+      "name": "Jig and paddle tail",
+      "art": ["rigs", "jig"],
+      "parts": "A lead jig head and a soft-plastic paddle tail. An eighth of an ounce for the shallows, a quarter ounce for depth, wind or current.",
+      "how": "Cast, let it sink, then hop it or swim it back. The tail thumps the whole way.",
+      "best": "Covering water when you don’t know where the fish are: sand potholes, channel edges, casting into the wind.",
+      "skip": "Thick grass and oyster shell. The open hook grabs everything."
+    },
+    {
+      "id": "free-line",
+      "name": "Free-lined live bait",
+      "art": ["rigs", "free-line"],
+      "parts": "Leader, a small circle hook and a live shrimp or baitfish. No cork, no weight.",
+      "how": "Cast up-current and let the tide carry it along the roots and under the branches, the way real food arrives.",
+      "best": "Clear water and a gentle, steady current along the mangroves. The quietest rig in the box, for fish that have seen it all.",
+      "skip": "Hard wind or a ripping tide: with no weight it never gets down to the fish.",
+      "book": { "chapter": 14, "line": "Snapper tosses a small live bait into the current, and hooks the giant." }
+    },
+    {
+      "id": "knocker",
+      "name": "Knocker rig",
+      "art": ["rigs", "knocker"],
+      "parts": "An egg sinker that slides down the leader to knock against a circle hook, baited with shrimp or cut bait.",
+      "how": "Drop it straight to the bottom, keep the line tight and wait for the thump.",
+      "best": "Deep holes, passes and pilings with a strong current. Bottom fish: snapper, sheepshead, black drum, grouper.",
+      "skip": "Shallow grass flats. It just buries itself."
+    },
+    {
+      "id": "weedless",
+      "name": "Weedless soft plastic",
+      "art": ["rigs", "weedless"],
+      "parts": "A slim soft-plastic jerk shad on a wide-gap hook with a little belly weight, the hook point tucked back into the plastic.",
+      "how": "Cast past the fish, never on its head. Twitch, twitch, pause.",
+      "best": "Water under two feet, thick grass, oyster edges and tailing redfish. It lands softly and slides through anything.",
+      "skip": "Deep water or heavy current: too light to get down."
+    },
+    {
+      "id": "gold-spoon",
+      "name": "Weedless gold spoon",
+      "art": ["rigs", "gold-spoon"],
+      "parts": "A gold spoon with one fixed hook and a wire weed guard, on a small swivel so it doesn’t twist the line.",
+      "how": "Cast it a mile and reel just fast enough to feel it wobble above the grass.",
+      "best": "Stained or muddy water, wind, and hunting for redfish across a big flat. Fish see the flash and feel the thump.",
+      "skip": "Deep holes. It’s a shallow-water searcher.",
+      "book": { "chapter": 13, "line": "A spoon was Matt’s first cast after the storm." }
+    },
+    {
+      "id": "topwater",
+      "name": "Topwater plug",
+      "art": ["rigs", "topwater"],
+      "parts": "A floating cigar-shaped plug, tied on with a loop knot so it can swing.",
+      "how": "Twitch the rod tip on a slack line so the plug zig-zags: ‘walking the dog.’ When a fish blows up on it, wait until you feel weight before you lift.",
+      "best": "Dawn, dusk and overcast days on a calm surface, along shallow shorelines and flats. Snook and trout.",
+      "skip": "Bright midday sun, a hard chop, or floating grass that fouls the hooks."
+    },
+    {
+      "id": "tarpon",
+      "name": "Big live bait, heavy leader",
+      "art": ["rigs", "tarpon"],
+      "parts": "A big circle hook, several feet of heavy leader and a live mullet or crab.",
+      "how": "Set the bait ahead of rolling fish and let them find it. When one eats, don’t jerk: just come tight and hang on. When it jumps, bow the rod to it.",
+      "best": "Tarpon rolling in a pass or a river mouth with the tide moving.",
+      "skip": "Everything else. This is big-game tackle."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "d1", "level": 1,
+      "scene": "A wide grass flat. Trout are scattered over the grass and you need to call them in.",
+      "cond": { "spot": "Grass flat", "depth": "3 feet", "tide": "Coming in", "water": "Stained", "wind": "Light breeze", "light": "Mid-morning" },
+      "options": ["popping-cork", "knocker", "tarpon", "weedless"],
+      "answer": "popping-cork",
+      "why": "The pop calls trout from across the flat, and the cork holds the shrimp just above the grass where they can find it.",
+      "also": "jig"
+    },
+    {
+      "id": "d2", "level": 1,
+      "scene": "A deep bend in the river with a fallen tree on the bottom. Mangrove snapper live in the branches.",
+      "cond": { "spot": "River hole", "depth": "12 feet", "tide": "Ripping out", "water": "Stained", "wind": "Calm", "light": "Midday" },
+      "options": ["topwater", "knocker", "free-line", "weedless"],
+      "answer": "knocker",
+      "why": "Only weight gets a bait to the bottom in that current. The sinker rides against the hook, so the bait stays put right by the tree."
+    },
+    {
+      "id": "d3", "level": 1,
+      "scene": "First light. The water is a mirror, and snook are popping bait along the shoreline.",
+      "cond": { "spot": "Mangrove shoreline", "depth": "2 feet", "tide": "Coming in", "water": "Clear", "wind": "Glass calm", "light": "Dawn" },
+      "options": ["knocker", "tarpon", "topwater", "popping-cork"],
+      "answer": "topwater",
+      "why": "Low light and a calm surface: the fish are already looking up. A plug walking across the top is one of the best bites there is.",
+      "also": "free-line"
+    },
+    {
+      "id": "d4", "level": 1,
+      "scene": "Redfish tails are waving above the surface as they root in thick turtle grass.",
+      "cond": { "spot": "Grass flat", "depth": "1 foot", "tide": "Low, just turning", "water": "Clear", "wind": "Calm", "light": "Morning" },
+      "options": ["jig", "popping-cork", "knocker", "weedless"],
+      "answer": "weedless",
+      "why": "It lands softly and slides through the grass without snagging. A jig’s open hook would catch grass, and a cork’s splash would send those tails running."
+    },
+    {
+      "id": "d5", "level": 1,
+      "scene": "Silver backs are rolling in the pass. Tarpon, and big ones.",
+      "cond": { "spot": "Pass at a river mouth", "depth": "15 feet", "tide": "Going out", "water": "Stained", "wind": "Light breeze", "light": "Early morning" },
+      "options": ["weedless", "tarpon", "popping-cork", "jig"],
+      "answer": "tarpon",
+      "why": "A fish that can weigh more than you needs a big bait, a big circle hook and a leader its sandpaper mouth can’t wear through."
+    },
+    {
+      "id": "d6", "level": 1,
+      "scene": "Snook are tucked under the branches of a mangrove point, and the tide is sliding gently along the roots.",
+      "cond": { "spot": "Mangrove point", "depth": "3 feet", "tide": "Gentle, moving", "water": "Clear", "wind": "Calm", "light": "Bright midday" },
+      "options": ["topwater", "knocker", "free-line", "gold-spoon"],
+      "answer": "free-line",
+      "why": "In clear water at midday the fish can see everything. A shrimp with no cork and no weight drifts under the branches exactly the way real food does."
+    },
+    {
+      "id": "m1", "level": 2,
+      "scene": "It has blown hard all night. The flat is the color of chocolate milk and the redfish could be anywhere on it.",
+      "cond": { "spot": "Mud flat", "depth": "2 feet", "tide": "Coming in", "water": "Muddy", "wind": "Howling", "light": "Midday" },
+      "options": ["free-line", "gold-spoon", "topwater", "weedless"],
+      "answer": "gold-spoon",
+      "why": "It casts like a bullet into the wind, and in dirty water fish find it by flash and thump. You can search the whole flat with it.",
+      "also": "popping-cork"
+    },
+    {
+      "id": "m2", "level": 2,
+      "scene": "New water. You have no idea where the fish are, only that there are sandy potholes spread across a mile of bay.",
+      "cond": { "spot": "Open bay, potholes", "depth": "4 feet", "tide": "Going out", "water": "Stained", "wind": "Breezy", "light": "Afternoon" },
+      "options": ["knocker", "jig", "free-line", "tarpon"],
+      "answer": "jig",
+      "why": "When you don’t know where they are, cover water. A jig casts far, sinks fast and lets you check a pothole a minute until one bites back."
+    },
+    {
+      "id": "m3", "level": 2,
+      "scene": "Trout and jacks are holding deep along a channel edge. The wind is in your face and your light lures keep sailing over their heads.",
+      "cond": { "spot": "Channel edge", "depth": "6 feet", "tide": "Strong", "water": "Stained", "wind": "In your face", "light": "Midday" },
+      "options": ["topwater", "weedless", "free-line", "jig"],
+      "answer": "jig",
+      "why": "Go up to the quarter-ounce head. The extra weight punches through the wind and gets down to the fish before the current sweeps it away."
+    },
+    {
+      "id": "m4", "level": 2,
+      "scene": "Sheepshead are nibbling barnacles off the dock pilings, right against the wood.",
+      "cond": { "spot": "Dock pilings", "depth": "8 feet", "tide": "Steady", "water": "Stained", "wind": "Light breeze", "light": "Morning" },
+      "options": ["gold-spoon", "popping-cork", "knocker", "topwater"],
+      "answer": "knocker",
+      "why": "Bottom fish on structure want a small bait held right beside the piling. Use a small hook and a piece of shrimp: sheepshead are famous bait thieves."
+    },
+    {
+      "id": "m5", "level": 2,
+      "scene": "The falling tide is pulling bait off an oyster bar, and redfish are waiting on the edge of the shell.",
+      "cond": { "spot": "Oyster bar", "depth": "1½ feet", "tide": "Falling", "water": "Stained", "wind": "Light breeze", "light": "Afternoon" },
+      "options": ["jig", "weedless", "knocker", "tarpon"],
+      "answer": "weedless",
+      "why": "Oyster shell eats open hooks and cuts line. A tucked hook point crawls over the bar and drops off the edge to the fish.",
+      "also": "gold-spoon"
+    },
+    {
+      "id": "m6", "level": 2,
+      "scene": "A gray, still afternoon. A creek is draining a flat, and snook are blowing up on the bait washing out of it.",
+      "cond": { "spot": "Creek mouth", "depth": "3 feet", "tide": "Going out", "water": "Stained", "wind": "Calm", "light": "Overcast" },
+      "options": ["knocker", "tarpon", "topwater", "gold-spoon"],
+      "answer": "topwater",
+      "why": "It doesn’t have to be dawn. Under a gray sky on calm water, fish feed on top all afternoon, and they’re already doing it.",
+      "also": "free-line"
+    },
+    {
+      "id": "g1", "level": 3,
+      "scene": "The trout are here, you can see them. But every time your popping cork lands, they scatter.",
+      "cond": { "spot": "Grass flat", "depth": "3 feet", "tide": "Slow", "water": "Gin clear", "wind": "Glass calm", "light": "Bright noon" },
+      "options": ["popping-cork", "free-line", "knocker", "gold-spoon"],
+      "answer": "free-line",
+      "why": "The rig that calls fish in dirty water scares them in clear water. Take the cork off, go quiet, and let a bare shrimp drift to them."
+    },
+    {
+      "id": "g2", "level": 3,
+      "scene": "Snook are holding deep against the roots. Your free-lined shrimp keeps getting swept away over their heads.",
+      "cond": { "spot": "Mangrove shoreline", "depth": "5 feet", "tide": "Ripping", "water": "Stained", "wind": "Pushing the boat", "light": "Morning" },
+      "options": ["free-line", "topwater", "jig", "weedless"],
+      "answer": "jig",
+      "why": "Same fish, different water. When the tide rips you need weight to get down to them, so bounce a quarter-ounce jig along the bottom."
+    },
+    {
+      "id": "g3", "level": 3,
+      "scene": "Two days of wind have turned the flat to mud. The wind has finally quit, but a fish couldn’t see a lure a foot away.",
+      "cond": { "spot": "Grass flat", "depth": "3 feet", "tide": "Coming in", "water": "Muddy", "wind": "Light breeze", "light": "Morning" },
+      "options": ["weedless", "free-line", "popping-cork", "topwater"],
+      "answer": "popping-cork",
+      "why": "When they can’t see, let them hear and smell. The cork makes the noise and the live shrimp does the rest.",
+      "also": "gold-spoon"
+    },
+    {
+      "id": "g4", "level": 3,
+      "scene": "Sunrise on a calm, skinny flat: perfect for a topwater plug, except the surface is covered in floating grass.",
+      "cond": { "spot": "Shallow flat", "depth": "1½ feet", "tide": "Coming in", "water": "Clear", "wind": "Calm", "light": "Sunrise" },
+      "options": ["topwater", "weedless", "knocker", "popping-cork"],
+      "answer": "weedless",
+      "why": "A plug’s dangling hooks collect floating grass on every cast, and a fouled lure catches nothing. The right rig is the one that stays clean."
+    },
+    {
+      "id": "g5", "level": 3,
+      "scene": "Good water, a mixed bag of trout, reds and snook. Your little cousin is aboard and has never held a rod.",
+      "cond": { "spot": "Pothole by an oyster edge", "depth": "3 feet", "tide": "Coming in", "water": "Stained", "wind": "Breezy", "light": "Morning" },
+      "options": ["topwater", "weedless", "popping-cork", "jig"],
+      "answer": "popping-cork",
+      "why": "A guide rigs for the angler, not just the fish. Anyone can fish a cork: pop it, watch it, and reel when it goes under."
+    },
+    {
+      "id": "g6", "level": 3,
+      "scene": "A school of redfish is pushing a wake across the flat, forty yards off and moving away. You get one cast.",
+      "cond": { "spot": "Mud flat", "depth": "2 feet", "tide": "Coming in", "water": "Muddy", "wind": "Strong, at your back", "light": "Afternoon" },
+      "options": ["free-line", "knocker", "popping-cork", "gold-spoon"],
+      "answer": "gold-spoon",
+      "why": "Nothing else in the box reaches them. The spoon flies forty yards, won’t snag, and flashes where a moving school can see it."
+    }
+  ]
+}

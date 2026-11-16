@@ -42,6 +42,8 @@ export const EVENTS = {
   journal_print: { value: 'signed' },
   fishid_finish: { label: 'level', value: 'score' },
   chart_finish: { value: 'score' },
+  rig_finish: { label: 'level', value: 'score' }, // Rig It Right: a level of six scenarios finished (Guide School, 2026-11-15)
+  boat_lesson: { label: 'id' }, // Learn the Boat: a lesson passed for the first time on this device
 };
 
 /** The analytics endpoint on the Worker. */

@@ -1,0 +1,238 @@
+{
+  "note": "Learn the Boat (Guide School, 2026-11-15). General small-boat practice for a teenager learning beside an adult captain; every engine, boat and ramp differs, so the lessons say to follow the owner's manual and the captain. No laws stated as current fact: the last panel links to FWC and the National Park Service. Book ties cite data/gear.json and data/missions.json.",
+  "lessons": [
+    {
+      "id": "boat-words",
+      "title": "Boat words",
+      "tag": "Talk like crew",
+      "art": ["boat-school", "boat-words"],
+      "alt": "A flats skiff seen from above, bow to stern",
+      "intro": "A captain can’t say ‘the pointy end.’ On the water, everyone uses the same words so nobody has to guess in a hurry.",
+      "points": [
+        { "t": "Bow and stern", "d": "The front and the back. ‘Forward’ is toward the bow, ‘aft’ is toward the stern." },
+        { "t": "Port and starboard", "d": "Left and right when you face the bow. They never change, no matter which way you’re standing. ‘Port’ and ‘left’ both have four letters." },
+        { "t": "Hull, transom and gunwale", "d": "The hull is the body of the boat. The transom is the flat back wall the engine hangs on. The gunwales (say ‘gunnels’) are the top edges of the sides." },
+        { "t": "Helm and console", "d": "The helm is where you steer: the wheel, the throttle and the key. On a skiff they sit on the console in the middle." },
+        { "t": "Draft", "d": "How much water the boat needs to float. A flats skiff drafts less than a foot, which is why it can go where others can’t." },
+        { "t": "Cleats and lines", "d": "A rope with a job is a ‘line.’ It ties off to a cleat, the metal horn bolted to the deck." }
+      ],
+      "pearl": "Learn the words on the dock, not in a squall.",
+      "book": "Mission 1 starts here: Matt at the console of the Mako, finding starboard.",
+      "quiz": [
+        { "q": "You face the bow. Which side is port?", "options": ["Left", "Right", "Behind you"], "answer": 0, "explain": "Port is left, starboard is right, always measured facing the bow." },
+        { "q": "The engine is bolted to the…", "options": ["Gunwale", "Transom", "Helm"], "answer": 1, "explain": "The transom is the flat back wall of the hull." },
+        { "q": "A boat’s draft tells you…", "options": ["How fast it goes", "How much water it needs to float", "How many people it holds"], "answer": 1, "explain": "Know your draft and you know where you can and can’t go." }
+      ]
+    },
+    {
+      "id": "before-you-go",
+      "title": "Before you leave the dock",
+      "tag": "The checklist",
+      "art": ["boat-school", "before-you-go"],
+      "alt": "Life jackets, a cut-off lanyard, a drain plug, an anchor and a chart laid out on a dock",
+      "intro": "Most bad days on the water were decided at the dock. A guide runs the same checklist every single morning, even the thousandth time.",
+      "points": [
+        { "t": "Drain plug in", "d": "The little brass plug in the transom. Forget it and the boat fills from the back. Check it with your own hand." },
+        { "t": "A life jacket for everyone", "d": "One that fits each person aboard, where you can reach it. Wearing it beats finding it." },
+        { "t": "Cut-off lanyard", "d": "The red cord that clips the driver to the engine’s kill switch. If the driver falls, the engine stops." },
+        { "t": "Fuel in thirds", "d": "A third of the tank to get out, a third to get back, and a third you never plan to use." },
+        { "t": "Weather and tide", "d": "Look at both before you go. In a Florida summer, storms build most afternoons. The tide decides where you can run, and when." },
+        { "t": "A float plan", "d": "Tell someone on land where you’re going and when you’ll be back. In the backcountry your phone may not have a signal to say it later." },
+        { "t": "Radio, anchor, water", "d": "A marine radio that works, an anchor with plenty of line, and more drinking water than you think you need." }
+      ],
+      "pearl": "The plug, the jackets, the lanyard. Touch all three before you touch the key.",
+      "book": "In Chapter 14 the crew runs on paper charts, because phones don’t work out there.",
+      "quiz": [
+        { "q": "What does the red lanyard do?", "options": ["Holds the anchor", "Stops the engine if the driver falls", "Marks the fuel level"], "answer": 1, "explain": "It clips the driver to the kill switch. Clip it on every time." },
+        { "q": "The ‘rule of thirds’ is about…", "options": ["Fuel", "Bait", "Life jackets"], "answer": 0, "explain": "A third out, a third back, a third in reserve." },
+        { "q": "A float plan is…", "options": ["A way to load the boat", "Telling someone ashore where you’re going and when you’ll be back", "A chart of the tides"], "answer": 1, "explain": "If you’re overdue, somebody knows where to start looking." }
+      ]
+    },
+    {
+      "id": "engine",
+      "title": "Waking the engine",
+      "tag": "Start-up",
+      "art": ["boat-school", "engine"],
+      "alt": "An outboard idling at the dock with a thin stream of water coming from its side",
+      "intro": "An outboard cools itself with the water it sits in. Start it right and it will run all day. Start it wrong and it can overheat fast.",
+      "points": [
+        { "t": "Lower it first", "d": "With the captain’s say-so, trim the engine down until the water intakes on the lower unit are under the surface. Never start an outboard out of the water." },
+        { "t": "Neutral, lanyard on", "d": "Throttle in neutral, the cut-off lanyard clipped to you. Look behind the boat: nobody in the water, no line near the propeller." },
+        { "t": "Find the tell-tale", "d": "A thin stream of water should squirt from the side of the engine within a few seconds. That is the cooling water. No stream means shut it off and tell the captain." },
+        { "t": "Let it warm up", "d": "Idle for a few minutes at the dock while you stow gear. A cold engine pushed hard wears out early." },
+        { "t": "Listen", "d": "A healthy engine has one steady note. Alarms, shaking or a new noise all mean the same thing: stop and find out why." }
+      ],
+      "pearl": "Watch the stream before you watch the fish.",
+      "quiz": [
+        { "q": "Before you turn the key, the engine should be…", "options": ["Tilted all the way up", "Lowered so the intakes are under water", "It doesn’t matter"], "answer": 1, "explain": "It cools itself with that water. Dry starts wreck the water pump." },
+        { "q": "No stream of water from the tell-tale. You…", "options": ["Speed up to clear it", "Shut down and tell the captain", "Ignore it"], "answer": 1, "explain": "No stream means no cooling. Stop before it overheats." },
+        { "q": "Why idle for a few minutes first?", "options": ["To warm the engine", "To use up fuel", "To scare off the fish"], "answer": 0, "explain": "Warm oil protects the engine. Use the time to stow gear." }
+      ]
+    },
+    {
+      "id": "markers",
+      "title": "Markers and manners",
+      "tag": "Rules of the road",
+      "art": ["boat-school", "markers"],
+      "alt": "A mangrove channel with a red triangle marker on the right and a green square marker on the left",
+      "intro": "Channels are the roads of the water, and the markers are the lines painted on them. Three words keep you in the deep part.",
+      "points": [
+        { "t": "Red, right, returning", "d": "Coming in from open water toward port, keep the red markers on your right. Going back out, they’re on your left." },
+        { "t": "Shape and number", "d": "Red markers are triangles with even numbers. Green markers are squares with odd numbers. Even at dusk, the shape tells you the color." },
+        { "t": "Keep to the right", "d": "In a channel, stay on the right-hand side, the same as on a road. Two boats meeting head-on both turn right." },
+        { "t": "Idle speed, no wake", "d": "In a slow zone the boat settles all the way down and leaves no wave. Florida’s manatee zones are posted. Obey the sign." },
+        { "t": "Your wake is yours", "d": "The wave behind your boat rocks docks, kayaks and anchored anglers. Slow down for them before you get there, not after." },
+        { "t": "When in doubt, slow down", "d": "No rule ever asks you to go faster. Slowing down gives you time to think." }
+      ],
+      "pearl": "Most markers out there went in because somebody ran aground first.",
+      "quiz": [
+        { "q": "You’re heading in from the Gulf. The red marker goes on your…", "options": ["Right", "Left", "Either side"], "answer": 0, "explain": "Red, right, returning." },
+        { "q": "A marker shaped like a square is…", "options": ["Red, with an even number", "Green, with an odd number", "A danger sign"], "answer": 1, "explain": "Green squares, odd numbers. Red triangles, even numbers." },
+        { "q": "Two boats meet head-on in a channel. Each should…", "options": ["Turn right", "Turn left", "Speed up"], "answer": 0, "explain": "Both turn to their own right and pass port side to port side." }
+      ]
+    },
+    {
+      "id": "read-the-water",
+      "title": "Reading the water",
+      "tag": "See the bottom",
+      "art": ["boat-school", "read-the-water"],
+      "alt": "The Ten Thousand Islands from the air: a dark channel winding between pale sandbars",
+      "intro": "The water tells you how deep it is, if you know how to look. A guide reads it the way you read a page.",
+      "points": [
+        { "t": "Color is depth", "d": "In clear water, dark blue-green is deep, pale green is thin, and tan or brown is a bar. An old rhyme: brown, brown, run aground." },
+        { "t": "In the backcountry, color lies", "d": "Everglades rivers run the color of tea, and tea hides the bottom. There you trust the chart, the markers and the depth finder." },
+        { "t": "Watch the surface", "d": "Nervous, rippled water over a calm patch often means a bar just underneath. A line of foam shows where two currents meet." },
+        { "t": "Birds don’t lie", "d": "If a heron is standing where you’re headed, it’s probably shin-deep. Slow down and go around." },
+        { "t": "Run the outside of the bend", "d": "In a river the current digs the outside of each curve deep and piles sand on the inside." },
+        { "t": "The tide changes the map", "d": "A flat you crossed at high tide can be dry land four hours later. Know which way the water is going before you go in." }
+      ],
+      "pearl": "If you’re not sure it’s deep enough, it isn’t.",
+      "book": "Dan teaches the tide in Chapter 2: a morning high means plenty of water over the oyster bars.",
+      "quiz": [
+        { "q": "In clear water, a pale tan patch ahead probably means…", "options": ["Deep water", "A shallow bar", "A school of fish"], "answer": 1, "explain": "Brown, brown, run aground." },
+        { "q": "A heron is standing right in your path. That tells you…", "options": ["It’s very shallow there", "Fish are biting", "The channel is deep"], "answer": 0, "explain": "Wading birds stand in water about as deep as their legs." },
+        { "q": "In a river bend, the deeper water is usually on the…", "options": ["Inside of the bend", "Outside of the bend", "Exact middle"], "answer": 1, "explain": "The current scours the outside and drops sand on the inside." }
+      ]
+    },
+    {
+      "id": "aground",
+      "title": "Skinny water, and getting stuck",
+      "tag": "It happens to everyone",
+      "art": ["boat-school", "aground"],
+      "alt": "A skiff on a sandbar at low tide, its engine tilted up, being poled toward the channel",
+      "intro": "Every guide in the Everglades has run aground. The good ones did it slowly, and knew what to do next.",
+      "points": [
+        { "t": "Trim up as it gets thin", "d": "Tilting the engine up lifts the propeller and buys you a few inches. Slow down before you need them." },
+        { "t": "Pole and troll", "d": "In the shallowest places the engine comes all the way up and the boat moves by push pole or trolling motor. Some flats are marked for exactly that." },
+        { "t": "Stuck? Stop.", "d": "Shut the engine off. Gunning it to get off a flat digs a trench through the seagrass that can take years to grow back, and it can wreck the engine too." },
+        { "t": "Lighten and push", "d": "Engine up. Move everyone’s weight toward the deep side. Push with the pole, back the way you came in." },
+        { "t": "Or wait", "d": "If the tide is coming in, the cheapest fix is patience. Drop the anchor so you don’t drift farther on, and let the water come to you." }
+      ],
+      "pearl": "Go in slow enough that you can get out the way you came.",
+      "book": "The push pole is how Snapper gets the Mako into the mangroves unheard in Chapter 9, and Mission 18 is all about floating her off.",
+      "quiz": [
+        { "q": "You’ve run aground on a grass flat. First move?", "options": ["Full throttle", "Engine off", "Jump out and run"], "answer": 1, "explain": "Stop first. Gunning the engine tears up the seagrass, and the engine too." },
+        { "q": "Tilting the engine up in thin water…", "options": ["Raises the propeller", "Makes the boat faster", "Drains the bilge"], "answer": 0, "explain": "It buys you inches, which is sometimes all you need." },
+        { "q": "Stuck, with the tide coming in. The easy answer is…", "options": ["Wait for the water", "Dig a channel", "Call the Coast Guard"], "answer": 0, "explain": "Set the anchor and let the tide lift you off." }
+      ]
+    },
+    {
+      "id": "anchor",
+      "title": "Anchoring and docking",
+      "tag": "Stopping on purpose",
+      "art": ["boat-school", "anchor"],
+      "alt": "A skiff anchored in a tidal creek, its anchor line running forward from the bow",
+      "intro": "Anyone can make a boat go. Crew earn their keep by making it stop, exactly where the captain wants it.",
+      "points": [
+        { "t": "Anchor from the bow", "d": "A small boat held by its stern alone can be swamped by the current or a wave. A stern anchor only ever goes out with a bow line, like the storm tie-off." },
+        { "t": "Let out plenty of line", "d": "Five to seven feet of line for every foot of depth. An anchor holds by lying down and digging in, not by hanging." },
+        { "t": "Point into it", "d": "Come up into the wind or the current, whichever is stronger, stop, lower the anchor and drift back on it. Never throw it." },
+        { "t": "Dock slow", "d": "Approach a dock no faster than you’d be willing to hit it. Into the wind or current gives you the most control." },
+        { "t": "Lines ready first", "d": "Dock lines on the cleats and fenders over the side before you get there. Hands and feet stay inside: never fend off a dock with your body." },
+        { "t": "The cleat hitch", "d": "Once around the base, a figure eight over the horns, and one locking turn. It holds all night and comes off in a second." }
+      ],
+      "pearl": "Never come at a dock faster than you’re willing to hit it.",
+      "book": "The storm tie-off in Chapter 12: a bow line to one mangrove and a stern anchor out, so the boat is stretched secure from end to end.",
+      "quiz": [
+        { "q": "Which end of the boat does the anchor line tie to?", "options": ["Bow", "Stern", "Whichever is closer"], "answer": 0, "explain": "The bow. A boat held by the stern alone can be swamped." },
+        { "q": "In 6 feet of water, about how much anchor line?", "options": ["6 feet", "12 feet", "30 to 40 feet"], "answer": 2, "explain": "Five to seven times the depth, so the anchor lies flat and digs in." },
+        { "q": "The best speed for coming in to a dock is…", "options": ["Fast, to keep steering", "As slow as you can still steer", "Whatever the boat ahead did"], "answer": 1, "explain": "Slow is a small mistake. Fast is a big one." }
+      ]
+    },
+    {
+      "id": "bait-and-ice",
+      "title": "Bait and ice",
+      "tag": "The mate’s job",
+      "art": ["boat-school", "bait-and-ice"],
+      "alt": "A livewell full of live shrimp beside a cooler packed with ice",
+      "intro": "The captain finds the fish. The mate keeps the bait alive and the catch cold, and a guide’s day is only as good as both.",
+      "points": [
+        { "t": "Air first", "d": "Switch the aerator or the livewell pump on before the bait goes in. Bait dies from lack of oxygen long before it goes hungry." },
+        { "t": "Don’t crowd it", "d": "Fewer, livelier baits beat a packed well of dying ones. If they’re gulping at the surface, there are too many." },
+        { "t": "Cool, fresh water", "d": "Keep new water flowing through, and keep the lid shut against the sun. Scoop out anything dead right away." },
+        { "t": "Wet hands, quick hook", "d": "Use the dip net, not your fist. A bait that’s been squeezed swims wrong, and fish notice." },
+        { "t": "More ice than you think", "d": "Fill the cooler before you leave. A fish for dinner goes straight onto ice, and ice mixed with a little seawater chills it fastest." },
+        { "t": "Keep the lid shut", "d": "Every peek lets the cold out. Drinks in one cooler, fish in another, if the boat has room." }
+      ],
+      "pearl": "Lively bait catches fish. Tired bait feeds crabs.",
+      "book": "In Chapter 5 a battery aerator keeps the bait shrimp alive overnight.",
+      "quiz": [
+        { "q": "Bait fish are gulping at the top of the livewell. That means…", "options": ["They’re hungry", "Not enough oxygen: too many baits, or the pump is off", "They’re happy"], "answer": 1, "explain": "Thin them out and check the aerator." },
+        { "q": "The fastest way to chill a fish is…", "options": ["On top of dry ice cubes", "In ice mixed with a little seawater", "In the livewell"], "answer": 1, "explain": "A cold slurry touches the whole fish at once." },
+        { "q": "The best tool for picking a bait out of the well is…", "options": ["A dip net", "A tight fist", "The gaff"], "answer": 0, "explain": "A squeezed bait swims wrong. Net it, and hook it quickly." }
+      ]
+    },
+    {
+      "id": "trailer",
+      "title": "Back on the trailer",
+      "tag": "At the ramp",
+      "art": ["boat-school", "trailer"],
+      "alt": "A skiff idling onto a half-sunk trailer at a boat ramp",
+      "intro": "The ramp is where everyone is watching and everyone is in a hurry. The captain drives; crew handles the lines, the strap and a second pair of eyes. Calm crews do their getting-ready somewhere else.",
+      "points": [
+        { "t": "Get ready off the ramp", "d": "Stow rods, unclip what needs unclipping and get the lines ready in the parking area or at the courtesy dock, not while you block the ramp." },
+        { "t": "Back down slowly", "d": "The driver backs the trailer in until the bunks are about two-thirds under water. Every boat and ramp is a little different, so learn yours." },
+        { "t": "Idle on, straight", "d": "The captain lines the bow up with the winch post and eases on at idle, letting the bunks center the boat. Nobody powers hard onto a trailer." },
+        { "t": "Winch strap and safety chain", "d": "Hook the strap to the bow eye and crank it snug to the roller, then clip the safety chain. Both, every time." },
+        { "t": "Engine up, then pull out", "d": "Tilt the engine up before the truck moves so it can’t drag on the ramp. Keep everyone clear of the trailer and the winch." },
+        { "t": "Finish in the lot", "d": "Pull the drain plug, put on the stern tie-down straps, check the trailer lights, and walk once around the whole rig before you drive." }
+      ],
+      "pearl": "Fast at the ramp comes from slow in the parking lot.",
+      "quiz": [
+        { "q": "Where do you stow gear and get the lines ready?", "options": ["On the ramp", "Away from the ramp, before your turn", "On the highway"], "answer": 1, "explain": "Be ready before you back down, so the ramp stays clear." },
+        { "q": "Once the boat is on, what holds the bow to the trailer?", "options": ["The winch strap and a safety chain", "Gravity", "The anchor"], "answer": 0, "explain": "Strap snug, chain clipped. Both, every time." },
+        { "q": "The engine should be tilted up…", "options": ["After you get home", "Before the truck pulls out", "Never"], "answer": 1, "explain": "Otherwise the skeg can drag on the concrete." }
+      ]
+    },
+    {
+      "id": "rinse-and-flush",
+      "title": "Rinse and flush",
+      "tag": "The day isn’t over",
+      "art": ["boat-school", "rinse-and-flush"],
+      "alt": "A skiff on its trailer with a garden hose flushing the outboard",
+      "intro": "Salt eats boats. The crew that washes it off the same day has a boat that starts next week, and next year.",
+      "points": [
+        { "t": "Flush the engine", "d": "Fresh water through the engine after every salt trip. With flushing muffs, the hose goes on before the engine starts and stays on until it stops. Follow the engine’s own manual." },
+        { "t": "Never run it dry", "d": "An outboard with no water going through it ruins its water pump in seconds." },
+        { "t": "Rinse top to bottom", "d": "Fresh water over everything: deck, console, hatches, the engine’s outside, the trailer, and the trailer’s wheels and springs most of all." },
+        { "t": "Reels get a mist", "d": "A light spray, not a blast. Hard water pressure drives salt into the reel. Loosen the drags before you put the rods away." },
+        { "t": "Empty and dry", "d": "Drain the livewell and the cooler. Old bait water is tomorrow’s smell. Prop the hatches open so everything dries." },
+        { "t": "Ready for next time", "d": "Fuel, batteries on charge, plug where you’ll find it. Whoever washes the boat is the one who knows what’s broken." }
+      ],
+      "pearl": "The boat you wash tonight is the boat that starts tomorrow.",
+      "quiz": [
+        { "q": "With flushing muffs, when does the water go on?", "options": ["Before the engine starts", "After a minute of running", "Only at the end"], "answer": 0, "explain": "Water first, engine second. And engine off before the water." },
+        { "q": "How do you rinse a fishing reel?", "options": ["Blast it with the nozzle", "A light mist", "Soak it in the cooler"], "answer": 1, "explain": "Pressure pushes salt inside. A gentle rinse takes it off." },
+        { "q": "Which part of the trailer most needs fresh water?", "options": ["The license plate", "Wheels, brakes and springs", "The winch handle"], "answer": 1, "explain": "They went under the salt water, and they rust first." }
+      ]
+    }
+  ],
+  "law": {
+    "title": "Before you take the wheel",
+    "text": "Florida has rules about who may run a boat and which safety course comes first, and Everglades National Park has a free boater course of its own. Rules change, so read what each one requires at the source, with a grown-up. Until then, you’re crew: you learn all of this beside a captain, wearing your life jacket.",
+    "links": [
+      { "label": "Florida boating safety courses (FWC)", "href": "https://myfwc.com/boating/safety-education/" },
+      { "label": "Everglades National Park boater education (NPS)", "href": "https://www.nps.gov/ever/planyourvisit/boater-education-program.htm" }
+    ]
+  }
+}

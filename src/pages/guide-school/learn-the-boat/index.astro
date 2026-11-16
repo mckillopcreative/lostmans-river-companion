@@ -1,0 +1,206 @@
+---
+// Learn the Boat (Guide School, John 2026-11-15): ten short lessons on being useful crew, from
+// boat words to rinsing down, from data/boat-school.json. Lessons 1 and 2 are free; the rest
+// need a purchase key. A lesson is passed when its three questions are answered right; the
+// passed list lives on the device (localStorage "lr-boat").
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../../../site.config.mjs';
+import data from '../../../../data/boat-school.json';
+
+const gated = !!site.gate?.live;
+const hero = artImage('tiles', 'learn-the-boat');
+const lessons = data.lessons.map((l, i) => ({ ...l, n: i + 1, img: artImage(l.art[0], l.art[1]), free: i < 2 }));
+---
+
+<Base title="Learn the Boat" description="Ten short lessons for a teenager learning to crew a fishing skiff in the Everglades: boat words, markers, reading the water, the trailer, the rinse-down.">
+  <div class="wrap section">
+    <p class="crumbs small"><a href={url('/guide-school/')}>← Guide School</a></p>
+    <header class="lb-head">
+      {hero && <Image class="lb-hero art" src={hero} alt="" width={220} height={220} loading="eager" />}
+      <div>
+        <p class="eyebrow">Guide School · {lessons.length} lessons</p>
+        <h1>Learn the Boat</h1>
+        <p class="lede">What an assistant guide has to know before anyone hands over the wheel: the words, the markers, the water, the ramp and the hose.</p>
+      </div>
+    </header>
+    <p class="progress"><span class="pill is-current" id="lb-count">0 of {lessons.length} passed</span> <span class="hand lb-done" id="lb-done" hidden>Boat sense: earned.</span></p>
+
+    <ol class="lessons">
+      {
+        lessons.map((l) => (
+          <li class="lesson" data-id={l.id}>
+            <a href={url(`/guide-school/learn-the-boat/${l.id}/`)}>
+              <span class="lesson-art art">{l.img && <Image src={l.img} alt="" width={360} sizes="120px" loading="lazy" />}</span>
+              <span class="lesson-text">
+                <span class="lesson-n mono">
+                  Lesson {l.n} · {l.tag}
+                  {gated && l.free && <span class="lesson-free"> · free</span>}
+                </span>
+                <span class="lesson-title">{l.title}</span>
+                <span class="lesson-pearl small muted">{l.pearl}</span>
+              </span>
+              <span class="lesson-check" aria-hidden="true">✓</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+
+    <aside class="law">
+      <h2>{data.law.title}</h2>
+      <p>{data.law.text}</p>
+      <ul>
+        {
+          data.law.links.map((k) => (
+            <li>
+              <a href={k.href} rel="noopener">
+                {k.label} →
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </aside>
+  </div>
+
+  <script>
+    let done: string[] = [];
+    try {
+      done = JSON.parse(localStorage.getItem('lr-boat') || '[]');
+    } catch {}
+    const items = [...document.querySelectorAll<HTMLElement>('.lesson')];
+    let n = 0;
+    for (const li of items)
+      if (done.includes(li.dataset.id!)) {
+        li.classList.add('is-done');
+        n++;
+      }
+    document.getElementById('lb-count')!.textContent = `${n} of ${items.length} passed`;
+    document.getElementById('lb-done')!.hidden = n < items.length;
+  </script>
+</Base>
+
+<style>
+  .lb-head {
+    display: flex;
+    gap: 1.1rem;
+    align-items: center;
+  }
+  .lb-head .lede {
+    margin-bottom: 0;
+  }
+  .lb-hero {
+    flex: none;
+    width: 104px;
+    height: 104px;
+    border-radius: 14px;
+    object-fit: cover;
+  }
+  @media (min-width: 640px) {
+    .lb-hero {
+      width: 150px;
+      height: 150px;
+    }
+  }
+  .progress {
+    margin: 1rem 0 0.6rem;
+  }
+  .lb-done {
+    margin-left: 0.4rem;
+    font-size: 1.3rem;
+    color: var(--sunrise-ink);
+  }
+  .lessons {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .lesson a {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) 1.6rem;
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.55rem;
+    background: var(--paper-2);
+    border: 1px solid var(--oyster);
+    border-radius: 14px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .lesson a:hover {
+    border-color: var(--mangrove);
+  }
+  .lesson-art {
+    display: block;
+    aspect-ratio: 3 / 2;
+    border-radius: 9px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--mangrove) 14%, var(--paper));
+  }
+  .lesson-art :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .lesson-text {
+    display: grid;
+    gap: 0.1rem;
+  }
+  .lesson-n {
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .lesson-free {
+    color: var(--sunrise-ink);
+    font-weight: 700;
+  }
+  .lesson-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--mangrove);
+  }
+  .lesson-pearl {
+    line-height: 1.3;
+    font-style: italic;
+  }
+  .lesson-check {
+    width: 1.6rem;
+    height: 1.6rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1.5px solid var(--oyster);
+    color: transparent;
+    font-weight: 700;
+  }
+  .lesson.is-done .lesson-check {
+    background: var(--mangrove);
+    border-color: var(--mangrove);
+    color: var(--paper);
+  }
+  .law {
+    margin-top: 1.6rem;
+    padding: 1rem 1.1rem;
+    border: 1px dashed var(--oyster);
+    border-radius: 14px;
+  }
+  .law h2 {
+    margin: 0 0 0.4rem;
+    font-size: 1.2rem;
+  }
+  .law p {
+    margin: 0 0 0.5rem;
+  }
+  .law ul {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+</style>

@@ -1,0 +1,47 @@
+---
+// The lock panel on a Guide School page: shown to visitors without a purchase key, hidden for key
+// holders by the same global rule as the mission lock (.has-key .mission-lock in global.css).
+import { url } from '@lib/url';
+import { buyHref, buyTrack, buyLabel } from '@lib/buy';
+
+interface Props {
+  /** heading, e.g. "The Mate and Guide levels are part of the Full Experience" */
+  title: string;
+  /** one line on what is free here and what the Experience adds */
+  text: string;
+  /** click label for the Buy button, e.g. "rig-it-right" */
+  page: string;
+  id?: string;
+  hidden?: boolean;
+}
+const { title, text, page, id, hidden = false } = Astro.props;
+---
+
+<div class="mission-lock gs-lock" id={id} hidden={hidden}>
+  <p class="hand gs-lock-h">{title}</p>
+  <p class="small">{text}</p>
+  <p class="cluster">
+    <a class="btn btn-primary" href={buyHref} data-track={buyTrack} data-track-page={page}>{buyLabel}</a>
+    <a class="small" href={url('/restore/')}>Already bought it?</a>
+  </p>
+</div>
+
+<style>
+  .gs-lock {
+    margin: 1rem 0;
+    padding: 1rem 1.1rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-left: 4px solid var(--sunrise);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .gs-lock-h {
+    font-size: 1.35rem;
+    line-height: 1.25;
+    color: var(--sunrise-ink);
+    margin: 0 0 0.3rem;
+  }
+  .gs-lock p:last-child {
+    margin-bottom: 0;
+  }
+</style>

@@ -1,0 +1,199 @@
+---
+// Guide School (John, 2026-11-15): the three named courses that turn "challenges" into something
+// a parent can picture. Rig It Right and Learn the Boat are new; Fish of the Everglades is the
+// Fish ID game under its course name. Counts come from the data.
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import BuyButton from '@components/BuyButton.astro';
+import { fish } from '@lib/data';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+import rigs from '../../../data/rigs.json';
+import boat from '../../../data/boat-school.json';
+
+const hero = artImage('tiles', 'guide-school');
+const plates = fish.filter((f) => artImage('fish', f.id)).length;
+const courses = [
+  {
+    id: 'rig-it-right',
+    href: '/guide-school/rig-it-right/',
+    art: artImage('tiles', 'rig-it-right'),
+    kind: 'Game',
+    title: 'Rig It Right',
+    count: `${rigs.scenarios.length} scenarios · ${rigs.rigs.length} rigs`,
+    text: 'Muddy water and a howling wind? Glass calm at dawn? Read the tide, the water, the wind and the depth, then pick the rig a guide would tie on.',
+    learn: 'When to pop a cork, swim a jig, free-line a shrimp or throw the gold spoon.',
+    free: 'First level free',
+  },
+  {
+    id: 'learn-the-boat',
+    href: '/guide-school/learn-the-boat/',
+    art: artImage('tiles', 'learn-the-boat'),
+    kind: 'Course',
+    title: 'Learn the Boat',
+    count: `${boat.lessons.length} lessons · ${boat.lessons.reduce((a, l) => a + l.quiz.length, 0)} questions`,
+    text: 'What crew should know before anyone hands over the wheel: boat words, channel markers, reading the water, getting unstuck, the trailer and the rinse-down.',
+    learn: 'Red, right, returning. Drain plug in. Never run it dry. Why the heron means turn.',
+    free: 'First two lessons free',
+  },
+  {
+    id: 'fish-id',
+    href: '/games/fish-id/',
+    art: artImage('tiles', 'fish-id'),
+    kind: 'Game',
+    title: 'Fish of the Everglades',
+    count: `${plates} species · 3 levels`,
+    text: 'A painted plate comes up; name the fish. Start with the six that matter and work up to every species in the book.',
+    learn: 'Snook from seatrout, redfish from black drum, and what gives each one away.',
+    free: 'Free to play',
+  },
+];
+---
+
+<Base title="Guide School" description="Three courses that teach a teenager the real skills of an Everglades fishing guide: Rig It Right, Learn the Boat and Fish of the Everglades.">
+  <div class="wrap section">
+    <header class="gs-head">
+      {hero && <Image class="gs-hero art" src={hero} alt="" width={900} sizes="(min-width: 760px) 720px, 94vw" loading="eager" />}
+      <p class="eyebrow">Part of the Summer Fishing Guide Experience</p>
+      <h1>Guide School</h1>
+      <p class="lede">Three courses in what an assistant fishing guide actually has to know: which rig to tie on, how to be useful on a boat, and what just came over the side.</p>
+    </header>
+
+    <ul class="courses">
+      {
+        courses.map((c) => (
+          <li class="course">
+            <a href={url(c.href)} data-track="tile_click" data-track-tile={`school-${c.id}`}>
+              <span class="course-art art">{c.art && <Image src={c.art} alt="" width={520} sizes="(min-width: 700px) 220px, 34vw" loading="lazy" />}</span>
+              <span class="course-text">
+                <span class="course-kind mono">
+                  {c.kind} · {c.count}
+                </span>
+                <span class="course-title">{c.title}</span>
+                <span class="course-desc">{c.text}</span>
+                <span class="course-learn small">
+                  <strong>You’ll know:</strong> {c.learn}
+                </span>
+                <span class="course-go">
+                  <span class="btn btn-sm btn-primary">Start</span> <span class="small muted course-free">{c.free}</span>
+                </span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="gs-buy">
+      <p class="hand gs-buy-h">All three come with the Experience.</p>
+      <p class="small">So do the whole novel to read and hear, 23 missions from Uncle Dan, the Field Journal and the Assistant Fishing Guide license.</p>
+      <BuyButton compact note={false} place="school" />
+    </div>
+    <p class="small"><a href={url('/app/')}>← Back to the Experience</a> · <a href={url('/knots/')}>Five knots to master →</a></p>
+  </div>
+</Base>
+
+<style>
+  .gs-hero {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 320px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-bottom: 1rem;
+  }
+  .courses {
+    list-style: none;
+    margin: 1.2rem 0;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+  .course a {
+    display: grid;
+    grid-template-columns: 34% minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: start;
+    padding: 0.8rem;
+    background: var(--paper-2);
+    border: 1.5px solid var(--oyster);
+    border-radius: 16px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .course a:hover {
+    border-color: var(--mangrove);
+  }
+  .course-art {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--mangrove) 14%, var(--paper));
+  }
+  .course-art :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .course-text {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .course-kind {
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .course-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--mangrove);
+  }
+  .course-desc {
+    line-height: 1.45;
+  }
+  .course-learn {
+    line-height: 1.4;
+    color: var(--ink-soft);
+  }
+  .course-go {
+    margin-top: 0.2rem;
+  }
+  /* a phone: a smaller picture and tighter words, so a card is about one screen-third tall */
+  @media (max-width: 560px) {
+    .course a {
+      grid-template-columns: 96px minmax(0, 1fr);
+      gap: 0.75rem;
+      padding: 0.7rem;
+    }
+    .course-title {
+      font-size: 1.25rem;
+    }
+    .course-desc {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+  }
+  :global(html.has-key) .course-free,
+  :global(html.has-key) .gs-buy {
+    display: none;
+  }
+  .gs-buy {
+    padding: 1rem 1.1rem;
+    border: 1px dashed color-mix(in srgb, var(--sunrise) 70%, transparent);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--sunrise) 8%, transparent);
+    margin-bottom: 1rem;
+  }
+  .gs-buy p {
+    margin: 0 0 0.3rem;
+  }
+  .gs-buy-h {
+    font-size: 1.4rem;
+    color: var(--sunrise-ink);
+  }
+</style>

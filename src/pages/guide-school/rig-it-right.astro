@@ -1,0 +1,476 @@
+---
+// Rig It Right (Guide School, John 2026-11-15): read the conditions, pick the rig. Three levels
+// of six scenarios from data/rigs.json; the first level is free, the other two need a purchase
+// key (client-side, like the missions). Below the game, the Rig Locker: every rig, what is on
+// the line, how to fish it and when to leave it in the box.
+import { getImage, Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SchoolLock from '@components/SchoolLock.astro';
+import ChapterPill from '@components/ChapterPill.astro';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../../site.config.mjs';
+import data from '../../../data/rigs.json';
+
+const gated = !!site.gate?.live;
+const hero = artImage('tiles', 'rig-it-right');
+const rigs = [];
+for (const r of data.rigs) {
+  const src = artImage(r.art[0], r.art[1]);
+  const img = src ? (await getImage({ src, width: 360, format: 'webp' })).src : null;
+  rigs.push({ ...r, src, img });
+}
+const levels = [
+  { n: 1, name: 'Deckhand', sub: 'the basics', free: true },
+  { n: 2, name: 'Mate', sub: 'wind and mud', free: false },
+  { n: 3, name: 'Guide', sub: 'trade-offs', free: false },
+];
+const payload = {
+  gated,
+  rigs: Object.fromEntries(rigs.map((r) => [r.id, { name: r.name, img: r.img }])),
+  scenarios: data.scenarios,
+};
+const condLabels: Record<string, string> = { spot: 'Where', depth: 'Depth', tide: 'Tide', water: 'Water', wind: 'Wind', light: 'Light' };
+---
+
+<Base title="Rig It Right" description="Read the tide, the water, the wind and the depth, then pick the rig a guide would tie on. Eighteen Everglades scenarios, eight rigs.">
+  <div class="wrap section">
+    <p class="crumbs small"><a href={url('/guide-school/')}>← Guide School</a></p>
+    <header class="rr-head">
+      {hero && <Image class="rr-hero art" src={hero} alt="" width={220} height={220} loading="eager" />}
+      <div>
+        <p class="eyebrow">Guide School · game</p>
+        <h1>Rig It Right</h1>
+        <p class="lede">Read the tide, the water, the wind and the depth. Then pick the rig a guide would tie on first.</p>
+      </div>
+    </header>
+
+    <div class="levels cluster" role="group" aria-label="Level">
+      {
+        levels.map((l) => (
+          <button type="button" class:list={['btn', 'btn-sm', 'level', { 'is-on': l.n === 1 }]} data-level={l.n} data-free={l.free ? '1' : undefined}>
+            {l.name} <span class="level-sub">{l.sub}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    {gated && <SchoolLock id="rr-lock" hidden title="The Mate and Guide levels come with the Experience" text="The Deckhand level is free. The other twelve scenarios, Learn the Boat, the whole book to read and hear, and all 23 missions come with the Summer Fishing Guide Experience." page="rig-it-right" />}
+
+    <div class="board" id="board" data-game={JSON.stringify(payload)}>
+      <p class="round mono"><span id="round">1</span> / 6 · score <span id="score">0</span> · best <span id="best">0</span></p>
+      <p class="scene" id="scene"></p>
+      <ul class="conds" id="conds" aria-label="Conditions">
+        {
+          Object.entries(condLabels).map(([k, label]) => (
+            <li>
+              <span class="cond-k mono">{label}</span>
+              <span class="cond-v" data-cond={k} />
+            </li>
+          ))
+        }
+      </ul>
+      <p class="ask hand">Which rig goes on?</p>
+      <ul class="choices" id="choices"></ul>
+      <div class="verdict-box" id="verdict-box" hidden>
+        <p class="verdict hand" id="verdict"></p>
+        <p class="why" id="why"></p>
+        <p class="also small muted" id="also"></p>
+      </div>
+      <p class="cluster">
+        <button type="button" class="btn btn-primary" id="next" hidden>Next ›</button>
+        <button type="button" class="btn" id="again" hidden>Play again</button>
+        <button type="button" class="btn btn-primary" id="up" hidden>Next level ›</button>
+      </p>
+    </div>
+    <p class="small muted fine">There is more than one right answer on the water. These are the rigs most guides reach for first; the fish get the last word. Sizes, seasons and bag limits change, so check <a href="https://myfwc.com/fishing/saltwater/recreational/" rel="noopener">FWC</a> before you keep a fish.</p>
+  </div>
+
+  <section class="wrap section rules-sec" aria-labelledby="rules-h">
+    <h2 id="rules-h">Seven rules of rigging</h2>
+    <ol class="rules">
+      {
+        data.rules.map((r) => (
+          <li>
+            <strong>{r.when}</strong> {r.then}
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="wrap-wide section" aria-labelledby="locker-h">
+    <div class="wrap locker-head">
+      <p class="eyebrow">Study before you play</p>
+      <h2 id="locker-h">The Rig Locker</h2>
+      <p>Eight rigs cover most days in the Ten Thousand Islands. Know what each one is for, and when to leave it in the box.</p>
+    </div>
+    <ul class="locker">
+      {
+        rigs.map((r) => (
+          <li class="rig" id={`rig-${r.id}`}>
+            {r.src && (
+              <span class="rig-art art">
+                <Image src={r.src} alt={r.name} width={420} sizes="(min-width: 700px) 240px, 40vw" loading="lazy" />
+              </span>
+            )}
+            <div class="rig-text">
+              <h3>{r.name}</h3>
+              <p class="small">
+                <strong>On the line:</strong> {r.parts}
+              </p>
+              <p class="small">
+                <strong>Fish it:</strong> {r.how}
+              </p>
+              <p class="small rig-best">
+                <strong>Tie it on for:</strong> {r.best}
+              </p>
+              <p class="small muted">
+                <strong>Leave it in the box:</strong> {r.skip}
+              </p>
+              {r.book && (
+                <p class="small rig-book">
+                  <ChapterPill n={r.book.chapter} /> {r.book.line}
+                </p>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="wrap small"><a href={url('/tackle/')}>The Tackle Box has the knots and the rest of the gear →</a></p>
+  </section>
+
+  <script>
+    type Scenario = { id: string; level: number; scene: string; cond: Record<string, string>; options: string[]; answer: string; why: string; also?: string };
+    const board = document.getElementById('board')!;
+    const game = JSON.parse(board.dataset.game!) as { gated: boolean; rigs: Record<string, { name: string; img: string | null }>; scenarios: Scenario[] };
+    const $ = (id: string) => document.getElementById(id)!;
+    const hasKey = () => !game.gated || document.documentElement.classList.contains('has-key');
+    const lock = document.getElementById('rr-lock');
+    const shuffle = <T,>(a: T[]) => [...a].sort(() => Math.random() - 0.5);
+    let level = 1;
+    let pool: Scenario[] = [];
+    let round = 0;
+    let score = 0;
+    let current: Scenario | null = null;
+    const bestKey = () => `rig-best:${level}`;
+
+    function start() {
+      const locked = level > 1 && !hasKey();
+      if (lock) lock.hidden = !locked;
+      board.hidden = locked;
+      if (locked) return;
+      pool = shuffle(game.scenarios.filter((s) => s.level === level));
+      round = 0;
+      score = 0;
+      $('score').textContent = '0';
+      try {
+        $('best').textContent = localStorage.getItem(bestKey()) || '0';
+      } catch {}
+      $('again').hidden = true;
+      $('up').hidden = true;
+      next();
+    }
+    function next() {
+      if (round >= pool.length) return end();
+      current = pool[round];
+      round++;
+      $('round').textContent = String(round);
+      $('scene').textContent = current.scene;
+      board.querySelectorAll<HTMLElement>('[data-cond]').forEach((el) => (el.textContent = current!.cond[el.dataset.cond!] ?? ''));
+      $('verdict-box').hidden = true;
+      $('next').hidden = true;
+      const ul = $('choices');
+      ul.innerHTML = '';
+      for (const id of shuffle(current.options)) {
+        const rig = game.rigs[id];
+        const li = document.createElement('li');
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'choice';
+        b.dataset.rig = id;
+        if (rig.img) {
+          const im = document.createElement('img');
+          im.src = rig.img;
+          im.alt = '';
+          im.width = 180;
+          im.height = 180;
+          b.appendChild(im);
+        }
+        const s = document.createElement('span');
+        s.textContent = rig.name;
+        b.appendChild(s);
+        b.addEventListener('click', () => answer(id, b));
+        li.appendChild(b);
+        ul.appendChild(li);
+      }
+    }
+    function answer(id: string, b: HTMLButtonElement) {
+      const c = current!;
+      const ok = id === c.answer;
+      const near = !ok && id === c.also;
+      if (ok) score++;
+      board.querySelectorAll<HTMLButtonElement>('.choice').forEach((x) => {
+        x.disabled = true;
+        if (x.dataset.rig === c.answer) x.classList.add('right');
+      });
+      if (!ok) b.classList.add('wrong');
+      $('verdict').textContent = ok ? 'That’s the one.' : near ? `That would catch fish too. First pick: the ${game.rigs[c.answer].name.toLowerCase()}.` : `A guide would tie on the ${game.rigs[c.answer].name.toLowerCase()}.`;
+      $('why').textContent = c.why;
+      $('also').textContent = c.also && !near ? `Also good here: the ${game.rigs[c.also].name.toLowerCase()}.` : '';
+      $('score').textContent = String(score);
+      $('verdict-box').hidden = false;
+      $('next').hidden = false;
+      $('next').textContent = round >= pool.length ? 'See your score ›' : 'Next ›';
+      $('verdict-box').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+    function end() {
+      (window as unknown as { lrTrack?: (n: string, p: Record<string, string | number>) => void }).lrTrack?.('rig_finish', { score, level: String(level) });
+      const n = pool.length;
+      $('scene').textContent = `${score} of ${n}.`;
+      board.querySelectorAll<HTMLElement>('[data-cond]').forEach((el) => (el.textContent = '—'));
+      $('choices').innerHTML = '';
+      $('verdict').textContent = score === n ? 'Rigged right, every time.' : score >= n - 2 ? 'Dan would nod.' : 'Back to the Rig Locker, then try again.';
+      $('why').textContent = '';
+      $('also').textContent = '';
+      $('verdict-box').hidden = false;
+      try {
+        const best = Number(localStorage.getItem(bestKey()) || '0');
+        if (score > best) localStorage.setItem(bestKey(), String(score));
+        $('best').textContent = String(Math.max(best, score));
+      } catch {}
+      $('next').hidden = true;
+      $('again').hidden = false;
+      $('up').hidden = level >= 3;
+    }
+    function setLevel(n: number) {
+      level = n;
+      document.querySelectorAll<HTMLButtonElement>('.level').forEach((b) => b.classList.toggle('is-on', Number(b.dataset.level) === n));
+      start();
+    }
+    $('next').addEventListener('click', next);
+    $('again').addEventListener('click', start);
+    $('up').addEventListener('click', () => {
+      setLevel(level + 1);
+      document.querySelector('.levels')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+    document.querySelectorAll<HTMLButtonElement>('.level').forEach((btn) => btn.addEventListener('click', () => setLevel(Number(btn.dataset.level))));
+    start();
+  </script>
+</Base>
+
+<style>
+  .rr-head {
+    display: flex;
+    gap: 1.1rem;
+    align-items: center;
+  }
+  .rr-head .lede {
+    margin-bottom: 0;
+  }
+  .rr-hero {
+    flex: none;
+    width: 104px;
+    height: 104px;
+    border-radius: 14px;
+    object-fit: cover;
+  }
+  @media (min-width: 640px) {
+    .rr-hero {
+      width: 150px;
+      height: 150px;
+    }
+  }
+  .levels {
+    margin: 1rem 0;
+  }
+  .level-sub {
+    font-weight: 400;
+    font-size: 0.82em;
+    opacity: 0.8;
+  }
+  .level.is-on {
+    background: var(--sunrise);
+    border-color: var(--sunrise);
+    color: var(--on-sunrise);
+  }
+  .board {
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .round {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    margin: 0 0 0.5rem;
+  }
+  .scene {
+    margin: 0 0 0.8rem;
+    font-size: 1.12rem;
+    line-height: 1.4;
+    font-weight: 600;
+    color: var(--mangrove);
+  }
+  .conds {
+    list-style: none;
+    margin: 0 0 0.9rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  @media (min-width: 640px) {
+    .conds {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .conds li {
+    display: grid;
+    gap: 0.05rem;
+    padding: 0.4rem 0.6rem;
+    background: var(--paper);
+    border: 1px solid var(--oyster);
+    border-radius: 10px;
+  }
+  .cond-k {
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .cond-v {
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .ask {
+    margin: 0 0 0.4rem;
+    font-size: 1.3rem;
+    color: var(--sunrise-ink);
+  }
+  .choices {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .choices :global(.choice) {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 0.3rem;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.25;
+    padding: 0.6rem 0.5rem 0.7rem;
+    min-height: 56px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--oyster);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .choices :global(.choice img) {
+    width: min(100%, 132px);
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+  .choices :global(.choice.right) {
+    border-color: var(--sunrise);
+    background: color-mix(in srgb, var(--sunrise) 18%, var(--paper));
+  }
+  .choices :global(.choice.wrong) {
+    opacity: 0.5;
+  }
+  .choices :global(.choice.wrong span) {
+    text-decoration: line-through;
+  }
+  .verdict-box {
+    margin-top: 0.8rem;
+  }
+  .verdict {
+    font-size: 1.4rem;
+    line-height: 1.25;
+    color: var(--sunrise-ink);
+    margin: 0 0 0.2rem;
+  }
+  .why {
+    margin: 0 0 0.2rem;
+  }
+  .also {
+    margin: 0;
+  }
+  .also:empty,
+  .why:empty {
+    display: none;
+  }
+  .fine {
+    margin-top: 0.8rem;
+  }
+  .rules-sec h2,
+  .locker-head h2 {
+    margin-top: 0;
+  }
+  .rules {
+    margin: 0;
+    padding-left: 1.3rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .rules strong {
+    color: var(--mangrove);
+  }
+  .locker {
+    list-style: none;
+    margin: 1rem auto 1.2rem;
+    padding: 0 1rem;
+    max-width: 1100px;
+    display: grid;
+    gap: 0.9rem;
+  }
+  @media (min-width: 820px) {
+    .locker {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .rig {
+    display: grid;
+    grid-template-columns: 34% minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: start;
+    padding: 0.9rem;
+    background: var(--paper-2);
+    border: 1px solid var(--oyster);
+    border-radius: 14px;
+    scroll-margin-top: 130px;
+  }
+  .rig-art :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+  .rig h3 {
+    margin: 0 0 0.35rem;
+    font-size: 1.15rem;
+    color: var(--mangrove);
+  }
+  .rig p {
+    margin: 0 0 0.35rem;
+    line-height: 1.4;
+  }
+  .rig-best strong {
+    color: var(--sunrise-ink);
+  }
+  .rig-book {
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+</style>
