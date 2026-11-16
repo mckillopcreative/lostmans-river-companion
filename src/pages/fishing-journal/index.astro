@@ -45,8 +45,9 @@ const tableFish = j.keeper.table.map((id) => fishById.get(id)).filter(Boolean);
     <h1>{j.title}</h1>
     <p class="lede">{j.subtitle}. Read it here, or print it and keep it in the boat.</p>
     <p class="cluster">
-      <button class="btn btn-primary" type="button" id="print">Print it, or save it as a PDF</button>
-      <span class="small muted">Letter size. Choose “Save as PDF” in the print window to keep a copy.</span>
+      <a class="btn btn-primary" id="pdf" hidden rel="noopener" target="_blank">Get the PDF</a>
+      <button class="btn btn-primary" type="button" id="print">Print it</button>
+      <span class="small muted" id="print-note">Letter size, about 20 pages.</span>
     </p>
     {
       locked && (
@@ -447,7 +448,7 @@ const tableFish = j.keeper.table.map((id) => fishById.get(id)).filter(Boolean);
   </div>
 
   <script>
-    import { getKey } from '../../scripts/access';
+    import { API, getKey } from '../../scripts/access';
     import { track } from '../../scripts/track';
     const fj = document.getElementById('fj')!;
     // ?unlocked works on the dev server only (never in a build): it lets a print run be checked without a key
@@ -455,6 +456,15 @@ const tableFish = j.keeper.table.map((id) => fishById.get(id)).filter(Boolean);
     if (getKey() || devOpen) {
       document.getElementById('fj-lock')?.remove();
       fj.classList.remove('is-locked');
+    }
+    // key holders get the ready-made PDF (scripts/journal-pdf.mjs → R2 → the Worker); printing stays as the second way
+    const key = getKey();
+    const pdf = document.getElementById('pdf') as HTMLAnchorElement;
+    if (key) {
+      pdf.href = `${API}/guide/${key}/matts-fishing-journal.pdf`;
+      pdf.hidden = false;
+      pdf.addEventListener('click', () => track('guide_pdf'));
+      document.getElementById('print')!.classList.remove('btn-primary');
     }
     document.getElementById('print')!.addEventListener('click', () => {
       if (fj.classList.contains('is-locked')) {

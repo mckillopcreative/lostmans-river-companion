@@ -1,5 +1,5 @@
 ---
-// Guide School on the landing page (John, 2026-11-15): the three named courses, right above the
+// Guide School on the landing page (John, 2026-11-15; a fourth course and the Training Manual 2026-11-16): the named courses, right above the
 // offer card, so "missions and challenges" has something a parent can picture. Each card opens
 // the course itself (all three have a free first taste).
 import { Image } from 'astro:assets';
@@ -8,12 +8,15 @@ import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 import rigs from '../../data/rigs.json';
 import boat from '../../data/boat-school.json';
+import manual from '../../data/manual.json';
 
 const plates = fish.filter((f) => artImage('fish', f.id)).length;
 const journalArt = artImage('journal', 'cover');
+const manualArt = artImage('manual', 'cover');
 const courses = [
   { id: 'rig-it-right', href: '/guide-school/rig-it-right/', title: 'Rig It Right', line: 'Read the wind, tide and water, then pick the rig.', count: `${rigs.scenarios.length} scenarios` },
   { id: 'learn-the-boat', href: '/guide-school/learn-the-boat/', title: 'Learn the Boat', line: 'Markers, reading the water, the trailer, the rinse-down.', count: `${boat.lessons.length} lessons` },
+  { id: 'keeper-or-release', href: '/guide-school/keeper-or-release/', title: 'Keeper or Release?', line: 'Measure the fish, read the card, make the call.', count: '3 levels' },
   { id: 'fish-id', href: '/games/fish-id/', title: 'Fish of the Everglades', line: 'Name the fish from its painted plate.', count: `${plates} species` },
 ];
 ---
@@ -22,7 +25,7 @@ const courses = [
   <div class="wrap-wide">
     <p class="eyebrow">Inside the Experience</p>
     <h2 id="gss-h">Guide School</h2>
-    <p class="gss-sub">Three courses in the real skills of an Everglades fishing guide. Start each one free.</p>
+    <p class="gss-sub">Four courses in the real skills of an Everglades fishing guide. Start each one free. Then hear it all in the Training Manual, and print it in Matt’s Fishing Journal.</p>
     <ul class="gss-row">
       {
         courses.map((c) => {
@@ -40,6 +43,14 @@ const courses = [
         })
       }
     </ul>
+    <a class="gss-journal" href={url('/training-manual/')} data-track="landing_click" data-track-to="training-manual">
+      <span class="gss-j-art gss-j-square art">{manualArt && <Image src={manualArt} alt="" width={420} sizes="110px" loading="lazy" />}</span>
+      <span class="gss-j-text">
+        <span class="gss-count mono">The audio companion · {manual.lessons.length} lessons · listen</span>
+        <span class="gss-j-title">{manual.title}</span>
+        <span class="gss-line small">The boat, the sky, the fish, the rigs and the guests, read by the voice of the book. Made for the car ride to the ramp.</span>
+      </span>
+    </a>
     <a class="gss-journal" href={url('/fishing-journal/')} data-track="landing_click" data-track-to="fishing-journal">
       <span class="gss-j-art art">{journalArt && <Image src={journalArt} alt="" width={420} sizes="110px" loading="lazy" />}</span>
       <span class="gss-j-text">
@@ -67,8 +78,16 @@ const courses = [
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.6rem;
+  }
+  @media (min-width: 760px) {
+    .gss-row {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .gss-j-square {
+    aspect-ratio: 1 !important;
   }
   .gss-row a {
     height: 100%;

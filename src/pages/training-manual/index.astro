@@ -1,0 +1,447 @@
+---
+// The Assistant Fishing Guide Training Manual (John, 2026-11-16): an audio companion to the book.
+// Fifteen short lessons read by the book's narrator straight to the listener as a trainee; the
+// scripts are data/manual/<id>.txt and the index is data/manual.json (scripts/narrate.mjs manual
+// makes the audio). Lesson 1 is a public MP3; lessons 2 to 15 stream from the Worker to devices
+// that hold a purchase key, like chapters 2 to 23. The read-along text of the paid lessons is in
+// the page and shown only to key holders (the same client-side gate as Guide School).
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { getImage, Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SchoolLock from '@components/SchoolLock.astro';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../../site.config.mjs';
+import manual from '../../../data/manual.json';
+import audioData from '../../../data/audio.json';
+
+const gated = !!site.gate?.live;
+const cover = artImage('manual', 'cover');
+const artwork = cover ? (await getImage({ src: cover, width: 512, height: 512, format: 'png' })).src : null;
+const minutes = ((audioData as unknown as { manual?: Record<string, number> }).manual ?? {}) as Record<string, number>;
+const free = existsSync(resolve(process.cwd(), 'public/audio/tm-01.mp3'));
+const lessons = manual.lessons.map((l) => {
+  const text = readFileSync(resolve(process.cwd(), 'data/manual', `${l.id}.txt`), 'utf8').replace(/\r/g, '').trim();
+  // "[pause]" is two seconds of silence in the audio; on the page the answer simply follows
+  const paras = text.split(/\n\s*\n/).map((p) => {
+    const [q, a] = p.split(/\s*\[pause\]\s*/);
+    return { q: q.trim(), a: a?.trim() };
+  });
+  return { ...l, paras, min: minutes[String(l.n)] ?? 0, tm: `tm-${String(l.n).padStart(2, '0')}` };
+});
+const total = lessons.reduce((a, l) => a + l.min, 0);
+const ready = free && total > 0;
+const payload = {
+  gated,
+  rate: manual.rate,
+  title: manual.title,
+  artwork,
+  free: url('/audio/tm-01.mp3'),
+  lessons: lessons.map((l) => ({ n: l.n, tm: l.tm, title: l.title })),
+};
+---
+
+<Base title="Training Manual" description={`${manual.title}: ${lessons.length} short audio lessons in what an assistant fishing guide has to know, read by the voice that reads the book.`}>
+  <div class="wrap section">
+    <p class="crumbs small"><a href={url('/app/')}>← The Experience</a> · <a href={url('/guide-school/')}>Guide School</a></p>
+    <header class="tm-head">
+      {cover && <Image class="tm-cover art" src={cover} alt="" width={300} height={300} loading="eager" />}
+      <div>
+        <p class="eyebrow">Listen · {lessons.length} lessons{total > 0 && ` · about ${total} minutes`}</p>
+        <h1>{manual.title}</h1>
+        <p class="tm-sub">{manual.subtitle}</p>
+      </div>
+    </header>
+    <p class="lede">{manual.intro}</p>
+
+    {
+      ready ? (
+        <section class="tm-player" id="player" aria-label="Player" data-manual={JSON.stringify(payload)}>
+          <p class="tm-now mono" id="tm-now">Lesson 1</p>
+          <p class="tm-now-title" id="tm-title">{lessons[0].title}</p>
+          <audio id="tm-audio" class="tm-audio" controls preload="none" src={url('/audio/tm-01.mp3')}>
+            Your browser can’t play this audio.
+          </audio>
+          <p class="tm-ctl">
+            <button type="button" class="btn btn-sm" id="tm-prev" disabled>‹ Back</button>
+            <span class="small muted" id="tm-progress">0 of {lessons.length} heard</span>
+            <button type="button" class="btn btn-sm" id="tm-next">Next ›</button>
+          </p>
+        </section>
+      ) : (
+        <p class="tm-soon">The recording is on its way. The lessons are listed below.</p>
+      )
+    }
+
+    {gated && <SchoolLock id="tm-lock" hidden title="Lessons 2 to 15 come with the Experience" text="Lesson 1 is free to hear. The other fourteen lessons, Guide School, Matt’s Fishing Journal, the whole book to read and hear, and all 23 missions come with the Summer Fishing Guide Experience." page="training-manual" />}
+
+    <ol class="tm-list" id="tm-list">
+      {
+        lessons.map((l) => (
+          <li class="tm-lesson" data-n={l.n} id={`lesson-${l.n}`}>
+            <button type="button" class="tm-row" data-play={l.n} aria-label={`Play lesson ${l.n}: ${l.title}`}>
+              <span class="tm-num mono" aria-hidden="true">
+                {l.n}
+              </span>
+              <span class="tm-text">
+                <span class="tm-title">{l.title}</span>
+                <span class="tm-blurb small">{l.blurb}</span>
+                <span class="tm-meta mono">
+                  {l.min > 0 && `${l.min} min`}
+                  {l.n === 1 && gated && <span class="tm-free"> · free</span>}
+                </span>
+              </span>
+              <span class="tm-state" aria-hidden="true" />
+            </button>
+            <div class="tm-more">
+              <a class="small" href={url(l.do.href)} data-track="tile_click" data-track-tile={`manual-${l.id}`}>
+                Then do it: {l.do.label} →
+              </a>
+              <details class:list={['tm-read', { 'gs-paid': gated && l.n > 1 }]}>
+                <summary class="small">Read along</summary>
+                {l.paras.map((p) => (
+                  <p>
+                    {p.q}
+                    {p.a && (
+                      <>
+                        {' '}
+                        <em>{p.a}</em>
+                      </>
+                    )}
+                  </p>
+                ))}
+              </details>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="small muted tm-fine">
+      The manual makes good crew; it does not make a captain. On a real boat a grown-up is in charge. It teaches how to measure a fish and read a rule, never the rules themselves: sizes, seasons and limits change, so look them up at <a href="https://myfwc.com/fishing/saltwater/recreational/" rel="noopener">FWC</a> before you keep a fish. Written by us for this Experience and read by the AI voice that narrates the book.
+    </p>
+  </div>
+
+  <script>
+    import { track } from '../../scripts/track';
+    import { API, getKey } from '../../scripts/access';
+    type Lesson = { n: number; tm: string; title: string };
+    const box = document.getElementById('player');
+    if (box) {
+      const m = JSON.parse(box.dataset.manual!) as { gated: boolean; rate: number; title: string; artwork: string | null; free: string; lessons: Lesson[] };
+      const audio = document.getElementById('tm-audio') as HTMLAudioElement;
+      const $ = (id: string) => document.getElementById(id)!;
+      const lock = document.getElementById('tm-lock');
+      const key = () => getKey();
+      const open = (n: number) => n === 1 || !m.gated || !!key();
+      const src = (l: Lesson) => (l.n === 1 ? m.free : key() ? `${API}/audio/${key()}/${l.tm}.mp3` : '');
+      const HEARD = 'lr-manual';
+      const heard = (): number[] => {
+        try {
+          return JSON.parse(localStorage.getItem(HEARD) || '[]');
+        } catch {
+          return [];
+        }
+      };
+      let cur = 1;
+      let wantPlay = false;
+      const started = new Set<number>();
+
+      function paint() {
+        const h = new Set(heard());
+        document.querySelectorAll<HTMLElement>('.tm-lesson').forEach((li) => {
+          const n = Number(li.dataset.n);
+          li.classList.toggle('is-current', n === cur);
+          li.classList.toggle('is-heard', h.has(n));
+          li.classList.toggle('is-locked', !open(n));
+        });
+        $('tm-progress').textContent = `${h.size} of ${m.lessons.length} heard`;
+        ($('tm-prev') as HTMLButtonElement).disabled = cur <= 1;
+        ($('tm-next') as HTMLButtonElement).disabled = cur >= m.lessons.length;
+      }
+      function load(n: number, play: boolean) {
+        const l = m.lessons.find((x) => x.n === n);
+        if (!l) return;
+        if (!open(n)) {
+          // a paid lesson on a device without the key: show what it is part of
+          if (lock) {
+            lock.hidden = false;
+            lock.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          }
+          return;
+        }
+        if (lock) lock.hidden = true;
+        cur = n;
+        $('tm-now').textContent = `Lesson ${l.n} of ${m.lessons.length}`;
+        $('tm-title').textContent = l.title;
+        const s = src(l);
+        if (audio.getAttribute('src') !== s) audio.src = s;
+        wantPlay = play;
+        if (play) {
+          audio.play().catch(() => {});
+          box!.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+        try {
+          localStorage.setItem('lr-manual-at', String(n));
+        } catch {}
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: `Lesson ${l.n}: ${l.title}`,
+            artist: m.title,
+            album: 'Escape to Lostman’s River',
+            artwork: m.artwork ? [{ src: m.artwork, sizes: '512x512', type: 'image/png' }] : [],
+          });
+        }
+        paint();
+      }
+      const posKey = () => `audio-pos:${m.lessons.find((x) => x.n === cur)!.tm}`;
+      const applyRate = () => (audio.playbackRate = m.rate);
+      audio.addEventListener('play', applyRate);
+      audio.addEventListener('loadedmetadata', () => {
+        applyRate();
+        try {
+          const saved = Number(localStorage.getItem(posKey()) || '0');
+          if (saved > 10 && saved < audio.duration - 5) audio.currentTime = saved;
+        } catch {}
+        if (wantPlay) audio.play().catch(() => {});
+      });
+      audio.addEventListener('play', () => {
+        if (!started.has(cur)) track('manual_play', { lesson: cur });
+        started.add(cur);
+      });
+      audio.addEventListener('timeupdate', () => {
+        try {
+          if (Math.floor(audio.currentTime) % 5 === 0) localStorage.setItem(posKey(), String(Math.floor(audio.currentTime)));
+        } catch {}
+      });
+      audio.addEventListener('ended', () => {
+        try {
+          localStorage.removeItem(posKey());
+          const h = new Set(heard());
+          const first = !h.has(cur);
+          h.add(cur);
+          localStorage.setItem(HEARD, JSON.stringify([...h].sort((a, b) => a - b)));
+          if (first) track('manual_done', { lesson: cur });
+        } catch {}
+        paint();
+        // roll on to the next lesson, like an audiobook
+        if (cur < m.lessons.length && open(cur + 1)) load(cur + 1, true);
+        else if (cur < m.lessons.length) load(cur + 1, false);
+      });
+      document.querySelectorAll<HTMLButtonElement>('[data-play]').forEach((b) => b.addEventListener('click', () => load(Number(b.dataset.play), true)));
+      $('tm-prev').addEventListener('click', () => load(cur - 1, !audio.paused));
+      $('tm-next').addEventListener('click', () => load(cur + 1, !audio.paused));
+      if ('mediaSession' in navigator) {
+        try {
+          navigator.mediaSession.setActionHandler('previoustrack', () => load(cur - 1, true));
+          navigator.mediaSession.setActionHandler('nexttrack', () => load(cur + 1, true));
+        } catch {}
+      }
+      // pick up at the lesson they were on, or at #lesson-N from a link
+      let at = 1;
+      try {
+        at = Number(localStorage.getItem('lr-manual-at') || '1') || 1;
+      } catch {}
+      const hash = /^#lesson-(\d+)$/.exec(location.hash);
+      if (hash) at = Number(hash[1]);
+      if (!open(at)) at = 1;
+      load(at, false);
+      if (lock) lock.hidden = true;
+    }
+  </script>
+</Base>
+
+<style>
+  .tm-head {
+    display: flex;
+    gap: 1.1rem;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+  .tm-head h1 {
+    margin: 0.1rem 0 0.2rem;
+    font-size: clamp(1.55rem, 5.6vw, 2.3rem);
+    line-height: 1.12;
+  }
+  .tm-sub {
+    margin: 0;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+  .tm-cover {
+    flex: none;
+    width: 104px;
+    height: 104px;
+    border-radius: 14px;
+    object-fit: cover;
+  }
+  @media (min-width: 640px) {
+    .tm-cover {
+      width: 170px;
+      height: 170px;
+    }
+  }
+  .tm-player {
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-left: 4px solid var(--sunrise);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 0.9rem 1rem;
+    margin: 1rem 0;
+    scroll-margin-top: 5rem;
+  }
+  .tm-now {
+    margin: 0;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sunrise-ink);
+  }
+  .tm-now-title {
+    margin: 0.1rem 0 0.6rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--mangrove);
+  }
+  .tm-audio {
+    width: 100%;
+    height: 44px;
+    border-radius: var(--radius);
+  }
+  .tm-ctl {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.6rem 0 0;
+  }
+  .tm-soon {
+    padding: 0.8rem 1rem;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+  }
+  .tm-list {
+    list-style: none;
+    margin: 1rem 0;
+    padding: 0;
+    display: grid;
+    gap: 0.55rem;
+  }
+  .tm-lesson {
+    background: var(--paper-2);
+    border: 1px solid var(--oyster);
+    border-radius: 14px;
+    overflow: hidden;
+    scroll-margin-top: 5rem;
+  }
+  .tm-lesson.is-current {
+    border-color: var(--sunrise);
+    box-shadow: inset 4px 0 0 var(--sunrise);
+  }
+  .tm-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 2.1rem minmax(0, 1fr) 1.9rem;
+    gap: 0.7rem;
+    align-items: center;
+    padding: 0.7rem 0.75rem 0.45rem;
+    background: none;
+    border: 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .tm-num {
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1.5px solid var(--oyster);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .tm-lesson.is-heard .tm-num {
+    background: var(--mangrove);
+    border-color: var(--mangrove);
+    color: var(--paper);
+  }
+  .tm-text {
+    display: grid;
+    gap: 0.1rem;
+  }
+  .tm-title {
+    font-size: 1.08rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--mangrove);
+  }
+  .tm-blurb {
+    line-height: 1.35;
+  }
+  .tm-meta {
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .tm-free {
+    color: var(--sunrise-ink);
+    font-weight: 700;
+  }
+  /* the state mark at the right of each row: play, heard, or locked */
+  .tm-state::before {
+    content: '▶';
+    display: grid;
+    place-items: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    background: var(--sunrise);
+    color: var(--on-sunrise);
+    font-size: 0.72rem;
+    padding-left: 0.12rem;
+  }
+  .tm-lesson.is-heard .tm-state::before {
+    content: '✓';
+    background: none;
+    color: var(--mangrove);
+    font-size: 1.15rem;
+    font-weight: 700;
+    padding-left: 0;
+  }
+  .tm-lesson.is-locked .tm-state::before {
+    content: '';
+    background: var(--ink-soft);
+    /* a small padlock */
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z'/%3E%3C/svg%3E") center / 1.15rem no-repeat;
+    border-radius: 0;
+  }
+  .tm-more {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0 0.75rem 0.7rem calc(0.75rem + 2.1rem + 0.7rem);
+  }
+  .tm-read summary {
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+  .tm-read p {
+    margin: 0.6rem 0 0;
+    font-size: 0.98rem;
+    line-height: 1.55;
+  }
+  .tm-read em {
+    color: var(--mangrove);
+  }
+  :global(html:not(.has-key)) .gs-paid {
+    display: none;
+  }
+  .tm-fine {
+    margin-top: 1rem;
+  }
+</style>

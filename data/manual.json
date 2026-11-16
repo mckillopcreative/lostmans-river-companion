@@ -1,0 +1,175 @@
+{
+  "note": "The Assistant Fishing Guide Training Manual (John, 2026-11-16): an audio companion to the book, fifteen short lessons read by the book's narrator (Brian, ElevenLabs) straight to the listener as a trainee, quoting Uncle Dan's sayings from data/quotes.json. The scripts are data/manual/<id>.txt (plain paragraphs; '[pause]' is two seconds of silence after a quiz question). scripts/narrate.mjs manual <n|all> makes the audio; lesson 1 is public/audio/tm-01.mp3 (free), lessons 2 to 15 are served from R2 to purchase-key holders. No sizes, seasons or bag limits are spoken; crew learn beside an adult captain. 'minutes' is filled in by the narration run (at the player's 1.1x).",
+  "title": "The Assistant Fishing Guide Training Manual",
+  "short": "Training Manual",
+  "subtitle": "A listening companion to Escape to Lostman’s River",
+  "intro": "Fifteen short lessons in what an assistant fishing guide has to know: the boat, the sky, the fish, the rigs, the guests and the hose. Read by the voice that reads the book, straight to you, with three questions at the end of nearly every one. Answer them out loud.",
+  "rate": 1.1,
+  "lessons": [
+    {
+      "n": 1,
+      "id": "welcome",
+      "title": "Welcome aboard, trainee",
+      "open": "The Assistant Fishing Guide Training Manual. Lesson one. Welcome aboard, trainee.",
+      "blurb": "The job you’re training for, how the manual works, and Uncle Dan’s five rules.",
+      "do": {
+        "label": "Start Guide School",
+        "href": "/guide-school/"
+      }
+    },
+    {
+      "n": 2,
+      "id": "boat-words",
+      "title": "Boat words, and the morning checklist",
+      "open": "Lesson two. Boat words, and the morning checklist.",
+      "blurb": "Bow, stern, port and starboard, and the seven things a guide checks before the key turns.",
+      "do": {
+        "label": "Learn the Boat: lessons 1 and 2",
+        "href": "/guide-school/learn-the-boat/"
+      }
+    },
+    {
+      "n": 3,
+      "id": "engine-and-markers",
+      "title": "Waking the engine, and the rules of the road",
+      "open": "Lesson three. Waking the engine, and the rules of the road.",
+      "blurb": "The tell-tale stream, red right returning, and why your wake is your business.",
+      "do": {
+        "label": "Learn the Boat: markers and manners",
+        "href": "/guide-school/learn-the-boat/markers/"
+      }
+    },
+    {
+      "n": 4,
+      "id": "reading-the-water",
+      "title": "Reading the water, and getting unstuck",
+      "open": "Lesson four. Reading the water, and getting unstuck.",
+      "blurb": "Color, birds and bends, and the three-step drill for the day you run aground.",
+      "do": {
+        "label": "Learn the Boat: skinny water",
+        "href": "/guide-school/learn-the-boat/aground/"
+      }
+    },
+    {
+      "n": 5,
+      "id": "the-mates-jobs",
+      "title": "The mate’s jobs: anchor, dock, bait and ice",
+      "open": "Lesson five. The mate’s jobs: the anchor, the dock, the bait and the ice.",
+      "blurb": "Making the boat stop where the captain wants it, and keeping the bait alive and the catch cold.",
+      "do": {
+        "label": "Learn the Boat: anchoring and docking",
+        "href": "/guide-school/learn-the-boat/anchor/"
+      }
+    },
+    {
+      "n": 6,
+      "id": "sun-and-storms",
+      "title": "Sun, storms and the sky",
+      "open": "Lesson six. Sun, storms, and the sky.",
+      "blurb": "Reading the clouds, counting the thunder, beating the heat, and the two jobs if someone goes over the side.",
+      "do": {
+        "label": "Learn the Boat: before you leave the dock",
+        "href": "/guide-school/learn-the-boat/before-you-go/"
+      }
+    },
+    {
+      "n": 7,
+      "id": "the-six-that-matter",
+      "title": "Know your fish: the six that matter",
+      "open": "Lesson seven. Know your fish, part one. The six that matter.",
+      "blurb": "Snook, tarpon, redfish, seatrout, snapper and grouper, described so you can see them with your eyes shut.",
+      "do": {
+        "label": "Play Fish of the Everglades",
+        "href": "/games/fish-id/"
+      }
+    },
+    {
+      "n": 8,
+      "id": "the-rest-of-the-river",
+      "title": "Know your fish: the rest of the river",
+      "open": "Lesson eight. Know your fish, part two. The rest of the river.",
+      "blurb": "The look-alikes, the bait thieves, and the ones to keep your fingers away from.",
+      "do": {
+        "label": "The fish field guide",
+        "href": "/fish/"
+      }
+    },
+    {
+      "n": 9,
+      "id": "the-neighbors",
+      "title": "The neighbors",
+      "open": "Lesson nine. The neighbors.",
+      "blurb": "Manatees, dolphins, alligators, snakes and pelicans, and the manners that go with each.",
+      "do": {
+        "label": "Meet the critters",
+        "href": "/critters/"
+      }
+    },
+    {
+      "n": 10,
+      "id": "keeper-or-release",
+      "title": "Keeper or release?",
+      "open": "Lesson ten. Keeper or release?",
+      "blurb": "How to measure a fish, what a slot is, where the real rules come from, and how to let one go.",
+      "do": {
+        "label": "Play Keeper or Release?",
+        "href": "/guide-school/keeper-or-release/"
+      }
+    },
+    {
+      "n": 11,
+      "id": "finding-the-fish",
+      "title": "Finding the fish",
+      "open": "Lesson eleven. Finding the fish.",
+      "blurb": "Six kinds of spot, six signs of fish, and why the tide matters more than either.",
+      "do": {
+        "label": "Today’s tide",
+        "href": "/tides/"
+      }
+    },
+    {
+      "n": 12,
+      "id": "rig-it-right",
+      "title": "Rig it right",
+      "open": "Lesson twelve. Rig it right.",
+      "blurb": "Seven rules, eight rigs, and one knot to learn with your fingers.",
+      "do": {
+        "label": "Play Rig It Right",
+        "href": "/guide-school/rig-it-right/"
+      }
+    },
+    {
+      "n": 13,
+      "id": "the-bite-the-fight-the-net",
+      "title": "The bite, the fight and the net",
+      "open": "Lesson thirteen. The bite, the fight, and the net.",
+      "blurb": "Five ways to set a hook, how to fight a fish, and which end goes in the net first.",
+      "do": {
+        "label": "Five knots to master",
+        "href": "/knots/"
+      }
+    },
+    {
+      "n": 14,
+      "id": "your-guests",
+      "title": "Your guests",
+      "open": "Lesson fourteen. Your guests.",
+      "blurb": "The hard part: people. Names, sunscreen, hooks, slow days, and never taking the rod.",
+      "do": {
+        "label": "Your missions",
+        "href": "/missions/"
+      }
+    },
+    {
+      "n": 15,
+      "id": "the-end-of-the-day",
+      "title": "The end of the day, and the big one",
+      "open": "Lesson fifteen. The end of the day, and the big one.",
+      "blurb": "The ramp, the hose, the nine-step list, and what it takes to earn the big one.",
+      "do": {
+        "label": "Matt’s Fishing Journal",
+        "href": "/fishing-journal/"
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "note": "Keeper or Release? tile and the Training Manual cover (John, 2026-11-16). Run with scripts/genbatch.mjs, then scripts/import-art.mjs private/art-pack/assets/art (then re-crop the tiles; see docs/GUIDE-SCHOOL.md).",
+  "groups": {
+    "tile": {
+      "shape": "square",
+      "refs": ["assets/art/tiles/tackle.webp"],
+      "prompt": "A square illustration in the style of the attached reference: pen-and-ink line with loose watercolor wash on cream watercolor paper, Florida Everglades colors (sky blue, seafoam, mangrove green, one warm sunrise-orange accent). Bold, simple, readable at thumbnail size. The picture fills the whole square, with no border, frame or torn paper edge. No text, letters, numbers, logos or signatures anywhere. Subject: {{line}}"
+    }
+  },
+  "items": [
+    { "group": "tile", "out": "private/art-pack/assets/art/tiles/keeper-or-release.png", "line": "a redfish (copper-bronze, one black spot at the base of the tail) lying on a white fish-measuring board on the deck of a skiff, seen from above, its nose against the stop at the left end; the board's ruler marks are plain tick lines with no numbers. Beside the board an open cooler of ice on one side and the green river water on the other, so the picture asks the question: keep it or let it go." },
+    { "group": "tile", "out": "private/art-pack/assets/art/manual/cover.png", "line": "a well-used spiral-bound field manual with a blank weathered cover lying on the console of a flats skiff beside a pair of over-ear headphones, a guide's long-billed cap and a coiled dock line; beyond the windshield a mangrove river at sunrise with an orange sun low on the water. A feeling of the first day on the job as a fishing guide's mate." }
+  ]
+}

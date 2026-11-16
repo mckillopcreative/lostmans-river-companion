@@ -1,0 +1,42 @@
+{
+  "note": "Keeper or Release? (Guide School, John 2026-11-16). The practice rule cards are made up by the page, at random, every round, so no number here or on screen is a real regulation and none can be memorised as one. 'min' and 'max' below are only how long each fish may be drawn on the measuring board (ordinary lengths for the species), never a rule. 'slot' says whether the game may deal this fish a two-ended practice slot or only a smallest-size practice rule.",
+  "rounds": 8,
+  "fish": [
+    { "id": "snook", "name": "Snook", "min": 18, "max": 38, "slot": true },
+    { "id": "redfish", "name": "Redfish", "min": 14, "max": 34, "slot": true },
+    { "id": "trout", "name": "Spotted seatrout", "min": 11, "max": 25, "slot": true },
+    { "id": "black-drum", "name": "Black drum", "min": 12, "max": 30, "slot": true },
+    { "id": "grouper", "name": "Grouper", "min": 16, "max": 34, "slot": true },
+    { "id": "snapper", "name": "Mangrove snapper", "min": 7, "max": 17, "slot": false },
+    { "id": "sheepshead", "name": "Sheepshead", "min": 8, "max": 19, "slot": false },
+    { "id": "flounder", "name": "Flounder", "min": 9, "max": 20, "slot": false }
+  ],
+  "levels": [
+    {
+      "n": 1,
+      "name": "Deckhand",
+      "sub": "one line to read",
+      "free": true,
+      "intro": "One rule on the card: a smallest size. Read the board, read the card, make the call."
+    },
+    {
+      "n": 2,
+      "name": "Mate",
+      "sub": "the slot",
+      "free": false,
+      "intro": "Now some cards have a slot: a smallest size and a biggest size. Too short goes back. So does too long."
+    },
+    {
+      "n": 3,
+      "name": "Guide",
+      "sub": "the whole card",
+      "free": false,
+      "intro": "Close calls, a season line and a limit. A guide reads the whole card and counts the cooler before the fish."
+    }
+  ],
+  "end": {
+    "perfect": "You know the card cold.",
+    "good": "Dan would nod.",
+    "again": "Read the card twice, measure once. Try again."
+  }
+}

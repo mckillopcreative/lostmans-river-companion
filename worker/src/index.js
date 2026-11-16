@@ -12,7 +12,8 @@
 //   GET  /key/:key              is this key valid?
 //   GET|PUT /progress/:key      the reader's missions, field sign-offs, badges, start date
 //   POST /restore               {email} → re-send the link (same answer whether or not it exists)
-//   GET  /audio/:key/ch-NN.mp3  chapters 2–23 from R2, with Range support
+//   GET  /audio/:key/ch-NN.mp3  chapters 2–23 from R2, with Range support (and tm-NN.mp3, Training Manual lessons 2–15)
+//   GET  /guide/:key/matts-fishing-journal.pdf  the ready-made journal PDF from R2
 //   GET  /text/:key/ch-NN.json  chapters 2–23's text from R2 (text/), from READER_OPENS only
 //   GET  /qr/:key.png           the start-link QR code for the email
 //   POST /admin/issue           {email, note?, send?} with x-admin-key: comps, reviewers, tests
@@ -242,7 +243,8 @@ function mergeField(a = {}, b = {}) {
 // ---------- audio ----------
 async function audio(request, env, key, file, cors) {
   if (!(await getKey(env, key))) return new Response('not found', { status: 404, headers: cors });
-  if (!/^ch-(0[2-9]|1\d|2[0-3])\.mp3$/.test(file)) return new Response('not found', { status: 404, headers: cors });
+  // chapters 2–23 of the book, and lessons 2–15 of the Training Manual (tm-NN; lesson 1 is a public file)
+  if (!/^(ch-(0[2-9]|1\d|2[0-3])|tm-(0[2-9]|1[0-5]))\.mp3$/.test(file)) return new Response('not found', { status: 404, headers: cors });
   if (!env.AUDIO) return new Response('audio storage not set up yet', { status: 503, headers: cors });
   const range = request.headers.get('range');
   let obj;
@@ -488,6 +490,14 @@ export default {
     }
 
     if ((m = /^\/audio\/([A-Za-z0-9]+)\/([\w.-]+)$/.exec(path))) return audio(request, env, m[1], m[2], cors);
+
+    // ---- Matt's Fishing Journal as a ready-made PDF, for key holders (made by scripts/journal-pdf.mjs, kept in R2) ----
+    if ((m = /^\/guide\/([A-Za-z0-9]+)\/matts-fishing-journal\.pdf$/.exec(path))) {
+      if (!(await getKey(env, m[1]))) return new Response('not found', { status: 404, headers: cors });
+      const obj = await env.AUDIO?.get('guide/matts-fishing-journal.pdf');
+      if (!obj) return new Response('not ready yet', { status: 503, headers: cors });
+      return new Response(obj.body, { headers: { 'content-type': 'application/pdf', 'content-length': String(obj.size), 'content-disposition': 'inline; filename="Matts-Fishing-Journal.pdf"', 'cache-control': 'private, max-age=3600', ...cors } });
+    }
 
     // ---- the book's text, chapters 2–23, for key holders from READER_OPENS ----
     if ((m = /^\/text\/([A-Za-z0-9]+)\/(ch-(?:0[2-9]|1\d|2[0-3])\.json)$/.exec(path))) {

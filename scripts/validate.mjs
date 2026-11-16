@@ -116,6 +116,28 @@ missions.forEach((m, i) => {
   if (/\b\d+\s*(inch|inches|in\b|")/i.test(JSON.stringify(fj.keeper))) errors.push('fishing-journal: the Keeper chapter must not print a size; the reader fills it in from FWC');
 }
 
+// 4d. Keeper or Release? deals only fish that exist; the Training Manual has a script for every lesson,
+//     three spoken questions in each (none in the last) and never a size spoken as fact
+{
+  const kg = JSON.parse(readFileSync(resolve(import.meta.dirname, '..', 'data', 'keeper-game.json'), 'utf8'));
+  for (const f of kg.fish) {
+    if (!ids.fish.has(f.id)) errors.push(`keeper-game: unknown fish ${f.id}`);
+    if (!(f.min < f.max)) errors.push(`keeper-game: ${f.id} needs min < max`);
+  }
+  const man = JSON.parse(readFileSync(resolve(import.meta.dirname, '..', 'data', 'manual.json'), 'utf8'));
+  man.lessons.forEach((l, i) => {
+    if (l.n !== i + 1) errors.push(`manual: lesson ${l.id} is numbered ${l.n}, expected ${i + 1}`);
+    const f = resolve(import.meta.dirname, '..', 'data', 'manual', `${l.id}.txt`);
+    if (!existsSync(f)) return errors.push(`manual: no script for lesson ${l.id}`);
+    const t = readFileSync(f, 'utf8');
+    const pauses = (t.match(/\[pause\]/g) || []).length;
+    const want = i === man.lessons.length - 1 ? 0 : 3;
+    if (pauses !== want) errors.push(`manual: lesson ${l.id} has ${pauses} questions, expected ${want}`);
+    if (/\b\d+\s*(inch|inches|in\b|")/i.test(t)) errors.push(`manual: lesson ${l.id} speaks a size in figures; sizes and limits are never stated (CLAUDE.md)`);
+    if (/[<>]/.test(t)) errors.push(`manual: lesson ${l.id} has a tag in it; write [pause] for a pause`);
+  });
+}
+
 // 5. places have numeric coordinates
 for (const p of entity.places) {
   if (typeof p.lat !== 'number' || typeof p.lng !== 'number') errors.push(`places/${p.id}: lat/lng must be numbers`);

@@ -1,5 +1,5 @@
 ---
-// Guide School (John, 2026-11-15): the three named courses that turn "challenges" into something
+// Guide School (John, 2026-11-15; Keeper or Release? added 2026-11-16): the named courses that turn "challenges" into something
 // a parent can picture. Rig It Right and Learn the Boat are new; Fish of the Everglades is the
 // Fish ID game under its course name. Counts come from the data.
 import { Image } from 'astro:assets';
@@ -10,8 +10,11 @@ import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 import rigs from '../../../data/rigs.json';
 import boat from '../../../data/boat-school.json';
+import keeper from '../../../data/keeper-game.json';
+import manual from '../../../data/manual.json';
 
 const hero = artImage('tiles', 'guide-school');
+const manualArt = artImage('manual', 'cover');
 const plates = fish.filter((f) => artImage('fish', f.id)).length;
 const courses = [
   {
@@ -37,6 +40,17 @@ const courses = [
     free: 'First two lessons free',
   },
   {
+    id: 'keeper-or-release',
+    href: '/guide-school/keeper-or-release/',
+    art: artImage('tiles', 'keeper-or-release'),
+    kind: 'Game',
+    title: 'Keeper or Release?',
+    count: `${keeper.fish.length} species · ${keeper.levels.length} levels`,
+    text: 'A fish is on the measuring board and a rule card is in your hand. Read the length, read the whole card, and make the call: dinner, or back in the water.',
+    learn: 'How to measure a fish, what a slot is, and why the biggest one often goes back.',
+    free: 'First level free',
+  },
+  {
     id: 'fish-id',
     href: '/games/fish-id/',
     art: artImage('tiles', 'fish-id'),
@@ -50,14 +64,23 @@ const courses = [
 ];
 ---
 
-<Base title="Guide School" description="Three courses that teach a teenager the real skills of an Everglades fishing guide: Rig It Right, Learn the Boat and Fish of the Everglades.">
+<Base title="Guide School" description="Four courses that teach a teenager the real skills of an Everglades fishing guide: Rig It Right, Learn the Boat, Keeper or Release? and Fish of the Everglades.">
   <div class="wrap section">
     <header class="gs-head">
       {hero && <Image class="gs-hero art" src={hero} alt="" width={900} sizes="(min-width: 760px) 720px, 94vw" loading="eager" />}
       <p class="eyebrow">Part of the Summer Fishing Guide Experience</p>
       <h1>Guide School</h1>
-      <p class="lede">Three courses in what an assistant fishing guide actually has to know: which rig to tie on, how to be useful on a boat, and what just came over the side.</p>
+      <p class="lede">Four courses in what an assistant fishing guide actually has to know: which rig to tie on, how to be useful on a boat, which fish go back, and what just came over the side.</p>
     </header>
+
+    <a class="gs-listen" href={url('/training-manual/')} data-track="tile_click" data-track-tile="school-manual">
+      <span class="gs-listen-art art">{manualArt && <Image src={manualArt} alt="" width={300} sizes="84px" loading="lazy" />}</span>
+      <span class="gs-listen-text">
+        <span class="course-kind mono">Listen first · {manual.lessons.length} lessons</span>
+        <span class="course-title">{manual.title}</span>
+        <span class="small">The whole school in your ears: the boat, the fish, the rigs and the guests, read by the voice of the book. Lesson 1 is free.</span>
+      </span>
+    </a>
 
     <ul class="courses">
       {
@@ -85,11 +108,11 @@ const courses = [
     </ul>
 
     <div class="gs-buy">
-      <p class="hand gs-buy-h">All three come with the Experience.</p>
+      <p class="hand gs-buy-h">All four come with the Experience.</p>
       <p class="small">So do the whole novel to read and hear, 23 missions from Uncle Dan, the Field Journal and the Assistant Fishing Guide license.</p>
       <BuyButton compact note={false} place="school" />
     </div>
-    <p class="small"><a href={url('/app/')}>← Back to the Experience</a> · <a href={url('/fishing-journal/')}>Matt’s Fishing Journal: the field guide →</a> · <a href={url('/knots/')}>Five knots to master →</a></p>
+    <p class="small"><a href={url('/app/')}>← Back to the Experience</a> · <a href={url('/training-manual/')}>The Training Manual: listen →</a> · <a href={url('/fishing-journal/')}>Matt’s Fishing Journal: the field guide →</a> · <a href={url('/knots/')}>Five knots to master →</a></p>
   </div>
 </Base>
 
@@ -102,6 +125,38 @@ const courses = [
     object-fit: cover;
     border-radius: 16px;
     margin-bottom: 1rem;
+  }
+  .gs-listen {
+    margin-top: 1.2rem;
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.5rem;
+    background: var(--paper-2);
+    border: 1.5px solid var(--oyster);
+    border-left: 4px solid var(--sunrise);
+    border-radius: 14px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .gs-listen:hover {
+    border-color: var(--mangrove);
+  }
+  .gs-listen-art {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .gs-listen-art :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .gs-listen-text {
+    display: grid;
+    gap: 0.15rem;
   }
   .courses {
     list-style: none;

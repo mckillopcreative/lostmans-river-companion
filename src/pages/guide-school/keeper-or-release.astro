@@ -1,0 +1,606 @@
+---
+// Keeper or Release? (Guide School, John 2026-11-16): a fish on the measuring board and a rule
+// card; keep it or let it go. The rule cards are PRACTICE cards, dealt at random every round, so
+// nothing here is a real regulation (CLAUDE.md: never state one as fact) and no number can be
+// memorised as one. The skill is the habit: read the board, read the whole card, then decide.
+// Level 1 is free; levels 2 and 3 need a purchase key (client-side, like Rig It Right).
+import { resolve } from 'node:path';
+import sharp from 'sharp';
+import { getImage, Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SchoolLock from '@components/SchoolLock.astro';
+import { fishById } from '@lib/data';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../../site.config.mjs';
+import data from '../../../data/keeper-game.json';
+import journal from '../../../data/fishing-journal.json';
+
+const gated = !!site.gate?.live;
+const hero = artImage('tiles', 'keeper-or-release');
+const boardArt = artImage('journal', 'keeper');
+
+// Where the fish sits inside its square plate (the plates are transparent), as fractions of the
+// plate: the game lays the nose on zero and the tail tip on the fish's length.
+async function box(id: string) {
+  const N = 400;
+  const { data: px } = await sharp(resolve(process.cwd(), 'assets/art/fish', `${id}.webp`)).ensureAlpha().extractChannel('alpha').resize(N, N, { fit: 'fill' }).raw().toBuffer({ resolveWithObject: true });
+  let l = N,
+    r = 0,
+    t = N,
+    b = 0;
+  for (let y = 0; y < N; y++)
+    for (let x = 0; x < N; x++)
+      if (px[y * N + x] > 60) {
+        if (x < l) l = x;
+        if (x > r) r = x;
+        if (y < t) t = y;
+        if (y > b) b = y;
+      }
+  return { l: l / N, r: (r + 1) / N, t: t / N, b: (b + 1) / N };
+}
+const fish = [];
+for (const f of data.fish) {
+  const src = artImage('fish', f.id);
+  const meta = fishById.get(f.id);
+  if (!src || !meta) continue;
+  const img = await getImage({ src, width: 900, format: 'webp' });
+  fish.push({ ...f, name: f.name ?? meta.common, img: img.src, box: await box(f.id) });
+}
+const payload = { gated, rounds: data.rounds, fish, end: data.end, levels: data.levels };
+---
+
+<Base title="Keeper or Release?" description="A fish on the measuring board and a rule card: keep it, or let it go? A Guide School game that teaches a young angler to measure, read the whole card and make the call.">
+  <div class="wrap section">
+    <p class="crumbs small"><a href={url('/guide-school/')}>← Guide School</a></p>
+    <header class="kr-head">
+      {hero && <Image class="kr-hero art" src={hero} alt="" width={220} height={220} loading="eager" />}
+      <div>
+        <p class="eyebrow">Guide School · game</p>
+        <h1>Keeper or Release?</h1>
+        <p class="lede">A fish is on the board. Read its length, read the card, and make the call a guide would make.</p>
+      </div>
+    </header>
+
+    <div class="levels cluster" role="group" aria-label="Level">
+      {
+        data.levels.map((l) => (
+          <button type="button" class:list={['btn', 'btn-sm', 'level', { 'is-on': l.n === 1 }]} data-level={l.n}>
+            {l.name} <span class="level-sub">{l.sub}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    {gated && <SchoolLock id="kr-lock" hidden title="The Mate and Guide levels come with the Experience" text="The Deckhand level is free. Slots, close calls, seasons and limits, the rest of Guide School, the whole book to read and hear, and all 23 missions come with the Summer Fishing Guide Experience." page="keeper-or-release" />}
+
+    <div class="board" id="board" data-game={JSON.stringify(payload)}>
+      <p class="round mono"><span id="round">1</span> / {data.rounds} · score <span id="score">0</span> · best <span id="best">0</span></p>
+      <p class="intro small" id="intro"></p>
+
+      <div class="card" id="card" aria-live="polite">
+        <p class="card-top mono">Practice card · not the real rule</p>
+        <p class="card-fish" id="c-fish"></p>
+        <dl class="card-lines">
+          <div>
+            <dt>Keep</dt>
+            <dd id="c-keep"></dd>
+          </div>
+          <div id="c-season-row">
+            <dt>Season</dt>
+            <dd id="c-season"></dd>
+          </div>
+          <div id="c-limit-row">
+            <dt>Limit</dt>
+            <dd id="c-limit"></dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="mb" id="mb" role="img" aria-label="A fish on a measuring board">
+        <div class="mb-fish" id="mb-fish"><img id="fishimg" alt="" /></div>
+        <div class="mb-ruler" id="mb-ruler"></div>
+      </div>
+      <p class="mb-note small muted">Mouth closed against the stop, tail pinched. Read where the tail ends.</p>
+
+      <div id="picks">
+        <p class="ask hand">Keeper, or release?</p>
+        <p class="picks">
+          <button type="button" class="btn pick" id="keep">Keeper</button>
+          <button type="button" class="btn pick" id="release">Release</button>
+        </p>
+      </div>
+      <div class="verdict-box" id="verdict-box" hidden>
+        <p class="verdict hand" id="verdict"></p>
+        <p class="why" id="why"></p>
+      </div>
+      <p class="cluster">
+        <button type="button" class="btn btn-primary" id="next" hidden>Next ›</button>
+        <button type="button" class="btn" id="again" hidden>Play again</button>
+        <button type="button" class="btn btn-primary" id="up" hidden>Next level ›</button>
+      </p>
+    </div>
+    <p class="small muted fine">
+      <strong>The cards in this game are made up, and they change every round.</strong> They are for practice, not for the boat. Real sizes, seasons and limits change by year and by coast: look them up at <a href="https://myfwc.com/fishing/saltwater/recreational/" rel="noopener">FWC</a> before you keep a fish.
+    </p>
+  </div>
+
+  <section class="wrap section how" aria-labelledby="how-h">
+    <h2 id="how-h">How a guide measures a fish</h2>
+    {boardArt && <Image class="how-art art" src={boardArt} alt="A redfish on a wet measuring board, its mouth against the stop and its tail pinched" width={1100} sizes="(min-width: 760px) 720px, 94vw" loading="lazy" />}
+    <ol class="how-list">
+      {
+        journal.keeper.measure.map((m) => (
+          <li>
+            <strong>{m.t}.</strong> {m.d}
+          </li>
+        ))
+      }
+    </ol>
+    <p class="small">
+      {journal.keeper.lookup.text}
+      {journal.keeper.lookup.links.map((l) => (
+        <>
+          {' '}
+          <a href={l.href} rel="noopener">
+            {l.label} →
+          </a>
+        </>
+      ))}
+    </p>
+    <p class="small"><a href={url('/fishing-journal/#keeper')}>Matt’s Fishing Journal has a page to write today’s rules on →</a></p>
+  </section>
+
+  <script>
+    type Fish = { id: string; name: string; img: string; min: number; max: number; slot: boolean; box: { l: number; r: number; t: number; b: number } };
+    type Card = { fish: Fish; len: number; lo: number; hi: number | null; closed: boolean; limit: number | null; have: number; keep: boolean; why: string };
+    const board = document.getElementById('board')!;
+    const game = JSON.parse(board.dataset.game!) as { gated: boolean; rounds: number; fish: Fish[]; end: Record<string, string>; levels: { n: number; intro: string }[] };
+    const $ = (id: string) => document.getElementById(id)!;
+    const hasKey = () => !game.gated || document.documentElement.classList.contains('has-key');
+    const lock = document.getElementById('kr-lock');
+    const rnd = (a: number, b: number) => a + Math.floor(Math.random() * (b - a + 1));
+    const pick = <T,>(a: T[]) => a[Math.floor(Math.random() * a.length)];
+    const shuffle = <T,>(a: T[]) => [...a].sort(() => Math.random() - 0.5);
+    let level = 1;
+    let round = 0;
+    let score = 0;
+    let current: Card | null = null;
+    let order: Fish[] = [];
+    let answered = false;
+    const bestKey = () => `keeper-best:${level}`;
+
+    // Deal one practice card. Lengths never land on a line: the closest call is one inch.
+    function deal(f: Fish): Card {
+      const close = level === 3 ? [1, 2] : level === 2 ? [1, 3] : [2, 5];
+      const d = () => rnd(close[0], close[1]);
+      const useSlot = level > 1 && f.slot && Math.random() < 0.7;
+      let lo: number;
+      let hi: number | null = null;
+      let len: number;
+      let where: 'under' | 'in' | 'over';
+      if (useSlot) {
+        const w = rnd(level === 3 ? 4 : 5, 8);
+        lo = rnd(f.min + 3, f.max - 3 - w);
+        hi = lo + w;
+        const r = Math.random();
+        where = r < 0.5 ? 'in' : r < 0.75 ? 'under' : 'over';
+        len = where === 'in' ? rnd(lo + 1, hi - 1) : where === 'under' ? lo - d() : hi + d();
+      } else {
+        lo = rnd(f.min + 3, f.max - 4);
+        where = Math.random() < 0.5 ? 'in' : 'under';
+        len = where === 'in' ? lo + d() : lo - d();
+      }
+      // level 3 reads the whole card: a season line and a limit, and sometimes they decide it
+      let closed = false;
+      let limit: number | null = null;
+      let have = 0;
+      if (level === 3) {
+        limit = rnd(1, 3);
+        have = rnd(0, limit - 1);
+        if (where === 'in') {
+          const r = Math.random();
+          if (r < 0.3) closed = true;
+          else if (r < 0.6) have = limit;
+        }
+      }
+      const size = `It measures ${len} inches. `;
+      const rule = hi ? `the slot on this card is ${lo} to ${hi}` : `this card says at least ${lo}`;
+      let keep = false;
+      let why: string;
+      if (where === 'under') why = size + (hi ? `The slot on this card starts at ${lo}.` : `This card says at least ${lo}.`) + ' Too short goes back to grow.';
+      else if (where === 'over') why = size + `The slot on this card stops at ${hi}. Too long goes back too: the big ones are the breeders.`;
+      else if (closed) why = size + `That is the right size, but the card says the season is closed. Every one goes back, whatever it measures.`;
+      else if (limit && have >= limit) why = size + `That is the right size and the season is open, but you already have your limit of ${limit}. A guide counts the cooler before the fish.`;
+      else {
+        keep = true;
+        why = size + `That fits: ${rule}` + (limit ? `, the season is open and there is room in the cooler.` : '.');
+      }
+      return { fish: f, len, lo, hi, closed, limit, have, keep, why };
+    }
+
+    function draw(showZone = false) {
+      const c = current;
+      if (!c) return;
+      const mb = $('mb');
+      const W = mb.clientWidth;
+      const x0 = 16; // the upright stop at zero
+      const top = Math.max(c.len, c.hi ?? c.lo) + 2;
+      const max = Math.max(20, Math.ceil(top / 5) * 5);
+      const s = (W - x0 - 12) / max; // pixels per inch
+      // the fish: nose on zero, tail tip on its length
+      const bw = c.fish.box.r - c.fish.box.l;
+      const side = (c.len * s) / bw; // the square plate's drawn size
+      const fishH = (c.fish.box.b - c.fish.box.t) * side;
+      const img = $('fishimg') as HTMLImageElement;
+      img.style.width = `${side}px`;
+      img.style.height = `${side}px`;
+      img.style.left = `${x0 - c.fish.box.l * side}px`;
+      img.style.top = `${10 - c.fish.box.t * side}px`;
+      $('mb-fish').style.height = `${Math.max(64, fishH + 14)}px`;
+      // the ruler: a tick every inch, a number every five
+      const H = 40;
+      let g = '';
+      if (showZone) {
+        const a = x0 + c.lo * s;
+        const b = c.hi ? x0 + c.hi * s : x0 + max * s;
+        g += `<rect x="${a}" y="0" width="${b - a}" height="${H}" fill="currentColor" opacity="0.16"/>`;
+      }
+      for (let i = 0; i <= max; i++) {
+        const x = x0 + i * s;
+        const five = i % 5 === 0;
+        g += `<line x1="${x}" y1="0" x2="${x}" y2="${five ? 16 : 8}" stroke="currentColor" stroke-width="${five ? 1.6 : 1}"/>`;
+        if (five) g += `<text x="${x}" y="31" text-anchor="${i === 0 ? 'start' : 'middle'}" font-size="12" fill="currentColor" font-family="ui-monospace, Menlo, Consolas, monospace">${i}</text>`;
+      }
+      const tail = x0 + c.len * s;
+      $('mb-ruler').innerHTML =
+        `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true" focusable="false">${g}</svg>` +
+        `<span class="mb-stop" style="width:${x0 - 3}px"></span>` +
+        `<span class="mb-tail" style="left:${tail}px"></span>` +
+        (showZone ? `<span class="mb-len mono" style="left:${Math.min(Math.max(tail, 34), W - 34)}px">${c.len} in</span>` : '');
+    }
+
+    function start() {
+      const locked = level > 1 && !hasKey();
+      if (lock) lock.hidden = !locked;
+      board.hidden = locked;
+      if (locked) return;
+      order = shuffle(game.fish);
+      round = 0;
+      score = 0;
+      $('score').textContent = '0';
+      $('intro').textContent = game.levels.find((l) => l.n === level)?.intro ?? '';
+      try {
+        $('best').textContent = localStorage.getItem(bestKey()) || '0';
+      } catch {}
+      $('again').hidden = true;
+      $('up').hidden = true;
+      $('card').hidden = false;
+      $('mb').hidden = false;
+      next();
+    }
+    function next() {
+      if (round >= game.rounds) return end();
+      const f = order[round % order.length];
+      round++;
+      answered = false;
+      current = deal(f);
+      const c = current;
+      $('round').textContent = String(round);
+      $('c-fish').textContent = c.fish.name;
+      $('c-keep').textContent = c.hi ? `${c.lo} to ${c.hi} inches` : `at least ${c.lo} inches`;
+      $('c-season-row').hidden = level < 2;
+      $('c-season').textContent = c.closed ? 'Closed' : 'Open';
+      $('c-season').classList.toggle('is-closed', c.closed);
+      $('c-limit-row').hidden = c.limit === null;
+      $('c-limit').textContent = c.limit === null ? '' : `${c.limit} each · you have ${c.have} in the cooler`;
+      ($('fishimg') as HTMLImageElement).src = c.fish.img;
+      $('mb').setAttribute('aria-label', `A ${c.fish.name.toLowerCase()} on a measuring board`);
+      $('verdict-box').hidden = true;
+      $('next').hidden = true;
+      $('picks').hidden = false;
+      document.querySelectorAll<HTMLButtonElement>('.pick').forEach((b) => {
+        b.disabled = false;
+        b.classList.remove('right', 'wrong');
+      });
+      draw();
+    }
+    function answer(keep: boolean, b: HTMLButtonElement) {
+      const c = current!;
+      if (answered) return;
+      answered = true;
+      const ok = keep === c.keep;
+      if (ok) score++;
+      document.querySelectorAll<HTMLButtonElement>('.pick').forEach((x) => (x.disabled = true));
+      ($(c.keep ? 'keep' : 'release') as HTMLButtonElement).classList.add('right');
+      if (!ok) b.classList.add('wrong');
+      $('verdict').textContent = ok ? (c.keep ? 'Keeper. Right call.' : 'Back it goes. Right call.') : c.keep ? 'That one was a keeper.' : 'That one goes back.';
+      $('why').textContent = c.why + (!ok && c.keep ? ' Letting a legal fish go is never against the rules, but a guide knows which is which.' : '');
+      $('score').textContent = String(score);
+      draw(true);
+      $('verdict-box').hidden = false;
+      $('next').hidden = false;
+      $('next').textContent = round >= game.rounds ? 'See your score ›' : 'Next ›';
+      $('verdict-box').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+    function end() {
+      (window as unknown as { lrTrack?: (n: string, p: Record<string, string | number>) => void }).lrTrack?.('keeper_finish', { score, level: String(level) });
+      const n = game.rounds;
+      current = null;
+      $('card').hidden = true;
+      $('mb').hidden = true;
+      $('picks').hidden = true;
+      $('intro').textContent = '';
+      $('verdict').textContent = `${score} of ${n}. ${score === n ? game.end.perfect : score >= n - 2 ? game.end.good : game.end.again}`;
+      $('why').textContent = '';
+      $('verdict-box').hidden = false;
+      try {
+        const best = Number(localStorage.getItem(bestKey()) || '0');
+        if (score > best) localStorage.setItem(bestKey(), String(score));
+        $('best').textContent = String(Math.max(best, score));
+      } catch {}
+      $('next').hidden = true;
+      $('again').hidden = false;
+      $('up').hidden = level >= 3;
+    }
+    function setLevel(n: number) {
+      level = n;
+      document.querySelectorAll<HTMLButtonElement>('.level').forEach((b) => b.classList.toggle('is-on', Number(b.dataset.level) === n));
+      start();
+    }
+    $('keep').addEventListener('click', (e) => answer(true, e.currentTarget as HTMLButtonElement));
+    $('release').addEventListener('click', (e) => answer(false, e.currentTarget as HTMLButtonElement));
+    $('next').addEventListener('click', next);
+    $('again').addEventListener('click', start);
+    $('up').addEventListener('click', () => {
+      setLevel(level + 1);
+      document.querySelector('.levels')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+    document.querySelectorAll<HTMLButtonElement>('.level').forEach((btn) => btn.addEventListener('click', () => setLevel(Number(btn.dataset.level))));
+    let rt = 0;
+    window.addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = window.setTimeout(() => draw(answered), 120);
+    });
+    start();
+  </script>
+</Base>
+
+<style>
+  .kr-head {
+    display: flex;
+    gap: 1.1rem;
+    align-items: center;
+  }
+  .kr-head .lede {
+    margin-bottom: 0;
+  }
+  .kr-hero {
+    flex: none;
+    width: 104px;
+    height: 104px;
+    border-radius: 14px;
+    object-fit: cover;
+  }
+  @media (min-width: 640px) {
+    .kr-hero {
+      width: 150px;
+      height: 150px;
+    }
+  }
+  .levels {
+    margin: 1rem 0;
+  }
+  .level-sub {
+    font-weight: 400;
+    font-size: 0.82em;
+    opacity: 0.8;
+  }
+  .level.is-on {
+    background: var(--sunrise);
+    border-color: var(--sunrise);
+    color: var(--on-sunrise);
+  }
+  .board {
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .board [hidden] {
+    display: none !important;
+  }
+  .round {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    margin: 0 0 0.4rem;
+  }
+  .intro {
+    margin: 0 0 0.7rem;
+  }
+  .intro:empty {
+    display: none;
+  }
+  /* the practice card: a laminated rule card, clearly marked as practice */
+  .card {
+    background: var(--paper);
+    border: 1.5px solid var(--mangrove);
+    border-radius: 12px;
+    padding: 0.6rem 0.8rem 0.7rem;
+    margin-bottom: 0.8rem;
+  }
+  .card-top {
+    margin: 0 0 0.15rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sunrise-ink);
+  }
+  .card-fish {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--mangrove);
+  }
+  .card-lines {
+    margin: 0;
+    display: grid;
+    gap: 0.2rem;
+  }
+  .card-lines div {
+    display: grid;
+    grid-template-columns: 4.6rem minmax(0, 1fr);
+    align-items: baseline;
+  }
+  .card-lines div[hidden] {
+    display: none;
+  }
+  .card-lines dt {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .card-lines dd {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .card-lines :global(dd.is-closed) {
+    color: var(--sunrise-ink);
+  }
+  /* the measuring board: always light, like the real thing, in both themes */
+  .mb {
+    position: relative;
+    background: #fbfaf5;
+    color: #1f2a2e;
+    border: 1.5px solid #b8b2a6;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .mb-fish {
+    position: relative;
+    height: 90px;
+  }
+  .mb-fish img {
+    position: absolute;
+    max-width: none;
+    pointer-events: none;
+    user-select: none;
+  }
+  .mb-ruler {
+    position: relative;
+    height: 40px;
+    border-top: 1.5px solid #1f2a2e;
+    color: #1f2a2e;
+  }
+  .mb-ruler :global(svg) {
+    display: block;
+  }
+  .mb-ruler :global(rect) {
+    color: #2f5d50;
+  }
+  /* the upright stop the nose rests against */
+  .mb-ruler :global(.mb-stop) {
+    position: absolute;
+    left: 0;
+    bottom: 100%;
+    height: 400px;
+    background: #2f5d50;
+    opacity: 0.85;
+    border-right: 2px solid #1f2a2e;
+  }
+  /* a hairline dropped from the pinched tail to the ruler */
+  .mb-ruler :global(.mb-tail) {
+    position: absolute;
+    bottom: 22px;
+    height: 400px;
+    width: 0;
+    border-left: 1.5px dashed #a04d12;
+    pointer-events: none;
+  }
+  .mb-ruler :global(.mb-len) {
+    position: absolute;
+    bottom: 2px;
+    transform: translateX(-50%);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.05rem 0.35rem;
+    border-radius: 999px;
+    background: #a04d12;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .mb-note {
+    margin: 0.35rem 0 0.7rem;
+  }
+  .ask {
+    margin: 0 0 0.4rem;
+    font-size: 1.3rem;
+    color: var(--sunrise-ink);
+  }
+  .picks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0;
+  }
+  .pick {
+    min-height: 54px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    justify-content: center;
+    background: var(--paper);
+    border: 1.5px solid var(--oyster);
+    color: var(--ink);
+  }
+  .pick.right {
+    border-color: var(--sunrise);
+    background: color-mix(in srgb, var(--sunrise) 18%, var(--paper));
+    opacity: 1;
+  }
+  .pick.wrong {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+  .verdict-box {
+    margin-top: 0.8rem;
+  }
+  .verdict {
+    font-size: 1.4rem;
+    line-height: 1.25;
+    color: var(--sunrise-ink);
+    margin: 0 0 0.2rem;
+  }
+  .why {
+    margin: 0 0 0.6rem;
+  }
+  .why:empty {
+    display: none;
+  }
+  .fine {
+    margin-top: 0.8rem;
+  }
+  .how h2 {
+    margin-top: 0;
+  }
+  .how-art {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 14px;
+    margin-bottom: 0.8rem;
+  }
+  .how-list {
+    margin: 0 0 0.9rem;
+    padding-left: 1.3rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .how-list strong {
+    color: var(--mangrove);
+  }
+</style>

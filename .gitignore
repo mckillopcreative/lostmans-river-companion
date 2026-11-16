@@ -9,6 +9,7 @@ source/
 # narration output is generated, not committed (public/audio is ~300 MB when complete)
 public/audio/*
 !public/audio/ch-01.mp3
+!public/audio/tm-01.mp3
 
 # wrangler local state
 worker/.wrangler/

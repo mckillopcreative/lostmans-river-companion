@@ -220,6 +220,7 @@ export function welcomeEmail(key, { resend = false } = {}) {
   const link = startLink(key);
   const giftLink = `${SITE}/gift/#${key}`;
   const qr = `${API}/qr/${key}.png`;
+  const pdf = `${API}/guide/${key}/matts-fishing-journal.pdf`;
   const subject = resend ? 'Your Lostman’s River link, again' : 'Your reader’s summer at Lostman’s River starts here';
   const text = [
     resend ? 'Here is your link again.' : 'Welcome aboard.',
@@ -232,6 +233,10 @@ export function welcomeEmail(key, { resend = false } = {}) {
     '3. That’s it. Their device remembers them. Next time they just open lostmansriver.com/app.',
     '',
     `No camera handy? Forward this email, or text them this link: ${link}`,
+    '',
+    'Also in the pack:',
+    `- Matt’s Fishing Journal, a 20-page field guide to print and keep in the boat (PDF): ${pdf}`,
+    `- The Assistant Fishing Guide Training Manual, fifteen short lessons to listen to: ${SITE}/training-manual/`,
     '',
     'Switching devices, or the browser was cleared? Open the same link on the new device and the summer picks up where they left off.',
     `Lost this email? Go to ${SITE}/restore/ and enter this email address.`,
@@ -268,6 +273,7 @@ export function welcomeEmail(key, { resend = false } = {}) {
   <a href="${esc(link)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-family:Georgia,serif;font-weight:bold;font-size:16px;text-decoration:none;padding:12px 22px;border-radius:999px;">Open it on this device</a>
 </td></tr>
 <tr><td style="padding:0 28px 24px;font-family:Georgia,'Times New Roman',serif;">
+  ${p(`<strong>Also in the pack.</strong> <a href="${esc(pdf)}" style="color:#2a7f8e;">Matt’s Fishing Journal</a>, a 20-page field guide to print and keep in the boat (PDF). And <a href="${SITE}/training-manual/" style="color:#2a7f8e;">the Assistant Fishing Guide Training Manual</a>, fifteen short lessons to listen to in the car.`, 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
   ${p('<strong>Switching devices, or the browser was cleared?</strong> Scan the same code or open the same link on the new device and the summer picks up exactly where they left off.', 'font-size:15px;')}
   ${p(`<strong>Lost this email?</strong> Go to <a href="${SITE}/restore/" style="color:#2a7f8e;">lostmansriver.com/restore</a> and enter this email address.`, 'font-size:15px;')}
   ${p('<strong>What we keep:</strong> your email, so we can send the link. Your reader’s missions and badges are saved under the link, not under their name. We never ask your child for their name, email or anything else, and there are no ads or trackers in the Experience.', 'font-size:14px;color:#4b5a60;')}

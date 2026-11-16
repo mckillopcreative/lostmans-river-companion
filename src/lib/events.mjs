@@ -43,6 +43,10 @@ export const EVENTS = {
   fishid_finish: { label: 'level', value: 'score' },
   chart_finish: { value: 'score' },
   rig_finish: { label: 'level', value: 'score' }, // Rig It Right: a level of six scenarios finished (Guide School, 2026-11-15)
+  keeper_finish: { label: 'level', value: 'score' }, // Keeper or Release? (Guide School, 2026-11-16): a level of eight fish finished
+  manual_play: { label: 'lesson' }, // Training Manual: a lesson started (once per lesson per visit)
+  manual_done: { label: 'lesson' }, // Training Manual: a lesson heard to the end for the first time on this device
+  guide_pdf: {}, // Matt's Fishing Journal: the ready-made PDF opened from the page (key holders only)
   guide_print: {}, // Matt's Fishing Journal: the print / save-as-PDF button (key holders only)
   boat_lesson: { label: 'id' }, // Learn the Boat: a lesson passed for the first time on this device
 };

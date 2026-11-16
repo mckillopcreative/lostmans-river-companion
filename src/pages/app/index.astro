@@ -13,6 +13,7 @@ import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 import { chapters, fish, places, todo } from '@lib/data';
 import site from '../../../site.config.mjs';
+import manual from '../../../data/manual.json';
 
 type Tile = { id: string; label: string; sub?: string; href: string; emblem?: string; size?: 'wide' | 'tall' | 'big'; soon?: boolean; art?: [string, string] };
 const tiles: Tile[] = [
@@ -22,10 +23,12 @@ const tiles: Tile[] = [
   { id: 'chart', label: 'The Chart', href: '/map/', emblem: 'chart' },
   { id: 'fish', label: 'Fish', sub: `${fish.length} species`, href: '/fish/', emblem: 'fish' },
   { id: 'fishing-journal', label: 'Matt’s Fishing Journal', sub: 'the field guide · print it', href: '/fishing-journal/', emblem: 'sketchbook', art: ['journal', 'cover'], size: 'wide' },
-  // Guide School (2026-11-15): the hub and its three courses, kept together near the top
-  { id: 'guide-school', label: 'Guide School', sub: 'three courses', href: '/guide-school/', emblem: 'tackle' },
+  { id: 'training-manual', label: 'Training Manual', sub: `listen · ${manual.lessons.length} lessons`, href: '/training-manual/', emblem: 'sketchbook' },
+  // Guide School (2026-11-15): the hub and its courses, kept together near the top
+  { id: 'guide-school', label: 'Guide School', sub: 'four courses', href: '/guide-school/', emblem: 'tackle' },
   { id: 'rig-it-right', label: 'Rig It Right', sub: 'pick the rig', href: '/guide-school/rig-it-right/', emblem: 'tackle' },
   { id: 'learn-the-boat', label: 'Learn the Boat', sub: 'ten lessons', href: '/guide-school/learn-the-boat/', emblem: 'boats' },
+  { id: 'keeper-or-release', label: 'Keeper or Release?', sub: 'measure it · make the call', href: '/guide-school/keeper-or-release/', emblem: 'fish' },
   { id: 'fish-id', label: 'Fish of the Everglades', sub: 'fish ID game', href: '/games/fish-id/', emblem: 'fish' },
   { id: 'crew', label: 'Crew', href: '/crew/', emblem: 'crew' },
   { id: 'critters', label: 'Critters', href: '/critters/', emblem: 'critters' },

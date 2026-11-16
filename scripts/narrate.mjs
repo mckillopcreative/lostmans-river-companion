@@ -6,6 +6,8 @@
 //   OPENAI_API_KEY=... node scripts/narrate.mjs all        # all 23
 //   OPENAI_KEY_FILE=<path to a KEY=VALUE file> node scripts/narrate.mjs 1
 //   node scripts/narrate.mjs all --dry                     # segment counts and cost, no calls
+//   TTS_ENGINE=elevenlabs OPENAI_KEY_FILE=<file> node scripts/narrate.mjs manual 1     # Training Manual, one lesson
+//   TTS_ENGINE=elevenlabs OPENAI_KEY_FILE=<file> node scripts/narrate.mjs manual all   # all of it → public/audio/tm-NN-el-b.mp3
 //
 // Output: public/audio/ch-NN.mp3 (joined with ffmpeg when available, byte-joined otherwise)
 //         plus public/audio/ch-NN/seg-XX.mp3 and segments.json for the segmented player.
@@ -35,7 +37,7 @@ export const EL_VOICES = {
 };
 const EL_VOICE = (process.env.EL_VOICE || 'B').toUpperCase(); // B Brian is the author's pick (2026-10-20: "5-brian-multi-low")
 const EL = EL_VOICES[EL_VOICE] ?? EL_VOICES.A;
-const EL_MONTHLY = 131000;
+const EL_MONTHLY = 600000; // the Pro plan (checked 2026-11-16); it was Creator, 131,000, in October
 // Spoken before a chapter's first segment, rendered as seg-00 so existing segments are reused.
 export const INTROS = {
   1: 'Welcome to the Lostman’s River Summer Fishing Guide Experience. Let’s begin the book, Escape to Lostman’s River.',
@@ -76,9 +78,24 @@ export function chapters() {
   });
 }
 
+// The Assistant Fishing Guide Training Manual (2026-11-16): fifteen lessons written for the ear,
+// data/manual.json + data/manual/<id>.txt. "[pause]" in a script is two seconds of silence after
+// a quiz question (an ElevenLabs break tag; other engines get an ellipsis).
+export const PAUSE = ENGINE === 'elevenlabs' ? '<break time="2.0s" />' : '...';
+export function manualLessons() {
+  const m = JSON.parse(readFileSync(resolve(root, 'data/manual.json'), 'utf8'));
+  return m.lessons.map((l) => ({
+    n: l.n,
+    title: l.title,
+    open: l.open,
+    prefix: 'tm',
+    body: readFileSync(resolve(root, 'data/manual', `${l.id}.txt`), 'utf8').replace(/\r/g, '').replace(/\[pause\]/g, PAUSE).trim(),
+  }));
+}
+
 // Paragraph-first packing; a paragraph longer than SEG_MAX is split at sentence ends.
 export function segments(ch) {
-  const open = `Chapter ${ch.n}. ${ch.title}.`;
+  const open = ch.open ?? `Chapter ${ch.n}. ${ch.title}.`;
   const paras = [open, ...ch.body.split(/\n\s*\n/).map((p) => p.replace(/\s+/g, ' ').trim()).filter(Boolean)];
   const out = [];
   let cur = '';
@@ -145,16 +162,16 @@ function hasFfmpeg() {
 }
 
 async function narrate(ch, apiKey) {
-  const id = `ch-${String(ch.n).padStart(2, '0')}${ENGINE === 'elevenlabs' ? '-el-' + EL_VOICE.toLowerCase() : MODEL === 'gpt-4o-mini-tts' ? '' : '-' + MODEL}`;
+  const id = `${ch.prefix ?? 'ch'}-${String(ch.n).padStart(2, '0')}${ENGINE === 'elevenlabs' ? '-el-' + EL_VOICE.toLowerCase() : MODEL === 'gpt-4o-mini-tts' ? '' : '-' + MODEL}`;
   const segs = SEG_LIMIT ? segments(ch).slice(0, SEG_LIMIT) : segments(ch);
-  console.log(`Chapter ${ch.n} — ${ch.title}: ${segs.length} segments, ${ch.body.length} chars`);
+  console.log(`${ch.prefix ? 'Lesson' : 'Chapter'} ${ch.n} — ${ch.title}: ${segs.length} segments, ${ch.body.length} chars`);
   if (DRY) return;
   const dir = resolve(root, 'public/audio', id);
   mkdirSync(dir, { recursive: true });
   const stamp = join(dir, 'style.txt');
   const sig = ENGINE === 'elevenlabs' ? `el:${EL.voice_id}:${EL.model_id}:${JSON.stringify(EL.voice_settings)}:${SEG_MAX}` : `${MODEL}:${VOICE}:${STYLE_V}:${SEG_MAX}`;
   const fresh = existsSync(stamp) && readFileSync(stamp, 'utf8') === sig;
-  const intro = INTROS[ch.n];
+  const intro = ch.prefix ? undefined : INTROS[ch.n];
   const jobs = [...(intro ? [{ i: -1, text: intro, file: join(dir, 'seg-00.mp3') }] : []), ...segs.map((text, i) => ({ i, text, file: join(dir, `seg-${String(i + 1).padStart(2, '0')}.mp3`) }))].filter((j) => !(fresh && existsSync(j.file)));
   let next = 0;
   const worker = async () => {
@@ -218,21 +235,23 @@ async function narrate(ch, apiKey) {
 }
 
 const isMain = process.argv[1] && /narrate\.mjs$/.test(process.argv[1]);
-const arg = isMain ? process.argv.find((a, i) => i >= 2 && !a.startsWith('--')) : null;
+const words = isMain ? process.argv.slice(2).filter((a) => !a.startsWith('--')) : [];
+const manual = words[0] === 'manual';
+const arg = isMain ? (manual ? (words[1] ?? 'all') : words[0]) : null;
 if (isMain && !arg) {
-  console.log('usage: node scripts/narrate.mjs <chapter number | all> [--dry]');
+  console.log('usage: node scripts/narrate.mjs <chapter number | all> [--dry]   or   manual <lesson number | all> [--dry]');
   process.exit(0);
 }
-const all = isMain ? chapters() : [];
+const all = isMain ? (manual ? manualLessons() : chapters()) : [];
 const todo = arg === 'all' ? all : all.filter((c) => c.n === Number(arg));
 if (isMain && !todo.length) {
-  console.error('no such chapter');
+  console.error(manual ? 'no such lesson' : 'no such chapter');
   process.exit(1);
 }
 const chars = todo.reduce((a, c) => a + c.body.length, 0);
 if (isMain && ENGINE === 'elevenlabs') {
   const segChars = todo.reduce((a, c) => a + segments(c).reduce((x, t) => x + t.length, 0), 0);
-  console.log(`${todo.length} chapter(s), ${segChars} characters to send, ElevenLabs voice ${EL_VOICE} (${EL.name}, ${EL.model_id}): ${((segChars / EL_MONTHLY) * 100).toFixed(0)}% of the ${EL_MONTHLY.toLocaleString()}-character monthly allowance, before any re-rolls`);
+  console.log(`${todo.length} ${manual ? 'lesson' : 'chapter'}(s), ${segChars} characters to send, ElevenLabs voice ${EL_VOICE} (${EL.name}, ${EL.model_id}): ${((segChars / EL_MONTHLY) * 100).toFixed(0)}% of the ${EL_MONTHLY.toLocaleString()}-character monthly allowance, before any re-rolls`);
 } else if (isMain) console.log(`${todo.length} chapter(s), ${chars} characters, voice ${VOICE}, est. cost ${((chars / 1e6) * 15).toFixed(2)}`);
 if (isMain) {
   const apiKey = DRY ? '' : key();
