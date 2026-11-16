@@ -86,8 +86,8 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
               <strong>
                 Add Wild Florida <span class="bc-plus mono">+{wild.price}</span>
               </strong>
-              <span data-one="Uncle Dan teaches your reader to name Florida’s animals on sight: sharks, snakes, gators, fish and birds." data-boat="Uncle Dan teaches your crew to name Florida’s animals on sight. One add-on covers every reader in the boat.">
-                Uncle Dan teaches your reader to name Florida’s animals on sight: sharks, snakes, gators, fish and birds.
+              <span data-one="Uncle Dan teaches your reader to name Florida’s sharks, snakes, gators, fish and birds on sight." data-boat="Uncle Dan teaches your crew to name Florida’s animals on sight. One add-on covers every reader in the boat.">
+                Uncle Dan teaches your reader to name Florida’s sharks, snakes, gators, fish and birds on sight.
               </span>
             </span>
           </label>
@@ -125,6 +125,9 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
       <strong>No subscription. Nothing renews.</strong>
       <span>30-day refund, no questions asked: email <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a>.</span>
     </div>
+    <p class="bc-total" aria-hidden="true">
+      Your total: <strong class="bc-amount2">{price}</strong>, once
+    </p>
     <a class="btn btn-primary bc-go" href={site.checkout.url} rel="noopener" data-track="confirm_go">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
       Continue to secure checkout →
@@ -196,7 +199,8 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
     go.dataset.track = on ? 'crew_click' : 'confirm_go';
     go.dataset.trackPage = on ? `${page}:sheet` : page;
     const total = cents(on ? bg.dataset.crewPrice! : bg.dataset.price!) + (addOn ? cents(wildBox!.dataset.price!) : 0);
-    bg.querySelector<HTMLElement>('.bc-amount')!.textContent = (inCanada ? 'US' : '') + '$' + (total / 100).toFixed(2);
+    // shown twice: under the title, and above Continue where the switches are (the sheet is taller than a phone)
+    for (const el of bg.querySelectorAll<HTMLElement>('.bc-amount, .bc-amount2')) el.textContent = (inCanada ? 'US' : '') + '$' + (total / 100).toFixed(2);
     bg.querySelector<HTMLElement>('.bc-for')!.hidden = !on;
     for (const el of bg.querySelectorAll<HTMLElement>('[data-one][data-boat]')) el.textContent = on ? el.dataset.boat! : el.dataset.one!;
     bg.querySelector('.bc-boat:not(.bc-wild-row)')?.classList.toggle('on', on);
@@ -538,6 +542,15 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
   }
   .bc-promise strong {
     color: var(--mangrove);
+  }
+  .bc-total {
+    margin: 0 0 -0.35rem;
+    text-align: center;
+    font-size: 1.05rem;
+    color: var(--ink);
+  }
+  .bc-total strong {
+    color: var(--sunrise-ink);
   }
   .bc-go {
     justify-content: center;

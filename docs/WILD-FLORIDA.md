@@ -78,7 +78,7 @@ The page asks the Worker (`GET /key/<key>` → `wild`) and remembers the answer 
 
 If an add-on is paid and no purchase can be matched (no key on the link, different email), nothing is unlocked and John gets an email headed "NO KEY FOUND" to fix by hand or refund.
 
-**New links were made by duplicating the live ones** in the Stripe dashboard and swapping the copied products for the real ones (Duplicate copies the product too; the three stray "(Copy)" products it left were archived). They carry the same settings: promotion codes on, automatic tax off, no terms box, redirect to the welcome page.
+**New links were made by duplicating the live ones** in the Stripe dashboard and swapping the copied products for the real ones (Duplicate copies the product too. It left three unused "(Copy)" products in the catalog, `prod_VdkvKDAX03oZ7N`, `prod_VdktCMaPJbOPRA` and `prod_VdkpciYRmOebN8`: safe to archive, not yet done). They carry the same settings: promotion codes on, automatic tax off, no terms box, redirect to the welcome page.
 
 Tests kept in the session scratchpad, worth re-creating if this is touched again: a Worker fulfilment test (signed pretend webhooks against an in-memory KV: single + add-on, crew + add-on, later upgrade by key and by email, repeat webhook, unmatched upgrade, Stripe line items unreadable, old keys) and a headless-Chrome run of the pages with stand-in keys.
 
