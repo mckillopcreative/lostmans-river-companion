@@ -177,7 +177,7 @@ export function crewEmail(keys) {
   return { subject, text, html };
 }
 
-/** The second Experience from "Keep one, give one": everything the buyer needs to give it. */
+/** The second Experience (holiday "buy one, give one", or the older "Keep one, give one" link): everything the buyer needs to give it. */
 export function giftEmail(key) {
   const link = startLink(key);
   const giftLink = `${SITE}/gift/#${key}`;
@@ -185,10 +185,10 @@ export function giftEmail(key) {
   const text = [
     'This is the one to give.',
     '',
-    'You bought Keep one, give one, so there are two Experiences: yours (in the other email) and this one, for another family.',
+    'Your purchase came with two Experiences: yours (in the other email) and this one, to give to another reader. Buy one, give one.',
     '',
-    `Print its gift card (it has its own code on it): ${giftLink}`,
-    `Or forward this email to the family, or send them this link: ${link}`,
+    `Print its gift card, or save it as a PDF to send (it has its own code on it): ${giftLink}`,
+    `Or forward this email to anyone you like, or send them this link: ${link}`,
     '',
     'It works the same way as yours: they open the link on the reader’s own tablet or phone and Mission 1 is waiting. Their progress is kept under this link, separate from yours.',
     '',
@@ -203,11 +203,11 @@ export function giftEmail(key) {
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f1e7;"><tr><td align="center" style="padding:24px 12px;">
 <table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#fbf8f1;border:1px solid #e2d9c7;border-radius:14px;">
 <tr><td style="padding:28px 28px 20px;font-family:Georgia,'Times New Roman',serif;">
-  <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">Keep one, give one</p>
+  <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">Buy one, give one</p>
   <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">This is the one to give</h1>
-  ${p('You have two Experiences: yours, in the other email, and this one for another family.')}
+  ${p('Your purchase came with two Experiences: yours, in the other email, and this one to give to another reader.')}
   <p style="margin:0 0 18px;"><a href="${esc(giftLink)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-weight:bold;font-size:16px;text-decoration:none;padding:12px 22px;border-radius:999px;">Print its gift card</a></p>
-  ${p(`Or forward this email to the family, or send them this link:<br><a href="${esc(link)}" style="color:#2a7f8e;word-break:break-all;">${esc(link)}</a>`)}
+  ${p(`The card prints, or saves as a PDF you can send. Or forward this email to anyone you like, or send them this link:<br><a href="${esc(link)}" style="color:#2a7f8e;word-break:break-all;">${esc(link)}</a>`)}
   ${p('It works just like yours: they open the link on the reader’s own tablet or phone and Mission 1 is waiting. Their progress is kept under this link, separate from yours.', 'font-size:15px;')}
   ${p('Keep this link for the family you give it to. Anyone with it can open that summer.', 'font-size:14px;color:#4b5a60;')}
   ${p('Questions? Just reply; it comes to us. 30-day refund, no questions asked.', 'font-size:14px;color:#4b5a60;')}
@@ -216,7 +216,7 @@ export function giftEmail(key) {
   return { subject, text, html };
 }
 
-export function welcomeEmail(key, { resend = false } = {}) {
+export function welcomeEmail(key, { resend = false, gift = false } = {}) {
   const link = startLink(key);
   const giftLink = `${SITE}/gift/#${key}`;
   const qr = `${API}/qr/${key}.png`;
@@ -225,6 +225,7 @@ export function welcomeEmail(key, { resend = false } = {}) {
   const text = [
     resend ? 'Here is your link again.' : 'Welcome aboard.',
     '',
+    ...(gift ? ['Buy one, give one: your second Experience, the one to give, is in a separate email with its own gift card.', ''] : []),
     'Giving it as a gift? Forward this email to the reader’s family, or print a gift card with the code on it: ' + giftLink,
     '',
     'Get your reader started in under a minute, on their own device:',
@@ -257,6 +258,7 @@ export function welcomeEmail(key, { resend = false } = {}) {
 <tr><td style="padding:28px 28px 8px;font-family:Georgia,'Times New Roman',serif;">
   <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">${resend ? 'Here it is again' : 'Welcome aboard'}</p>
   <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;color:#2f5d50;">Summer Fishing Guide Experience</h1>
+  ${gift ? p('<strong>Buy one, give one.</strong> Your second Experience, the one to give, is in a separate email with its own gift card.', 'font-size:15px;background:#e3efe6;padding:10px 12px;border-radius:8px;') : ''}
   ${p(`<strong>Giving it as a gift?</strong> Forward this email to the reader’s family, or <a href="${esc(giftLink)}" style="color:#2a7f8e;">print a gift card</a> with the code on it.`, 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
   ${p('<strong>Get your reader started in under a minute, on their own device:</strong>')}
   ${p('<strong>1.</strong> On their tablet or phone, open the camera and point it at this code.')}

@@ -12,6 +12,7 @@
 import { Image } from 'astro:assets';
 import { artImage } from '@lib/images';
 import site from '../../site.config.mjs';
+import { bogo } from '@lib/buy';
 const thumb = artImage('tiles', 'app-hero');
 const price = site.checkout.price;
 const crew = site.checkout.open ? site.checkout.crew : null;
@@ -33,6 +34,13 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
     </div>
     <ul class="bc-list">
       <li>Read, listen, learn.</li>
+      {
+        bogo && (
+          <li class="bc-bogo" data-bogo-until={bogo.until} data-one={`Buy one, give one: a second Experience to give, free, with a gift card you can send to anyone. Through ${bogo.through}.`} data-boat="Every reader’s link comes with its own gift card to print or send.">
+            Buy one, give one: a second Experience to give, free, with a gift card you can send to anyone. Through {bogo.through}.
+          </li>
+        )
+      }
       <li>Opens the minute you pay: a link on screen and in your email. Nothing to install.</li>
       <li class="bc-who" data-one="One reader, on any of your family’s devices. No account, no password." data-boat="Up to five readers, each with their own link on their own device. No account, no password.">One reader, on any of your family’s devices. No account, no password.</li>
     </ul>
@@ -68,6 +76,14 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
 
 <script>
   import { track, campaign } from '../scripts/track';
+  // The holiday "buy one, give one" offer ends by itself: after its date, everything that
+  // mentions it is taken off the page and the ordinary line it replaced comes back.
+  for (const el of document.querySelectorAll<HTMLElement>('[data-bogo-until]')) {
+    if (Date.now() > Date.parse(el.dataset.bogoUntil!)) {
+      el.remove();
+      document.querySelectorAll<HTMLElement>('[data-bogo-else]').forEach((e) => (e.hidden = false));
+    }
+  }
   const bg = document.getElementById('buy-confirm')!;
   const go = bg.querySelector<HTMLAnchorElement>('.bc-go')!;
   let opener: HTMLElement | null = null;
@@ -285,6 +301,10 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
     border-style: solid;
     border-color: var(--mangrove);
     background: color-mix(in srgb, var(--mangrove) 10%, transparent);
+  }
+  .bc-bogo {
+    font-weight: 700;
+    color: var(--mangrove);
   }
   .bc-boat-in {
     position: absolute;

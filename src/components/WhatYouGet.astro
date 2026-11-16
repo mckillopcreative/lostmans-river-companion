@@ -9,6 +9,7 @@ import { Image } from 'astro:assets';
 import { chapters, fish, missions, knots } from '@lib/data';
 import { artImage, coverImage } from '@lib/images';
 import { url } from '@lib/url';
+import { bogo } from '@lib/buy';
 import audioData from '../../data/audio.json';
 import manual from '../../data/manual.json';
 import boat from '../../data/boat-school.json';
@@ -45,7 +46,8 @@ const pageNames = ['Cover', 'Before you cast', 'Know your fish', 'The rest of th
 const pages = pageNames.map((label, i) => ({ art: artImage('journal-pages', `page-${String(i + 1).padStart(2, '0')}`), label })).filter((p) => p.art);
 const journalChapters = 10;
 
-const bonus = [
+const bonus: { n: string; t: string; d: string; until?: string }[] = [
+  ...(bogo ? [{ n: '2', t: 'Experiences: buy one, give one', d: `one to keep, one to give with its own gift card · through ${bogo.through}`, until: bogo.until }] : []),
   { n: String(missions.length), t: 'missions from Uncle Dan', d: 'one for every chapter' },
   { n: String(missions.length), t: 'real-world field missions', d: 'done off the screen, signed off by a grown-up' },
   { n: '30', t: 'pages in the Field Journal', d: 'to print and fill in by hand' },
@@ -169,7 +171,7 @@ const bonus = [
       <ul class="wyg-bonus-list">
         {
           bonus.map((b) => (
-            <li>
+            <li data-bogo-until={b.until}>
               <strong>{b.n}</strong>
               <span>
                 {b.t}

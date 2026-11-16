@@ -5,7 +5,7 @@
 // paperback is pointed at Amazon underneath (no shipping sold here). Before opening day it goes
 // to the waitlist instead (src/lib/buy.ts).
 import site from '../../site.config.mjs';
-import { isOpen, buyHref, buyTrack, opens, price } from '@lib/buy';
+import { isOpen, buyHref, buyTrack, opens, price, bogo } from '@lib/buy';
 
 interface Props {
   compact?: boolean;
@@ -36,13 +36,22 @@ void tag;
     crew && jump ? (
       <>
         <p class="crew-lead hand">Fill your boat with up to 5 readers…</p>
+        {bogo && <span class="bogo-tag" data-bogo-until={bogo.until}>Buy one · Give one</span>}
         <a class="btn btn-primary hook-pill" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={`${Astro.url.pathname}:pill`}>
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
           Hook the Experience
           <span class="buy-price mono">{price}</span>
         </a>
         {/* the gift line (John, 2026-11-15): the welcome email can be forwarded, and /gift/ prints a card or saves it as a PDF */}
-        <p class="gift-line">
+        {
+          bogo && (
+            <p class="gift-line" data-bogo-until={bogo.until}>
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1" /><path d="M12 8v13" /><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" /><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" /></svg>
+              <span><strong>Holiday: buy one, give one.</strong> You get a second Experience free, with a gift card to email or print for anyone. Through {bogo.through}.</span>
+            </p>
+          )
+        }
+        <p class="gift-line" hidden={!!bogo} data-bogo-else={bogo ? '' : undefined}>
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1" /><path d="M12 8v13" /><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" /><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" /></svg>
           <span><strong>A holiday gift that’s ready today.</strong> Email it, or print the included gift card.</span>
         </p>
@@ -50,10 +59,18 @@ void tag;
     ) : crew ? (
       <>
         {!plain && <p class="crew-lead hand">Fill your boat with up to 5 readers…</p>}
+        {bogo && <span class="bogo-tag" data-bogo-until={bogo.until}>Buy one · Give one</span>}
         <a class="btn btn-primary buy-btn" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={where}>
           <span class="buy-label">Hook the Experience</span>
           <span class="buy-price mono">{price}</span>
         </a>
+        {
+          bogo && (
+            <p class="bogo-note" data-bogo-until={bogo.until}>
+              <strong>+ a second Experience to give, free.</strong> It comes with its own gift card, to email or print for anyone. Through {bogo.through}.
+            </p>
+          )
+        }
         <p class="small boat-note">
           <strong class="crew-em">Full Boat bonus:</strong> add up to four more readers for {boatPlus} at checkout, each with their own missions, badges and license.
         </p>
@@ -137,6 +154,37 @@ void tag;
     border-radius: 999px;
     font-size: 1.1rem;
     box-shadow: 0 4px 12px rgb(0 0 0 / 0.16);
+  }
+  /* the holiday "buy one, give one" label, sitting on the button's top-left shoulder */
+  .bogo-tag {
+    display: block;
+    width: fit-content;
+    position: relative;
+    z-index: 1;
+    margin: 0.2rem 0 -0.55rem 0.9rem;
+    padding: 0.16rem 0.7rem 0.18rem;
+    border-radius: 999px;
+    background: var(--mangrove);
+    color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.3;
+  }
+  .bogo-note {
+    margin: 0.55rem 0 0;
+    max-width: 30rem;
+    font-size: 0.98rem;
+    line-height: 1.4;
+    color: var(--mangrove);
+  }
+  .bogo-note strong {
+    display: block;
+  }
+  .gift-line[hidden] {
+    display: none;
   }
   .gift-line {
     display: flex;

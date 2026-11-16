@@ -24,6 +24,9 @@ PAIR_LINK = "plink_1UaRO8R6rTUxNaU85SUldLfs"
 # The Full Crew Experience ($39.99, up to five readers; 2026-11-11): four extra keys per purchase.
 CREW_LINK = "plink_1Uan0QR6rTUxNaU8jDZt5nIz"
 CREW_PRODUCT = "prod_VbegFKkQkjcsyt"
+# Holiday "buy one, give one" (2026-11-16): until this moment a one-reader purchase also gets a
+# second, gift key (worker/src/index.js giftCount). Keep it the same as site.config → checkout.bogo.until.
+BOGO_UNTIL = "2027-01-01T05:00:00Z"
 
 [[analytics_engine_datasets]]
 binding = "EVENTS"

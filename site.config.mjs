@@ -39,6 +39,12 @@ export default {
     // confirm sheet before Stripe (BuyConfirm.astro). It was off Nov 10–15 (19 Buy taps → 5 Continue
     // with it on, Nov 6–10); back on 2026-11-15 because it now carries the Full Boat toggle.
     confirmSheet: true,
+    // Holiday "buy one, give one" (John, 2026-11-16): every one-reader purchase also gets a second
+    // Experience to give, with its own link and gift card. It ends by itself at `until` (the pages
+    // hide the offer in the browser after that moment, and stop building it in). The Worker gives
+    // the second key by its own BOGO_UNTIL in worker/wrangler.toml: KEEP THE TWO THE SAME. To end
+    // it early, delete this line, deploy, and set BOGO_UNTIL to a past date.
+    bogo: { until: '2027-01-01T05:00:00Z', through: 'December 31' },
     // The Full Crew Experience: up to five readers, each with their own link, missions, badges and
     // license. The Worker issues the four extra keys (CREW_LINK) and emails them with gift cards.
     // Since 2026-11-15 nobody is sent straight to this link from the page: it is the sheet's

@@ -121,6 +121,13 @@ async function verifyStripe(request, secret) {
  *  once; everything beyond the buyer's own is a gift. Prices are matched in USD cents on the price
  *  itself, so Adaptive Pricing (Canadians paying CAD) doesn't confuse it. Capped at 5. */
 async function giftCount(env, session) {
+  const paid = await paidGifts(env, session);
+  // Holiday "buy one, give one" (John, 2026-11-16): until BOGO_UNTIL a purchase that paid for one
+  // reader also gets one Experience to give. A pair or a crew already has its extra keys.
+  const bogo = !!env.BOGO_UNTIL && Date.now() < Date.parse(env.BOGO_UNTIL) && (Number(session.amount_subtotal) || 0) > 0;
+  return paid === 0 && bogo ? 1 : paid;
+}
+async function paidGifts(env, session) {
   const sub = Number(session.amount_subtotal) || 0;
   const usd = String(session.currency || 'usd').toLowerCase() === 'usd';
   const isPairLink = !!env.PAIR_LINK && session.payment_link === env.PAIR_LINK;
@@ -176,7 +183,7 @@ async function fulfil(env, session, ctx) {
   const freshGifts = giftKeys.filter((g) => g.created).map((g) => g.key);
   if (freshGifts.length && email)
     ctx?.waitUntil(sendMail(env, email, giftKeys.length > 1 ? crewEmail(giftKeys.map((g) => g.key)) : giftEmail(freshGifts[0])));
-  if (created && email) await sendWelcome(env, email, key);
+  if (created && email) await sendWelcome(env, email, key, { gift: giftKeys.length === 1 });
   if (created) {
     // count the sale under the campaign that brought it (the code rode through Stripe in
     // client_reference_id); a Meta click with no code counts as "meta", the rest as "direct"

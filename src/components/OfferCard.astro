@@ -9,7 +9,7 @@ import { photoImages } from '@lib/images';
 import audioData from '../../data/audio.json';
 import manual from '../../data/manual.json';
 import site from '../../site.config.mjs';
-import { isOpen, price } from '@lib/buy';
+import { isOpen, price, bogo } from '@lib/buy';
 import BuyButton from '@components/BuyButton.astro';
 // the four things a reader does, as a row of icons under the sub line (John, 2026-11-13)
 import { ways } from '@lib/ways';
@@ -33,6 +33,7 @@ const items = [
   { t: `${n} real-world field missions`, d: 'Done off the screen: knots on real line, a treasure map, a cleanup, a fishing day. A grown-up signs each one off.' },
   { t: 'The Field Journal', d: '30 printable pages to fill in by hand: logs, sketches, the case file, a fish log and a knot log.' },
   { t: 'Three badges and a guide license', d: 'Earned along the way, with a printable Assistant Fishing Guide license at the end.' },
+  ...(bogo ? [{ t: 'Holiday: buy one, give one', d: `A second Experience to give to another reader, free, with its own gift card to email or print for anyone. Through ${bogo.through}.`, until: bogo.until }] : []),
   { t: 'Their own link', d: 'Your reader keeps their own missions, badges and license, and a printable gift card comes with it.' },
   { t: 'Nothing to install', d: 'Arrives the moment you pay. Opens on any phone, tablet or computer; no app, no account.' },
 ];
@@ -59,7 +60,7 @@ const items = [
       <ul class="offer-list">
         {
           items.map((i) => (
-            <li>
+            <li data-bogo-until={(i as { until?: string }).until}>
               <svg viewBox="0 0 24 24" aria-hidden="true" class="offer-tick"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
               <div>
                 <strong>{i.t}</strong>

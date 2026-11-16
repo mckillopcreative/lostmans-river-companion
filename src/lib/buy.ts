@@ -12,3 +12,6 @@ export const buyTrack = isOpen ? 'buy_click' : 'waitlist_click';
 export const buyLabel = isOpen ? `Hook the Full Experience ${c.price}` : `Opens ${c.opens}: join the list`;
 export const opens = c.opens;
 export const price = c.price;
+/** The holiday "buy one, give one" offer while it runs, else null (site.config → checkout.bogo). */
+const b = (c as { bogo?: { until: string; through: string } }).bogo;
+export const bogo = isOpen && b && Date.now() < Date.parse(b.until) ? b : null;

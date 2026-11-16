@@ -94,7 +94,7 @@
           const glink = startLink(g);
           const li = document.createElement('li');
           const mail = `mailto:?subject=${encodeURIComponent('Join my Lostman’s River crew')}&body=${encodeURIComponent(`You’re on the crew for a summer as an assistant fishing guide. Open this on your tablet or phone: ${glink}`)}`;
-          li.innerHTML = `<span class="ho-crew-n">Crew member ${i + 2}</span>
+          li.innerHTML = `<span class="ho-crew-n">${gifts.length === 1 ? 'The one to give' : `Crew member ${i + 2}`}</span>
             <a class="btn btn-sm btn-primary" href="/gift/#${g}">Print gift card</a>
             <button type="button" class="btn btn-sm">Copy link</button>
             <a class="btn btn-sm" href="${mail}">Email it</a>`;
