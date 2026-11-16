@@ -13,7 +13,8 @@ interface Props {
   note?: boolean;
   /** buttons only: no "Fill your boat" lead, promise line or crew note (the offer card says them) */
   plain?: boolean;
-  /** the id of the offer card: show one "Hook the Experience" pill that scrolls to it, in place of the buttons (the landing hero) */
+  /** the landing hero: show one "Hook the Experience" pill in place of the buttons. Since 2026-11-15 (John) the pill is a Buy
+   *  link like the others, so it opens the confirm sheet instead of scrolling to the offer card; its taps are buy_click "/:pill" */
   jump?: string;
   /** a small label pinned to the crew button, e.g. "Holiday Special" (the offer card passes site.checkout.crew.tag) */
   tag?: string;
@@ -35,7 +36,7 @@ void tag;
     crew && jump ? (
       <>
         <p class="crew-lead hand">Fill your boat with up to 5 readers…</p>
-        <a class="btn btn-primary hook-pill" href={`#${jump}`} data-track="hook_click" data-track-page={Astro.url.pathname}>
+        <a class="btn btn-primary hook-pill" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page={`${Astro.url.pathname}:pill`}>
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
           Hook the Experience
           <span class="buy-price mono">{price}</span>

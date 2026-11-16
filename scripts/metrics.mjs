@@ -40,7 +40,8 @@ if (campaigns) {
   const codes = [...new Set(rows.map((r) => r.campaign || '(none)'))].sort();
   const get = (c, e, v) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === e && (v === undefined || Number(r.v) === v)).reduce((a, r) => a + Number(r.n), 0);
   const money = (c) => rows.filter((r) => (r.campaign || '(none)') === c && r.event === 'purchase').reduce((a, r) => a + Number(r.total), 0);
-  // pill = the hero's "Hook the Experience"; card / cardbtn = the offer card's heading / buy buttons seen;
+  // pill = the hero's "Hook the Experience" (hook_click until 2026-11-15, when it scrolled to the card;
+  // buy_click "/:pill" since, when it opens the sheet, so it is also inside buy); card / cardbtn = the offer card's heading / buy buttons seen;
   // Since 2026-11-15 every Buy button opens the confirm sheet: buy = Buy taps (sticky = the ones
   // from the floating button), boat = the sheet's Full Boat switch turned on, go1 = Continue at the
   // one-reader price, go5 = Continue with the Full Boat (crew_click). Before that date crew_click
@@ -50,7 +51,7 @@ if (campaigns) {
   console.log(`Landing page by campaign, last ${days} days${own ? ' (including own traffic)' : ''}`);
   console.log('  ' + 'campaign'.padEnd(18) + cols.map((c) => c.padStart(9)).join(''));
   for (const c of codes) {
-    const vals = [get(c, 'landing_view'), get(c, 'scroll', 50), get(c, 'scroll', 90), get(c, 'sample_click'), get(c, 'audio_play'), get(c, 'offer_join'), get(c, 'hook_click'), get(c, 'card_view', 1), get(c, 'card_view', 2), get(c, 'buy_click'), getL(c, 'buy_click', /:sticky$/) + getL(c, 'crew_click', /:sticky$/), get(c, 'boat_toggle', 1), get(c, 'confirm_go'), get(c, 'crew_click') - getL(c, 'crew_click', /:sticky$/), get(c, 'checkout_return'), get(c, 'purchase'), money(c).toFixed(2)];
+    const vals = [get(c, 'landing_view'), get(c, 'scroll', 50), get(c, 'scroll', 90), get(c, 'sample_click'), get(c, 'audio_play'), get(c, 'offer_join'), get(c, 'hook_click') + getL(c, 'buy_click', /:pill$/), get(c, 'card_view', 1), get(c, 'card_view', 2), get(c, 'buy_click'), getL(c, 'buy_click', /:sticky$/) + getL(c, 'crew_click', /:sticky$/), get(c, 'boat_toggle', 1), get(c, 'confirm_go'), get(c, 'crew_click') - getL(c, 'crew_click', /:sticky$/), get(c, 'checkout_return'), get(c, 'purchase'), money(c).toFixed(2)];
     console.log('  ' + c.padEnd(18) + vals.map((v) => String(v).padStart(9)).join(''));
   }
   if (!codes.length) console.log('  (none yet)');
@@ -67,10 +68,10 @@ if (campaigns) {
     ['Tried chapter 1', get('sample_click')],
     ['Heard chapter 1', get('audio_play', '1')],
     ['Listened to the end of ch 1', rows.filter((r) => r.event === 'audio_progress' && r.label === '1').length ? get('audio_progress', '1') : 0],
-    ['Tapped "Hook the Experience" (hero pill)', get('hook_click')],
+    ['Tapped "Hook the Experience" (hero pill)', get('hook_click') + rows.filter((r) => r.event === 'buy_click' && /:pill$/.test(r.label || '')).reduce((a, r) => a + Number(r.n), 0)],
     ['Saw the offer card', cardSeen],
     ['Saw the offer card\'s buy buttons', cardBtnSeen],
-    ['Tapped a Buy button (opens the sheet)', get('buy_click')],
+    ['Tapped a Buy button, the pill included (opens the sheet)', get('buy_click')],
     ['Switched on the Full Boat bonus', boatOn],
     ['Continued to checkout, one reader ($24.99)', get('confirm_go')],
     ['Continued to checkout, Full Boat ($39.99)', get('crew_click')],

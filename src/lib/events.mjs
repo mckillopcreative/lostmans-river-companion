@@ -13,10 +13,10 @@ export const EVENTS = {
   landing_click: { label: 'to' }, // any other link on the landing page, by where it goes (ch, app, map, fish, …)
   purchase: { label: 'src', value: 'usd' }, // written by the Worker at fulfilment, never by a page
   // buy_click and crew_click labels say where the button was: "/:card" = the landing offer card,
-  // "<page>:sticky" = the floating "Build your crew" button, a bare page = any other Buy button
+  // "<page>:sticky" = the floating button, "/:pill" = the landing hero pill, a bare page = any other Buy button
   buy_click: { label: 'page' }, // the Buy tap (opens the confirm sheet)
   crew_click: { label: 'page' }, // the Full Crew Experience ($39.99, up to five readers) handed to Stripe. Since 2026-11-15 that is the sheet's Continue with the Full Boat toggle on (label "<page>:sheet")
-  hook_click: { label: 'page' }, // the hero's "Hook the Experience" pill: scrolls to the offer card
+  hook_click: { label: 'page' }, // until 2026-11-15: the hero pill scrolling to the offer card. Now the pill is buy_click "/:pill"
   card_view: { label: 'page', value: 'step' }, // the offer card seen, once each per visit: step 1 = its heading on screen, step 2 = its buy buttons on screen
   pair_click: { label: 'page' }, // the "Keep one, give one" ($34.99, two Experiences) tap: straight to Stripe
   confirm_go: { label: 'page' }, // "Continue to secure checkout" on the sheet: the real hand-off to Stripe

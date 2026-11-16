@@ -23,7 +23,7 @@ Events say what happened, never who.
 | `scroll` | 50% and 90% of the landing page, once each | page / percent |
 | `sample_click` | "Try the first chapter now" | page |
 | `landing_click` | any other link on the landing page, by destination: `ch`, `app`, `map`, `fish`, `crew`, `about`, `section:chapters`, `out:amazon.com`… | to |
-| `hook_click` | the hero's "Hook the Experience" pill, which scrolls to the offer card | page |
+| `hook_click` | until 2026-11-15: the hero's "Hook the Experience" pill scrolling to the offer card. Since then the pill opens the confirm sheet and counts as `buy_click` with label `/:pill` | page |
 | `card_view` | the landing offer card seen, once each per visit: step 1 = its heading on screen, step 2 = its buy buttons on screen | page / step |
 | `crew_click` | the Full Crew Experience handed to Stripe. Since 2026-11-15: the confirm sheet's Continue with the Full Boat switch on, label `<page>:sheet`. Before: a tap straight to the $39.99 checkout (`/:card`, `<page>:sticky`) | page |
 | `boat_toggle` | the confirm sheet's Full Boat bonus switch (adds the Full Crew, up to five readers): value 1 = switched on, 0 = off | page / on |
