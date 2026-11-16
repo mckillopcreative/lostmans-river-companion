@@ -108,6 +108,14 @@ missions.forEach((m, i) => {
   }
 }
 
+// 4c. Matt's Fishing Journal: the fill-in rules table names real fish, and prints no numbers of its own
+{
+  const fj = JSON.parse(readFileSync(resolve(import.meta.dirname, '..', 'data', 'fishing-journal.json'), 'utf8'));
+  for (const id of fj.keeper.table) if (!ids.fish.has(id)) errors.push(`fishing-journal: unknown fish ${id} in the rules table`);
+  // a size or bag limit must never be printed as fact (CLAUDE.md): no "NN inches" / "NN in" in the Keeper chapter
+  if (/\b\d+\s*(inch|inches|in\b|")/i.test(JSON.stringify(fj.keeper))) errors.push('fishing-journal: the Keeper chapter must not print a size; the reader fills it in from FWC');
+}
+
 // 5. places have numeric coordinates
 for (const p of entity.places) {
   if (typeof p.lat !== 'number' || typeof p.lng !== 'number') errors.push(`places/${p.id}: lat/lng must be numbers`);

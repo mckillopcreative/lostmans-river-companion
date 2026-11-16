@@ -1,0 +1,1026 @@
+---
+// Matt's Fishing Journal (John, 2026-11-15): the printable field guide that comes with the
+// Experience. Ten chapters, read on screen or printed (the browser's "Save as PDF" makes the
+// PDF). The fish, rigs, knots and boat pages come from their own data files; what is new here
+// is in data/fishing-journal.json. No sizes, seasons or bag limits are printed: the Keeper
+// chapter teaches how to measure and has a table the reader fills in from FWC.
+// Without a purchase key the cover, the contents and the first chapter show; the rest and the
+// print button wait for the key (same client-side gate as the Field Journal).
+import { Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import { fish, fishById, knots } from '@lib/data';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+import { buyHref, buyTrack, buyLabel } from '@lib/buy';
+import site from '../../../site.config.mjs';
+import j from '../../../data/fishing-journal.json';
+import rigsData from '../../../data/rigs.json';
+import boat from '../../../data/boat-school.json';
+
+const locked = !!site.gate?.live;
+const cover = artImage('journal', 'cover');
+const art = (id: string) => artImage('journal', id);
+const core = ['snook', 'tarpon', 'redfish', 'trout', 'snapper', 'grouper'].map((id) => fishById.get(id)!).filter(Boolean);
+const rest = fish.filter((f) => !core.includes(f) && artImage('fish', f.id));
+const aground = boat.lessons.find((l) => l.id === 'aground')!;
+const chapters = [
+  { id: 'fish', t: 'Know your fish' },
+  { id: 'keeper', t: 'Keeper or release?' },
+  { id: 'spots', t: 'Find the spot' },
+  { id: 'rigs', t: 'Rig it right' },
+  { id: 'knots', t: 'Five knots' },
+  { id: 'hook', t: 'Set the hook, land the fish' },
+  { id: 'boat', t: 'On the boat' },
+  { id: 'pack', t: 'The pack list' },
+  { id: 'end', t: 'End of the day' },
+  { id: 'big', t: 'The big one' },
+];
+const tableFish = j.keeper.table.map((id) => fishById.get(id)).filter(Boolean);
+---
+
+<Base title={j.title} description="A printable field guide to fishing the Everglades: identify the fish, measure a keeper, find the spot, pick the rig, tie the knot, set the hook, pack the bag and put the boat away." noindex>
+  <div class="wrap section no-print">
+    <p class="small"><a href={url('/app/')}>← The Experience</a> · <a href={url('/guide-school/')}>Guide School</a></p>
+    <p class="eyebrow">The field guide · {chapters.length} chapters</p>
+    <h1>{j.title}</h1>
+    <p class="lede">{j.subtitle}. Read it here, or print it and keep it in the boat.</p>
+    <p class="cluster">
+      <button class="btn btn-primary" type="button" id="print">Print it, or save it as a PDF</button>
+      <span class="small muted">Letter size. Choose “Save as PDF” in the print window to keep a copy.</span>
+    </p>
+    {
+      locked && (
+        <div class="mission-lock fj-lock" id="fj-lock">
+          <p class="hand fj-lock-h">The whole journal comes with the Experience</p>
+          <p class="small">The cover, the contents and the first chapter are here to read. The other nine chapters, and the print button, open once the Experience is on this device.</p>
+          <p class="cluster">
+            <a class="btn btn-primary" href={buyHref} data-track={buyTrack} data-track-page="fishing-journal">
+              {buyLabel}
+            </a>
+            <a class="small" href={url('/restore/')}>Already bought it?</a>
+          </p>
+        </div>
+      )
+    }
+  </div>
+
+  <div class:list={['fj', { 'is-locked': locked }]} id="fj">
+    <!-- cover -->
+    <section class="jp jp-cover">
+      {cover && <Image class="cv-art" src={cover} alt="A boy on the bow of a skiff at sunrise, his rod bent, as a tarpon leaps" width={1100} sizes="(min-width: 860px) 760px, 94vw" loading="eager" />}
+      <div class="cv-text">
+        <p class="cv-eyebrow hand">Lostman’s River · Ten Thousand Islands</p>
+        <h2 class="cv-title">{j.title}</h2>
+        <p class="cv-sub">{j.subtitle}</p>
+        <p class="fill cv-fill"><span>This journal belongs to</span></p>
+      </div>
+      <p class="jp-foot mono">A companion to the novel <em>Escape to Lostman’s River</em> by {site.authors}.</p>
+    </section>
+
+    <!-- contents -->
+    <section class="jp">
+      <h2 class="jp-h">Before you cast</h2>
+      <p class="fj-intro">{j.intro}</p>
+      <p class="hand fj-sign">— Matt</p>
+      <ol class="toc">
+        {
+          chapters.map((c) => (
+            <li>
+              <a href={`#${c.id}`}>{c.t}</a>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="small fj-note">Sizes, seasons and bag limits are not printed in this journal, because they change. Chapter 2 shows you where to look them up and gives you a page to write them on.</p>
+    </section>
+
+    <!-- 1 fish -->
+    <section class="jp" id="fish">
+      <p class="ch mono">Chapter 1</p>
+      <h2 class="jp-h">Know your fish</h2>
+      <p>Six fish matter most on this river. Learn what gives each one away, where it lives and how to fish for it, and you can name most of what comes over the side.</p>
+      <div class="six">
+        {
+          core.map((f) => {
+            const img = artImage('fish', f.id);
+            return (
+              <article class="fishcard">
+                {img && <Image src={img} alt={f.common} width={520} sizes="(min-width: 700px) 230px, 40vw" loading="lazy" />}
+                <div>
+                  <h3>{f.common}</h3>
+                  <p>
+                    <strong>Tell-tale:</strong> {f.identify}
+                  </p>
+                  {f.habitat && (
+                    <p>
+                      <strong>Lives:</strong> {f.habitat}
+                    </p>
+                  )}
+                  {f.how_matt_fishes_it && (
+                    <p>
+                      <strong>How I fish it:</strong> {f.how_matt_fishes_it}
+                    </p>
+                  )}
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+    </section>
+
+    <section class="jp">
+      <h2 class="jp-h">And the rest of the river</h2>
+      <ul class="plates">
+        {
+          rest.map((f) => (
+            <li>
+              <Image src={artImage('fish', f.id)!} alt="" width={300} sizes="110px" loading="lazy" />
+              <strong>{f.common}</strong>
+              <span>{f.identify}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="small no-print"><a href={url('/games/fish-id/')}>Test yourself: Fish of the Everglades →</a></p>
+    </section>
+
+    <!-- 2 keeper -->
+    <section class="jp" id="keeper">
+      <p class="ch mono">Chapter 2</p>
+      <h2 class="jp-h">Keeper or release?</h2>
+      {art('keeper') && <Image class="wide-art" src={art('keeper')!} alt="A redfish on a measuring board, its tail pinched" width={1100} sizes="(min-width: 860px) 700px, 90vw" loading="lazy" />}
+      <p>{j.keeper.intro}</p>
+      <h3>How to measure a fish</h3>
+      <ol class="steps">
+        {
+          j.keeper.measure.map((s) => (
+            <li>
+              <strong>{s.t}.</strong> {s.d}
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="jp">
+      <h2 class="jp-h">Today’s rules</h2>
+      <p>{j.keeper.lookup.text}</p>
+      <p class="small">
+        {
+          j.keeper.lookup.links.map((k, i) => (
+            <>
+              {i > 0 && ' · '}
+              <a href={k.href} rel="noopener">
+                {k.label}
+              </a>
+            </>
+          ))
+        }
+      </p>
+      <table class="log">
+        <thead>
+          <tr>
+            <th>Fish</th>
+            <th>Smallest</th>
+            <th>Biggest</th>
+            <th>How many</th>
+            <th>Season open?</th>
+            <th>Checked on</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            tableFish.map((f) => (
+              <tr>
+                <td class="log-name">{f!.common}</td>
+                <td />
+                <td />
+                <td />
+                <td />
+                <td />
+              </tr>
+            ))
+          }
+          <tr>
+            <td />
+            <td />
+            <td />
+            <td />
+            <td />
+            <td />
+          </tr>
+        </tbody>
+      </table>
+      <h3>Letting one go right</h3>
+      <ul class="plain">
+        {j.keeper.release.map((r) => <li>{r}</li>)}
+      </ul>
+      <p class="book small">In the book: {j.keeper.book}</p>
+    </section>
+
+    <!-- 3 spots -->
+    <section class="jp" id="spots">
+      <p class="ch mono">Chapter 3</p>
+      <h2 class="jp-h">Find the spot</h2>
+      {art('spots') && <Image class="wide-art" src={art('spots')!} alt="The backcountry from above: a mangrove point, a creek mouth, an oyster bar, a grass flat, a deep hole and a dock" width={1100} sizes="(min-width: 860px) 700px, 90vw" loading="lazy" />}
+      <p>{j.spots.intro}</p>
+      <div class="cards">
+        {
+          j.spots.places.map((p) => (
+            <article class="card">
+              <h3>{p.t}</h3>
+              <p class="who mono">{p.who}</p>
+              <p>{p.d}</p>
+              <p>
+                <strong>Best:</strong> {p.when}
+              </p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="jp">
+      <h2 class="jp-h">Signs of fish</h2>
+      <dl class="signs">
+        {
+          j.spots.signs.map((s) => (
+            <>
+              <dt>{s.t}</dt>
+              <dd>{s.d}</dd>
+            </>
+          ))
+        }
+      </dl>
+      <p class="callout">
+        <strong>And the tide.</strong>
+        {j.spots.tide}
+      </p>
+      <p class="book small">In the book: {j.spots.book}</p>
+      <p class="small no-print"><a href={url('/tides/')}>Today’s tide at Chokoloskee →</a></p>
+    </section>
+
+    <!-- 4 rigs -->
+    <section class="jp" id="rigs">
+      <p class="ch mono">Chapter 4</p>
+      <h2 class="jp-h">Rig it right</h2>
+      <p>There is more than one right answer on the water. These are the rigs most guides reach for first, and the days to leave each one in the box.</p>
+      <div class="rigs">
+        {
+          rigsData.rigs.map((r) => {
+            const img = artImage(r.art[0], r.art[1]);
+            return (
+              <article class="rigrow">
+                {img && <Image src={img} alt="" width={300} sizes="96px" loading="lazy" />}
+                <div>
+                  <h3>{r.name}</h3>
+                  <p>
+                    <strong>Tie it on for:</strong> {r.best}
+                  </p>
+                  <p class="soft">
+                    <strong>Leave it in the box:</strong> {r.skip}
+                  </p>
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+      <h3 class="rules-h">Seven rules of rigging</h3>
+      <ol class="steps">
+        {
+          rigsData.rules.map((r) => (
+            <li>
+              <strong>{r.when}</strong> {r.then}
+            </li>
+          ))
+        }
+      </ol>
+      <p class="small no-print"><a href={url('/guide-school/rig-it-right/')}>Practice: Rig It Right →</a></p>
+    </section>
+
+    <!-- 5 knots -->
+    <section class="jp" id="knots">
+      <p class="ch mono">Chapter 5</p>
+      <h2 class="jp-h">Five knots</h2>
+      <p>A knot you can tie in the dark, with wet hands, is worth ten you half remember. Wet every knot before you pull it tight, and test it with a hard tug.</p>
+      <div class="knots">
+        {
+          knots.map((k) => {
+            const img = artImage('tackle', `knot-${k.id}`);
+            return (
+              <article class="knot">
+                {img && <Image src={img} alt="" width={360} sizes="(min-width: 700px) 150px, 30vw" loading="lazy" />}
+                <div>
+                  <h3>{k.name}</h3>
+                  <p class="soft">{k.use}</p>
+                  <ol>
+                    {k.steps.map((s) => (
+                      <li>{s}</li>
+                    ))}
+                  </ol>
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+    </section>
+
+    <!-- 6 hookset -->
+    <section class="jp" id="hook">
+      <p class="ch mono">Chapter 6</p>
+      <h2 class="jp-h">Set the hook, land the fish</h2>
+      {art('landing') && <Image class="wide-art" src={art('landing')!} alt="A snook led head-first into a landing net beside the boat" width={1100} sizes="(min-width: 860px) 700px, 90vw" loading="lazy" />}
+      <p>{j.hookset.intro}</p>
+      <dl class="signs">
+        {
+          j.hookset.ways.map((s) => (
+            <>
+              <dt>{s.t}</dt>
+              <dd>{s.d}</dd>
+            </>
+          ))
+        }
+      </dl>
+      <h3>The fight</h3>
+      <ul class="plain">
+        {j.hookset.fight.map((r) => <li>{r}</li>)}
+      </ul>
+      <p class="book small">In the book: {j.hookset.book}</p>
+    </section>
+
+    <!-- 7 boat -->
+    <section class="jp" id="boat">
+      <p class="ch mono">Chapter 7</p>
+      <h2 class="jp-h">On the boat</h2>
+      <p>You’re crew before you’re captain. These are the rules a guide’s mate lives by, one from each lesson of Learn the Boat.</p>
+      <ol class="pearls">
+        {
+          boat.lessons.map((l) => (
+            <li>
+              <span class="mono pearl-t">{l.title}</span>
+              <span class="hand pearl-q">{l.pearl}</span>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="small no-print"><a href={url('/guide-school/learn-the-boat/')}>All ten lessons: Learn the Boat →</a></p>
+    </section>
+
+    <section class="jp">
+      <h2 class="jp-h">If you run aground</h2>
+      <p>{aground.intro}</p>
+      {artImage('boat-school', 'aground') && <Image class="wide-art" src={artImage('boat-school', 'aground')!} alt="A skiff on a sandbar, engine tilted up, being poled off" width={1100} sizes="(min-width: 860px) 700px, 90vw" loading="lazy" />}
+      <ol class="steps">
+        {
+          aground.points.map((p) => (
+            <li>
+              <strong>{p.t}</strong> {p.d}
+            </li>
+          ))
+        }
+      </ol>
+      <p class="callout"><strong>{aground.pearl}</strong></p>
+      <p class="small">{boat.law.text}</p>
+    </section>
+
+    <!-- 8 pack -->
+    <section class="jp" id="pack">
+      <p class="ch mono">Chapter 8</p>
+      <h2 class="jp-h">The pack list</h2>
+      <p>{j.pack.intro}</p>
+      <div class="packs">
+        {
+          j.pack.groups.map((g) => (
+            <div class="pack">
+              <h3>{g.t}</h3>
+              <ul class="checks">
+                {g.items.map((i) => (
+                  <li>{i}</li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- 9 end of day -->
+    <section class="jp" id="end">
+      <p class="ch mono">Chapter 9</p>
+      <h2 class="jp-h">End of the day</h2>
+      {artImage('boat-school', 'rinse-and-flush') && <Image class="wide-art" src={artImage('boat-school', 'rinse-and-flush')!} alt="A skiff on its trailer, the outboard being flushed with a garden hose" width={1100} sizes="(min-width: 860px) 700px, 90vw" loading="lazy" />}
+      <p>{j.endOfDay.intro}</p>
+      <ul class="checks big">
+        {
+          j.endOfDay.steps.map((s) => (
+            <li>
+              <strong>{s.t}.</strong> {s.d}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <!-- 10 the big one -->
+    <section class="jp" id="big">
+      <p class="ch mono">Chapter 10</p>
+      <h2 class="jp-h">The big one</h2>
+      {art('big-one') && <Image class="wide-art" src={art('big-one')!} alt="A very large snook held level over the water, about to be let go" width={1100} sizes="(min-width: 860px) 700px, 90vw" loading="lazy" />}
+      <p>{j.bigOne.intro}</p>
+      <div class="bigfields">
+        {
+          j.bigOne.fields.map((f) => (
+            <p class="fill">
+              <span>{f}</span>
+            </p>
+          ))
+        }
+      </div>
+      <p class="mono draw-k">Draw it, or tape the photo here</p>
+      <div class="draw" />
+      <p class="fill"><span>{j.bigOne.sign}</span></p>
+      <p class="jp-foot mono">lostmansriver.com · from the novel <em>Escape to Lostman’s River</em> by {site.authors}</p>
+    </section>
+  </div>
+
+  <script>
+    import { getKey } from '../../scripts/access';
+    import { track } from '../../scripts/track';
+    const fj = document.getElementById('fj')!;
+    // ?unlocked works on the dev server only (never in a build): it lets a print run be checked without a key
+    const devOpen = import.meta.env.DEV && new URLSearchParams(location.search).has('unlocked');
+    if (getKey() || devOpen) {
+      document.getElementById('fj-lock')?.remove();
+      fj.classList.remove('is-locked');
+    }
+    document.getElementById('print')!.addEventListener('click', () => {
+      if (fj.classList.contains('is-locked')) {
+        document.getElementById('fj-lock')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      track('guide_print');
+      window.print();
+    });
+  </script>
+</Base>
+
+<style>
+  .fj-lock {
+    margin: 1rem 0 0;
+    padding: 1rem 1.1rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-left: 4px solid var(--sunrise);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .fj-lock-h {
+    font-size: 1.35rem;
+    color: var(--sunrise-ink);
+    margin: 0 0 0.3rem;
+  }
+  .fj {
+    --jink: #1f2a2e;
+    --jsoft: #5b676b;
+    --jline: #c9c2b4;
+    --jgreen: #2f5d50;
+    --jorange: #a04d12;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+    justify-items: center;
+    padding: 0 var(--gutter) 3rem;
+  }
+  /* without a key: the cover, the contents and chapter 1 (two pages) */
+  .fj.is-locked .jp:nth-child(n + 5) {
+    display: none;
+  }
+  .jp {
+    width: 100%;
+    max-width: 8.5in;
+    background: #fffdf8;
+    color: var(--jink);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.15);
+    padding: clamp(1.1rem, 5vw, 0.65in);
+    font-size: 1rem;
+    line-height: 1.45;
+    position: relative;
+    scroll-margin-top: 130px;
+  }
+  .jp :global(a) {
+    color: var(--jgreen);
+  }
+  .jp p {
+    margin: 0 0 0.6rem;
+  }
+  .jp h3 {
+    font-size: 1.08rem;
+    color: var(--jgreen);
+    margin: 0.9rem 0 0.3rem;
+  }
+  .ch {
+    margin: 0 0 0.1rem !important;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--jorange);
+  }
+  .jp-h {
+    color: var(--jgreen);
+    font-size: 1.65rem;
+    line-height: 1.15;
+    margin: 0 0 0.7rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 2px solid var(--jgreen);
+  }
+  .jp-foot {
+    font-size: 0.7rem;
+    color: var(--jsoft);
+    text-align: center;
+    margin: 1rem 0 0 !important;
+  }
+  .soft {
+    color: var(--jsoft);
+  }
+  .book {
+    font-style: italic;
+    color: var(--jsoft);
+  }
+  .fill {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    margin: 0 !important;
+    min-height: 2.2rem;
+    border-bottom: 1px solid var(--jink);
+  }
+  .fill span {
+    font-size: 0.72rem;
+    font-family: var(--font-mono, monospace);
+    color: var(--jsoft);
+    white-space: nowrap;
+    padding-bottom: 0.15rem;
+  }
+  /* cover */
+  .jp-cover {
+    padding: 0;
+    overflow: hidden;
+  }
+  .cv-art {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 6.4in;
+    object-fit: cover;
+    object-position: center 60%;
+  }
+  .cv-text {
+    padding: 1.1rem clamp(1.1rem, 5vw, 0.65in) 0.4rem;
+    text-align: center;
+  }
+  .cv-eyebrow {
+    margin: 0 !important;
+    font-size: 1.35rem;
+    color: var(--jorange);
+  }
+  .cv-title {
+    margin: 0.1rem 0 0.2rem;
+    font-size: clamp(2rem, 8vw, 3.1rem);
+    line-height: 1.05;
+    color: var(--jgreen);
+  }
+  .cv-sub {
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--jsoft);
+  }
+  .cv-fill {
+    max-width: 22rem;
+    margin: 0.8rem auto 0 !important;
+  }
+  .jp-cover .jp-foot {
+    padding: 0 1rem 1rem;
+  }
+  .fj-intro {
+    font-size: 1.08rem;
+  }
+  .fj-sign {
+    font-size: 1.5rem;
+    color: var(--jorange);
+    text-align: right;
+  }
+  .toc {
+    margin: 0.6rem 0 1rem;
+    padding-left: 1.6rem;
+    display: grid;
+    gap: 0.25rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  .fj-note {
+    padding: 0.6rem 0.8rem;
+    border: 1px dashed var(--jline);
+    border-radius: 8px;
+    color: var(--jsoft);
+  }
+  /* fish */
+  .six {
+    display: grid;
+    gap: 0.9rem;
+  }
+  .fishcard {
+    display: grid;
+    grid-template-columns: 36% minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: start;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--jline);
+    break-inside: avoid;
+  }
+  .fishcard:last-child {
+    border-bottom: 0;
+  }
+  .fishcard :global(img) {
+    width: 100%;
+    height: auto;
+  }
+  .fishcard h3 {
+    margin-top: 0;
+  }
+  .fishcard p {
+    margin: 0 0 0.3rem;
+    font-size: 0.93rem;
+    line-height: 1.4;
+  }
+  .plates {
+    list-style: none;
+    margin: 0 0 0.8rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem 0.9rem;
+  }
+  @media (min-width: 640px) {
+    .plates {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .plates li {
+    display: grid;
+    gap: 0.1rem;
+    font-size: 0.85rem;
+    line-height: 1.3;
+    break-inside: avoid;
+  }
+  .plates :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: contain;
+  }
+  .plates strong {
+    color: var(--jgreen);
+    font-size: 0.95rem;
+  }
+  .plates span {
+    color: var(--jsoft);
+  }
+  .wide-art {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin: 0 0 0.8rem;
+  }
+  .rules-h {
+    margin-top: 1.2rem !important;
+    font-size: 1.25rem !important;
+  }
+  .steps {
+    margin: 0 0 0.6rem;
+    padding-left: 1.3rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .steps li {
+    break-inside: avoid;
+  }
+  .steps strong,
+  .signs dt {
+    color: var(--jgreen);
+  }
+  .plain {
+    margin: 0 0 0.6rem;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.3rem;
+  }
+  .log {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0 0.8rem;
+  }
+  .log th {
+    text-align: left;
+    font-size: 0.68rem;
+    font-family: var(--font-mono, monospace);
+    color: var(--jsoft);
+    border-bottom: 1.5px solid var(--jink);
+    padding: 0.2rem 0.25rem;
+  }
+  .log td {
+    border-bottom: 1px solid var(--jline);
+    border-left: 1px solid var(--jline);
+    height: 0.42in;
+    padding: 0.2rem 0.3rem;
+  }
+  .log td:first-child {
+    border-left: 0;
+  }
+  .log-name {
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .cards {
+    display: grid;
+    gap: 0.7rem;
+  }
+  @media (min-width: 640px) {
+    .cards {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .card {
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--jline);
+    border-radius: 10px;
+    break-inside: avoid;
+  }
+  .card h3 {
+    margin-top: 0;
+  }
+  .card p {
+    margin: 0 0 0.3rem;
+    font-size: 0.93rem;
+    line-height: 1.4;
+  }
+  .who {
+    font-size: 0.7rem !important;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--jorange);
+  }
+  .signs {
+    margin: 0 0 0.8rem;
+    display: grid;
+    gap: 0.1rem;
+  }
+  .signs dt {
+    font-weight: 700;
+    margin-top: 0.45rem;
+  }
+  .signs dd {
+    margin: 0;
+  }
+  .callout {
+    padding: 0.7rem 0.85rem;
+    border-left: 4px solid var(--jorange);
+    background: #f6efe1;
+    border-radius: 0 8px 8px 0;
+  }
+  .callout strong {
+    margin-right: 0.3rem;
+  }
+  .rigs {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .rigrow {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: center;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--jline);
+    break-inside: avoid;
+  }
+  .rigrow:last-child {
+    border-bottom: 0;
+  }
+  .rigrow :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+  .rigrow h3 {
+    margin: 0 0 0.15rem;
+  }
+  .rigrow p {
+    margin: 0 0 0.2rem;
+    font-size: 0.92rem;
+    line-height: 1.38;
+  }
+  .knots {
+    display: grid;
+    gap: 0.9rem;
+  }
+  .knot {
+    display: grid;
+    grid-template-columns: 30% minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: start;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--jline);
+    break-inside: avoid;
+  }
+  .knot:last-child {
+    border-bottom: 0;
+  }
+  .knot :global(img) {
+    width: 100%;
+    height: auto;
+  }
+  .knot h3 {
+    margin-top: 0;
+  }
+  .knot p {
+    margin: 0 0 0.3rem;
+    font-size: 0.92rem;
+  }
+  .knot ol {
+    margin: 0;
+    padding-left: 1.2rem;
+    font-size: 0.93rem;
+    line-height: 1.4;
+  }
+  .pearls {
+    list-style: none;
+    margin: 0 0 0.8rem;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .pearls li {
+    display: grid;
+    gap: 0;
+    padding-left: 0.7rem;
+    border-left: 3px solid var(--jorange);
+    break-inside: avoid;
+  }
+  .pearl-t {
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--jsoft);
+  }
+  .pearl-q {
+    font-size: 1.3rem;
+    line-height: 1.2;
+    color: var(--jgreen);
+  }
+  .packs {
+    display: grid;
+    gap: 0.4rem 1.2rem;
+  }
+  @media (min-width: 640px) {
+    .packs {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .pack {
+    break-inside: avoid;
+  }
+  .checks {
+    list-style: none;
+    margin: 0 0 0.4rem;
+    padding: 0;
+    display: grid;
+    gap: 0.3rem;
+  }
+  .checks li {
+    display: grid;
+    grid-template-columns: 1.05rem minmax(0, 1fr);
+    gap: 0.55rem;
+    align-items: start;
+    font-size: 0.95rem;
+    line-height: 1.38;
+    break-inside: avoid;
+  }
+  .checks li::before {
+    content: '';
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.16rem;
+    border: 1.5px solid var(--jink);
+    border-radius: 3px;
+  }
+  .checks.big {
+    gap: 0.55rem;
+  }
+  .checks.big li {
+    display: block;
+    position: relative;
+    padding-left: 1.6rem;
+    font-size: 1rem;
+  }
+  .checks.big li::before {
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+  }
+  .bigfields {
+    display: grid;
+    gap: 0 1.2rem;
+    margin: 0.4rem 0 0.8rem;
+  }
+  @media (min-width: 640px) {
+    .bigfields {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .draw-k {
+    margin: 0 0 0.2rem !important;
+    font-size: 0.72rem;
+    color: var(--jsoft);
+  }
+  .draw {
+    height: 2.4in;
+    border: 1.5px dashed var(--jline);
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+  }
+
+  @media print {
+    :global(header.site-header),
+    :global(footer.site-footer),
+    :global(.skip-link),
+    :global(.hook-btn),
+    .no-print {
+      display: none !important;
+    }
+    :global(body),
+    :global(main) {
+      background: #fff !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .fj {
+      display: block;
+      padding: 0;
+    }
+    .jp {
+      max-width: none;
+      box-shadow: none;
+      padding: 0;
+      background: #fff;
+      font-size: 10.5pt;
+      break-after: page;
+    }
+    .jp:last-child {
+      break-after: auto;
+    }
+    .jp-cover .cv-art {
+      max-height: 6.2in;
+    }
+    .cards,
+    .packs,
+    .bigfields {
+      grid-template-columns: 1fr 1fr;
+    }
+    .wide-art {
+      max-height: 2.5in;
+      object-fit: cover;
+    }
+    .card p,
+    .rigrow p,
+    .fishcard p,
+    .knot ol,
+    .knot p {
+      font-size: 9.5pt;
+    }
+    .plates {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .plates :global(img) {
+      aspect-ratio: 2 / 1;
+    }
+    .rigrow {
+      grid-template-columns: 70px minmax(0, 1fr);
+      padding-bottom: 0.35rem;
+    }
+    .rigs {
+      gap: 0.35rem;
+    }
+    .draw {
+      height: 2in;
+    }
+    @page {
+      size: letter portrait;
+      margin: 0.55in;
+    }
+  }
+</style>

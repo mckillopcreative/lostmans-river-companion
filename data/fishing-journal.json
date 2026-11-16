@@ -1,0 +1,99 @@
+{
+  "note": "Matt's Fishing Journal (John, 2026-11-15): the printable field guide. This file holds only what is new to it; the fish come from fish.json, the rigs from rigs.json, the knots from knots.json and the boat pages from boat-school.json. No sizes, seasons, bag limits or licence rules are stated: the Keeper chapter teaches how to measure and where to look, with a table the reader fills in from FWC.",
+  "title": "Matt’s Fishing Journal",
+  "subtitle": "An essential guide to catching the big one",
+  "intro": "Everything in here I learned the slow way, one summer on Lostman’s River: from Uncle Dan, from Snapper, and from the fish that got away. Print it, keep it in a zip bag in the boat, and write in it. A journal that stays clean isn’t being used.",
+  "keeper": {
+    "intro": "A guide knows the rules cold, because the fish belong to everybody. Sizes, seasons and how many you may keep change from year to year and from one coast to the other, so the numbers on this page are yours to fill in from the source.",
+    "measure": [
+      { "t": "Wet the board, wet your hands", "d": "Dry hands and a hot deck strip the slime that keeps a fish healthy." },
+      { "t": "Mouth closed, nose to the stop", "d": "Lay the fish flat on its side with its closed mouth against the end of the board." },
+      { "t": "Pinch the tail", "d": "For most inshore fish, squeeze the tail fin together and read the longest point. That is ‘total length.’ A few species are measured to the fork of the tail instead; the rule for each fish says which." },
+      { "t": "Know what a slot is", "d": "A slot limit has a smallest size and a biggest size. Too short goes back to grow. Too long goes back too: the big ones are the breeders." },
+      { "t": "When in doubt, let it go", "d": "A fish on the line between legal and not is not a keeper. Neither is one you won’t eat." }
+    ],
+    "lookup": {
+      "text": "Before the trip, look up each fish you might keep and write today’s rule in the table. Note the date: if it’s old, check again.",
+      "links": [
+        { "label": "FWC saltwater fishing rules", "href": "https://myfwc.com/fishing/saltwater/recreational/" },
+        { "label": "FWC fishing licenses: who needs one", "href": "https://myfwc.com/license/recreational/" }
+      ]
+    },
+    "table": ["snook", "redfish", "trout", "snapper", "black-drum", "sheepshead", "flounder", "tarpon"],
+    "release": [
+      "Keep it in the water as long as you can. Unhook it there if you’re able.",
+      "Hold a big fish level, one hand under the belly. Never hang it by the jaw alone.",
+      "If the hook is deep, cut the line close and leave it. The fish does better than you’d think.",
+      "To revive it, hold it upright facing into the current until the tail kicks out of your hand."
+    ],
+    "book": "Chapter 6: Matt holds his big snook upright and moves it through the water until its tail kicks."
+  },
+  "spots": {
+    "intro": "Fish aren’t spread around like raisins in a cake. The old saying is that ninety percent of them are in ten percent of the water, and that ten percent always has two things: something to eat and somewhere to hide.",
+    "places": [
+      { "t": "Mangrove points", "who": "Snook, redfish, snapper", "d": "The tide sweeps bait around the point, and fish wait in the slack water just behind it.", "when": "Any moving tide. Cast up-current and let it swing past." },
+      { "t": "Creek mouths", "who": "Snook, redfish, trout, young tarpon", "d": "A falling tide drains the flats behind the creek and carries every shrimp and minnow out through one door.", "when": "The last half of the falling tide." },
+      { "t": "Oyster bars", "who": "Redfish, sheepshead, black drum, snook", "d": "Crabs and shrimp live in the shell. Fish the edges, where the bar drops into deeper water.", "when": "A rising tide, as water first covers the shell. Oysters cut line and feet: mind both." },
+      { "t": "Grass flats and potholes", "who": "Seatrout over the grass; reds and snook in the potholes", "d": "A pothole is a pale sandy patch in dark grass. Fish sit on its edge to ambush whatever crosses the open sand.", "when": "Higher water. Drift across with the wind and cast ahead of the boat." },
+      { "t": "Deep holes and passes", "who": "Snapper, grouper, black drum, rolling tarpon", "d": "Deep water is cooler in summer and warmer in a cold snap, and the current brings dinner through all day.", "when": "The start and the end of a tide, when you can still hold bottom." },
+      { "t": "Docks and pilings", "who": "Sheepshead, snapper, snook", "d": "Shade, barnacles and a place to hide from the current. A dock light at night is a snook restaurant.", "when": "Moving water. Fish the up-current side and the shady side first." }
+    ],
+    "signs": [
+      { "t": "Birds diving", "d": "Something below is pushing bait to the top. Go look, slowly." },
+      { "t": "Bait showering", "d": "Minnows spraying out of the water are being chased. Cast to the far edge of the spray." },
+      { "t": "A wake with no boat", "d": "A big fish moving just under the surface pushes a ripple like a tiny boat. Cast ahead of it, never at it." },
+      { "t": "Tails", "d": "A redfish with its nose in the grass waves its tail in the air. It’s eating, and it can’t see you." },
+      { "t": "Jumping mullet", "d": "Mullet aren’t what you’re after, but everything that eats them is nearby." },
+      { "t": "A seam in the water", "d": "A line of foam or a change in color is where two currents meet. Bait collects along it, and fish patrol it." }
+    ],
+    "tide": "Moving water feeds fish; slack water is for eating your own lunch. Dan’s rule is the hour on either side of high tide, when there is plenty of water over the oyster bars.",
+    "book": "Chapter 4: a fish ‘throwing a wake.’ Chapter 7: grass beds mean trout; mangroves and oysters mean snook and reds."
+  },
+  "hookset": {
+    "intro": "Most lost fish are lost in the first two seconds. What you do when you feel the bite depends on what’s tied to your line.",
+    "ways": [
+      { "t": "Circle hook", "d": "Don’t jerk. Reel until the line comes tight and the rod bends, and the hook slides into the corner of the mouth by itself. A yank pulls it straight out." },
+      { "t": "Jig, spoon or plain hook", "d": "Reel down until you feel the fish, then one firm sweep of the rod, up and to the side. Firm, not wild." },
+      { "t": "Popping cork", "d": "When the cork goes under, reel fast until you feel weight, then lift. The slack line has to go first." },
+      { "t": "Topwater plug", "d": "The hardest one. The splash comes before the fish has the lure, so keep working it until the rod actually pulls. Then lift." },
+      { "t": "Tarpon", "d": "Come tight and hang on. When it jumps, bow: push the rod tip toward the fish to give it slack, or it lands on a tight line and breaks you off." }
+    ],
+    "fight": [
+      "Keep the rod bent. A bent rod is a spring, and a straight rod is a broken line.",
+      "Let the drag do its job. When the fish runs, let it run. When it stops, you reel.",
+      "Lift slowly, then reel as you lower the rod: ‘pump and wind.’ Never reel against a running fish.",
+      "Steer it away from roots, pilings and oyster shell by leaning the rod the other way, low to the water.",
+      "Never grab the line with your hand. Net the fish head-first, or have your captain land it."
+    ],
+    "book": "Chapter 4: set the hook too early and it flies out empty."
+  },
+  "pack": {
+    "intro": "Pack the night before. The morning you’re hunting for the pliers is the morning the tide won’t wait.",
+    "groups": [
+      { "t": "On you", "items": ["Life jacket that fits", "Hat with a brim", "Polarized sunglasses: they let you see into the water", "Long-sleeved sun shirt", "Shoes that can get wet and won’t mark the deck"] },
+      { "t": "In your bag", "items": ["More water than you think you need", "Sunscreen", "Bug spray (the no-see-ums are real)", "Rain jacket", "Snacks", "Small first-aid kit", "Towel and a dry shirt", "Phone in a waterproof bag"] },
+      { "t": "Tackle", "items": ["Rod and reel, rigged the night before", "Spool of leader", "Hooks, jig heads and a few soft plastics", "Popping cork and a gold spoon", "Pliers and line cutters", "Landing net", "Measuring board or tape", "A rag"] },
+      { "t": "For the boat (the captain’s list; you check it)", "items": ["Drain plug, in", "Cut-off lanyard", "Anchor and line", "Marine radio", "Paper chart", "Push pole", "Ice", "Bait, and the aerator running", "Fuel", "Flashlight and a whistle or horn"] },
+      { "t": "Paperwork", "items": ["Fishing license, if you need one (ask a grown-up to check FWC)", "Today’s rules, written on the Keeper page", "This journal and a pencil"] }
+    ]
+  },
+  "endOfDay": {
+    "intro": "The trip isn’t over when the boat is on the trailer. The crew that does this list is the crew that gets invited back.",
+    "steps": [
+      { "t": "Ice the catch, clean the fish", "d": "Fish first. Everything else can wait ten minutes; dinner can’t." },
+      { "t": "Flush the engine", "d": "Fresh water through it after every salt trip, the way the engine’s manual says. Water on before the engine starts; never run it dry." },
+      { "t": "Rinse top to bottom", "d": "Deck, console, hatches, the outside of the engine, the trailer, and the trailer’s wheels and springs most of all." },
+      { "t": "Rods and reels", "d": "A light mist, never a blast. Loosen the drags. Run the last few feet of line through your fingers and cut off anything rough." },
+      { "t": "Tackle", "d": "Rinse the lures you used and let them dry before they go back in the box. One wet hook rusts the whole tray." },
+      { "t": "Livewell and cooler", "d": "Drain them, scrub them, prop them open. Old bait water is tomorrow’s smell." },
+      { "t": "Trash and old line", "d": "Every scrap comes off the boat. Loose fishing line tangles birds and turtles." },
+      { "t": "Ready for next time", "d": "Fuel, batteries on charge, the plug where you’ll find it. Tell the captain about anything that’s broken." },
+      { "t": "Write it down", "d": "Where, what tide, what rig, what bit. In a year this page is worth more than any lure." }
+    ]
+  },
+  "bigOne": {
+    "intro": "Every angler has one. Write yours down the same day, while you still remember which way the tide was going.",
+    "fields": ["The fish", "Length", "Date and time", "Where", "Tide and weather", "Rig and bait", "Who was there", "Kept or released"],
+    "sign": "Witnessed by (your captain)"
+  }
+}

@@ -23,6 +23,7 @@ Events say what happened, never who.
 | `scroll` | 50% and 90% of the landing page, once each | page / percent |
 | `sample_click` | "Try the first chapter now" | page |
 | `landing_click` | any other link on the landing page, by destination: `ch`, `app`, `map`, `fish`, `crew`, `about`, `section:chapters`, `out:amazon.com`… | to |
+| `guide_print` | Matt's Fishing Journal: the print / save-as-PDF button (key holders only) | none |
 | `rig_finish` | Rig It Right (Guide School): a level of six scenarios finished | level (1 to 3), value = score |
 | `boat_lesson` | Learn the Boat (Guide School): a lesson passed for the first time on the device | lesson id |
 | `hook_click` | until 2026-11-15: the hero's "Hook the Experience" pill scrolling to the offer card. Since then the pill opens the confirm sheet and counts as `buy_click` with label `/:pill` | page |

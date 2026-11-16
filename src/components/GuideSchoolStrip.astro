@@ -10,6 +10,7 @@ import rigs from '../../data/rigs.json';
 import boat from '../../data/boat-school.json';
 
 const plates = fish.filter((f) => artImage('fish', f.id)).length;
+const journalArt = artImage('journal', 'cover');
 const courses = [
   { id: 'rig-it-right', href: '/guide-school/rig-it-right/', title: 'Rig It Right', line: 'Read the wind, tide and water, then pick the rig.', count: `${rigs.scenarios.length} scenarios` },
   { id: 'learn-the-boat', href: '/guide-school/learn-the-boat/', title: 'Learn the Boat', line: 'Markers, reading the water, the trailer, the rinse-down.', count: `${boat.lessons.length} lessons` },
@@ -39,6 +40,14 @@ const courses = [
         })
       }
     </ul>
+    <a class="gss-journal" href={url('/fishing-journal/')} data-track="landing_click" data-track-to="fishing-journal">
+      <span class="gss-j-art art">{journalArt && <Image src={journalArt} alt="" width={420} sizes="110px" loading="lazy" />}</span>
+      <span class="gss-j-text">
+        <span class="gss-count mono">The field guide · 10 chapters · print it</span>
+        <span class="gss-j-title">Matt’s Fishing Journal</span>
+        <span class="gss-line small">An essential guide to catching the big one: the fish, the keepers, the spots, the rigs, the knots, the pack list.</span>
+      </span>
+    </a>
   </div>
 </section>
 
@@ -97,6 +106,44 @@ const courses = [
   .gss-line {
     line-height: 1.3;
     color: var(--ink-soft);
+  }
+  .gss-journal {
+    margin-top: 0.6rem;
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.45rem;
+    background: var(--paper-2);
+    border: 1.5px solid var(--oyster);
+    border-radius: 14px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .gss-journal:hover {
+    border-color: var(--mangrove);
+  }
+  .gss-j-art {
+    display: block;
+    aspect-ratio: 3 / 4;
+    border-radius: 10px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--mangrove) 14%, var(--paper));
+  }
+  .gss-j-art :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .gss-j-text {
+    display: grid;
+    gap: 0.2rem;
+  }
+  .gss-j-title {
+    font-weight: 700;
+    font-size: 1.15rem;
+    line-height: 1.2;
+    color: var(--mangrove);
   }
   .gss-count {
     font-size: 0.66rem;

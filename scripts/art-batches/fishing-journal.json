@@ -1,0 +1,22 @@
+{
+  "note": "Matt's Fishing Journal art (John, 2026-11-15). Run with scripts/genbatch.mjs, then scripts/import-art.mjs private/art-pack/assets/art.",
+  "groups": {
+    "cover": {
+      "shape": "portrait",
+      "refs": ["assets/art/boat-types/outboard.webp"],
+      "prompt": "A detailed ink-line and watercolor painting, a full scene painted to the edges, in the style of the attached reference: Florida Everglades, red mangroves, warm sunrise light. A book-cover composition with the top third kept as calm open sky (a title will be printed there later). No text, letters, numbers, logos, brand names or signatures anywhere. Any person is seen from behind, never a face. Scene: {{line}}"
+    },
+    "scene": {
+      "shape": "landscape",
+      "refs": ["assets/art/boat-types/outboard.webp"],
+      "prompt": "A detailed ink-line and watercolor painting, a full scene painted to the edges, in the style of the attached reference: bright Florida Everglades daylight, red mangroves, clear green-blue shallow water, a white fiberglass flats skiff. Warm, crisp, inviting, like a plate in a fishing handbook. No text, letters, numbers, labels, logos, brand names or signatures anywhere. Any person is seen from behind or as hands only, never a close-up face. Scene: {{line}}"
+    }
+  },
+  "items": [
+    { "group": "cover", "out": "private/art-pack/assets/art/journal/cover.png", "line": "a fifteen-year-old boy seen from behind, standing on the bow of a white flats skiff at sunrise, his fishing rod bent double, as a huge silver tarpon leaps clear of the water in a burst of spray thirty yards ahead of him; mangrove islands on both sides, an orange and pink sky, calm river water." },
+    { "group": "scene", "out": "private/art-pack/assets/art/journal/keeper.png", "line": "a close view of a redfish (copper-bronze, one black spot at the base of the tail) lying flat on a wet white fish-measuring board on the deck of the skiff, its closed mouth touching the upright stop at the left end of the board and a pair of wet hands gently pinching the tail fin together at the other end. The board's ruler marks are plain tick lines with no numbers." },
+    { "group": "scene", "out": "private/art-pack/assets/art/journal/spots.png", "line": "a high aerial view, like a painted map with nobody in it, of a piece of Everglades backcountry that shows six kinds of fishing spots at once: a mangrove point jutting into a river, a small creek mouth draining a shallow flat, a brown oyster bar just under the surface, a wide green seagrass flat dotted with pale sandy potholes, a dark deep hole at a bend of the river, and a small wooden dock with pilings. Clear, readable, each feature distinct." },
+    { "group": "scene", "out": "private/art-pack/assets/art/journal/landing.png", "line": "beside the skiff, a snook (long silver-olive body with one bold black stripe from gill to tail) being led head-first into a rubber-mesh landing net held in the water by a pair of hands; a bent fishing rod and taut line come in from the upper corner; splashes of water, mangroves behind." },
+    { "group": "scene", "out": "private/art-pack/assets/art/journal/big-one.png", "line": "a pair of wet hands holding a very large snook (long silver-olive body, one bold black stripe from gill to tail, protruding lower jaw) level and low over the water beside the skiff, one hand under the belly and one gripping the lower jaw, about to let it go; water dripping, golden late-afternoon light, mangroves behind. The fish is the hero of the picture." }
+  ]
+}

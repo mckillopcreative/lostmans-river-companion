@@ -39,6 +39,33 @@ The prompts are in `scripts/art-batches/guide-school.json`. The PNG originals st
 
 `rig_finish` (label = level, value = score) and `boat_lesson` (label = lesson id, first pass only). Hub and landing taps are `tile_click` / `landing_click` with a `school-…` label.
 
+## Matt's Fishing Journal (the printable field guide)
+
+*Added 2026-11-15, John's idea and title: "Matt's Fishing Journal: an essential guide to catching the big one".*
+
+`/fishing-journal/` is a ten-chapter field guide read on screen or printed (the print button opens the browser's print window; "Save as PDF" makes the PDF). About 20 letter pages.
+
+| Chapter | Comes from |
+|---|---|
+| 1 Know your fish | `data/fish.json` (tell-tale, where it lives, how Matt fishes it) |
+| 2 Keeper or release? | `data/fishing-journal.json`: how to measure, a rules table the reader fills in from FWC, releasing a fish |
+| 3 Find the spot | `fishing-journal.json`: six kinds of spot, six signs of fish, the tide |
+| 4 Rig it right | `data/rigs.json` |
+| 5 Five knots | `data/knots.json` |
+| 6 Set the hook, land the fish | `fishing-journal.json` |
+| 7 On the boat, and running aground | `data/boat-school.json` (each lesson's rule; the aground lesson) |
+| 8 The pack list | `fishing-journal.json` |
+| 9 End of the day | `fishing-journal.json` |
+| 10 The big one | `fishing-journal.json` (a fill-in record page) |
+
+- **No sizes, seasons, bag limits or licence rules are printed.** `npm run validate` fails if a size appears in the Keeper chapter. The reader writes today's rule in the table.
+- Without a key: the cover, the contents and chapter 1. The rest and the print button need the key (same client-side gate as the Field Journal).
+- The opening note is written in Matt's voice and signed "Matt". It is new writing, not a line from the novel.
+- Print check: on the dev server only, `/fishing-journal/?unlocked` opens every chapter without a key. `chrome --headless=new --print-to-pdf=out.pdf http://127.0.0.1:4321/fishing-journal/?unlocked` makes a test PDF. Each chapter is tuned to end on a whole sheet; if copy grows, measure again.
+- It is not the Field Journal (`/field-journal/`), which is the fill-in workbook for the 23 field missions.
+- Pictures: `scripts/art-batches/fishing-journal.json` (cover, keeper, spots, landing, big-one) into `assets/art/journal/`; the app-home tile is a band cut from the cover.
+- Analytics: `guide_print`.
+
 ## Ideas not built
 
 - A fourth course on tides ("Pick the tide"), using the live Chokoloskee tide on `/tides/`.
