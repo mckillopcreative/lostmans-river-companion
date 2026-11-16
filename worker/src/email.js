@@ -53,6 +53,82 @@ export function openingEmail(leave) {
   return { subject, text, html };
 }
 
+// The holiday news email (John, 2026-11-16): what has been added since they signed up, and the
+// holiday specials. The people on the list were told "one reminder before Christmas and nothing
+// else", so THIS IS THAT ONE EMAIL: do not send them another. The picture is the landing page's
+// banner (public/email/hero.jpg). Sent by POST /admin/send-opening {template: 'news'}.
+export function newsEmail(leave, why = 'asked for the holiday offer') {
+  const subject = 'New at Lostman’s River: Guide School, and buy one, give one';
+  const link = (c) => `${SITE}/${c}${c.includes('?') ? '&' : '?'}utm_source=email&utm_medium=email&utm_campaign=holiday-news`;
+  const buy = link('#offer').replace('/#offer?', '/?').concat('#offer');
+  const text = [
+    'Hello from the two of us,',
+    '',
+    'When you asked for our holiday offer we promised one note before Christmas and nothing else. This is it, and we saved it until there was real news. There is: we have been building, and the Experience is a good deal bigger than the day you looked.',
+    '',
+    'WHAT’S NEW',
+    '',
+    '- It’s a Guide School now. Four courses: Rig It Right, Learn the Boat, Keeper or Release? and Fish of the Everglades. Which rig to tie on, how to be useful crew, which fish go back, and what just came over the side.',
+    '- The Assistant Fishing Guide Training Manual. Fifteen short audio lessons, about an hour in all, read by the voice of the book. Good for the car. Lesson 1 is free to hear on the site.',
+    '- Matt’s Fishing Journal. A 20-page field guide, ready as a PDF: name the fish, find the spot, pick the rig, tie the knot, set the hook.',
+    '- Wild Florida, an add-on ($9.99). Uncle Dan teaches your reader to name Florida’s animals on sight: sharks, snakes, gators, fish and birds. The first animals are free to try, and more are on the way.',
+    '',
+    'THE HOLIDAY SPECIALS',
+    '',
+    '- Buy one, give one. Through December 31, every Experience ($24.99) comes with a second one to give, free, with its own gift card to print, email or text to anyone.',
+    '- The Full Boat bonus. Add $15 at checkout and it covers up to five readers, each with their own link, missions, badges and license. Brothers, sisters, cousins, the kid next door.',
+    '',
+    `Have a look: ${buy}`,
+    '',
+    'It opens the minute you pay, so it works right up to Christmas Eve. If you want the gift card printed and under the tree, give yourself until December 22.',
+    '',
+    `Not sure yet? Chapter 1 is free, to read or to hear, no sign-up: ${link('ch/1/')}`,
+    '',
+    'Thank you for looking in on our book. It took us decades, and we finished it together.',
+    '',
+    'Linda and John McKillop',
+    'mother and son, co-authors (Linda drew the pictures, too)',
+    footerText(leave, why),
+  ].join('\n');
+  const p = (s, extra = '') => `<p style="margin:0 0 14px;font-size:16px;line-height:1.55;color:#1f2a2e;${extra}">${s}</p>`;
+  const h = (s) => `<p style="margin:22px 0 10px;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;font-weight:bold;color:#a04d12;font-family:Georgia,'Times New Roman',serif;">${s}</p>`;
+  const item = (title, body) => `<tr><td valign="top" style="padding:0 10px 12px 0;font-size:18px;line-height:1.3;color:#e8873a;">&#10022;</td><td style="padding:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.5;color:#1f2a2e;"><strong style="color:#2f5d50;">${title}</strong> ${body}</td></tr>`;
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f6f1e7;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f1e7;"><tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#fbf8f1;border:1px solid #e2d9c7;border-radius:14px;overflow:hidden;">
+<tr><td style="padding:0;line-height:0;">
+  <a href="${esc(buy)}"><img src="${SITE}/email/hero.jpg" width="560" alt="Summer Fishing Guide Experience: Escape to Lostman’s River. A houseboat moored in the mangroves at dusk." style="display:block;width:100%;max-width:560px;height:auto;border:0;border-radius:14px 14px 0 0;"></a>
+</td></tr>
+<tr><td style="padding:24px 28px 22px;font-family:Georgia,'Times New Roman',serif;">
+  <p style="margin:0 0 4px;font-size:14px;color:#a04d12;font-style:italic;">A note from Linda and John</p>
+  <h1 style="margin:0 0 16px;font-size:25px;line-height:1.2;color:#2f5d50;">We’ve been busy. It’s a Guide School now.</h1>
+  ${p('When you asked for our holiday offer we promised one note before Christmas and nothing else. This is it, and we saved it until there was real news. There is: we have been building, and the Experience is a good deal bigger than the day you looked.')}
+  ${h('What’s new')}
+  <table role="presentation" cellspacing="0" cellpadding="0" width="100%">
+  ${item('Guide School.', 'Four courses: Rig It Right, Learn the Boat, Keeper or Release? and Fish of the Everglades. Which rig to tie on, how to be useful crew, which fish go back, and what just came over the side.')}
+  ${item('The Assistant Fishing Guide Training Manual.', `Fifteen short audio lessons, about an hour in all, read by the voice of the book. Good for the car. <a href="${esc(link('training-manual/'))}" style="color:#2a7f8e;">Lesson 1 is free to hear.</a>`)}
+  ${item('Matt’s Fishing Journal.', 'A 20-page field guide, ready as a PDF: name the fish, find the spot, pick the rig, tie the knot, set the hook.')}
+  ${item('Wild Florida, an add-on ($9.99).', `Uncle Dan teaches your reader to name Florida’s animals on sight: sharks, snakes, gators, fish and birds. <a href="${esc(link('wild-florida/'))}" style="color:#2a7f8e;">The first animals are free to try</a>, and more are on the way.`)}
+  </table>
+  ${h('The holiday specials')}
+  <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="background:#e3efe6;border-radius:10px;"><tr><td style="padding:14px 16px 4px;">
+  <table role="presentation" cellspacing="0" cellpadding="0" width="100%">
+  ${item('Buy one, give one.', 'Through December 31, every Experience ($24.99) comes with a second one to give, free, with its own gift card to print, email or text to anyone.')}
+  ${item('The Full Boat bonus.', 'Add $15 at checkout and it covers up to five readers, each with their own link, missions, badges and license. Brothers, sisters, cousins, the kid next door.')}
+  </table>
+  </td></tr></table>
+  <p style="margin:22px 0 20px;text-align:center;"><a href="${esc(buy)}" style="display:inline-block;background:#e8873a;color:#1f2a2e;font-family:Georgia,serif;font-weight:bold;font-size:17px;text-decoration:none;padding:13px 26px;border-radius:999px;">See what’s in it now</a></p>
+  ${p('It opens the minute you pay, so it works right up to Christmas Eve. If you want the gift card printed and under the tree, give yourself until <strong>December 22</strong>.', 'font-size:15px;')}
+  ${p(`<strong>Not sure yet?</strong> <a href="${esc(link('ch/1/'))}" style="color:#2a7f8e;">Chapter 1 is free</a>, to read or to hear, no sign-up.`, 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
+  ${p('Thank you for looking in on our book. It took us decades, and we finished it together.')}
+  <p style="margin:18px 0 0;font-size:16px;color:#2f5d50;font-style:italic;">Linda and John McKillop</p>
+  <p style="margin:2px 0 0;font-size:13px;color:#6b7478;">mother and son, co-authors (Linda drew the pictures, too)</p>
+  ${footer(leave, why)}
+</td></tr>
+</table></td></tr></table></body></html>`;
+  return { subject, text, html };
+}
+
 // The holiday promo code, sent the moment a grown-up asks for it on the site (POST /offer).
 export const HOLIDAY_CODE = 'HOLIDAYPROMO';
 // Since 2026-11-11 the holiday offer is the Full Crew Experience ($39.99, up to five readers). The

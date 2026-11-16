@@ -3,6 +3,8 @@
 //   node scripts/send-opening.mjs --dry          how many are on the list and still unsent
 //   node scripts/send-opening.mjs --to you@x.com  one copy to that address, to check it in a real inbox
 //   node scripts/send-opening.mjs                send to the list
+//   add  --template news   to any of the three for the holiday news email (worker/src/email.js newsEmail)
+//        instead of the opening-day one. Each template goes to an address once; buyers are skipped for "news".
 // Reads ADMIN_KEY from worker/.dev.vars (never committed, never printed).
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -21,21 +23,24 @@ const call = async (body) => {
 };
 
 const args = process.argv.slice(2);
+const tIdx = args.indexOf('--template');
+const template = tIdx >= 0 ? args[tIdx + 1] : undefined;
+const base = template ? { template } : {};
 const toIdx = args.indexOf('--to');
 if (toIdx >= 0) {
-  console.log(JSON.stringify(await call({ to: args[toIdx + 1] })));
+  console.log(JSON.stringify(await call({ ...base, to: args[toIdx + 1] })));
 } else if (args.includes('--dry')) {
-  console.log(JSON.stringify(await call({ dry: true })));
+  console.log(JSON.stringify(await call({ ...base, dry: true })));
 } else {
-  const d = await call({ dry: true });
+  const d = await call({ ...base, dry: true });
   console.log(`on the list: ${d.list}, unsent: ${d.unsent}`);
   let total = 0;
   for (;;) {
-    const r = await call({ limit: 25 });
+    const r = await call({ ...base, limit: 25 });
     total += r.sent;
     if (r.failed.length) console.log('failed:', JSON.stringify(r.failed));
     console.log(`sent ${r.sent}, remaining ${r.remaining}`);
     if (r.remaining <= 0 || r.sent === 0) break;
   }
-  console.log(`✓ opening email sent to ${total}`);
+  console.log(`✓ ${template || 'opening'} email sent to ${total}`);
 }
