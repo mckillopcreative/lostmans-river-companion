@@ -240,7 +240,10 @@ export function isSouthCarolina(a) {
 }
 
 async function fulfil(env, session, ctx) {
-  if (!session || session.payment_status !== 'paid') return null;
+  // 'no_payment_required' on a COMPLETED checkout covers an order that came to $0 (a 100%-off
+  // code), should Stripe label it that way; an open checkout is never fulfilled
+  const settled = session?.payment_status === 'paid' || (session?.payment_status === 'no_payment_required' && session?.status === 'complete');
+  if (!session || !settled) return null;
   // Wild Florida bought on its own, for a purchase that already exists: no new key
   if (env.WILD_ADD_LINK && session.payment_link === env.WILD_ADD_LINK) return addWild(env, session, ctx);
   const email = session.customer_details?.email || session.customer_email || '';
