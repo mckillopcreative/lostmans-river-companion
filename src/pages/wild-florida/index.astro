@@ -1,0 +1,1008 @@
+---
+// Wild Florida (John, 2026-11-16): Uncle Dan's field school. A game that teaches a reader to
+// name the major animals of Florida: fish, sharks and rays, gators, snakes and turtles, birds,
+// mammals. Filter by kind of animal and by part of Florida; then meet them, tell look-alikes
+// apart side by side, name them, read the clue, race the clock, and take the test.
+//
+// How it teaches (docs/WILD-FLORIDA.md): one tell-tale per animal; look-alikes side by side;
+// quizzes that mix similar animals; and the ones you miss come back sooner (each animal sits in a
+// box 0 to 4 on this device; a right answer moves it up, a miss moves it down; 3 or more = known).
+// Data: data/wild.json. Plates: assets/art/wild/ and assets/art/fish/. Dan's lines are spoken by
+// the book's narrator voice (public/audio/wild/<id>.mp3, scripts/wild-voice.mjs). An animal whose
+// plate has not been painted yet is simply left out. The starter set is free; the rest needs a
+// purchase key (client-side, like the rest of Guide School). Progress stays on the device.
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { getImage, Image } from 'astro:assets';
+import Base from '@layouts/Base.astro';
+import SchoolLock from '@components/SchoolLock.astro';
+import { artImage } from '@lib/images';
+import { url } from '@lib/url';
+import site from '../../../site.config.mjs';
+import data from '../../../data/wild.json';
+
+const gated = !!site.gate?.live;
+const hero = artImage('tiles', 'wild-florida');
+const hasAudio = (id: string) => existsSync(resolve(process.cwd(), 'public/audio/wild', `${id}.mp3`));
+const animals = [];
+for (const a of data.animals) {
+  const src = artImage(a.art[0], a.art[1]);
+  if (!src) continue; // not painted yet
+  const img = await getImage({ src, width: 560, format: 'webp' });
+  // close-ups of a tell-tale that one picture cannot show (painted separately; left out until they exist)
+  const more = [];
+  for (const m of (a as { more?: { art: string[]; cap: string }[] }).more ?? []) {
+    const msrc = artImage(m.art[0], m.art[1]);
+    if (msrc) more.push({ img: (await getImage({ src: msrc, width: 560, format: 'webp' })).src, cap: m.cap });
+  }
+  animals.push({ id: a.id, name: a.name, type: a.type, regions: a.regions, tell: a.tell, dan: a.dan, like: a.like, starter: !!(a as { starter?: boolean }).starter, book: (a as { book?: string }).book ?? '', img: img.src, more, audio: hasAudio(a.id) });
+}
+const have = new Set(animals.map((a) => a.id));
+for (const a of animals) a.like = a.like.filter((id: string) => have.has(id));
+const starters = animals.filter((a) => a.starter).length;
+// no rank may ask for more animals than have been painted
+const ranks = data.ranks.map((r) => ({ ...r, at: Math.min(r.at, animals.length) }));
+const payload = { gated, animals, types: data.types, regions: data.regions, ranks, audioBase: url('/audio/wild/'), intro: hasAudio('intro') };
+const kinds = data.types.map((t) => t.name.toLowerCase()).join(', ');
+---
+
+<Base title="Wild Florida" description={`Uncle Dan’s field school: learn to name ${animals.length} Florida animals on sight, from snook and bull sharks to alligators, coral snakes and ospreys.`}>
+  <div class="wrap section wf">
+    <p class="crumbs small"><a href={url('/app/')}>← The Experience</a> · <a href={url('/guide-school/')}>Guide School</a></p>
+    <header class="wf-head">
+      {hero && <Image class="wf-hero art" src={hero} alt="" width={300} height={300} loading="eager" />}
+      <div>
+        <p class="eyebrow">{data.subtitle}</p>
+        <h1>{data.title}</h1>
+        <p class="lede">Name {animals.length} Florida animals on sight: {kinds}.</p>
+      </div>
+    </header>
+
+    <div class="wf-dan">
+      <p class="wf-dan-who hand">Uncle Dan</p>
+      <p class="wf-dan-say" id="wf-dan-say">{data.intro}</p>
+      {payload.intro && <button type="button" class="btn btn-sm wf-hear" data-hear="intro">▶ Hear Uncle Dan</button>}
+    </div>
+
+    <div class="wf-pick" role="group" aria-label="Choose what to learn">
+      <div class="wf-chips" id="wf-types">
+        <button type="button" class="wf-chip is-on" data-type="all" aria-pressed="true">All animals</button>
+        {
+          data.types.map((t) => (
+            <button type="button" class="wf-chip" data-type={t.id} aria-pressed="false">
+              {t.name}
+            </button>
+          ))
+        }
+      </div>
+      <label class="wf-where">
+        <span class="mono">Where in Florida</span>
+        <select id="wf-region">
+          <option value="all">All of Florida</option>
+          {data.regions.map((r) => <option value={r.id}>{r.name}</option>)}
+        </select>
+      </label>
+      <p class="small muted wf-count" id="wf-count" aria-live="polite"></p>
+    </div>
+
+    <div class="wf-modes" role="group" aria-label="How to play" id="wf-modes">
+      <button type="button" class="wf-mode is-on" data-mode="meet"><strong>Meet them</strong><span>learn the tell-tale</span></button>
+      <button type="button" class="wf-mode" data-mode="apart"><strong>Tell them apart</strong><span>side by side</span></button>
+      <button type="button" class="wf-mode" data-mode="name"><strong>Name it</strong><span>ten rounds</span></button>
+      <button type="button" class="wf-mode" data-mode="clue"><strong>Read the clue</strong><span>pick the picture</span></button>
+      <button type="button" class="wf-mode" data-mode="speed"><strong>Speed round</strong><span>60 seconds</span></button>
+      <button type="button" class="wf-mode" data-mode="test"><strong>The test</strong><span>pass with 8 in 10</span></button>
+    </div>
+
+    {gated && <SchoolLock id="wf-lock" hidden title={`The other ${animals.length - starters} animals come with the Experience`} text={`The first ${starters} are free to learn. The rest of Wild Florida, Guide School, Matt’s Fishing Journal, the Training Manual, the whole book to read and hear, and all 23 missions come with the Summer Fishing Guide Experience.`} page="wild-florida" />}
+
+    <div class="wf-board" id="wf-board" data-game={JSON.stringify(payload)} aria-live="polite"></div>
+
+    <section class="wf-log" aria-labelledby="wf-log-h">
+      <h2 id="wf-log-h">Your logbook</h2>
+      <p class="wf-rank"><span class="hand" id="wf-rank">Greenhorn</span> <span class="small muted" id="wf-known"></span></p>
+      <div class="wf-bar" aria-hidden="true"><span id="wf-bar"></span></div>
+      <p class="small muted" id="wf-next"></p>
+      <ul class="wf-grid" id="wf-grid"></ul>
+      <div class="wf-cert-tools" id="wf-cert-tools" hidden>
+        <label>Name for the certificate <input id="wf-name" maxlength="40" placeholder="First name" autocomplete="off" /></label>
+        <button type="button" class="btn btn-primary" id="wf-print">Print my certificate</button>
+        <p class="small muted">The name stays on this device. It is only printed on the page.</p>
+      </div>
+    </section>
+
+    <p class="small muted wf-fine">
+      Pictures are painted plates for learning the main tell-tales, not a scientific key. Wild animals are for looking at: keep your distance, never feed one, and leave every snake alone. Uncle Dan’s lines were written by us for this game and are read by the AI voice that narrates the book. Fishing rules change: check <a href="https://myfwc.com/fishing/saltwater/recreational/" rel="noopener">FWC</a> before you keep a fish.
+    </p>
+  </div>
+
+  <section class="wf-cert" id="wf-cert" aria-hidden="true">
+    <p class="wf-cert-top hand">Uncle Dan’s field school</p>
+    <h2>Wild Florida</h2>
+    <p class="wf-cert-line">This is to say that</p>
+    <p class="wf-cert-name hand" id="wf-cert-name">________________</p>
+    <p class="wf-cert-line">has earned the rank of</p>
+    <p class="wf-cert-rank" id="wf-cert-rank">Deckhand</p>
+    <p class="wf-cert-line" id="wf-cert-count"></p>
+    <p class="wf-cert-sign hand">Uncle Dan</p>
+    <p class="wf-cert-foot mono"><span id="wf-cert-date"></span> · lostmansriver.com · from the novel Escape to Lostman’s River by Linda and John McKillop</p>
+  </section>
+
+  <script>
+    type A = { id: string; name: string; type: string; regions: string[]; tell: string; dan: string; like: string[]; starter: boolean; book: string; img: string; more: { img: string; cap: string }[]; audio: boolean };
+    type Rec = { b: number; r: number; w: number };
+    const board = document.getElementById('wf-board')!;
+    const G = JSON.parse(board.dataset.game!) as { gated: boolean; animals: A[]; types: { id: string; name: string }[]; regions: { id: string; name: string }[]; ranks: { at: number; name: string }[]; audioBase: string; intro: boolean };
+    const byId = new Map(G.animals.map((a) => [a.id, a]));
+    const $ = (id: string) => document.getElementById(id)!;
+    const lock = document.getElementById('wf-lock');
+    const track = (n: string, p: Record<string, string | number>) => (window as unknown as { lrTrack?: (n: string, p: Record<string, string | number>) => void }).lrTrack?.(n, p);
+    const hasKey = () => !G.gated || document.documentElement.classList.contains('has-key');
+    const open = (a: A) => hasKey() || a.starter;
+    const shuffle = <T,>(a: T[]) => {
+      const x = [...a];
+      for (let i = x.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [x[i], x[j]] = [x[j], x[i]];
+      }
+      return x;
+    };
+    const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+    // ---- what this device remembers ----
+    const KEY = 'lr-wild';
+    let S: Record<string, Rec> = {};
+    try {
+      S = JSON.parse(localStorage.getItem(KEY) || '{}');
+    } catch {}
+    const rec = (id: string) => (S[id] ||= { b: 0, r: 0, w: 0 });
+    const save = () => {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(S));
+      } catch {}
+    };
+    const known = (a: A) => (S[a.id]?.b ?? 0) >= 3;
+    function mark(a: A, right: boolean) {
+      const r = rec(a.id);
+      if (right) (r.b = Math.min(4, r.b + 1)), r.r++;
+      else (r.b = Math.max(0, r.b - 1)), r.w++;
+      save();
+    }
+
+    // ---- Uncle Dan's voice ----
+    const voice = new Audio();
+    voice.preload = 'none';
+    function hear(id: string) {
+      voice.pause();
+      voice.src = `${G.audioBase}${id}.mp3`;
+      voice.playbackRate = 1.05;
+      voice.play().catch(() => {});
+    }
+    document.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('[data-hear]');
+      if (b) hear(b.dataset.hear!);
+    });
+
+    // ---- the pick: kinds of animal and part of Florida ----
+    const types = new Set<string>();
+    let region = 'all';
+    let mode = 'meet';
+    const allOpen = () => G.animals.filter(open);
+    const picked = () => G.animals.filter((a) => (types.size === 0 || types.has(a.type)) && (region === 'all' || a.regions.includes(region)));
+    const pool = () => picked().filter(open);
+
+    // the next animal to ask about: the ones you know least come up most, and not twice in a row
+    let recent: string[] = [];
+    function nextAnimal(from: A[]) {
+      const cands = from.filter((a) => !recent.includes(a.id));
+      const list = cands.length ? cands : from;
+      const weights = list.map((a) => (5 - (S[a.id]?.b ?? 0)) ** 2);
+      let t = Math.random() * weights.reduce((x, y) => x + y, 0);
+      let pickA = list[0];
+      for (let i = 0; i < list.length; i++) {
+        t -= weights[i];
+        if (t <= 0) {
+          pickA = list[i];
+          break;
+        }
+      }
+      recent = [pickA.id, ...recent].slice(0, Math.min(3, Math.max(0, from.length - 1)));
+      return pickA;
+    }
+    // three wrong answers: its look-alikes first, then its own kind, then anything
+    function others(a: A, n = 3) {
+      const openAll = allOpen().filter((x) => x.id !== a.id);
+      const seen = new Set<string>();
+      const out: A[] = [];
+      const add = (list: A[]) => {
+        for (const x of shuffle(list)) {
+          if (out.length >= n) return;
+          if (!seen.has(x.id)) (seen.add(x.id), out.push(x));
+        }
+      };
+      add(a.like.map((id) => byId.get(id)!).filter((x) => x && open(x)));
+      add(pool().filter((x) => x.id !== a.id && x.type === a.type));
+      add(openAll.filter((x) => x.type === a.type));
+      add(openAll);
+      return out;
+    }
+
+    const card = (a: A, big = false) => `<figure class="wf-plate${big ? ' big' : ''}"><img src="${a.img}" alt="" width="560" height="560" loading="lazy" /></figure>`;
+    // the close-ups: the tell-tale itself, where the whole animal cannot show it
+    const closeUps = (a: A) => (a.more.length ? `<div class="wf-more">${a.more.map((m) => `<figure><span class="wf-plate"><img src="${m.img}" alt="" width="560" height="560" loading="lazy" /></span><figcaption>${esc(m.cap)}</figcaption></figure>`).join('')}</div>` : '');
+    const danSays = (a: A) =>
+      `<div class="wf-says"><p class="wf-dan-who hand">Uncle Dan</p><p>${esc(a.dan)}</p>${a.audio ? `<button type="button" class="btn btn-sm wf-hear" data-hear="${a.id}">▶ Hear it</button>` : ''}${a.book ? `<p class="small wf-book"><strong>In the book:</strong> ${esc(a.book)}</p>` : ''}</div>`;
+
+    // ---- Meet them ----
+    let meetAt = 0;
+    let meetList: A[] = [];
+    function meet(startId?: string) {
+      const p = pool();
+      meetList = [...p].sort((x, y) => (S[x.id]?.b ?? 0) - (S[y.id]?.b ?? 0));
+      if (startId) {
+        const a = byId.get(startId);
+        if (a && open(a)) (meetList = [a, ...meetList.filter((x) => x.id !== a.id)]), (meetAt = 0);
+      }
+      if (meetAt >= meetList.length) meetAt = 0;
+      const a = meetList[meetAt];
+      const likes = a.like.map((id) => byId.get(id)!).filter((x) => x && open(x));
+      board.innerHTML = `
+        <p class="wf-step mono">${meetAt + 1} of ${meetList.length}</p>
+        ${card(a, true)}
+        <h3 class="wf-name">${esc(a.name)}</h3>
+        <p class="wf-tell"><span class="mono">The tell-tale</span>${esc(a.tell)}</p>
+        ${closeUps(a)}
+        ${danSays(a)}
+        ${likes.length ? `<p class="small wf-mix">Don’t mix it up with: ${likes.map((x) => `<button type="button" class="wf-link" data-vs="${x.id}">${esc(x.name)}</button>`).join(', ')}</p><div id="wf-vs"></div>` : ''}
+        <p class="wf-nav"><button type="button" class="btn" id="wf-prev" ${meetAt === 0 ? 'disabled' : ''}>‹ Back</button><button type="button" class="btn btn-primary" id="wf-got">Got it ›</button></p>`;
+      $('wf-got').addEventListener('click', () => {
+        const r = rec(a.id);
+        if (r.b === 0) (r.b = 1), save();
+        meetAt = (meetAt + 1) % meetList.length;
+        paintLog();
+        meet();
+        board.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      });
+      $('wf-prev').addEventListener('click', () => {
+        meetAt = Math.max(0, meetAt - 1);
+        meet();
+      });
+      board.querySelectorAll<HTMLElement>('[data-vs]').forEach((b) =>
+        b.addEventListener('click', () => {
+          const x = byId.get(b.dataset.vs!)!;
+          $('wf-vs').innerHTML = `<div class="wf-pair"><div>${card(a)}<p class="wf-pair-n">${esc(a.name)}</p><p class="small">${esc(a.tell)}</p></div><div>${card(x)}<p class="wf-pair-n">${esc(x.name)}</p><p class="small">${esc(x.tell)}</p></div></div>`;
+        }),
+      );
+    }
+
+    // ---- the quiz modes ----
+    type Q = { kind: 'name' | 'clue' | 'apart'; a: A; opts: A[] };
+    let round = { n: 0, of: 10, score: 0, kind: 'name', timed: false, test: false, ends: 0, timer: 0 };
+    function pairs() {
+      const p = pool();
+      const ids = new Set(p.map((a) => a.id));
+      return p.filter((a) => a.like.some((id) => ids.has(id)));
+    }
+    function ask(): Q | null {
+      const p = pool();
+      if (round.kind === 'apart') {
+        const withPair = pairs();
+        if (!withPair.length) return null;
+        const a = nextAnimal(withPair);
+        const ids = new Set(p.map((x) => x.id));
+        const b = byId.get(shuffle(a.like.filter((id) => ids.has(id)))[0])!;
+        return { kind: 'apart', a, opts: shuffle([a, b]) };
+      }
+      const a = nextAnimal(p);
+      const kind = round.test ? (round.n % 2 ? 'clue' : 'name') : (round.kind as 'name' | 'clue');
+      return { kind, a, opts: shuffle([a, ...others(a)]) };
+    }
+    function head() {
+      const left = round.timed ? `<span id="wf-clock">${Math.max(0, Math.ceil((round.ends - Date.now()) / 1000))}</span> s · ` : `${round.n + 1} of ${round.of} · `;
+      return `<p class="wf-step mono">${left}score <span id="wf-score">${round.score}</span></p>`;
+    }
+    function show(q: Q) {
+      const a = q.a;
+      if (q.kind === 'name') {
+        board.innerHTML = `${head()}${card(a, true)}<p class="wf-ask hand">What is it?</p><div class="wf-opts">${q.opts.map((o) => `<button type="button" class="wf-opt" data-id="${o.id}">${esc(o.name)}</button>`).join('')}</div><div id="wf-after"></div>`;
+      } else if (q.kind === 'clue') {
+        board.innerHTML = `${head()}<p class="wf-clue"><span class="mono">The tell-tale</span>${esc(a.tell)}</p><p class="wf-ask hand">Which one is it?</p><div class="wf-pics">${q.opts.map((o) => `<button type="button" class="wf-pic" data-id="${o.id}" aria-label="Picture">${card(o)}</button>`).join('')}</div><div id="wf-after"></div>`;
+      } else {
+        board.innerHTML = `${head()}<p class="wf-ask hand">Tap the ${esc(a.name.toLowerCase())}.</p><div class="wf-pics two">${q.opts.map((o) => `<button type="button" class="wf-pic" data-id="${o.id}" aria-label="Picture">${card(o)}</button>`).join('')}</div><div id="wf-after"></div>`;
+      }
+      board.querySelectorAll<HTMLButtonElement>('[data-id]').forEach((b) => b.addEventListener('click', () => answer(q, b)));
+    }
+    function answer(q: Q, b: HTMLButtonElement) {
+      const a = q.a;
+      const right = b.dataset.id === a.id;
+      mark(a, right);
+      if (right) round.score++;
+      board.querySelectorAll<HTMLButtonElement>('[data-id]').forEach((x) => {
+        x.disabled = true;
+        if (x.dataset.id === a.id) x.classList.add('right');
+      });
+      if (!right) b.classList.add('wrong');
+      const sc = document.getElementById('wf-score');
+      if (sc) sc.textContent = String(round.score);
+      round.n++;
+      paintLog();
+      if (round.timed) {
+        // the clock is running: a quick flash, then the next one
+        setTimeout(() => (Date.now() < round.ends ? step() : finish()), right ? 350 : 900);
+        return;
+      }
+      const picked = byId.get(b.dataset.id!)!;
+      const after = $('wf-after');
+      const last = round.n >= round.of;
+      if (round.test) {
+        after.innerHTML = `<p class="wf-verdict hand">${right ? 'Right.' : `That was the ${esc(a.name.toLowerCase())}.`}</p><p class="wf-nav"><button type="button" class="btn btn-primary" id="wf-next">${last ? 'See how you did ›' : 'Next ›'}</button></p>`;
+      } else {
+        const vs = !right && picked.id !== a.id ? `<p class="small wf-vsline"><strong>${esc(picked.name)}:</strong> ${esc(picked.tell)}</p>` : '';
+        const names = q.kind !== 'name' ? `<p class="wf-names small">${q.opts.map((o) => esc(o.name)).join(' · ')}</p>` : '';
+        after.innerHTML = `<p class="wf-verdict hand">${right ? 'That’s it.' : `Not that one. It’s the ${esc(a.name.toLowerCase())}.`}</p>${names}<p class="wf-tell"><span class="mono">${esc(a.name)}</span>${esc(a.tell)}</p>${closeUps(a)}${vs}${danSays(a)}<p class="wf-nav"><button type="button" class="btn btn-primary" id="wf-next">${last ? 'See your score ›' : 'Next ›'}</button></p>`;
+      }
+      $('wf-next').addEventListener('click', () => (last ? finish() : step()));
+      after.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+    function step() {
+      const q = ask();
+      if (!q) return finish();
+      show(q);
+      if (round.timed && !round.timer) {
+        round.timer = window.setInterval(() => {
+          const c = document.getElementById('wf-clock');
+          const left = Math.ceil((round.ends - Date.now()) / 1000);
+          if (c) c.textContent = String(Math.max(0, left));
+          if (left <= 0) finish();
+        }, 250);
+      }
+    }
+    function finish() {
+      if (round.timer) (clearInterval(round.timer), (round.timer = 0));
+      const n = round.timed ? round.n : round.of;
+      const bestKey = `lr-wild-best:${mode}`;
+      let best = 0;
+      try {
+        best = Number(localStorage.getItem(bestKey) || '0');
+        if (round.score > best) localStorage.setItem(bestKey, String(round.score));
+      } catch {}
+      const pct = n ? round.score / n : 0;
+      let line: string;
+      if (round.test) {
+        const pass = pct >= 0.8;
+        track('wild_test', { result: pass ? 'pass' : 'fail', score: round.score });
+        line = pass ? 'You passed. I’d put you on my boat.' : 'Not yet. Go meet the ones you missed, then come back. No shame in it. I failed my first one too.';
+      } else {
+        track('wild_round', { mode, score: round.score });
+        line = round.timed ? (round.score >= 15 ? 'Quick eyes. That’s a guide’s eyes.' : round.score >= 8 ? 'Not bad. The more you know them, the faster it gets.' : 'Speed comes after knowing. Go meet a few more.') : pct === 1 ? 'Every one. Couldn’t have done better myself.' : pct >= 0.7 ? 'Good eye. A few more trips and you’ll have them all.' : 'That’s how you learn them. The ones you missed will come around again.';
+      }
+      board.innerHTML = `<p class="wf-result hand">${round.score}${round.timed ? ' in 60 seconds' : ` of ${n}`}</p><p class="small muted">Best so far: ${Math.max(best, round.score)}</p><div class="wf-says"><p class="wf-dan-who hand">Uncle Dan</p><p>${line}</p></div><p class="wf-nav"><button type="button" class="btn btn-primary" id="wf-again">Go again</button><button type="button" class="btn" id="wf-tomeet">Meet them</button></p>`;
+      $('wf-again').addEventListener('click', start);
+      $('wf-tomeet').addEventListener('click', () => setMode('meet'));
+      paintLog();
+    }
+
+    // ---- start whatever is chosen ----
+    function start() {
+      if (round.timer) (clearInterval(round.timer), (round.timer = 0));
+      const all = picked();
+      const p = pool();
+      const lockedHere = all.length - p.length;
+      const where = region === 'all' ? '' : ` in ${G.regions.find((r) => r.id === region)!.name}`;
+      $('wf-count').textContent = `${p.length} animal${p.length === 1 ? '' : 's'}${where}${lockedHere ? `, and ${lockedHere} more with the Experience` : ''}.`;
+      if (lock) lock.hidden = !(lockedHere > 0 && p.length < 4);
+      const need = mode === 'meet' ? 1 : 4;
+      if (p.length < need) {
+        board.innerHTML = `<p class="wf-empty">${all.length === 0 ? 'No animals match that pick yet. Try another kind, or all of Florida.' : lockedHere ? 'The animals in this pick come with the Experience.' : 'That pick has too few animals for a round. Add another kind, or choose all of Florida.'}</p>`;
+        return;
+      }
+      recent = [];
+      if (mode === 'meet') return meet();
+      if (mode === 'apart' && !pairs().length) {
+        board.innerHTML = `<p class="wf-empty">No look-alikes in this pick. Try “All animals”.</p>`;
+        return;
+      }
+      round = { n: 0, of: mode === 'test' ? Math.min(20, Math.max(10, p.length)) : 10, score: 0, kind: mode === 'apart' ? 'apart' : mode === 'clue' ? 'clue' : 'name', timed: mode === 'speed', test: mode === 'test', ends: Date.now() + 60000, timer: 0 };
+      step();
+    }
+    function setMode(m: string) {
+      mode = m;
+      document.querySelectorAll<HTMLElement>('.wf-mode').forEach((b) => b.classList.toggle('is-on', b.dataset.mode === m));
+      start();
+    }
+    document.querySelectorAll<HTMLElement>('.wf-mode').forEach((b) =>
+      b.addEventListener('click', () => {
+        setMode(b.dataset.mode!);
+        board.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }),
+    );
+    document.querySelectorAll<HTMLElement>('.wf-chip').forEach((b) =>
+      b.addEventListener('click', () => {
+        const t = b.dataset.type!;
+        if (t === 'all') types.clear();
+        else types.has(t) ? types.delete(t) : types.add(t);
+        document.querySelectorAll<HTMLElement>('.wf-chip').forEach((c) => {
+          const on = c.dataset.type === 'all' ? types.size === 0 : types.has(c.dataset.type!);
+          c.classList.toggle('is-on', on);
+          c.setAttribute('aria-pressed', String(on));
+        });
+        meetAt = 0;
+        start();
+      }),
+    );
+    ($('wf-region') as HTMLSelectElement).addEventListener('change', (e) => {
+      region = (e.target as HTMLSelectElement).value;
+      meetAt = 0;
+      start();
+    });
+
+    // ---- the logbook ----
+    function paintLog() {
+      const openList = allOpen();
+      const k = G.animals.filter(known).length;
+      const total = G.animals.length;
+      const rank = [...G.ranks].reverse().find((r) => k >= r.at) ?? G.ranks[0];
+      const next = G.ranks.find((r) => r.at > k);
+      $('wf-rank').textContent = rank.name;
+      $('wf-known').textContent = `${k} of ${total} known on sight`;
+      ($('wf-bar') as HTMLElement).style.width = `${Math.round((k / total) * 100)}%`;
+      $('wf-next').textContent = next ? `${next.at - k} more to make ${next.name}.${openList.length < total ? ` ${total - openList.length} animals open with the Experience.` : ''}` : 'Captain. You know them all.';
+      const grid = $('wf-grid');
+      if (!grid.children.length) {
+        grid.innerHTML = G.animals.map((a) => `<li><button type="button" class="wf-cell" data-open="${a.id}"><span class="wf-thumb"><img src="${a.img}" alt="" width="160" height="160" loading="lazy" /></span><span class="wf-cell-n">${esc(a.name)}</span></button></li>`).join('');
+        grid.querySelectorAll<HTMLElement>('[data-open]').forEach((b) =>
+          b.addEventListener('click', () => {
+            const a = byId.get(b.dataset.open!)!;
+            if (!open(a)) {
+              if (lock) (lock.hidden = false), lock.scrollIntoView({ block: 'center', behavior: 'smooth' });
+              return;
+            }
+            mode = 'meet';
+            document.querySelectorAll<HTMLElement>('.wf-mode').forEach((x) => x.classList.toggle('is-on', x.dataset.mode === 'meet'));
+            meet(a.id);
+            board.scrollIntoView({ block: 'start', behavior: 'smooth' });
+          }),
+        );
+      }
+      grid.querySelectorAll<HTMLElement>('[data-open]').forEach((b) => {
+        const a = byId.get(b.dataset.open!)!;
+        const box = S[a.id]?.b ?? 0;
+        b.classList.toggle('is-locked', !open(a));
+        b.classList.toggle('is-known', box >= 3);
+        b.classList.toggle('is-learning', box > 0 && box < 3);
+      });
+      // the certificate, from Deckhand up
+      $('wf-cert-tools').hidden = k < (G.ranks[1]?.at ?? 10);
+      $('wf-cert-rank').textContent = rank.name;
+      $('wf-cert-count').textContent = `and can name ${k} Florida animals on sight.`;
+    }
+    const nameIn = $('wf-name') as HTMLInputElement;
+    try {
+      nameIn.value = localStorage.getItem('lr-wild-name') || '';
+    } catch {}
+    $('wf-print').addEventListener('click', () => {
+      const n = nameIn.value.trim();
+      try {
+        localStorage.setItem('lr-wild-name', n);
+      } catch {}
+      $('wf-cert-name').textContent = n || '________________';
+      $('wf-cert-date').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      window.print();
+    });
+
+    paintLog();
+    start();
+  </script>
+</Base>
+
+<style is:global>
+  .wf-head {
+    display: flex;
+    gap: 1.1rem;
+    align-items: center;
+  }
+  .wf-head .lede {
+    margin-bottom: 0;
+  }
+  .wf-hero {
+    flex: none;
+    width: 104px;
+    height: 104px;
+    border-radius: 14px;
+    object-fit: cover;
+  }
+  @media (min-width: 640px) {
+    .wf-hero {
+      width: 160px;
+      height: 160px;
+    }
+  }
+  /* Uncle Dan speaking */
+  .wf-dan,
+  .wf-says {
+    margin: 1rem 0;
+    padding: 0.8rem 1rem 0.9rem;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-left: 4px solid var(--mangrove);
+    border-radius: 0 12px 12px 0;
+  }
+  .wf-says {
+    margin: 0.7rem 0;
+  }
+  .wf-dan-who {
+    margin: 0 0 0.15rem;
+    font-size: 1.2rem;
+    line-height: 1.1;
+    color: var(--mangrove);
+  }
+  .wf-dan p,
+  .wf-says p {
+    margin: 0 0 0.5rem;
+    line-height: 1.5;
+  }
+  .wf-dan p:last-child,
+  .wf-says p:last-child {
+    margin-bottom: 0;
+  }
+  .wf-book {
+    margin-top: 0.5rem !important;
+    color: var(--ink-soft);
+  }
+  /* the pick */
+  .wf-pick {
+    margin: 1rem 0 0.8rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .wf-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .wf-chip {
+    min-height: 40px;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--oyster);
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .wf-chip.is-on {
+    background: var(--mangrove);
+    border-color: var(--mangrove);
+    color: var(--paper);
+  }
+  .wf-where {
+    display: grid;
+    gap: 0.2rem;
+    max-width: 24rem;
+  }
+  .wf-where span {
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .wf-where select {
+    min-height: 44px;
+    padding: 0.4rem 0.6rem;
+    border: 1.5px solid var(--oyster);
+    border-radius: var(--radius);
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+  }
+  .wf-count {
+    margin: 0;
+  }
+  .wf-modes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 0.9rem;
+  }
+  @media (min-width: 640px) {
+    .wf-modes {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .wf-mode {
+    display: grid;
+    gap: 0.05rem;
+    padding: 0.55rem 0.7rem;
+    text-align: left;
+    border-radius: 12px;
+    border: 1.5px solid var(--oyster);
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+    cursor: pointer;
+  }
+  .wf-mode strong {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  .wf-mode span {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+  .wf-mode.is-on {
+    background: var(--sunrise);
+    border-color: var(--sunrise);
+    color: var(--on-sunrise);
+  }
+  .wf-mode.is-on span {
+    color: var(--on-sunrise);
+    opacity: 0.85;
+  }
+  /* the board */
+  .wf-board {
+    background: var(--paper-2);
+    border-radius: 14px;
+    padding: 1rem;
+    scroll-margin-top: 5.5rem;
+    min-height: 12rem;
+  }
+  .wf-step {
+    margin: 0 0 0.5rem;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+  }
+  /* a plate: always on white, like a page of a field guide, in both themes */
+  .wf-plate {
+    margin: 0;
+    background: #fff;
+    border: 1px solid var(--oyster);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .wf-plate.big {
+    max-width: 440px;
+    margin-inline: auto;
+  }
+  .wf-plate img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+  .wf-more {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 8px;
+    margin: 0.5rem 0;
+  }
+  .wf-more figure {
+    margin: 0;
+  }
+  .wf-more .wf-plate {
+    display: block;
+    max-width: 300px;
+  }
+  .wf-more figcaption {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--mangrove);
+  }
+  .wf-name {
+    margin: 0.7rem 0 0.3rem;
+    font-size: 1.6rem;
+    line-height: 1.15;
+    color: var(--mangrove);
+  }
+  .wf-tell,
+  .wf-clue {
+    margin: 0.5rem 0;
+    padding: 0.6rem 0.8rem;
+    background: var(--paper);
+    border: 1.5px solid var(--mangrove);
+    border-radius: 12px;
+    font-size: 1.05rem;
+    line-height: 1.4;
+    font-weight: 600;
+  }
+  .wf-clue {
+    font-size: 1.15rem;
+  }
+  .wf-tell span,
+  .wf-clue span {
+    display: block;
+    margin-bottom: 0.15rem;
+    font-size: 0.66rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sunrise-ink);
+  }
+  .wf-link {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-weight: 600;
+    color: var(--gulf);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .wf-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0.5rem 0;
+  }
+  .wf-pair-n {
+    margin: 0.3rem 0 0.1rem;
+    font-weight: 700;
+    color: var(--mangrove);
+  }
+  .wf-pair .small {
+    margin: 0;
+    line-height: 1.35;
+  }
+  .wf-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0.8rem 0 0;
+  }
+  .wf-ask {
+    margin: 0.7rem 0 0.4rem;
+    font-size: 1.35rem;
+    color: var(--sunrise-ink);
+  }
+  .wf-opts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .wf-opt {
+    min-height: 54px;
+    padding: 0.6rem 0.6rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--oyster);
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+  .wf-pics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .wf-pic {
+    padding: 0;
+    border: 3px solid transparent;
+    border-radius: 14px;
+    background: none;
+    cursor: pointer;
+  }
+  .wf-opt.right,
+  .wf-pic.right {
+    border-color: var(--sunrise);
+    background: color-mix(in srgb, var(--sunrise) 18%, var(--paper));
+  }
+  .wf-opt.wrong {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+  .wf-pic.wrong {
+    opacity: 0.45;
+  }
+  .wf-verdict,
+  .wf-result {
+    margin: 0.8rem 0 0.2rem;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    color: var(--sunrise-ink);
+  }
+  .wf-result {
+    font-size: 2.2rem;
+  }
+  .wf-names,
+  .wf-vsline {
+    margin: 0.2rem 0;
+  }
+  .wf-empty {
+    margin: 0;
+    padding: 1.5rem 0.5rem;
+    text-align: center;
+    color: var(--ink-soft);
+  }
+  /* the logbook */
+  .wf-log {
+    margin-top: 2rem;
+  }
+  .wf-log h2 {
+    margin-bottom: 0.2rem;
+  }
+  .wf-rank {
+    margin: 0;
+  }
+  .wf-rank .hand {
+    font-size: 1.7rem;
+    color: var(--sunrise-ink);
+  }
+  .wf-bar {
+    height: 10px;
+    margin: 0.3rem 0;
+    border-radius: 999px;
+    background: var(--paper-2);
+    border: 1px solid var(--oyster);
+    overflow: hidden;
+  }
+  .wf-bar span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--mangrove);
+    transition: width 0.4s;
+  }
+  .wf-grid {
+    list-style: none;
+    margin: 0.8rem 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 8px;
+  }
+  .wf-cell {
+    width: 100%;
+    display: grid;
+    gap: 0.2rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .wf-thumb {
+    display: block;
+    aspect-ratio: 1;
+    background: #fff;
+    border: 2px solid var(--oyster);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .wf-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .wf-cell-n {
+    font-size: 0.74rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .wf-cell.is-learning .wf-thumb {
+    border-color: var(--sunrise);
+  }
+  .wf-cell.is-known .wf-thumb {
+    border-color: var(--mangrove);
+    box-shadow: inset 0 0 0 2px var(--mangrove);
+  }
+  .wf-cell.is-known .wf-cell-n::after {
+    content: ' ✓';
+    color: var(--mangrove);
+  }
+  .wf-cell.is-locked .wf-thumb img {
+    filter: grayscale(1);
+    opacity: 0.35;
+  }
+  .wf-cell.is-locked .wf-cell-n {
+    color: var(--ink-soft);
+  }
+  .wf-cert-tools {
+    margin: 1rem 0;
+    padding: 0.9rem 1rem;
+    background: var(--paper-2);
+    border: 1px solid var(--oyster);
+    border-radius: 12px;
+    display: grid;
+    gap: 0.6rem;
+    justify-items: start;
+  }
+  .wf-cert-tools label {
+    display: grid;
+    gap: 0.25rem;
+    font-weight: 600;
+  }
+  .wf-cert-tools input {
+    min-height: 44px;
+    padding: 0.4rem 0.7rem;
+    border: 1.5px solid var(--oyster);
+    border-radius: var(--radius);
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 400;
+  }
+  .wf-cert-tools p {
+    margin: 0;
+  }
+  .wf-fine {
+    margin-top: 1.5rem;
+  }
+  /* the certificate: on paper only */
+  .wf-cert {
+    display: none;
+  }
+  @media print {
+    header,
+    footer,
+    nav,
+    .wf,
+    .hook-btn,
+    .skip-link,
+    #buy-confirm {
+      display: none !important;
+    }
+    body,
+    main {
+      background: #fff !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .wf-cert {
+      display: block;
+      text-align: center;
+      padding: 0.9in 0.6in;
+      border: 6px double #2f5d50;
+      color: #1f2a2e;
+    }
+    .wf-cert-top {
+      margin: 0;
+      font-size: 22pt;
+      color: #a04d12;
+    }
+    .wf-cert h2 {
+      margin: 0.1in 0 0.4in;
+      font-size: 46pt;
+      color: #2f5d50;
+    }
+    .wf-cert-line {
+      margin: 0.12in 0;
+      font-size: 15pt;
+    }
+    .wf-cert-name {
+      margin: 0.1in 0;
+      font-size: 40pt;
+      color: #2f5d50;
+    }
+    .wf-cert-rank {
+      margin: 0.1in 0;
+      font-size: 34pt;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #a04d12;
+    }
+    .wf-cert-sign {
+      margin: 0.7in 0 0;
+      font-size: 30pt;
+      color: #2f5d50;
+    }
+    .wf-cert-foot {
+      margin: 0.5in 0 0;
+      font-size: 8pt;
+      color: #4b5a60;
+    }
+    @page {
+      size: letter portrait;
+      margin: 0.6in;
+    }
+  }
+</style>

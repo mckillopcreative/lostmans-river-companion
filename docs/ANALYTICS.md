@@ -23,6 +23,8 @@ Events say what happened, never who.
 | `scroll` | 50% and 90% of the landing page, once each | page / percent |
 | `sample_click` | "Try the first chapter now" | page |
 | `landing_click` | any other link on the landing page, by destination: `ch`, `app`, `map`, `fish`, `crew`, `about`, `section:chapters`, `out:amazon.com`… | to |
+| `wild_round` | Wild Florida: a round finished | mode (name, clue, apart, speed), value = score |
+| `wild_test` | Wild Florida: the test finished | pass or fail, value = score |
 | `keeper_finish` | Keeper or Release? (Guide School): a level of eight fish finished | level (1 to 3), value = score |
 | `manual_play` | Training Manual: a lesson started (once per lesson per visit) | lesson number |
 | `manual_done` | Training Manual: a lesson heard to the end for the first time on the device | lesson number |

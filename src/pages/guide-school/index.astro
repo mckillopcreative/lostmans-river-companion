@@ -12,9 +12,11 @@ import rigs from '../../../data/rigs.json';
 import boat from '../../../data/boat-school.json';
 import keeper from '../../../data/keeper-game.json';
 import manual from '../../../data/manual.json';
+import { wildCount, wildTitle } from '@lib/wild';
 
 const hero = artImage('tiles', 'guide-school');
 const manualArt = artImage('manual', 'cover');
+const wildArt = artImage('tiles', 'wild-florida');
 const plates = fish.filter((f) => artImage('fish', f.id)).length;
 const courses = [
   {
@@ -82,6 +84,15 @@ const courses = [
       </span>
     </a>
 
+    <a class="gs-listen gs-wild" href={url('/wild-florida/')} data-track="tile_click" data-track-tile="school-wild">
+      <span class="gs-listen-art art">{wildArt && <Image src={wildArt} alt="" width={300} sizes="84px" loading="lazy" />}</span>
+      <span class="gs-listen-text">
+        <span class="course-kind mono">Field school · {wildCount} animals</span>
+        <span class="course-title">{wildTitle}</span>
+        <span class="small">Uncle Dan teaches you to name Florida’s fish, sharks, gators, snakes and birds on sight. Six ways to play, a logbook and a certificate. The first dozen are free.</span>
+      </span>
+    </a>
+
     <ul class="courses">
       {
         courses.map((c) => (
@@ -139,6 +150,10 @@ const courses = [
     border-radius: 14px;
     color: inherit;
     text-decoration: none;
+  }
+  .gs-wild {
+    margin-top: 0.6rem;
+    border-left-color: var(--mangrove);
   }
   .gs-listen:hover {
     border-color: var(--mangrove);

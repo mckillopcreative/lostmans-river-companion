@@ -138,6 +138,22 @@ missions.forEach((m, i) => {
   });
 }
 
+// 4e. Wild Florida: every animal has a known kind and region, real look-alikes, a tell-tale and a line
+{
+  const w = JSON.parse(readFileSync(resolve(import.meta.dirname, '..', 'data', 'wild.json'), 'utf8'));
+  const wid = new Set(w.animals.map((a) => a.id));
+  if (wid.size !== w.animals.length) errors.push('wild: duplicate animal ids');
+  for (const a of w.animals) {
+    if (!w.types.some((t) => t.id === a.type)) errors.push(`wild: ${a.id} has unknown type ${a.type}`);
+    for (const r of a.regions) if (!w.regions.some((x) => x.id === r)) errors.push(`wild: ${a.id} has unknown region ${r}`);
+    for (const l of a.like) if (!wid.has(l)) errors.push(`wild: ${a.id} lists unknown look-alike ${l}`);
+    if (!a.tell || !a.dan) errors.push(`wild: ${a.id} needs a tell-tale and a line`);
+    for (const m of a.more ?? []) if (!m.cap || !m.draw || !Array.isArray(m.art)) errors.push(`wild: a close-up of ${a.id} needs art, a caption and a draw line`);
+    if (/\b\d+\s*(inch|inches|in\b|")/i.test(a.tell + a.dan)) errors.push(`wild: ${a.id} states a size in inches; no sizes or limits (CLAUDE.md)`);
+  }
+  if (w.animals.filter((a) => a.starter).length < 8) errors.push('wild: the free starter set needs at least 8 animals');
+}
+
 // 5. places have numeric coordinates
 for (const p of entity.places) {
   if (typeof p.lat !== 'number' || typeof p.lng !== 'number') errors.push(`places/${p.id}: lat/lng must be numbers`);

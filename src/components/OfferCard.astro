@@ -8,6 +8,7 @@ import { missions } from '@lib/data';
 import { photoImages } from '@lib/images';
 import audioData from '../../data/audio.json';
 import manual from '../../data/manual.json';
+import { wildCount } from '@lib/wild';
 import site from '../../site.config.mjs';
 import { isOpen, price, bogo } from '@lib/buy';
 import BuyButton from '@components/BuyButton.astro';
@@ -30,6 +31,7 @@ const items = [
   { t: 'The Assistant Fishing Guide Training Manual', d: `${manual.lessons.length} audio lessons${manualMin ? `, about ${manualMin} minutes` : ''}: the boat, the fish, the rigs and the guests, read by the voice of the book.` },
   { t: 'Matt’s Fishing Journal', d: 'A field guide in ten chapters, as a ready-made PDF to print: name the fish, measure a keeper, find the spot, pick the rig, tie the knot, set the hook, pack the bag, put the boat away.' },
   { t: 'Guide School: four courses', d: 'Rig It Right, Learn the Boat, Keeper or Release? and Fish of the Everglades: which rig to tie on, how to be useful crew, which fish go back, and what just came over the side.' },
+  { t: 'Wild Florida, with Uncle Dan', d: `A field school that teaches them to name ${wildCount} Florida animals on sight: fish, sharks, gators, snakes and birds. Games, a logbook and a certificate.` },
   { t: `${n} real-world field missions`, d: 'Done off the screen: knots on real line, a treasure map, a cleanup, a fishing day. A grown-up signs each one off.' },
   { t: 'The Field Journal', d: '30 printable pages to fill in by hand: logs, sketches, the case file, a fish log and a knot log.' },
   { t: 'Three badges and a guide license', d: 'Earned along the way, with a printable Assistant Fishing Guide license at the end.' },

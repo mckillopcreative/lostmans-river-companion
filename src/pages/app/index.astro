@@ -15,6 +15,7 @@ import { url } from '@lib/url';
 import { chapters, fish, places, todo } from '@lib/data';
 import site from '../../../site.config.mjs';
 import manual from '../../../data/manual.json';
+import { wildCount } from '@lib/wild';
 
 type Tile = { id: string; label: string; sub?: string; href: string; emblem?: string; size?: 'wide' | 'tall' | 'big'; soon?: boolean; art?: [string, string] };
 const tiles: Tile[] = [
@@ -24,6 +25,7 @@ const tiles: Tile[] = [
   { id: 'chart', label: 'The Chart', href: '/map/', emblem: 'chart' },
   { id: 'fish', label: 'Fish', sub: `${fish.length} species`, href: '/fish/', emblem: 'fish' },
   { id: 'fishing-journal', label: 'Matt’s Fishing Journal', sub: 'the field guide · print it', href: '/fishing-journal/', emblem: 'sketchbook', art: ['journal', 'cover'], size: 'wide' },
+  { id: 'wild-florida', label: 'Wild Florida', sub: `name ${wildCount} animals · with Uncle Dan`, href: '/wild-florida/', emblem: 'critters', size: 'wide' },
   { id: 'training-manual', label: 'Training Manual', sub: `listen · ${manual.lessons.length} lessons`, href: '/training-manual/', emblem: 'sketchbook' },
   // Guide School (2026-11-15): the hub and its courses, kept together near the top
   { id: 'guide-school', label: 'Guide School', sub: 'four courses', href: '/guide-school/', emblem: 'tackle' },

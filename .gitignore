@@ -10,6 +10,8 @@ source/
 public/audio/*
 !public/audio/ch-01.mp3
 !public/audio/tm-01.mp3
+# Uncle Dan's short lines for Wild Florida (scripts/wild-voice.mjs): small clips, committed
+!public/audio/wild/
 
 # wrangler local state
 worker/.wrangler/

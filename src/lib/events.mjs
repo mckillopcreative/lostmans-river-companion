@@ -43,6 +43,8 @@ export const EVENTS = {
   fishid_finish: { label: 'level', value: 'score' },
   chart_finish: { value: 'score' },
   rig_finish: { label: 'level', value: 'score' }, // Rig It Right: a level of six scenarios finished (Guide School, 2026-11-15)
+  wild_round: { label: 'mode', value: 'score' }, // Wild Florida: a round finished (name, clue, apart, speed), by mode
+  wild_test: { label: 'result', value: 'score' }, // Wild Florida: the test finished, pass or fail
   keeper_finish: { label: 'level', value: 'score' }, // Keeper or Release? (Guide School, 2026-11-16): a level of eight fish finished
   manual_play: { label: 'lesson' }, // Training Manual: a lesson started (once per lesson per visit)
   manual_done: { label: 'lesson' }, // Training Manual: a lesson heard to the end for the first time on this device
