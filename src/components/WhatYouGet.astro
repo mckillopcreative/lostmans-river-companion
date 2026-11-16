@@ -58,7 +58,7 @@ const bonus = [
 <section class="wyg" id="what-you-get" aria-labelledby="wyg-h">
   <div class="wrap-wide">
     <p class="eyebrow">What your reader gets</p>
-    <h2 id="wyg-h">More than an audiobook. It’s a Guide School.</h2>
+    <h2 id="wyg-h">It’s a Guide School.</h2>
     <p class="wyg-sub">Three big things in one purchase, and a boatload of extras.</p>
 
     <ol class="wyg-list">
@@ -183,6 +183,50 @@ const bonus = [
   </div>
 </section>
 
+<script>
+  // The preview rows drift sideways by themselves, slowly, and turn round at each end (John,
+  // 2026-11-16). They stop while a finger, the mouse or the keyboard is on them and pick up again
+  // a few seconds later; they only move while on screen, and not at all for readers who have
+  // asked their device for less motion.
+  const SPEED = 14; // pixels a second
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!still) {
+    document.querySelectorAll<HTMLElement>('.wyg-scroll').forEach((row) => {
+      let dir = 1;
+      let pos = 0;
+      let seen = false;
+      let heldUntil = 0;
+      let last = 0;
+      const hold = (ms = 4000) => {
+        heldUntil = performance.now() + ms;
+        row.classList.remove('is-drifting');
+      };
+      for (const ev of ['pointerdown', 'touchstart', 'wheel', 'focusin', 'keydown']) row.addEventListener(ev, () => hold(), { passive: true });
+      row.addEventListener('pointerenter', (e) => (e as PointerEvent).pointerType === 'mouse' && hold(3600000));
+      row.addEventListener('pointerleave', (e) => (e as PointerEvent).pointerType === 'mouse' && hold(800));
+      new IntersectionObserver((es) => (seen = es[0].isIntersecting), { threshold: 0.4 }).observe(row);
+      const step = (now: number) => {
+        const dt = Math.min(0.1, (now - last) / 1000);
+        last = now;
+        const max = row.scrollWidth - row.clientWidth;
+        if (seen && max > 8 && now > heldUntil) {
+          // scroll-snap would fight a slow drift, so it is off while the row moves itself
+          if (!row.classList.contains('is-drifting')) {
+            row.classList.add('is-drifting');
+            pos = row.scrollLeft;
+          }
+          pos += dir * SPEED * dt;
+          if (pos >= max) (pos = max), (dir = -1), hold(1200);
+          if (pos <= 0) (pos = 0), (dir = 1), hold(1200);
+          row.scrollLeft = pos;
+        }
+        requestAnimationFrame(step);
+      };
+      requestAnimationFrame((t) => ((last = t), step(t)));
+    });
+  }
+</script>
+
 <style>
   .wyg {
     padding-block: 2rem 0.5rem;
@@ -303,6 +347,9 @@ const bonus = [
     scroll-padding-inline: 1rem;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
+  }
+  .wyg-scroll.is-drifting {
+    scroll-snap-type: none;
   }
   .wyg-scroll li {
     flex: none;
