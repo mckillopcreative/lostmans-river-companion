@@ -1,0 +1,343 @@
+<!doctype html>
+<!-- The one-page pitch sheet for shops (John, 2026-11-16). Edit the words here, then run
+     `node scripts/sell-sheet.mjs` to remake sales/pitch-sheet.pdf. The terms in "For your store"
+     are John's to set; the numbers must stay in step with the cover price ($12.99). -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Escape to Lostman's River: for your store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet" />
+    <style>
+      @page {
+        size: 8.5in 11in;
+        margin: 0;
+      }
+      :root {
+        --paper: #f6f1e7;
+        --paper-2: #ede5d5;
+        --ink: #1f2a2e;
+        --ink-soft: #4b5a60;
+        --mangrove: #2f5d50;
+        --sunrise: #e8873a;
+        --sunrise-ink: #a04d12;
+        --oyster: #b8b2a6;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        width: 8.5in;
+        height: 11in;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: 'Source Serif 4', Georgia, serif;
+        font-size: 10.4pt;
+        line-height: 1.4;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        overflow: hidden;
+      }
+      .page {
+        height: 11in;
+        padding: 0.42in 0.55in 0.4in;
+        display: flex;
+        flex-direction: column;
+      }
+      .eyebrow {
+        font-size: 8.6pt;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--sunrise-ink);
+        font-weight: 600;
+        margin: 0 0 4pt;
+      }
+      h1 {
+        font-size: 31pt;
+        line-height: 1.04;
+        margin: 0;
+        color: var(--mangrove);
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .sub {
+        font-size: 13pt;
+        font-style: italic;
+        margin: 6pt 0 2pt;
+        color: var(--ink);
+      }
+      .by {
+        font-size: 10.4pt;
+        color: var(--ink-soft);
+        margin: 0;
+      }
+      .rule {
+        border: 0;
+        border-top: 1.5pt solid var(--mangrove);
+        margin: 9pt 0 11pt;
+      }
+      .cols {
+        display: grid;
+        grid-template-columns: 2.36in 1fr;
+        gap: 0.34in;
+        flex: 1;
+        min-height: 0;
+      }
+      .cover {
+        width: 100%;
+        display: block;
+        border-radius: 3pt;
+        box-shadow: 0 2pt 3pt rgb(31 42 46 / 0.18), 0 10pt 22pt -10pt rgb(31 42 46 / 0.45);
+      }
+      .stars {
+        margin: 11pt 0 0;
+        text-align: center;
+        font-size: 10.6pt;
+      }
+      .stars b {
+        color: var(--sunrise-ink);
+        letter-spacing: 0.08em;
+      }
+      .specs {
+        margin: 10pt 0 0;
+        padding: 9pt 10pt;
+        background: var(--paper-2);
+        border-radius: 4pt;
+        font-size: 9.2pt;
+        line-height: 1.5;
+      }
+      .specs dl {
+        margin: 0;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        column-gap: 8pt;
+      }
+      .specs dt {
+        color: var(--ink-soft);
+      }
+      .specs dd {
+        margin: 0;
+        font-weight: 600;
+      }
+      h2 {
+        font-size: 12.4pt;
+        margin: 0 0 4pt;
+        color: var(--mangrove);
+        font-weight: 700;
+      }
+      p {
+        margin: 0 0 8pt;
+      }
+      ul {
+        margin: 0 0 9pt;
+        padding: 0;
+        list-style: none;
+      }
+      li {
+        padding-left: 13pt;
+        position: relative;
+        margin-bottom: 4.2pt;
+      }
+      li::before {
+        content: '';
+        position: absolute;
+        left: 1pt;
+        top: 5.4pt;
+        width: 5pt;
+        height: 5pt;
+        border-radius: 50%;
+        background: var(--sunrise);
+      }
+      li b {
+        color: var(--ink);
+      }
+      .head {
+        display: grid;
+        grid-template-columns: 1fr 2.05in;
+        gap: 0.3in;
+        align-items: end;
+      }
+      .fig {
+        margin: 0;
+      }
+      blockquote {
+        margin: 0 0 6.5pt;
+        padding-left: 9pt;
+        border-left: 2.2pt solid var(--sunrise);
+        font-style: italic;
+        font-size: 10pt;
+        line-height: 1.36;
+      }
+      blockquote cite {
+        display: block;
+        font-style: normal;
+        font-size: 8.6pt;
+        color: var(--ink-soft);
+        margin-top: 1pt;
+      }
+      .sketch {
+        width: 100%;
+        display: block;
+        mix-blend-mode: multiply;
+      }
+      .sketch-cap {
+        font-family: 'Caveat', cursive;
+        font-size: 11.5pt;
+        font-weight: 600;
+        color: var(--sunrise-ink);
+        text-align: center;
+        line-height: 1.05;
+        margin-top: 2pt;
+      }
+      .store {
+        margin-top: 12pt;
+        background: var(--mangrove);
+        color: #f6f1e7;
+        border-radius: 6pt;
+        padding: 13pt 16pt 12pt;
+        display: grid;
+        grid-template-columns: 1fr 1.02in;
+        gap: 16pt;
+        align-items: center;
+      }
+      .store h2 {
+        color: #fff;
+        font-size: 14pt;
+        margin-bottom: 5pt;
+      }
+      .store ul {
+        margin: 0 0 8pt;
+        columns: 2;
+        column-gap: 18pt;
+      }
+      .store li {
+        break-inside: avoid;
+        font-size: 10pt;
+        margin-bottom: 3.6pt;
+      }
+      .store li b {
+        color: #fff;
+      }
+      .contact {
+        font-size: 10.4pt;
+        margin: 0;
+        padding-top: 7pt;
+        border-top: 0.8pt solid rgb(246 241 231 / 0.4);
+      }
+      .contact b {
+        color: #fff;
+      }
+      .qr {
+        background: #fff;
+        border-radius: 4pt;
+        padding: 5pt;
+        text-align: center;
+      }
+      .qr img {
+        width: 100%;
+        display: block;
+      }
+      .qr span {
+        display: block;
+        font-size: 7.4pt;
+        color: var(--ink);
+        line-height: 1.2;
+        margin-top: 2pt;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="head">
+        <div>
+        <p class="eyebrow">A Florida adventure for your shelf</p>
+        <h1>Escape to Lostman’s River</h1>
+        <p class="sub">A coming-of-age fishing adventure in the Everglades</p>
+        <p class="by">Written by Linda &amp; John McKillop, mother and son<br />Illustrated by Linda McKillop</p>
+        </div>
+        <figure class="fig">
+          <img class="sketch" src="img/sketch.png" alt="Pen-and-ink sketch from the book: a tarpon leaps beside a houseboat" />
+          <figcaption class="sketch-cap">one of Linda’s sketches from the book</figcaption>
+        </figure>
+      </header>
+      <hr class="rule" />
+
+      <div class="cols">
+        <aside>
+          <img class="cover" src="img/cover.jpg" alt="Cover of Escape to Lostman’s River" />
+          <p class="stars"><b>★★★★★</b> &nbsp;4.7 · 20 Amazon ratings</p>
+          <div class="specs">
+            <dl>
+              <dt>Format</dt>
+              <dd>Paperback, 5.5 × 8.5 in</dd>
+              <dt>Pages</dt>
+              <dd>194, illustrated</dd>
+              <dt>Readers</dt>
+              <dd>Ages 10 and up</dd>
+              <dt>Retail</dt>
+              <dd>$12.99</dd>
+              <dt>ISBN</dt>
+              <dd>979-8374178890</dd>
+            </dl>
+          </div>
+        </aside>
+
+        <main>
+          <h2>The story</h2>
+          <p>
+            Fifteen-year-old Matt Creek spends the summer after his father’s death as his uncle Dan’s assistant fishing guide in Chokoloskee, at the top of the Ten Thousand Islands. There is a legendary tarpon, a smuggling ring, a houseboat, a storm, and a lot of snook.
+          </p>
+
+          <h2>Why it sells in a Florida shop</h2>
+          <ul>
+            <li><b>It happens right here.</b> Everglades City, Chokoloskee, Rabbit Key Pass, Lostman’s River: real places your visitors have just seen.</li>
+            <li><b>An easy gift to choose.</b> A take-home story of the Everglades for a child or grandchild, at $12.99.</li>
+            <li><b>Hand-illustrated.</b> Eleven pen-and-ink sketches by Linda McKillop, and her hand-drawn chart of Lostman’s River.</li>
+            <li><b>More than a book.</b> A code at every chapter opens a free web companion: the real chart with the boat’s route, the fish painted as a field guide, the knots a guide ties.</li>
+            <li><b>Recommended.</b> One of Joelbooks’ Top 8 Short Adventure Books for Teens.</li>
+          </ul>
+
+          <div class="quotes">
+            <div>
+              <h2>What readers say</h2>
+              <blockquote>
+                Bought it for my 12-year-old son who loves fishing. He said it was the best book about fishing he’d ever read.
+                <cite>Inna, Amazon review</cite>
+              </blockquote>
+              <blockquote>
+                My 14-year-old really doesn’t like to read at all. It was the first time my son ever said he connected to the main character.
+                <cite>A parent, Amazon review</cite>
+              </blockquote>
+              <blockquote>
+                Read to children by a grandparent, and made for many enjoyable discussions about family, friendships, and making memories.
+                <cite>DEL, Amazon review</cite>
+              </blockquote>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <section class="store">
+        <div>
+          <h2>For your store</h2>
+          <ul>
+            <li><b>$7.79 a copy</b> wholesale (40% off the $12.99 cover price)</li>
+            <li><b>Start with 6 copies</b>, shipping included</li>
+            <li><b>Or on consignment:</b> pay as copies sell</li>
+            <li><b>No risk:</b> we swap or take back any copy that hasn’t sold in 90 days</li>
+          </ul>
+          <p class="contact"><b>John McKillop</b> · <b>help@lostmansriver.com</b> · lostmansriver.com</p>
+        </div>
+        <div class="qr">
+          <img src="img/qr.png" alt="QR code to lostmansriver.com" />
+          <span>See the free companion</span>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
