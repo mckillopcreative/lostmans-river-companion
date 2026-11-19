@@ -36,8 +36,7 @@ const full = Math.floor(r?.rating ?? 0);
           </li>
         ))}
         <li class="rc-card rc-more">
-          {/* 2026-11-16 Amazon-link test (docs/OPEN-ITEMS.md): plain words for now, it was a link to the reviews on Amazon */}
-          <span>All {r.count} reviews are on Amazon, where the book is rated {r.rating} out of 5.</span>
+          <a href={r.url} rel="noopener">Read all {r.count} reviews on Amazon →</a>
         </li>
       </ul>
     </section>
@@ -251,8 +250,7 @@ const full = Math.floor(r?.rating ?? 0);
     flex-basis: 60%;
     display: grid;
   }
-  .rc-more a,
-  .rc-more span {
+  .rc-more a {
     display: grid;
     place-items: center;
     height: 100%;

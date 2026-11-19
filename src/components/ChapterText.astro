@@ -76,13 +76,12 @@ const next = chapterByN.get(n + 1);
             <p class="read-end hand">End of Chapter {s.n}.</p>
             <div class="read-next">
               <p class="read-next-h">Want to know what happens next?</p>
-              <p class="small muted">Read and hear the whole book right here, with the missions, the field missions and the license:</p>
+              <p class="read-next-opts">
+                <a class="btn" href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page="read-end">Read the whole book: paperback or Kindle on Amazon →</a>
+              </p>
+              <p class="small muted">Or read and hear the whole book here, with the missions, the field missions and the license:</p>
               <BuyButton compact note={false} />
               <p class="small muted">One-time purchase, 30-day refund.</p>
-              {/* 2026-11-16 Amazon-link test: Amazon is a small line under our own button, no longer the first button */}
-              <p class="small muted">
-                Prefer paper? <a href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page="read-end">The paperback and Kindle are on Amazon</a>.
-              </p>
             </div>
           </details>
         )}

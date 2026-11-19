@@ -43,7 +43,7 @@ import { artImage, sketchImage, coverImage, photoImages } from '@lib/images';
 import { url } from '@lib/url';
 // John and Linda, for the hero byline (2026-11-12)
 const authorsPhoto = photoImages.get('authors.jpg') ?? null;
-import { buyHref, buyTrack, isOpen } from '@lib/buy';
+import { buyHref, isOpen } from '@lib/buy';
 import site from '../../site.config.mjs';
 
 // The titled journal (GPT, Oct 13) with the untitled emblem as fallback.
@@ -448,7 +448,7 @@ const ld = [
     <div class="wrap-wide book-grid" data-reveal>
       {
         cover && (
-          <a class="book" href={url('/about/')}>
+          <a class="book" href={site.buyUrl} rel="noopener">
             <Image src={cover} alt="Cover of Escape to Lostman’s River" width={320} />
           </a>
         )
@@ -465,9 +465,8 @@ const ld = [
           A coming-of-age fishing adventure in the Everglades, by {site.authors}. One summer, one houseboat, one legendary tarpon. <a href={site.joelbooks.url} rel="noopener">{site.joelbooks.text}</a>.
         </p>
         <p class="cluster">
-          {/* 2026-11-16 Amazon-link test: this was an orange "Amazon" button; the paperback link lives on the About page */}
-          <a class="btn btn-primary" href={buyHref} rel="noopener" data-track={buyTrack} data-track-page="/:book">Read and hear it here</a>
-          <a class="btn" href={url('/about/')}>About the book and its authors</a>
+          <a class="btn btn-primary" href={site.buyUrl} rel="noopener">Amazon</a>
+          <a class="btn" href={url('/about/')}>About the authors</a>
         </p>
         <SignupForm id="signup-journal" compact />
       </div>

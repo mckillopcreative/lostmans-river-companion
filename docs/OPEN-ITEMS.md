@@ -46,10 +46,8 @@ See SPEC.md §8. Placeholders used during the build are listed here with where t
 - [ ] **Review the portraits and places** for anything that contradicts the book (hair, boats, buildings). Replacements go in the same path with the same id.
 - [ ] **Wording of the art credit** — `artCredit` in `site.config.mjs` and the Credits page.
 
-## Amazon-link test (started 2026-11-16, review on or after 2026-11-30)
+## Amazon-link test (2026-11-16 to 2026-11-18, ended early, links restored)
 
-John's question: are we losing $24.99 buyers to the paperback link? From 2026-11-16 the only Amazon button is on the About page (plus a small "Prefer paper?" line at the end of the free chapter). Gone: the "Want the paperback? It's on Amazon" link under every Buy button (the 4.7 rating stays as plain text), the orange Amazon buttons in the landing page's book section and in every page's footer, and the link at the foot of the app home.
+For two days the only Amazon button was on the About page (commit 887380d, reverted 2026-11-18 at John's call). It could not be read: 103 visits and no sales in that stretch, but the site averages about one sale per 200 visits, and the Meta ad account was switched off for a missed payment from 9:16 PM Nov 17 to 2:15 PM Nov 18. What it did show: the Buy-tap rate from the Smugglers ad did not rise (4 of 80 visits, against 29 of 412 before), and 5 of those 80 visitors went to the About page and tapped through to Amazon anyway. Baseline for any later test, the 12 days to Nov 16: about 19 taps on Amazon links, about 73 Buy taps, 5 site purchases; Amazon had 18 orders and $76.92 in royalties for November to that date.
 
-Baseline, the 12 days to Nov 16: about 14 taps on the link under the Buy button and 5 on the other Amazon links, about 73 Buy taps, 5 site purchases. Amazon (KDP dashboard, John's screenshot): 18 orders, $76.92 royalties, November to date; none in the months before the ads began.
-
-Read it this way after two weeks, at similar ad spend: site purchases up and Amazon orders flat or a little down = keep it. Site purchases flat and Amazon orders down = the link was not costing sales; put it back (revert the commit "Amazon-link test"). Amazon orders cannot be tied to site visitors, so this is a before-and-after comparison, not proof.
+At this traffic a before-and-after test of site sales needs a month or more to show anything but a very large change. Do not rerun it without a plan for that.

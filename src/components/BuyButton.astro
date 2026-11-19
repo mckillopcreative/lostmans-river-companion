@@ -85,13 +85,16 @@ void tag;
   {
     note && (
       <p class="small muted buy-note">
-        {isOpen ? 'One-time purchase, 30-day refund.' : 'One-time purchase. We’ll email you once, the morning it opens.'}
-        {/* 2026-11-16 Amazon-link test (docs/OPEN-ITEMS.md): no link to Amazon beside a Buy button; the rating stays as proof */}
+        {isOpen ? 'One-time purchase, 30-day refund.' : 'One-time purchase. We’ll email you once, the morning it opens.'} Want the paperback?{' '}
+        <a href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page={where}>
+          It’s on Amazon
+        </a>
         {site.reviews && (
           <>
-            {' '}The book is rated <strong>{site.reviews.rating}</strong> by {site.reviews.count} readers on Amazon.
+            , rated <strong>{site.reviews.rating}</strong> by {site.reviews.count} readers
           </>
         )}
+        .
       </p>
     )
   }
