@@ -1,0 +1,99 @@
+---
+// "Two ways to get it" (John, 2026-11-20): the Experience and the book on Amazon, side by side,
+// high in the landing hero. Why: in the first two weeks of ads, people who saw the ad bought the
+// book on Amazon four times as often as they bought here (20 Amazon orders to 5 site purchases,
+// and zero Amazon orders the month before the ads), mostly by searching for it themselves. So
+// Amazon is offered plainly as the second choice instead of a small line under the button. The
+// Experience stays first and is the only orange button: one sale here is worth about six there.
+// The Amazon taps are amazon_click "/:two"; the Buy pill is the usual buy_click "/:pill".
+import site from '../../site.config.mjs';
+import BuyButton from './BuyButton.astro';
+import { isOpen } from '@lib/buy';
+const r = site.reviews;
+---
+
+{
+  isOpen && (
+    <section class="two" aria-labelledby="two-h">
+      <h2 id="two-h" class="two-h hand">Two ways to get it</h2>
+      <div class="two-grid">
+        <div class="two-card two-exp">
+          <p class="two-kicker mono">Opens today · nothing to ship</p>
+          <h3 class="two-title">The Experience</h3>
+          <p class="two-what">The whole novel to read or hear, plus Guide School, missions and Matt’s Fishing Journal, on their own tablet or phone.</p>
+          <BuyButton jump="offer" note={false} />
+          <p class="small muted two-fine">One-time purchase, 30-day refund.</p>
+        </div>
+        <div class="two-card two-book">
+          <p class="two-kicker mono">On Amazon · paperback or Kindle</p>
+          <h3 class="two-title">The book</h3>
+          <p class="two-what">
+            The illustrated novel on its own{r && (<>, rated <strong>{r.rating}</strong> by {r.count} readers</>)}.
+          </p>
+          <a class="btn btn-white two-amz" href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page="/:two">Get the book on Amazon →</a>
+        </div>
+      </div>
+      <p class="two-both hand">Better together: the paperback in their hands, Guide School on their tablet.</p>
+    </section>
+  )
+}
+
+<style>
+  .two {
+    margin: 1.4rem 0 1.2rem;
+  }
+  .two-h {
+    margin: 0 0 0.5rem;
+    font-size: 1.7rem;
+    line-height: 1.1;
+    font-weight: 400;
+    color: var(--sunrise-ink);
+  }
+  .two-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 0.8rem;
+    align-items: start;
+  }
+  .two-card {
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--oyster) 60%, transparent);
+    border-radius: calc(var(--radius) * 2);
+    padding: 0.9rem 1rem 1rem;
+  }
+  .two-exp {
+    border: 2px solid var(--mangrove);
+  }
+  .two-kicker {
+    margin: 0 0 0.2rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sunrise-ink);
+  }
+  .two-title {
+    margin: 0 0 0.3rem;
+    font-size: 1.35rem;
+    line-height: 1.15;
+  }
+  .two-what {
+    margin: 0 0 0.6rem;
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+  .two-exp :global(.buy) {
+    margin: 0.5rem 0 0.3rem;
+  }
+  .two-fine {
+    margin: 0.4rem 0 0;
+  }
+  .two-amz {
+    font-size: 1rem;
+  }
+  .two-both {
+    margin: 0.7rem 0 0;
+    font-size: 1.3rem;
+    line-height: 1.25;
+    color: var(--mangrove);
+  }
+</style>

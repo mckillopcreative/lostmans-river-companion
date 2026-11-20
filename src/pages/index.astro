@@ -8,9 +8,9 @@ import SectionEmblem from '@components/SectionEmblem.astro';
 import Divider from '@components/Divider.astro';
 import SignupForm from '@components/SignupForm.astro';
 import ChapterAudio from '@components/ChapterAudio.astro';
-import BuyButton from '@components/BuyButton.astro';
 import ExperienceBanner from '@components/ExperienceBanner.astro';
 import ReviewsCarousel from '@components/ReviewsCarousel.astro';
+import TwoWays from '@components/TwoWays.astro';
 import WhatYouGet from '@components/WhatYouGet.astro';
 import ManualSample from '@components/ManualSample.astro';
 import GlanceList from '@components/GlanceList.astro';
@@ -151,6 +151,8 @@ const ld = [
         <!-- adults read it too: the Amazon reviews and the ad comments say so (John, 2026-11-14) -->
         <p class="grown-line hand">Not just for kids. Grown-ups who fish get hooked too.</p>
         <ReviewsCarousel />
+        <!-- the Experience or the book on Amazon, side by side (John, 2026-11-20); it carries the hero's Buy pill -->
+        <TwoWays />
         <p class="try-note">
           <strong>Chapter 1 is free, no sign-up.</strong> Read it as pages or hear it read aloud, with the chart, the fish, the knot and today’s tide that go with it.
         </p>
@@ -158,7 +160,6 @@ const ld = [
           <a class="btn btn-white" href={url('/ch/1/')} data-track="sample_click" data-track-page="/">Try the first chapter now</a>
         </p>
         <ChapterAudio n={1} title="Hear Chapter 1 read aloud" compact />
-        <BuyButton jump="offer" />
         <p class="small"><a href={url('/app/')}>See everything in the Experience →</a> · <a href="#chapters">Browse Matt’s journal below ↓</a></p>
         <p class="small muted scan-note">
           Reading the paperback? The code at the top of each chapter opens that chapter’s page here. No spoilers past where you are.
