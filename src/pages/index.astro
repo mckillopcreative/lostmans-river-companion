@@ -158,7 +158,6 @@ const ld = [
           <a class="btn btn-white" href={url('/ch/1/')} data-track="sample_click" data-track-page="/">Try the first chapter now</a>
         </p>
         <ChapterAudio n={1} title="Hear Chapter 1 read aloud" compact />
-        <ManualSample />
         <BuyButton jump="offer" />
         <p class="small"><a href={url('/app/')}>See everything in the Experience →</a> · <a href="#chapters">Browse Matt’s journal below ↓</a></p>
         <p class="small muted scan-note">
@@ -175,9 +174,6 @@ const ld = [
   <!-- What readers say now sits in the hero as a swipe row (ReviewsCarousel, 2026-11-14), so the
        strip that used to be here is gone: the same six quotes twice in a row read as padding. -->
 
-  <!-- ===== What your reader gets: the book, Guide School, the journal, and the bonus material (John, 2026-11-16) ===== -->
-  <WhatYouGet />
-
   <!-- ===== Who made it: John and Linda, then and now ===== -->
   <section class="j-authors">
     <div class="wrap-wide">
@@ -190,6 +186,17 @@ const ld = [
 
   <!-- ===== How a purchase reaches the reader's own device ===== -->
   <HowItWorks />
+
+  <!-- ===== What your reader gets: the book, Guide School, the journal, and the bonus material (John, 2026-11-16).
+       2026-11-19 (John): moved BELOW the offer card, with the Guide School lesson sample that used to sit in
+       the hero. Only 7 in 100 ad visitors scroll half-way down this page, and with these two blocks above the
+       card the share who ever saw it fell from 43% (Nov 15, card right after the authors) to 18%. ===== -->
+  <section class="j-msample">
+    <div class="wrap-wide">
+      <ManualSample />
+    </div>
+  </section>
+  <WhatYouGet />
 
   <!-- ===== Sticky section links ===== -->
   <nav class="j-nav" aria-label="Sections of the journal" id="j-nav">
@@ -540,6 +547,9 @@ const ld = [
   }
   .j-authors {
     padding-block: 1.75rem 0.25rem;
+  }
+  .j-msample {
+    padding-block: 1.5rem 0;
   }
   .j-hero {
     padding-block: 2rem 1.5rem;

@@ -32,6 +32,10 @@ interface Props {
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 const { title, description = site.tagline, chapter, image, bleed = false, ads = false, offer = false, noindex = false, jsonLd } = Astro.props;
+// 2026-11-19 (John): the holiday email pop-up is switched off. It interrupted the visitors who had stayed
+// 45 seconds, took 1 email in about 200 showings, and its offer (second copy half off) is worse than the
+// buy one, give one that every Buy button now carries. Set to true to bring it back.
+const OFFER_SHEET_ON = false;
 const ld = jsonLd ? JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd]).replace(/</g, '\\u003c') : null;
 // The home page carries the full book title ("Escape to Lostman's River: …"); every other page
 // ends in the short name people type and remember (author's call, 2026-11-09).
@@ -256,7 +260,7 @@ const isActive = (href: string) => here.startsWith(url(href));
     </script>
     <BuyConfirm />
     <HookButton />
-    {offer && <OfferSheet />}
+    {offer && OFFER_SHEET_ON && <OfferSheet />}
   </body>
 </html>
 

@@ -53,15 +53,25 @@ function adClickRef() {
 /** The first-touch campaign code, so a waitlist signup can say which ad brought it. */
 export const campaign = () => context().src;
 
+/** One "started checkout" per page view has gone to Meta already. */
+let checkoutTold = false;
+
 export function track(name: string, props?: Props) {
-  // The checkout hand-off: the sheet's Continue, or the Buy tap itself while the sheet is switched
-  // off. For an ad-referred visit it carries the ad click and an event id, so the Worker can report
-  // "started checkout" to Meta from the server with the same id the browser pixel uses.
-  const handoff = name === 'confirm_go' || name === 'pair_click' || name === 'crew_click' || (name === 'buy_click' && document.getElementById('buy-confirm')?.dataset.sheet === 'off');
+  // "Started checkout" for Meta. Since 2026-11-19 (John) that is the FIRST Buy step of a page view:
+  // normally the Buy tap that opens the sheet, else the sheet's Continue or a straight-to-Stripe
+  // button. From Nov 15 to Nov 19 only Continue counted, and the ad sets that optimise for this
+  // event got 0 signals in three days (6 Buy taps, no Continue). Once per page view, so opening the
+  // sheet and then continuing is one checkout, not two. For an ad-referred visit it carries the ad
+  // click and an event id, so the Worker reports it to Meta from the server with the same id the
+  // browser pixel uses.
+  const step = name === 'buy_click' || name === 'confirm_go' || name === 'pair_click' || name === 'crew_click';
+  const handoff = step && !checkoutTold;
+  if (handoff) checkoutTold = true;
   const adRef = handoff ? adClickRef() : '';
   const eid = adRef ? `ic_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}` : '';
-  // the ad pixel (parent-facing landing page only, ad-referred visits only) mirrors a few events
-  (window as W).lrAds?.(name, eid ? { ...(props || {}), eid } : props);
+  // the ad pixel (parent-facing landing page only, ad-referred visits only) mirrors a few events;
+  // ic: 1 marks the one call per page view that Meta should count as the checkout start
+  (window as W).lrAds?.(name, handoff ? { ...(props || {}), ic: 1, ...(eid ? { eid } : {}) } : props);
   const spec = (EVENTS as Record<string, { label?: string; value?: string }>)[name];
   if (!spec) return; // not an allowed event; scripts/check-events.mjs catches this at build
   const body: Record<string, string | number | boolean> = { n: name };
