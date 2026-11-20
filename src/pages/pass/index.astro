@@ -1,0 +1,141 @@
+---
+// /pass/: the Crew Pass (2026-11-20). The Amazon gift edition of the book prints one pass code
+// on its last page; typing it here opens the whole Experience for up to five readers, Wild
+// Florida included. The Worker (POST /pass) makes the five keys the way a Full Crew purchase
+// does and answers with an id the welcome page already understands, so this page only has to
+// send the grown-up on to /app/?welcome=1&session_id=…, where the five links and their gift
+// cards are laid out. The email is optional on purpose: nothing is asked that the pass does not need.
+import Base from '@layouts/Base.astro';
+import { url } from '@lib/url';
+---
+
+<Base title="Your Crew Pass" description="Have the book? The pass on its last page opens the Summer Fishing Guide Experience for up to five readers." noindex>
+  <section class="wrap section pass">
+    <p class="eyebrow">Have the book?</p>
+    <h1>Your Crew Pass</h1>
+    <p class="lede">The pass code on the last page of <em>Escape to Lostman’s River</em> opens the Summer Fishing Guide Experience for up to five readers: you and four friends, brothers, sisters or cousins.</p>
+    <ul class="pass-list">
+      <li>The whole book read aloud, chapter by chapter</li>
+      <li>Guide School, 23 missions, badges and a fishing guide license</li>
+      <li>Wild Florida, Uncle Dan’s animal ID trainer</li>
+      <li>Matt’s Fishing Journal to print</li>
+    </ul>
+    <p class="pass-grown hand">A grown-up does this part. It takes a minute.</p>
+    <form id="pass" class="pass-form" novalidate>
+      <label for="p-code">Pass code from the last page</label>
+      <input id="p-code" type="text" required autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" placeholder="WORD-1234" />
+      <label for="p-email">Your email <span class="muted">(optional)</span></label>
+      <input id="p-email" type="email" autocomplete="email" inputmode="email" maxlength="200" placeholder="you@example.com" />
+      <p class="small muted pass-why">Leave it and we’ll email you all five links, so they can’t get lost. Nothing else is sent.</p>
+      <button class="btn btn-primary" type="submit">Open my crew’s Experience</button>
+    </form>
+    <p class="hand pass-msg" id="p-msg" aria-live="polite"></p>
+    <p class="small muted">Trouble with your pass? Write to <a href="mailto:help@lostmansriver.com">help@lostmansriver.com</a> and a person will sort it out.</p>
+    <p class="small"><a href={url('/')}>← Back to Lostman’s River</a></p>
+  </section>
+
+  <script>
+    import { API } from '../../scripts/access';
+    import { track } from '../../scripts/track';
+    const form = document.getElementById('pass') as HTMLFormElement;
+    const msg = document.getElementById('p-msg')!;
+    const codeIn = document.getElementById('p-code') as HTMLInputElement;
+    const WHY: Record<string, string> = {
+      code: 'That code doesn’t match. It’s on the last page of the book: a word, a dash, then four letters and numbers.',
+      email: 'That email doesn’t look right. Fix it, or leave it empty.',
+      slow: 'Too many tries from here. Give it an hour, or write to help@lostmansriver.com.',
+      limit: 'We’ve opened a lot of crews today. Write to help@lostmansriver.com and we’ll open yours by hand.',
+      closed: 'The pass desk is closed for a moment. Try again shortly.',
+    };
+    // a pass typed into the address (lostmansriver.com/pass/#WORD-1234) fills the box
+    if (location.hash.length > 1) codeIn.value = decodeURIComponent(location.hash.slice(1)).slice(0, 24);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = codeIn.value.trim();
+      const email = (document.getElementById('p-email') as HTMLInputElement).value.trim();
+      if (!code) {
+        msg.textContent = 'Type the pass code from the last page of the book.';
+        return;
+      }
+      const btn = form.querySelector('button')!;
+      btn.disabled = true;
+      msg.textContent = 'Checking your pass…';
+      let own = false;
+      try {
+        own = localStorage.getItem('lr-own') === '1';
+      } catch {}
+      try {
+        const r = await fetch(`${API}/pass`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ code, email, own }) });
+        const j = await r.json().catch(() => ({}));
+        if (j.ok && j.session) {
+          track('pass_redeem', { result: 'ok' });
+          msg.textContent = 'Welcome aboard. Getting your crew’s links…';
+          location.href = `/app/?welcome=1&session_id=${encodeURIComponent(j.session)}`;
+          return;
+        }
+        track('pass_redeem', { result: j.why || 'error' });
+        msg.textContent = WHY[j.why] || 'That didn’t go through. Try again in a minute.';
+      } catch {
+        msg.textContent = 'Couldn’t reach us just now. Try again in a minute.';
+      }
+      btn.disabled = false;
+    });
+  </script>
+</Base>
+
+<style>
+  .pass {
+    max-width: 620px;
+  }
+  .pass-list {
+    margin: 0.4rem 0 0.8rem;
+    padding-left: 1.2rem;
+  }
+  .pass-list li {
+    margin: 0.2rem 0;
+  }
+  .pass-grown {
+    margin: 0.6rem 0 0.2rem;
+    font-size: 1.35rem;
+    color: var(--mangrove);
+  }
+  .pass-form {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0.6rem 0 1rem;
+  }
+  .pass-form label {
+    font-weight: 600;
+    margin-top: 0.3rem;
+  }
+  .pass-form label .muted {
+    font-weight: 400;
+  }
+  .pass-form input {
+    min-height: 46px;
+    padding: 0.5rem 0.75rem;
+    border: 1.5px solid var(--oyster);
+    border-radius: var(--radius);
+    background: var(--paper-2);
+    color: var(--ink);
+    font: inherit;
+  }
+  #p-code {
+    font-family: var(--font-mono, monospace);
+    font-size: 1.2rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .pass-why {
+    margin: 0;
+  }
+  .pass-form .btn {
+    justify-self: start;
+    margin-top: 0.5rem;
+  }
+  .pass-msg {
+    font-size: 1.3rem;
+    color: var(--sunrise-ink);
+    min-height: 1.5em;
+  }
+</style>

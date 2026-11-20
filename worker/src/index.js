@@ -12,6 +12,7 @@
 //   GET  /key/:key              is this key valid? (and does it hold the Wild Florida add-on)
 //   GET|PUT /progress/:key      the reader's missions, field sign-offs, badges, start date
 //   POST /restore               {email} → re-send the link (same answer whether or not it exists)
+//   POST /pass                  {code, email?} → the book's Crew Pass: five reader keys with Wild Florida (the Amazon gift edition)
 //   GET  /audio/:key/ch-NN.mp3  chapters 2–23 from R2, with Range support (and tm-NN.mp3, Training Manual lessons 2–15)
 //   GET  /guide/:key/matts-fishing-journal.pdf  the ready-made journal PDF from R2
 //   GET  /text/:key/ch-NN.json  chapters 2–23's text from R2 (text/), from READER_OPENS only
@@ -27,6 +28,8 @@
 // KV (binding LR): k:<key> → {email, created, session, comp, wild}; e:<email> → key;
 // s:<session> → key; p:<key> → progress; rl:<email> → restore count (1 h TTL);
 // w:<email> → {created, page, src} (waitlist); rlw:<ip> → waitlist signups this hour
+// bp:<email> → the crew a pass already opened for that email; rlp:<ip> → wrong pass codes this
+// hour; bpd:<ip>:<day> and bpd:all:<day> → crews opened today (per address, and in all)
 import { EVENTS } from '../../src/lib/events.mjs';
 import { qrPng } from './qr.js';
 import { welcomeEmail, waitlistEmail, openingEmail, offerEmail, giftEmail, crewEmail, wildEmail, newsEmail } from './email.js';
@@ -473,6 +476,71 @@ export default {
         if (gifts.length) ctx?.waitUntil(sendMail(env, email, gifts.length > 1 ? crewEmail(gifts) : giftEmail(gifts[0])));
       }
       return same;
+    }
+
+    // ---- the Crew Pass (2026-11-20): the Amazon gift edition's last page carries one pass code ----
+    // KDP prints every copy the same, so the code is shared by every book; what keeps it honest is
+    // small: wrong guesses are limited, one address opens at most three crews a day, there is a
+    // daily ceiling (BOOK_PASS_DAILY), and the author gets a line for every crew opened. The keys
+    // are made the way a Full Crew purchase makes them (s:<id>, s:<id>:gift…), under an id that
+    // starts cs_book_, so the welcome page, /restore and the gift cards all work unchanged.
+    if (path === '/pass' && request.method === 'POST') {
+      const passes = String(env.BOOK_PASS || '').split(',').map((s) => s.toUpperCase().replace(/[^A-Z0-9]/g, '')).filter(Boolean);
+      if (!passes.length) return json({ ok: false, why: 'closed' }, 503, cors);
+      const ip = request.headers.get('cf-connecting-ip') || 'unknown';
+      const wrong = Number((await env.LR.get(`rlp:${ip}`)) || 0);
+      if (wrong >= 10) return json({ ok: false, why: 'slow' }, 429, cors);
+      let b;
+      try {
+        b = await request.json();
+      } catch {
+        return json({ ok: false, why: 'code' }, 400, cors);
+      }
+      const code = String(b.code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 40);
+      if (!passes.includes(code)) {
+        await env.LR.put(`rlp:${ip}`, String(wrong + 1), { expirationTtl: 3600 });
+        return json({ ok: false, why: 'code' }, 403, cors);
+      }
+      const email = normEmail(b.email);
+      if (email && !okEmail(email)) return json({ ok: false, why: 'email' }, 400, cors);
+      // the same email gets the same crew back, however often it asks
+      const before = email ? await env.LR.get(`bp:${email}`) : null;
+      if (before) return json({ ok: true, session: before, again: true }, 200, cors);
+      const day = new Date().toISOString().slice(0, 10);
+      const mine = Number((await env.LR.get(`bpd:${ip}:${day}`)) || 0);
+      const all = Number((await env.LR.get(`bpd:all:${day}`)) || 0);
+      const ceiling = Number(env.BOOK_PASS_DAILY) || 60;
+      if (mine >= 3 || all >= ceiling) {
+        if (all >= ceiling && all === ceiling) {
+          await env.LR.put(`bpd:all:${day}`, String(all + 1), { expirationTtl: 172800 });
+          ctx?.waitUntil(sendMail(env, NOTIFY, { subject: 'Lostman’s River: Crew Pass daily ceiling reached', text: `${ceiling} crews were opened with the book's pass code today, so the page is asking people to write to help@ until tomorrow. If that is real demand, raise BOOK_PASS_DAILY in worker/wrangler.toml; if not, the code may have been shared: change BOOK_PASS.`, html: `<p><strong>Crew Pass daily ceiling reached.</strong></p><p>${ceiling} crews were opened with the book's pass code today, so the page is asking people to write to help@ until tomorrow. If that is real demand, raise BOOK_PASS_DAILY in worker/wrangler.toml; if not, the code may have been shared: change BOOK_PASS.</p>` }));
+        }
+        return json({ ok: false, why: 'limit' }, 429, cors);
+      }
+      const session = `cs_book_${newKey()}`;
+      const crew = [];
+      for (let i = 0; i < 4; i++) crew.push((await issueKey(env, { email: '', session: `${session}:gift${i ? i + 1 : ''}`, note: 'book pass crew', wild: true })).key);
+      const { key } = await issueKey(env, { email, session, note: 'book pass', wild: true });
+      await env.LR.put(`bpd:${ip}:${day}`, String(mine + 1), { expirationTtl: 172800 });
+      await env.LR.put(`bpd:all:${day}`, String(all + 1), { expirationTtl: 172800 });
+      if (email) {
+        await env.LR.put(`bp:${email}`, session);
+        ctx?.waitUntil(sendWelcome(env, email, key, { wild: true }));
+        ctx?.waitUntil(sendMail(env, email, crewEmail(crew)));
+      }
+      const own = !!b.own;
+      env.EVENTS?.writeDataPoint({ indexes: ['book_pass'], blobs: ['book_pass', 'book', 'book', own ? 'own' : ''], doubles: [1, 0] });
+      if (!own) {
+        const when = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+        ctx?.waitUntil(
+          sendMail(env, NOTIFY, {
+            subject: 'Lostman’s River: a book’s Crew Pass was opened',
+            text: `A reader with the Amazon gift edition opened their crew (five readers, Wild Florida included).\n${email || 'no email left'} · ${when} ET · crew number ${all + 1} today`,
+            html: `<p><strong>A book’s Crew Pass was opened.</strong></p><p>Five readers, Wild Florida included.</p><p>${email || 'no email left'} · ${when} ET · crew number ${all + 1} today</p>`,
+          }),
+        );
+      }
+      return json({ ok: true, session }, 200, cors);
     }
 
     // ---- waitlist (before opening day) ----

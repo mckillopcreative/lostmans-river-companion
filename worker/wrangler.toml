@@ -36,6 +36,11 @@ WILD_LINK = "plink_1UcTNDR6rTUxNaU8VEZawk9Y"
 WILD_CREW_LINK = "plink_1UcTPDR6rTUxNaU8uZg39hWk"
 WILD_ADD_LINK = "plink_1UcTRaR6rTUxNaU8VrUQwSCv"
 WILD_SINCE = "2026-11-16T17:50:00Z"
+# The Crew Pass printed on the last page of the Amazon gift edition (2026-11-20). One code for
+# every copy; to retire a leaked one, print a new code in the book and list both here for a while
+# (comma-separated). Letters and digits only count; case and dashes are ignored.
+BOOK_PASS = "TARPON-47KM"
+BOOK_PASS_DAILY = "60"
 
 [[analytics_engine_datasets]]
 binding = "EVENTS"

@@ -62,12 +62,23 @@
         } catch {}
         if (!key) await new Promise((res) => setTimeout(res, 2000));
       }
+      if (!isKey(key) && session.startsWith('cs_book_')) {
+        $('ho-status').innerHTML = 'We couldn’t find that crew. <a href="/pass/">Type your pass code again</a>, or write to help@lostmansriver.com.';
+        return;
+      }
       if (!isKey(key)) {
         $('ho-status').innerHTML = 'Your payment went through. Your link is on its way by email from help@lostmansriver.com; it can take a minute. Nothing in the inbox after ten minutes? <a href="/restore/">Have it sent again</a>.';
         return;
       }
       setKey(key); // this device too, so the parent can look around
       setWild(wild);
+      // a crew opened with the book's Crew Pass (/pass/, ids start cs_book_): the email was optional
+      const book = session.startsWith('cs_book_');
+      if (book) {
+        $('ho-eyebrow').textContent = 'Your pass checked out. Welcome aboard';
+        $('ho-note').textContent = 'If you left your email, all five links are on their way from help@lostmansriver.com. If you didn’t, save them now: copy, text or email each one before you close this page. Keep each link to the reader it’s for.';
+        $('ho-g-lede').textContent = 'Each crew member gets their own link, with their own missions, badges and license. Hand one to each reader: a brother or sister, a cousin, a friend.';
+      }
       const link = startLink(key);
       ($('ho-qr-img') as HTMLImageElement).src = `${API}/qr/${key}.png`;
       $('ho-status').textContent = 'It takes about a minute, on their own device:';

@@ -21,6 +21,7 @@ export const EVENTS = {
   pair_click: { label: 'page' }, // the "Keep one, give one" ($34.99, two Experiences) tap: straight to Stripe
   confirm_go: { label: 'page' }, // "Continue to secure checkout" on the sheet: the real hand-off to Stripe
   confirm_close: { label: 'page' }, // the sheet dismissed
+  pass_redeem: { label: 'result' }, // /pass/: the book's Crew Pass tried (ok, or why not: code, email, slow, limit)
   boat_toggle: { label: 'page', value: 'on' }, // the sheet's Full Boat bonus switch: value 1 = switched on, 0 = switched off
   wild_toggle: { label: 'page', value: 'on' }, // the sheet's Wild Florida add-on switch (+$9.99): value 1 = switched on, 0 = off
   wild_what: { label: 'page' }, // the sheet's "What's this?" under the add-on, opened
