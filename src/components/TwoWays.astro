@@ -9,6 +9,7 @@
 import site from '../../site.config.mjs';
 import BuyButton from './BuyButton.astro';
 import { isOpen } from '@lib/buy';
+import { url } from '@lib/url';
 const r = site.reviews;
 ---
 
@@ -24,14 +25,30 @@ const r = site.reviews;
           <BuyButton jump="offer" note={false} />
           <p class="small muted two-fine">One-time purchase, 30-day refund.</p>
         </div>
-        <div class="two-card two-book">
-          <p class="two-kicker mono">On Amazon · paperback or Kindle</p>
-          <h3 class="two-title">The book</h3>
-          <p class="two-what">
-            The illustrated novel on its own{r && (<>, rated <strong>{r.rating}</strong> by {r.count} readers</>)}.
-          </p>
-          <a class="btn btn-white two-amz" href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page="/:two">Get the book on Amazon →</a>
-        </div>
+        {
+          site.amazonCrewPass ? (
+            <div class="two-card two-book">
+              <p class="two-kicker mono">On Amazon · the paperback</p>
+              <h3 class="two-title">The book, with the Experience inside</h3>
+              <p class="two-what">
+                The illustrated novel in their hands{r && (<>, rated <strong>{r.rating}</strong> by {r.count} readers</>)}. The Crew Pass on its last page opens the whole Experience for up to five readers, Wild Florida included.
+              </p>
+              <a class="btn btn-white two-amz" href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page="/:two">Get the paperback on Amazon →</a>
+              <p class="small two-fine">
+                Already have it? <a href={url('/pass/')}>Open your Crew Pass →</a>
+              </p>
+            </div>
+          ) : (
+            <div class="two-card two-book">
+              <p class="two-kicker mono">On Amazon · paperback or Kindle</p>
+              <h3 class="two-title">The book</h3>
+              <p class="two-what">
+                The illustrated novel on its own{r && (<>, rated <strong>{r.rating}</strong> by {r.count} readers</>)}.
+              </p>
+              <a class="btn btn-white two-amz" href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page="/:two">Get the book on Amazon →</a>
+            </div>
+          )
+        }
       </div>
       <p class="two-both hand">Better together: the paperback in their hands, Guide School on their tablet.</p>
     </section>

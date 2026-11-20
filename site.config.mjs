@@ -71,6 +71,11 @@ export default {
 
   /** Amazon listing. Replace with the Associates link (…?tag=xxx-20) once the account exists. */
   buyUrl: 'https://www.amazon.com/dp/B0BV41JY8N', // the paperback (QR-code edition); Kindle is B0BVJ4XR65
+  // The paperback as the Crew Pass edition ($34.99, the Experience for five readers unlocked from its
+  // last page at /pass/). Submitted to KDP 2026-11-20; it shows on Amazon when KDP's review ends (up to
+  // 72 hours). Set this to true THAT day and deploy: the landing page's Amazon card then says what the
+  // book includes and links to /pass/. While it is false the card describes the plain book.
+  amazonCrewPass: false,
   // hardcover 9798375928548 (ASIN B0BVDYCW8G) unpublished on KDP 2026-10-28; republish from the KDP bookshelf
   isbn: { paperback: '9798374178890', hardcover: '9798375928548', kindle: 'B0BVJ4XR65' },
 
