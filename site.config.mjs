@@ -75,7 +75,8 @@ export default {
   // last page at /pass/). Submitted to KDP 2026-11-20; it shows on Amazon when KDP's review ends (up to
   // 72 hours). Set this to true THAT day and deploy: the landing page's Amazon card then says what the
   // book includes and links to /pass/. While it is false the card describes the plain book.
-  amazonCrewPass: false,
+  // Turned on 2026-11-20: KDP shows the paperback Live at $34.99 with the new interior and description.
+  amazonCrewPass: true,
   // hardcover 9798375928548 (ASIN B0BVDYCW8G) unpublished on KDP 2026-10-28; republish from the KDP bookshelf
   isbn: { paperback: '9798374178890', hardcover: '9798375928548', kindle: 'B0BVJ4XR65' },
 
