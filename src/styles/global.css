@@ -568,8 +568,10 @@ blockquote cite {
   }
 }
 
-/* buyers: no Buy prompts once this device holds a purchase key */
-.has-key .buy,
+/* buyers: no Buy prompts once this device holds a purchase key. Since 2026-11-23 (John: "they might
+   buy more") the landing page keeps its Buy buttons for them (.buy-keep, from BuyButton's keep prop);
+   the reader's own pages (app home, chapters, Guide School) stay clear */
+.has-key .buy:not(.buy-keep),
 .has-key .listen-lock,
 .has-key .mission-lock,
 .has-key .read-next .buy {

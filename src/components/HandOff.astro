@@ -38,7 +38,7 @@
 </section>
 
 <script>
-  import { API, setKey, setWild, startLink, isKey } from '../scripts/access';
+  import { API, getKey, setKey, setWild, startLink, isKey } from '../scripts/access';
   const q = new URLSearchParams(location.search);
   const session = q.get('session_id') || '';
   const box = document.getElementById('handoff')!;
@@ -70,8 +70,12 @@
         $('ho-status').innerHTML = 'Your payment went through. Your link is on its way by email from help@lostmansriver.com; it can take a minute. Nothing in the inbox after ten minutes? <a href="/restore/">Have it sent again</a>.';
         return;
       }
-      setKey(key); // this device too, so the parent can look around
-      setWild(wild);
+      // this device too, so the parent can look around; a device that already holds a key keeps it
+      // (2026-11-23: buyers can buy again from the landing page, and their own summer must not be swapped out)
+      if (!getKey()) {
+        setKey(key);
+        setWild(wild);
+      }
       // a crew opened with the book's Crew Pass (/pass/, ids start cs_book_): the email was optional
       const book = session.startsWith('cs_book_');
       if (book) {

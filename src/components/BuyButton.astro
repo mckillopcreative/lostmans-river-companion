@@ -20,8 +20,10 @@ interface Props {
   tag?: string;
   /** where this set of buttons sits, added to the click label ("card" → "/:card") */
   place?: string;
+  /** stay visible on a device that already holds a purchase key (the landing page, 2026-11-23) */
+  keep?: boolean;
 }
-const { compact = false, note = true, plain = false, jump = '', tag = '', place = '' } = Astro.props;
+const { compact = false, note = true, plain = false, jump = '', tag = '', place = '', keep = false } = Astro.props;
 const where = Astro.url.pathname + (place ? `:${place}` : '');
 const crew = isOpen ? site.checkout.crew : null;
 // what the Full Boat bonus adds to the one-reader price, e.g. "+$15"
@@ -31,7 +33,7 @@ const boatPlus = '+$' + (Number.isInteger(boatDiff) ? boatDiff : boatDiff.toFixe
 void tag;
 ---
 
-<div class:list={['buy', { compact }]}>
+<div class:list={['buy', { compact, 'buy-keep': keep }]}>
   {
     crew && jump ? (
       <>

@@ -1,7 +1,8 @@
 ---
 // "Hook the Experience": a sticky button, bottom right, that appears once the reader has scrolled
 // a screen down on a page without a purchase key. Same destination as every Buy button, so the
-// confirm sheet opens and the beacons fire the same way. Hidden for key holders (.has-key).
+// confirm sheet opens and the beacons fire the same way. Hidden for key holders (.has-key), except
+// on the landing page since 2026-11-23 (John: people who bought may buy more), class hook-keep.
 import site from '../../site.config.mjs';
 import { buyHref, buyTrack, isOpen, price, bogo } from '@lib/buy';
 // 2026-11-16 (John): while the holiday "buy one, give one" runs, the same small pill that sits on
@@ -12,9 +13,10 @@ import { buyHref, buyTrack, isOpen, price, bogo } from '@lib/buy';
 const href = buyHref;
 const track = buyTrack;
 void site;
+const keep = Astro.url.pathname === '/';
 ---
 
-<a class="hook-btn btn btn-primary" href={href} rel="noopener" data-track={track} data-track-page={`${Astro.url.pathname}:sticky`} hidden aria-label={isOpen ? `Hook the Experience, ${price}${bogo ? ', buy one, give one' : ''}` : 'Hook the Experience'}>
+<a class:list={['hook-btn', 'btn', 'btn-primary', { 'hook-keep': keep }]} href={href} rel="noopener" data-track={track} data-track-page={`${Astro.url.pathname}:sticky`} hidden aria-label={isOpen ? `Hook the Experience, ${price}${bogo ? ', buy one, give one' : ''}` : 'Hook the Experience'}>
   {bogo && <span class="hook-bogo" data-bogo-until={bogo.until} aria-hidden="true">Buy one · Give one</span>}
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
   Hook the Experience
@@ -23,7 +25,7 @@ void site;
 
 <script>
   const btn = document.querySelector<HTMLAnchorElement>('.hook-btn');
-  if (btn && !document.documentElement.classList.contains('has-key')) {
+  if (btn && (btn.classList.contains('hook-keep') || !document.documentElement.classList.contains('has-key'))) {
     let shown = false;
     const check = () => {
       const past = window.scrollY > window.innerHeight * 0.8;
@@ -75,7 +77,7 @@ void site;
   .hook-btn[hidden] {
     display: none;
   }
-  :global(html.has-key) .hook-btn,
+  :global(html.has-key) .hook-btn:not(.hook-keep),
   :global(html.bc-open) .hook-btn,
   :global(html.pager-open) .hook-btn {
     display: none;
