@@ -3,6 +3,9 @@
 // a screen down on a page without a purchase key. Same destination as every Buy button, so the
 // confirm sheet opens and the beacons fire the same way. Hidden for key holders (.has-key), except
 // on the landing page since 2026-11-23 (John: people who bought may buy more), class hook-keep.
+// 2026-11-27 (John): on the landing page it shows the moment the page loads, with no scrolling
+// ("people have to scroll for like 5 seconds to even know how to purchase"). It is rendered
+// visible there, so it does not wait for the script. Other pages keep the one-screen scroll rule.
 import site from '../../site.config.mjs';
 import { buyHref, buyTrack, isOpen, price, bogo } from '@lib/buy';
 // 2026-11-16 (John): while the holiday "buy one, give one" runs, the same small pill that sits on
@@ -16,7 +19,7 @@ void site;
 const keep = Astro.url.pathname === '/';
 ---
 
-<a class:list={['hook-btn', 'btn', 'btn-primary', { 'hook-keep': keep }]} href={href} rel="noopener" data-track={track} data-track-page={`${Astro.url.pathname}:sticky`} hidden aria-label={isOpen ? `Hook the Experience, ${price}${bogo ? ', buy one, give one' : ''}` : 'Hook the Experience'}>
+<a class:list={['hook-btn', 'btn', 'btn-primary', { 'hook-keep': keep }]} href={href} rel="noopener" data-track={track} data-track-page={`${Astro.url.pathname}:sticky`} hidden={!keep} aria-label={isOpen ? `Hook the Experience, ${price}${bogo ? ', buy one, give one' : ''}` : 'Hook the Experience'}>
   {bogo && <span class="hook-bogo" data-bogo-until={bogo.until} aria-hidden="true">Buy one · Give one</span>}
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
   Hook the Experience
@@ -25,7 +28,8 @@ const keep = Astro.url.pathname === '/';
 
 <script>
   const btn = document.querySelector<HTMLAnchorElement>('.hook-btn');
-  if (btn && (btn.classList.contains('hook-keep') || !document.documentElement.classList.contains('has-key'))) {
+  // the landing page's button (hook-keep) is already showing and stays; everywhere else it waits for a scroll
+  if (btn && !btn.classList.contains('hook-keep') && !document.documentElement.classList.contains('has-key')) {
     let shown = false;
     const check = () => {
       const past = window.scrollY > window.innerHeight * 0.8;
