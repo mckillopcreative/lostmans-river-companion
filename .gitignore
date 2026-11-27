@@ -9,6 +9,7 @@ source/
 # narration output is generated, not committed (public/audio is ~300 MB when complete)
 public/audio/*
 !public/audio/ch-01.mp3
+!public/audio/ch-01-scored.m4a
 !public/audio/tm-01.mp3
 # Uncle Dan's short lines for Wild Florida (scripts/wild-voice.mjs): small clips, committed
 !public/audio/wild/

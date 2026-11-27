@@ -4,10 +4,15 @@
 // with numbers"). Each line jumps to the full "What your reader gets" section (WhatYouGet.astro).
 // 2026-11-23 (John): a line at the top of the box says the full Experience is on Amazon too (the
 // Crew Pass paperback), with a link. The box is a div now, because a link cannot sit inside a link.
+// 2026-11-27 (John): the list was missing parts, the animal trainer among them. The missions get
+// their own line, and Wild Florida is named as what it is on this site: an add-on at its own price
+// (the Amazon paperback's Crew Pass includes it; a $24.99 purchase here does not).
 import site from '../../site.config.mjs';
 import { chapters } from '@lib/data';
 import audioData from '../../data/audio.json';
 import manual from '../../data/manual.json';
+import { wild } from '@lib/buy';
+import { wildCount } from '@lib/wild';
 
 const bookHours = Math.round(Object.values(audioData.minutes as Record<string, number>).reduce((a, b) => a + b, 0) / 60);
 const manualMin = Object.values(((audioData as unknown as { manual?: Record<string, number> }).manual ?? {}) as Record<string, number>).reduce((a, b) => a + b, 0);
@@ -36,8 +41,20 @@ const manualLen = manualMin >= 55 ? 'about an hour' : `${manualMin} minutes`;
       <span class="g-n" aria-hidden="true">3</span>
       <span><strong>Matt’s Fishing Journal</strong>: a 20-page field guide</span>
     </li>
+    <li>
+      <span class="g-n" aria-hidden="true">4</span>
+      <span><strong>{chapters.length} missions</strong>, badges and a guide license to earn</span>
+    </li>
+    {
+      wild && (
+        <li>
+          <span class="g-n g-plus" aria-hidden="true">+</span>
+          <span><strong>Wild Florida Animal ID Trainer</strong>: {wildCount} animals to name (add-on, {wild.price})</span>
+        </li>
+      )
+    }
   </ol>
-  <span class="g-more">Plus missions, badges and a guide license. See it all ↓</span>
+  <span class="g-more">See it all ↓</span>
   </a>
 </div>
 
@@ -100,6 +117,10 @@ const manualLen = manualMin >= 55 ? 'about an hour' : `${manualMin} minutes`;
     font-size: 0.95rem;
     font-weight: 700;
     line-height: 1;
+  }
+  .g-plus {
+    background: var(--mangrove);
+    color: var(--paper);
   }
   .glance strong {
     color: var(--mangrove);
