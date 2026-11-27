@@ -57,6 +57,12 @@ export default {
     // `crewUrl` = the Full Crew + Wild Florida ($49.98), `addUrl` = Wild Florida alone, for a
     // family that already has the Experience (the Wild Florida page sends their key with it).
     // The Worker knows the same three links and the product (worker/wrangler.toml WILD_*).
+    // 2026-11-27 (John: "Make it included in the digital product"): Wild Florida now comes with
+    // every Experience, as it already does with the Amazon paperback's Crew Pass. While this is
+    // true the add-on switch, its price and its three links below are not shown anywhere; the
+    // Worker opens Wild Florida for every key by WILD_INCLUDED in worker/wrangler.toml: KEEP THE
+    // TWO THE SAME. The Stripe links are left alone for anyone who still has one open.
+    wildIncluded: true,
     wild: {
       price: '$9.99',
       url: 'https://buy.stripe.com/6oU8wRew30X70pFfs493y05',

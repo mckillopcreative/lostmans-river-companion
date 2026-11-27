@@ -9,7 +9,7 @@ import { Image } from 'astro:assets';
 import { chapters, fish, missions, knots } from '@lib/data';
 import { artImage, coverImage } from '@lib/images';
 import { url } from '@lib/url';
-import { bogo, wild } from '@lib/buy';
+import { bogo, wild, wildIncluded } from '@lib/buy';
 import audioData from '../../data/audio.json';
 import manual from '../../data/manual.json';
 import boat from '../../data/boat-school.json';
@@ -32,7 +32,7 @@ const spots = chapters
 // 2. Guide School: the manual, the four courses, then a few of the boat lessons
 const school = [
   { art: artImage('manual', 'cover'), label: 'Training Manual', sub: `${manual.lessons.length} audio lessons`, href: '/training-manual/' },
-  { art: artImage('tiles', 'wild-florida'), label: 'Wild Florida', sub: `add-on · ${wildCount} animals`, href: '/wild-florida/' },
+  { art: artImage('tiles', 'wild-florida'), label: 'Wild Florida', sub: wildIncluded ? `included · ${wildCount} animals` : `add-on · ${wildCount} animals`, href: '/wild-florida/' },
   { art: artImage('tiles', 'rig-it-right'), label: 'Rig It Right', sub: `${rigs.scenarios.length} scenarios`, href: '/guide-school/rig-it-right/' },
   { art: artImage('tiles', 'learn-the-boat'), label: 'Learn the Boat', sub: `${boat.lessons.length} lessons`, href: '/guide-school/learn-the-boat/' },
   { art: artImage('tiles', 'keeper-or-release'), label: 'Keeper or Release?', sub: `${keeper.levels.length} levels`, href: '/guide-school/keeper-or-release/' },
@@ -50,7 +50,7 @@ const journalChapters = 10;
 
 const bonus: { n: string; t: string; d: string; until?: string }[] = [
   ...(bogo ? [{ n: '2', t: 'Experiences: buy one, give one', d: `one to keep, one to give with its own gift card · through ${bogo.through}`, until: bogo.until }] : []),
-  { n: String(wildCount), t: 'Florida animals to name', d: `Wild Florida with Uncle Dan · optional add-on${wild ? `, +${wild.price}` : ''}` },
+  { n: String(wildCount), t: 'Florida animals to name', d: wildIncluded ? 'Wild Florida Animal ID Trainer, with Uncle Dan · included' : `Wild Florida with Uncle Dan · optional add-on${wild ? `, +${wild.price}` : ''}` },
   { n: String(missions.length), t: 'missions from Uncle Dan', d: 'one for every chapter' },
   { n: String(missions.length), t: 'real-world field missions', d: 'done off the screen, signed off by a grown-up' },
   { n: '30', t: 'pages in the Field Journal', d: 'to print and fill in by hand' },

@@ -8,7 +8,7 @@
 // The Amazon taps are amazon_click "/:two"; the Buy pill is the usual buy_click "/:pill".
 import site from '../../site.config.mjs';
 import BuyButton from './BuyButton.astro';
-import { isOpen } from '@lib/buy';
+import { isOpen, wildIncluded } from '@lib/buy';
 import { url } from '@lib/url';
 const r = site.reviews;
 ---
@@ -21,7 +21,7 @@ const r = site.reviews;
         <div class="two-card two-exp">
           <p class="two-kicker mono">Opens today · nothing to ship</p>
           <h3 class="two-title">The Experience</h3>
-          <p class="two-what">The whole novel to read or hear, plus Guide School, missions and Matt’s Fishing Journal, on their own tablet or phone.</p>
+          <p class="two-what">The whole novel to read or hear, plus Guide School, missions{wildIncluded ? ', Matt’s Fishing Journal and the Wild Florida Animal ID Trainer' : ' and Matt’s Fishing Journal'}, on their own tablet or phone.</p>
           <BuyButton jump="offer" note={false} keep />
           <p class="small muted two-fine">One-time purchase, 30-day refund.</p>
         </div>

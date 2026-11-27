@@ -18,7 +18,7 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { getImage, Image } from 'astro:assets';
 import Base from '@layouts/Base.astro';
-import { buyHref, buyTrack, wild } from '@lib/buy';
+import { buyHref, buyTrack, wild, wildIncluded } from '@lib/buy';
 import { artImage } from '@lib/images';
 import { url } from '@lib/url';
 import site from '../../../site.config.mjs';
@@ -106,14 +106,18 @@ const kinds = data.types.map((t) => t.name.toLowerCase()).join(', ');
         <div class="wf-lock" id="wf-lock" hidden>
           <p class="hand wf-lock-h">The other {animals.length - starters} animals are in the full Wild Florida</p>
           <p class="small wf-lock-new">
-            The first {starters} are free to learn. The full field school is an add-on to the Summer Fishing Guide Experience{wild ? ` (${wild.price}, once)` : ''}: a grown-up switches it on when they buy, and it unlocks for every reader in the purchase.
+            {wildIncluded
+              ? `The first ${starters} are free to learn. The full field school comes with the Summer Fishing Guide Experience, for every reader in the purchase.`
+              : `The first ${starters} are free to learn. The full field school is an add-on to the Summer Fishing Guide Experience${wild ? ` (${wild.price}, once)` : ''}: a grown-up switches it on when they buy, and it unlocks for every reader in the purchase.`}
           </p>
           <p class="small wf-lock-have">
-            You have the Experience. Wild Florida is an add-on{wild ? `: ${wild.price}, once` : ''}. A grown-up can add it here, and it unlocks on every link from your purchase.
+            {wildIncluded
+              ? 'You have the Experience, and Wild Florida now comes with it. Tap “Check again” and every animal opens.'
+              : `You have the Experience. Wild Florida is an add-on${wild ? `: ${wild.price}, once` : ''}. A grown-up can add it here, and it unlocks on every link from your purchase.`}
           </p>
           <p class="cluster">
-            <a class="btn btn-primary wf-lock-new" href={buyHref} data-wild="1" data-track={buyTrack} data-track-page="wild-florida">
-              Get the Experience + Wild Florida
+            <a class="btn btn-primary wf-lock-new" href={buyHref} data-wild={wildIncluded ? undefined : '1'} data-track={buyTrack} data-track-page="wild-florida">
+              {wildIncluded ? 'Get the Experience' : 'Get the Experience + Wild Florida'}
             </a>
             {
               wild && (
@@ -126,7 +130,7 @@ const kinds = data.types.map((t) => t.name.toLowerCase()).join(', ');
               Already bought it?
             </a>
             <button type="button" class="wf-linkish small wf-lock-have" id="wf-recheck">
-              Already added it? Check again
+              {wildIncluded ? 'Check again' : 'Already added it? Check again'}
             </button>
           </p>
         </div>

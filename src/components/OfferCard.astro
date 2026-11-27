@@ -11,7 +11,7 @@ import manual from '../../data/manual.json';
 import { wildHowMany, wildStarters } from '@lib/wild';
 import { url } from '@lib/url';
 import site from '../../site.config.mjs';
-import { isOpen, price, bogo, wild } from '@lib/buy';
+import { isOpen, price, bogo, wild, wildIncluded } from '@lib/buy';
 import BuyButton from '@components/BuyButton.astro';
 // the four things a reader does, as a row of icons under the sub line (John, 2026-11-13)
 import { ways } from '@lib/ways';
@@ -73,6 +73,14 @@ const items = [
         }
       </ul>
 
+      {
+        wildIncluded && (
+          <p class="offer-addon">
+            <span class="offer-addon-tag mono">Now included</span>
+            <strong>Wild Florida Animal ID Trainer, with Uncle Dan.</strong> A field school that teaches them to name Florida’s animals on sight: sharks, snakes, gators, fish, birds, bugs and sea creatures. {wildHowMany}. <a href={url('/wild-florida/')}>Try the first {wildStarters} animals free</a>
+          </p>
+        )
+      }
       {
         wild && (
           <p class="offer-addon">

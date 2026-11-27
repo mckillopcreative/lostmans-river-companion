@@ -81,7 +81,9 @@ const getKey = async (env, key) => (KEY_RE.test(key) ? JSON.parse((await env.LR.
 // A key holds it when it was bought with the purchase (wild: true on the record), when it is a
 // comp, or when the key is older than WILD_SINCE: Wild Florida was part of the Experience for the
 // hours before it became an add-on, and nobody who bought then loses it.
-const hasWild = (env, rec) => !!rec && (!!rec.wild || !!rec.comp || (!!env.WILD_SINCE && String(rec.created || '') < env.WILD_SINCE));
+// 2026-11-27: with WILD_INCLUDED = "1" it comes with every Experience, so every valid key holds it.
+const wildIncluded = (env) => env.WILD_INCLUDED === '1';
+const hasWild = (env, rec) => !!rec && (wildIncluded(env) || !!rec.wild || !!rec.comp || (!!env.WILD_SINCE && String(rec.created || '') < env.WILD_SINCE));
 /** Every key from the same purchase as this one: the buyer's and the gift or crew keys. */
 async function boatKeys(env, key) {
   const rec = await getKey(env, key);
@@ -256,7 +258,10 @@ async function fulfil(env, session, ctx) {
   // time the welcome page sees the buyer's own key. They carry no email (restore by email finds
   // the buyer's key); each gift email goes to the buyer to pass on.
   // the Wild Florida add-on covers every seat in the boat: the buyer's key and each gift or crew key
-  const { gifts, wild } = await orderOf(env, session);
+  // paidWild = the $9.99 add-on is on this order (counted and named in the sale alert);
+  // wild = these keys get Wild Florida, paid for or included
+  const { gifts, wild: paidWild } = await orderOf(env, session);
+  const wild = paidWild || wildIncluded(env);
   const pair = gifts > 0;
   const giftKeys = [];
   for (let i = 0; i < gifts; i++) giftKeys.push(await issueKey(env, { email: '', session: `${session.id}:gift${i ? i + 1 : ''}`, note: 'gift', wild }));
@@ -272,13 +277,13 @@ async function fulfil(env, session, ctx) {
     const ref = session.client_reference_id || '';
     const src = srcFrom(ref) || (fbcFrom(ref) ? 'meta' : 'direct');
     env.EVENTS?.writeDataPoint({ indexes: ['purchase'], blobs: ['purchase', src, src, ''], doubles: [1, (Number(session.amount_total) || 0) / 100] });
-    if (wild) env.EVENTS?.writeDataPoint({ indexes: ['wild_sale'], blobs: ['wild_sale', src, src, ''], doubles: [1, 9.99] });
+    if (paidWild) env.EVENTS?.writeDataPoint({ indexes: ['wild_sale'], blobs: ['wild_sale', src, src, ''], doubles: [1, 9.99] });
     // and tell the author: one short email per sale (the buyer's address is the seller's to see)
     // the amount in the currency the buyer paid (Canadians pay CAD through Adaptive Pricing)
     const cur = String(session.currency || 'usd').toLowerCase();
     const usd = `${cur === 'usd' ? '$' : cur === 'cad' ? 'CA$' : cur.toUpperCase() + ' '}${((Number(session.amount_total) || 0) / 100).toFixed(2)}`;
     const when = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
-    const line = `${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET${gifts >= 4 ? ` · FULL CREW (${gifts + 1} readers)` : pair ? ` · PLUS ${gifts} GIFT EXPERIENCE${gifts > 1 ? 'S' : ''} (${gifts + 1} keys)` : ''}${wild ? ' · + WILD FLORIDA ADD-ON' : ''}`;
+    const line = `${usd} · ${email || 'no email on the session'} · from ${src} · ${when} ET${gifts >= 4 ? ` · FULL CREW (${gifts + 1} readers)` : pair ? ` · PLUS ${gifts} GIFT EXPERIENCE${gifts > 1 ? 'S' : ''} (${gifts + 1} keys)` : ''}${paidWild ? ' · + WILD FLORIDA ADD-ON' : ''}`;
     // South Carolina buyers: checkout no longer collects tax (2026-11-12, John: no address forms;
     // he remits SC sales tax himself), so flag them from the ZIP or wallet address Stripe has
     const sc = isSouthCarolina(session.customer_details?.address);
@@ -463,7 +468,7 @@ export default {
       const key = await env.LR.get(`e:${email}`);
       if (key) {
         const rec = await getKey(env, key);
-        await sendWelcome(env, email, key, { resend: true, wild: !!rec?.wild });
+        await sendWelcome(env, email, key, { resend: true, wild: hasWild(env, rec) });
         // the Experience(s) that came with that purchase to give away (buy one, give one; a crew):
         // they carry no email of their own, so this is the only way to get a lost one back
         const gifts = [];

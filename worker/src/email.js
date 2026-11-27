@@ -71,7 +71,7 @@ export function newsEmail(leave, why = 'asked for the holiday offer') {
     '- It’s a Guide School now. Four courses: Rig It Right, Learn the Boat, Keeper or Release? and Fish of the Everglades. Which rig to tie on, how to be useful crew, which fish go back, and what just came over the side.',
     '- The Assistant Fishing Guide Training Manual. Fifteen short audio lessons, about an hour in all, read by the voice of the book. Good for the car. Lesson 1 is free to hear on the site.',
     '- Matt’s Fishing Journal. A 20-page field guide, ready as a PDF: name the fish, find the spot, pick the rig, tie the knot, set the hook.',
-    '- Wild Florida, an add-on ($9.99). Uncle Dan teaches your reader to name Florida’s animals on sight: sharks, snakes, gators, fish and birds. The first animals are free to try, and more are on the way.',
+    '- Wild Florida, now included. Uncle Dan teaches your reader to name Florida’s animals on sight: sharks, snakes, gators, fish and birds. The first animals are free to try, and more are on the way.',
     '',
     'THE HOLIDAY SPECIALS',
     '',
@@ -108,7 +108,7 @@ export function newsEmail(leave, why = 'asked for the holiday offer') {
   ${item('Guide School.', 'Four courses: Rig It Right, Learn the Boat, Keeper or Release? and Fish of the Everglades. Which rig to tie on, how to be useful crew, which fish go back, and what just came over the side.')}
   ${item('The Assistant Fishing Guide Training Manual.', `Fifteen short audio lessons, about an hour in all, read by the voice of the book. Good for the car. <a href="${esc(link('training-manual/'))}" style="color:#2a7f8e;">Lesson 1 is free to hear.</a>`)}
   ${item('Matt’s Fishing Journal.', 'A 20-page field guide, ready as a PDF: name the fish, find the spot, pick the rig, tie the knot, set the hook.')}
-  ${item('Wild Florida, an add-on ($9.99).', `Uncle Dan teaches your reader to name Florida’s animals on sight: sharks, snakes, gators, fish and birds. <a href="${esc(link('wild-florida/'))}" style="color:#2a7f8e;">The first animals are free to try</a>, and more are on the way.`)}
+  ${item('Wild Florida, now included.', `Uncle Dan teaches your reader to name Florida’s animals on sight: sharks, snakes, gators, fish and birds. <a href="${esc(link('wild-florida/'))}" style="color:#2a7f8e;">The first animals are free to try</a>, and more are on the way.`)}
   </table>
   ${h('The holiday specials')}
   <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="background:#e3efe6;border-radius:10px;"><tr><td style="padding:14px 16px 4px;">
@@ -349,7 +349,7 @@ export function welcomeEmail(key, { resend = false, gift = false, wild = false }
     'Also in the pack:',
     `- Matt’s Fishing Journal, a 20-page field guide to print and keep in the boat (PDF): ${pdf}`,
     `- The Assistant Fishing Guide Training Manual, fifteen short lessons to listen to: ${SITE}/training-manual/`,
-    ...(wild ? [`- Wild Florida, your add-on: Uncle Dan’s field school, unlocked on every link in this purchase: ${SITE}/wild-florida/`] : []),
+    ...(wild ? [`- Wild Florida, the animal ID trainer: Uncle Dan’s field school, unlocked on every link in this purchase: ${SITE}/wild-florida/`] : []),
     '',
     'Switching devices, or the browser was cleared? Open the same link on the new device and the summer picks up where they left off.',
     `Lost this email? Go to ${SITE}/restore/ and enter this email address.`,
@@ -388,7 +388,7 @@ export function welcomeEmail(key, { resend = false, gift = false, wild = false }
 </td></tr>
 <tr><td style="padding:0 28px 24px;font-family:Georgia,'Times New Roman',serif;">
   ${p(`<strong>Also in the pack.</strong> <a href="${esc(pdf)}" style="color:#2a7f8e;">Matt’s Fishing Journal</a>, a 20-page field guide to print and keep in the boat (PDF). And <a href="${SITE}/training-manual/" style="color:#2a7f8e;">the Assistant Fishing Guide Training Manual</a>, fifteen short lessons to listen to in the car.`, 'font-size:15px;background:#f1e7d6;padding:10px 12px;border-radius:8px;')}
-  ${wild ? p(`<strong>Your add-on: Wild Florida.</strong> <a href="${SITE}/wild-florida/" style="color:#2a7f8e;">Uncle Dan’s field school</a> is unlocked on every link in this purchase.`, 'font-size:15px;background:#e3efe6;padding:10px 12px;border-radius:8px;') : ''}
+  ${wild ? p(`<strong>Also yours: Wild Florida, the animal ID trainer.</strong> <a href="${SITE}/wild-florida/" style="color:#2a7f8e;">Uncle Dan’s field school</a> is unlocked on every link in this purchase.`, 'font-size:15px;background:#e3efe6;padding:10px 12px;border-radius:8px;') : ''}
   ${p('<strong>Switching devices, or the browser was cleared?</strong> Scan the same code or open the same link on the new device and the summer picks up exactly where they left off.', 'font-size:15px;')}
   ${p(`<strong>Lost this email?</strong> Go to <a href="${SITE}/restore/" style="color:#2a7f8e;">lostmansriver.com/restore</a> and enter this email address.`, 'font-size:15px;')}
   ${p('<strong>What we keep:</strong> your email, so we can send the link. Your reader’s missions and badges are saved under the link, not under their name. We never ask your child for their name, email or anything else, and there are no ads or trackers in the Experience.', 'font-size:14px;color:#4b5a60;')}

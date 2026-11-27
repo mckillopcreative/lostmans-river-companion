@@ -7,11 +7,12 @@
 // 2026-11-27 (John): the list was missing parts, the animal trainer among them. The missions get
 // their own line, and Wild Florida is named as what it is on this site: an add-on at its own price
 // (the Amazon paperback's Crew Pass includes it; a $24.99 purchase here does not).
+// Later the same day (John: "Make it included in the digital product"): it is line 5, included.
 import site from '../../site.config.mjs';
 import { chapters } from '@lib/data';
 import audioData from '../../data/audio.json';
 import manual from '../../data/manual.json';
-import { wild } from '@lib/buy';
+import { wild, wildIncluded } from '@lib/buy';
 import { wildCount } from '@lib/wild';
 
 const bookHours = Math.round(Object.values(audioData.minutes as Record<string, number>).reduce((a, b) => a + b, 0) / 60);
@@ -45,6 +46,14 @@ const manualLen = manualMin >= 55 ? 'about an hour' : `${manualMin} minutes`;
       <span class="g-n" aria-hidden="true">4</span>
       <span><strong>{chapters.length} missions</strong>, badges and a guide license to earn</span>
     </li>
+    {
+      wildIncluded && (
+        <li>
+          <span class="g-n" aria-hidden="true">5</span>
+          <span><strong>Wild Florida Animal ID Trainer</strong>: {wildCount} animals to name</span>
+        </li>
+      )
+    }
     {
       wild && (
         <li>

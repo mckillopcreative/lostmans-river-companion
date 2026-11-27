@@ -36,6 +36,10 @@ WILD_LINK = "plink_1UcTNDR6rTUxNaU8VEZawk9Y"
 WILD_CREW_LINK = "plink_1UcTPDR6rTUxNaU8uZg39hWk"
 WILD_ADD_LINK = "plink_1UcTRaR6rTUxNaU8VrUQwSCv"
 WILD_SINCE = "2026-11-16T17:50:00Z"
+# 2026-11-27 (John: "Make it included in the digital product"): "1" = Wild Florida comes with every
+# Experience. Every valid key holds it, old and new, and new keys are stamped wild. Keep it the
+# same as site.config -> checkout.wildIncluded. Set it to "" to go back to the paid add-on.
+WILD_INCLUDED = "1"
 # The Crew Pass printed on the last page of the Amazon gift edition (2026-11-20). One code for
 # every copy; to retire a leaked one, print a new code in the book and list both here for a while
 # (comma-separated). Letters and digits only count; case and dashes are ignored.

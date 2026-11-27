@@ -17,4 +17,6 @@ const b = (c as { bogo?: { until: string; through: string } }).bogo;
 export const bogo = isOpen && b && Date.now() < Date.parse(b.until) ? b : null;
 /** The Wild Florida add-on while checkout is open, else null (site.config → checkout.wild). */
 const w = (c as { wild?: { price: string; url: string; crewUrl: string; addUrl: string } }).wild;
-export const wild = isOpen && w ? w : null;
+/** Wild Florida comes with every Experience (site.config → checkout.wildIncluded, 2026-11-27). */
+export const wildIncluded = !!(c as { wildIncluded?: boolean }).wildIncluded;
+export const wild = isOpen && w && !wildIncluded ? w : null;
