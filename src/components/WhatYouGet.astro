@@ -50,7 +50,7 @@ const journalChapters = 10;
 
 const bonus: { n: string; t: string; d: string; until?: string }[] = [
   ...(bogo ? [{ n: '2', t: 'Experiences: buy one, give one', d: `one to keep, one to give with its own gift card · through ${bogo.through}`, until: bogo.until }] : []),
-  { n: String(wildCount), t: 'Florida animals to name', d: wildIncluded ? 'Wild Florida Animal ID Trainer, with Uncle Dan · included' : `Wild Florida with Uncle Dan · optional add-on${wild ? `, +${wild.price}` : ''}` },
+  { n: String(wildCount), t: 'Florida animals to learn', d: wildIncluded ? 'Wild Florida Animal ID Trainer, with Uncle Dan · included' : `Wild Florida with Uncle Dan · optional add-on${wild ? `, +${wild.price}` : ''}` },
   { n: String(missions.length), t: 'missions from Uncle Dan', d: 'one for every chapter' },
   { n: String(missions.length), t: 'real-world field missions', d: 'done off the screen, signed off by a grown-up' },
   { n: '30', t: 'pages in the Field Journal', d: 'to print and fill in by hand' },
