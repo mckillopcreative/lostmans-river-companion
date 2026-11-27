@@ -83,6 +83,12 @@ export default {
   // book includes and links to /pass/. While it is false the card describes the plain book.
   // Turned on 2026-11-20: KDP shows the paperback Live at $34.99 with the new interior and description.
   amazonCrewPass: true,
+  // The floating "Hook the Experience" pill (John, 2026-11-27): it sends people to the Amazon
+  // paperback until `amazonUntil`, then flips by itself to the digital Experience ($24.99, opens
+  // the minute you buy) for the days when a book can no longer arrive by Christmas. The date is a
+  // default nobody has confirmed: move it to flip earlier or later, or delete the line to go back
+  // to the digital pill for good. (HookButton.astro)
+  sticky: { amazonUntil: '2026-12-18T05:00:00Z' },
   // hardcover 9798375928548 (ASIN B0BVDYCW8G) unpublished on KDP 2026-10-28; republish from the KDP bookshelf
   isbn: { paperback: '9798374178890', hardcover: '9798375928548', kindle: 'B0BVJ4XR65' },
 

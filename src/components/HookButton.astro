@@ -6,6 +6,11 @@
 // 2026-11-27 (John): on the landing page it shows the moment the page loads, with no scrolling
 // ("people have to scroll for like 5 seconds to even know how to purchase"). It is rendered
 // visible there, so it does not wait for the script. Other pages keep the one-screen scroll rule.
+// Later the same day (John: "a hook the experience sticky pill that goes to Amazon? Then flip it
+// closer to Christmas"): until site.config → sticky.amazonUntil the pill goes to the Amazon
+// paperback (amazon_click "<page>:sticky"), with no price and no holiday pill, because both belong
+// to the digital copy and Amazon sets its own price. After that moment the script swaps in the
+// digital pill below (the same one as before), so the flip needs no deploy.
 import site from '../../site.config.mjs';
 import { buyHref, buyTrack, isOpen, price, bogo } from '@lib/buy';
 // 2026-11-16 (John): while the holiday "buy one, give one" runs, the same small pill that sits on
@@ -15,11 +20,22 @@ import { buyHref, buyTrack, isOpen, price, bogo } from '@lib/buy';
 // Buy button; the crew is the sheet's Full Boat toggle, and nobody lands cold on a $39.99 checkout
 const href = buyHref;
 const track = buyTrack;
-void site;
 const keep = Astro.url.pathname === '/';
+const until = (site as { sticky?: { amazonUntil?: string } }).sticky?.amazonUntil;
+// built after the date: the Amazon pill is not built in at all
+const amz = !!site.amazonCrewPass && !!until && Date.now() < Date.parse(until);
 ---
 
-<a class:list={['hook-btn', 'btn', 'btn-primary', { 'hook-keep': keep }]} href={href} rel="noopener" data-track={track} data-track-page={`${Astro.url.pathname}:sticky`} hidden={!keep} aria-label={isOpen ? `Hook the Experience, ${price}${bogo ? ', buy one, give one' : ''}` : 'Hook the Experience'}>
+{
+  amz && (
+    <a class:list={['hook-btn', 'hook-amz', 'btn', 'btn-primary', { 'hook-keep': keep }]} href={site.buyUrl} rel="noopener" data-track="amazon_click" data-track-page={`${Astro.url.pathname}:sticky`} data-amz-until={until} hidden={!keep} aria-label="Hook the Experience: the paperback on Amazon">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
+      Hook the Experience
+      <span class="hook-price mono">on Amazon →</span>
+    </a>
+  )
+}
+<a class:list={['hook-btn', 'hook-exp', 'btn', 'btn-primary', { 'hook-keep': keep }]} href={href} rel="noopener" data-track={track} data-track-page={`${Astro.url.pathname}:sticky`} hidden={amz || !keep} aria-label={isOpen ? `Hook the Experience, ${price}${bogo ? ', buy one, give one' : ''}` : 'Hook the Experience'}>
   {bogo && <span class="hook-bogo" data-bogo-until={bogo.until} aria-hidden="true">Buy one · Give one</span>}
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9a4 4 0 0 0 8 0" /><path d="M20 12a2 2 0 1 0-4 0" /><circle cx="12" cy="3" r="1" /></svg>
   Hook the Experience
@@ -27,7 +43,19 @@ const keep = Astro.url.pathname === '/';
 </a>
 
 <script>
-  const btn = document.querySelector<HTMLAnchorElement>('.hook-btn');
+  // which pill is on duty: the Amazon one until its date, then the digital one
+  const amz = document.querySelector<HTMLAnchorElement>('.hook-amz');
+  const exp = document.querySelector<HTMLAnchorElement>('.hook-exp');
+  let btn = exp;
+  if (amz) {
+    if (Date.now() < Date.parse(amz.dataset.amzUntil || '')) {
+      btn = amz;
+      exp?.remove();
+    } else {
+      amz.remove();
+      if (exp?.classList.contains('hook-keep')) exp.hidden = false;
+    }
+  }
   // the landing page's button (hook-keep) is already showing and stays; everywhere else it waits for a scroll
   if (btn && !btn.classList.contains('hook-keep') && !document.documentElement.classList.contains('has-key')) {
     let shown = false;
@@ -35,7 +63,7 @@ const keep = Astro.url.pathname === '/';
       const past = window.scrollY > window.innerHeight * 0.8;
       if (past !== shown) {
         shown = past;
-        btn.hidden = !past;
+        btn!.hidden = !past;
       }
     };
     addEventListener('scroll', check, { passive: true });
